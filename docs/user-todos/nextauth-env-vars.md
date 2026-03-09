@@ -30,5 +30,5 @@ NEXTAUTH_SECRET=<your-generated-secret>
 The `book-skye-admin-website` app has been scaffolded. You need to:
 
 1. Create a new Vercel project for it
-2. Set the `VERCEL_PROJECT_ID_BOOK_SKYE_ADMIN` GitHub variable
+2. Set the `VERCEL_PROJECT_ID_SKYE_GLAMPING_ADMIN` GitHub variable
 3. Add `NEXTAUTH_SECRET` to the project's environment variables

@@ -6,7 +6,7 @@ dotenv.config({ path: constants.envPath });
 
 // Must preceed all except dotenv
 // Deliberately using require not import to prevent hoisting it above dotenv.config
-// as it relies on process.env.BOOK_SKYE_API_SENTRY_DSN
+// as it relies on process.env.SKYE_GLAMPING_API_SENTRY_DSN
 require('./instrument');
 
 import { Logger } from '@nestjs/common';
