@@ -1,4 +1,4 @@
-import type { IPhoneVerifyOtpResponseDto } from "@repo/book-skye-api-client";
+import type { IPhoneVerifyOtpResponseDto } from "@repo/skye-hosts-api-client";
 import { router } from "expo-router";
 import React, {
   createContext,

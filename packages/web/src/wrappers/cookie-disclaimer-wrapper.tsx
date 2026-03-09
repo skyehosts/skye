@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiBaseUrl } from "@repo/book-skye-api-client";
+import { getApiBaseUrl } from "@repo/skye-hosts-api-client";
 import { CookieDisclaimer } from "@repo/web-components/cookie-disclaimer/cookie-disclaimer";
 import { useAuth } from "../auth/use-auth";
 

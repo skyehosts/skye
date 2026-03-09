@@ -3,7 +3,7 @@ import type {
   IMessageDto,
   IWsMessageReadEvent,
   IWsNewMessageEvent,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {

@@ -4,9 +4,9 @@
     "baseUrl": "./",
     "outDir": "./dist",
     "paths": {
-      "@/book-skye-api/*": ["src/book-skye-api/*"],
+      "@/skye-hosts-api/*": ["src/skye-hosts-api/*"],
       "@/common/*": ["src/common/*"],
-      "@/book-skye-api-client/*": ["src/book-skye-api-client/*"],
+      "@/skye-hosts-api-client/*": ["src/skye-hosts-api-client/*"],
       "@/config/*": ["src/config/*"],
       "@/constants/*": ["src/constants/*"],
       "@/database/*": ["src/database/*"],

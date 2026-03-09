@@ -1,7 +1,7 @@
 import {
   ListingBookingType,
   LISTING_BOOKING_TYPE_OPTIONS,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";

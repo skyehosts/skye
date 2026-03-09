@@ -1,4 +1,4 @@
-import { IAvailabilityResponseDto, fetchApi } from '@repo/book-skye-api-client';
+import { IAvailabilityResponseDto, fetchApi } from '@repo/skye-hosts-api-client';
 
 export const dynamic = 'force-dynamic';
 

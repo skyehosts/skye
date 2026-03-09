@@ -1,4 +1,4 @@
-import type { IPhoneRequestOtpRequestDto } from '@repo/book-skye-api-client';
+import type { IPhoneRequestOtpRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString } from 'class-validator';
 
 export class PhoneRequestOtpRequestDto implements IPhoneRequestOtpRequestDto {

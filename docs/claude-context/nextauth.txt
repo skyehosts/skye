@@ -1,13 +1,13 @@
 - Implement NextAuth.js
-- Single tenant but it will be used in book-skye-guest-website, book-skye-host-app & book-skye-admin-website. In each case, there are some pages publically available and some protected.
+- Single tenant but it will be used in skye-hosts-guest-website, skye-hosts-host-app & skye-hosts-admin-website. In each case, there are some pages publically available and some protected.
 - Authorization model is role based (Granular permissions not required). There are three roles "host", "admin", "guest". This maps 1:1 with each app.
-- Common logic should be stored in a package where possible to prevent duplication. Logic related to book-skye-api can go in book-skye-api-client. Logic only related to frontend could go in a new package, suggest packages/ui/src/auth
+- Common logic should be stored in a package where possible to prevent duplication. Logic related to skye-hosts-api can go in skye-hosts-api-client. Logic only related to frontend could go in a new package, suggest packages/ui/src/auth
 - Use App router, JWT Sessions (Stateless)
 - User sign in with Email + password only
 - No email activation required
 - No JWT token versioning required
-- Password is hashed in book-skye-api, it will be added to the Account entity.
-- Authorization/Authentication checks aren't need in API routes / NextJs layer. The token will be verified in book-skye-api by NestJs guard by ajax calls
+- Password is hashed in skye-hosts-api, it will be added to the Account entity.
+- Authorization/Authentication checks aren't need in API routes / NextJs layer. The token will be verified in skye-hosts-api by NestJs guard by ajax calls
 - Multi-Device Policy: Allow unlimited
 - Audit + ComplianceL Don't worry about Login history, ip tracking, gdpr delete, SOC2 compliance etc, keep simple
 - Be mindful how this is being deployed in vercel in deploy-prod.yml
@@ -17,7 +17,7 @@
 - Don't implement everything now. Plan first, ask questions if any outstanding major decisions and then initially implement only NextJs layer only with NextAuth.js boilerplate, initialisation stuff, common services in packages etc.
 - Next steps will be:
   - Connect it to /sign-up-form.tsx
-  - Integrate with book-skye-api (I.E enhance/refactor existing /user/sign-up endpoint)
+  - Integrate with skye-hosts-api (I.E enhance/refactor existing /user/sign-up endpoint)
   - Create a login form and connect to it
 
 

@@ -1,4 +1,4 @@
-import { IResetPasswordRequestDto } from '@repo/book-skye-api-client';
+import { IResetPasswordRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString, MinLength } from 'class-validator';
 
 export class ResetPasswordRequestDto implements IResetPasswordRequestDto {

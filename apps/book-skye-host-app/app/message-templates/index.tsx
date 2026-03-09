@@ -2,8 +2,8 @@ import type {
   IGetHostListingsResponseDto,
   IGetMessageTemplatesResponseDto,
   IMessageTemplateDto,
-} from "@repo/book-skye-api-client";
-import { TRIGGER_TYPE_LABELS } from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
+import { TRIGGER_TYPE_LABELS } from "@repo/skye-hosts-api-client";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {

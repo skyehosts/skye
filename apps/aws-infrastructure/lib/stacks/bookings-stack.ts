@@ -141,7 +141,7 @@ export class BookingsStack extends cdk.Stack {
     // SQS → HTTP Forwarder Lambda
     //
     // Consumes messages from the bookings queue and forwards them via HTTP
-    // POST to the book-skye-api. On non-2xx responses the Lambda throws,
+    // POST to the skye-hosts-api. On non-2xx responses the Lambda throws,
     // causing SQS to retry (up to maxReceiveCount) before routing to the DLQ.
     // -------------------------------------------------------------------------
     const sentryLayer = lambda.LayerVersion.fromLayerVersionArn(

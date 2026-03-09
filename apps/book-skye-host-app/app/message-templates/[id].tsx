@@ -5,8 +5,8 @@ import type {
   IMessageTemplateDto,
   IUpdateMessageTemplateRequestDto,
   TriggerType,
-} from "@repo/book-skye-api-client";
-import { TRIGGER_TYPE_LABELS } from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
+import { TRIGGER_TYPE_LABELS } from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";

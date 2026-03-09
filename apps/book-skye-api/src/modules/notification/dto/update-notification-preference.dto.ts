@@ -1,7 +1,7 @@
 import type {
   IUpdateNotificationPreferenceRequestDto,
   NotificationEventType,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { IsBoolean, IsIn, IsString } from 'class-validator';
 
 const EVENT_TYPES: NotificationEventType[] = [

@@ -1,8 +1,8 @@
 import type {
   IGetSpaceTypesResponseDto,
   IListingSpaceTypeDto,
-} from "@repo/book-skye-api-client";
-import { ListingSpaceType } from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
+import { ListingSpaceType } from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {

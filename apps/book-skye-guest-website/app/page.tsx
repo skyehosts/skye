@@ -2,7 +2,7 @@ import {
   fetchApi,
   IGetAllListingsResponseDto,
   slugify,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';

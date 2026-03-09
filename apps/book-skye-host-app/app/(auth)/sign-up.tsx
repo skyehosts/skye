@@ -87,7 +87,7 @@ export default function SignUpScreen() {
       >
         <View style={styles.content}>
           <Text variant="headlineMedium" style={styles.title}>
-            Book Skye Host
+            Skye Hosts Host
           </Text>
           <Text variant="bodyLarge" style={styles.subtitle}>
             {showNameField

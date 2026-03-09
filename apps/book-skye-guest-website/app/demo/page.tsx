@@ -2,7 +2,7 @@ import {
   IDemoRequestDto,
   IDemoResponseDto,
   fetchApi,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { GlampingInfoCard } from '@repo/web-components/listings/glamping-info-card';
 import { DemoFormWrapper } from './DemoFormWrapper';
 

@@ -1,4 +1,4 @@
-import type { TemplateVersionStatus } from '@repo/book-skye-api-client';
+import type { TemplateVersionStatus } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,

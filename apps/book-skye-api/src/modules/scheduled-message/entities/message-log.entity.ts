@@ -1,4 +1,4 @@
-import type { MessageLogAction } from '@repo/book-skye-api-client';
+import type { MessageLogAction } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,

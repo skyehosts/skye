@@ -19,8 +19,8 @@ import type {
   IMessageDto,
   IWsMessageReadEvent,
   IWsNewMessageEvent,
-} from '@repo/book-skye-api-client';
-import { getApiBaseUrl } from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
+import { getApiBaseUrl } from '@repo/skye-hosts-api-client';
 import { useAuth } from '@repo/web/use-auth';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';

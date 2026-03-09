@@ -48,4 +48,4 @@ jobs:
 
       - name: Run EAS Build
         run: eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }} --non-interactive
-        working-directory: apps/book-skye-host-app
+        working-directory: apps/skye-hosts-host-app

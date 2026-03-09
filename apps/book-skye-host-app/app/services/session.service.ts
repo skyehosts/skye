@@ -1,11 +1,11 @@
 import type {
   IRefreshTokenRequestDto,
   IRefreshTokenResponseDto,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import {
   fetchApi as baseFetchApi,
   type FetchApiOptions,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { getApiBaseUrl } from "./platform-url";
 import {
   getRefreshToken,

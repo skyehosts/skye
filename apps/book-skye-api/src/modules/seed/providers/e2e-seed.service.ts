@@ -5,7 +5,7 @@ import {
   ListingHighlightId,
   ListingSpaceType,
   ListingTypeId,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomBytes } from 'crypto';
 import { DataSource } from 'typeorm';

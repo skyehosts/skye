@@ -7,7 +7,7 @@ import type {
   ListingStatus,
   ListingTypeId,
   PropertySizeUnit,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

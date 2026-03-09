@@ -22,7 +22,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@repo/book-skye-api-client": "workspace:*",
+    "@repo/skye-hosts-api-client": "workspace:*",
     "@repo/web-components": "workspace:^",
     "next-auth": "^5.0.0-beta.25"
   },

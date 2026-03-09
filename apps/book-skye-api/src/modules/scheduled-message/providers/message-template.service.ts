@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type {
   IGetMessageTemplatesResponseDto,
   IMessageTemplateDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { IsNull } from 'typeorm';
 import { DatabaseService } from '../../common/providers';
 import {

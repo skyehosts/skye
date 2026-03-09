@@ -19,7 +19,7 @@ EXPO_ACCESS_TOKEN=your-expo-access-token-here
 Run the migration to create `device_token` and `notification_history` tables:
 
 ```bash
-pnpm --filter book-skye-api migration:run
+pnpm --filter skye-hosts-api migration:run
 ```
 
 Migration file: `src/migrations/1772883100000-add-device-token-and-notification-history.ts`
@@ -29,9 +29,9 @@ Migration file: `src/migrations/1772883100000-add-device-token-and-notification-
 `expo-notifications` was added as a dependency and to `app.json` plugins. You need to rebuild the dev client:
 
 ```bash
-pnpm --filter book-skye-host-app build:dev:ios
+pnpm --filter skye-hosts-host-app build:dev:ios
 # or
-pnpm --filter book-skye-host-app build:dev:android
+pnpm --filter skye-hosts-host-app build:dev:android
 ```
 
 ## Device Token Deregistration on Logout

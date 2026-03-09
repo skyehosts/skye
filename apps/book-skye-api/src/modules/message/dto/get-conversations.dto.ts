@@ -1,7 +1,7 @@
 import type {
   IConversationDto,
   IGetConversationsResponseDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 
 export class ConversationDto implements IConversationDto {
   bookingId: number;

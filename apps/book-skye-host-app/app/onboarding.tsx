@@ -17,7 +17,7 @@ const { width } = Dimensions.get("window");
 
 const SLIDES = [
   {
-    title: "Welcome to Book Skye",
+    title: "Welcome to Skye Hosts",
     imageBg: "#B8D4E8",
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
   },

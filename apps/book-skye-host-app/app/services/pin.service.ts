@@ -1,7 +1,7 @@
 import type {
   IPinSetupRequestDto,
   IPinSetupResponseDto,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import * as Crypto from "expo-crypto";
 import { fetchApi } from "./api";
 import {

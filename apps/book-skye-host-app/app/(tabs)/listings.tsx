@@ -1,8 +1,8 @@
 import type {
   IGetHostListingsResponseDto,
   IHostListingDto,
-} from "@repo/book-skye-api-client";
-import { LISTING_TYPE_LABELS } from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
+import { LISTING_TYPE_LABELS } from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {

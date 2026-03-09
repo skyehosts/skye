@@ -4,7 +4,7 @@ import type {
   IRegisterDeviceTokenResponseDto,
   IRemoveDeviceTokenResponseDto,
   IUpdateNotificationPreferenceResponseDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { AuthenticatedUser } from '../../common/decorators';
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
 import {

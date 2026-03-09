@@ -14,8 +14,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import type { IHostListingDto } from '@repo/book-skye-api-client';
-import { slugify } from '@repo/book-skye-api-client';
+import type { IHostListingDto } from '@repo/skye-hosts-api-client';
+import { slugify } from '@repo/skye-hosts-api-client';
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   house: 'House',

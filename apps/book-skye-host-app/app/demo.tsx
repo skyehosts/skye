@@ -10,7 +10,7 @@
 import type {
   IDemoFormRequestDto,
   IDemoFormResponseDto,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";

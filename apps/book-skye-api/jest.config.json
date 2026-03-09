@@ -14,7 +14,7 @@
   "coverageDirectory": "../coverage",
   "testEnvironment": "node",
   "moduleNameMapper": {
-    "^@/book-skye-api(.*)$": "<rootDir>/book-skye-api$1",
+    "^@/skye-hosts-api(.*)$": "<rootDir>/skye-hosts-api$1",
     "^@/config(.*)$": "<rootDir>/config$1",
     "^@/constants(.*)$": "<rootDir>/constants$1",
     "^@/database(.*)$": "<rootDir>/database$1",

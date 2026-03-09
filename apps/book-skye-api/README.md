@@ -16,10 +16,10 @@ cp .env.example .env
 
 ```bash
 # Run in development mode
-pnpm --filter=book-skye-api start:dev
+pnpm --filter=skye-hosts-api start:dev
 
 # Run with hot-reload
-pnpm --filter=book-skye-api start:debug
+pnpm --filter=skye-hosts-api start:debug
 
 ```
 
@@ -27,21 +27,21 @@ pnpm --filter=book-skye-api start:debug
 
 ```bash
 # Build application
-pnpm --filter=book-skye-api build
+pnpm --filter=skye-hosts-api build
 
 # Run in production mode
-pnpm --filter=book-skye-api start:prod
+pnpm --filter=skye-hosts-api start:prod
 ```
 
 ## Testing
 
 ```bash
 # Run unit tests
-pnpm --filter=book-skye-api test
+pnpm --filter=skye-hosts-api test
 
 # Run e2e tests
-pnpm --filter=book-skye-api test:e2e
+pnpm --filter=skye-hosts-api test:e2e
 
 # Check test coverage
-pnpm --filter=book-skye-api test:cov
+pnpm --filter=skye-hosts-api test:cov
 ```

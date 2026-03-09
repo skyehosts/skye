@@ -1,6 +1,6 @@
 services:
   db:
-    container_name: book-skye-db
+    container_name: skye-hosts-db
     image: postgres:17
     restart: always
     volumes:
@@ -17,7 +17,7 @@ services:
       - nestjs-turbo-network
 
   pgadmin:
-    container_name: book-skye-pgadmin
+    container_name: skye-hosts-pgadmin
     image: dpage/pgadmin4
     ports:
       - "18080:80"

@@ -4,7 +4,7 @@ import {
   fetchApi,
   IBookingPaymentRequestDto,
   IBookingPaymentResponseDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { useState } from 'react';
 
 interface BookNowButtonProps {

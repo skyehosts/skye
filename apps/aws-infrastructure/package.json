@@ -17,7 +17,7 @@
     "destroy:production": "cdk destroy --context env=production"
   },
   "dependencies": {
-    "@repo/book-skye-api-client": "workspace:*",
+    "@repo/skye-hosts-api-client": "workspace:*",
     "@repo/common": "workspace:*",
     "aws-cdk-lib": "^2.200.0",
     "constructs": "^10.4.2"

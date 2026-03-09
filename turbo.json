@@ -29,13 +29,13 @@
     "test:e2e": {
       "cache": false
     },
-    "@repo/book-skye-api#migration:up": {
+    "@repo/skye-hosts-api#migration:up": {
       "cache": false
     },
-    "@repo/book-skye-api#migration:down": {
+    "@repo/skye-hosts-api#migration:down": {
       "cache": false
     },
-    "@repo/book-skye-api#migration:generate": {
+    "@repo/skye-hosts-api#migration:generate": {
       "cache": false
     }
   }

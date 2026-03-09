@@ -1,7 +1,7 @@
 import {
   IGetEmailSubscriptionsResponseDto,
   ISaveEmailSubscriptionsRequestDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { IsBoolean } from 'class-validator';
 
 export class SaveEmailSubscriptionsRequestDto implements ISaveEmailSubscriptionsRequestDto {

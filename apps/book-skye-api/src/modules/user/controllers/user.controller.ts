@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
 import type {
   IAccountAuthenticatedRequestDto,
   IUserSummaryVm,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import {
   AuthenticatedUser,
   IgnoreBearerAuthentication,

@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiBaseUrl } from "@repo/book-skye-api-client";
+import { getApiBaseUrl } from "@repo/skye-hosts-api-client";
 import { ResetPasswordForm } from "@repo/web-components/forms/reset-password-form";
 import type { ResetPasswordFormValues } from "@repo/web-components/forms/reset-password-form";
 import { signIn } from "next-auth/react";

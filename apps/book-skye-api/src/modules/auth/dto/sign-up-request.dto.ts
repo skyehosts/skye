@@ -1,4 +1,4 @@
-import type { ISignUpRequestDto, SignUpRole } from '@repo/book-skye-api-client';
+import type { ISignUpRequestDto, SignUpRole } from '@repo/skye-hosts-api-client';
 import {
   IsBoolean,
   IsIn,

@@ -1,7 +1,7 @@
 import {
   fetchApi as baseFetchApi,
   type FetchApiOptions,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { ensureValidToken } from "./session.service";
 import { getApiBaseUrl } from "./platform-url";
 import { getToken } from "./token.service";

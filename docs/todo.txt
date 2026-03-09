@@ -63,7 +63,7 @@ Pending Prompts
 =======
 Logins
 ======
-- [Book skye] Aws --> A...[pin]$$$
+- [Skye Hosts] Aws --> A...[pin]$$$
 - [williamsandonz] Donk...[pin]$
 
 ===============

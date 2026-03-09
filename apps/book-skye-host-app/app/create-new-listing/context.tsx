@@ -6,7 +6,7 @@ import type {
   ListingSafetyDisclosureId,
   ListingSpaceType,
   ListingTypeId,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import {
   createContext,
   useCallback,

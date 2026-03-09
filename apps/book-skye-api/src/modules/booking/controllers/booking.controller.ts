@@ -9,7 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import type { IGetBookingResponseDto } from '@repo/book-skye-api-client';
+import type { IGetBookingResponseDto } from '@repo/skye-hosts-api-client';
 import {
   AuthenticatedUser,
   IgnoreBearerAuthentication,
