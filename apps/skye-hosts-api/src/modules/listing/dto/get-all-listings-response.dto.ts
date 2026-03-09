@@ -1,4 +1,4 @@
-import type { IGetAllListingsResponseDto } from '../../../../../../packages/skye-hosts-api-client/src';
+import type { IGetAllListingsResponseDto } from '@repo/skye-hosts-api-client';
 import { GetHostListingsResponseDto } from './get-host-listings-response.dto';
 
 export class GetAllListingsResponseDto

@@ -1,3 +1,4 @@
+import type { NotificationEventType } from '@repo/skye-hosts-api-client';
 import {
   Column,
   CreateDateColumn,
@@ -6,7 +7,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import type { NotificationEventType } from '../../../../../../packages/skye-hosts-api-client/src';
 import { Account } from '../../account/entities';
 
 @Entity()

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { LISTING_AMENITY_CATEGORIES } from '../../../../../../packages/skye-hosts-api-client/src';
+import { LISTING_AMENITY_CATEGORIES } from '@repo/skye-hosts-api-client';
 import { IgnoreBearerAuthentication } from '../../common/decorators';
 import { GetAmenitiesResponseDto } from '../dto';
 

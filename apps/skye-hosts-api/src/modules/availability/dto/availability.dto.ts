@@ -1,4 +1,4 @@
-import { IAvailabilityResponseDto } from '../../../../../../packages/skye-hosts-api-client/src';
+import { IAvailabilityResponseDto } from '@repo/skye-hosts-api-client';
 
 export class AvailabilityResponseDto implements IAvailabilityResponseDto {
   date: Date;

@@ -1,3 +1,8 @@
+import type { ICreateListingRequestDto } from '@repo/skye-hosts-api-client';
+import {
+  LISTING_SPACE_TYPES,
+  LISTING_TYPE_IDS,
+} from '@repo/skye-hosts-api-client';
 import {
   IsArray,
   IsIn,
@@ -6,11 +11,6 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import type { ICreateListingRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
-import {
-  LISTING_SPACE_TYPES,
-  LISTING_TYPE_IDS,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class CreateListingRequestDto implements ICreateListingRequestDto {
   @IsString()

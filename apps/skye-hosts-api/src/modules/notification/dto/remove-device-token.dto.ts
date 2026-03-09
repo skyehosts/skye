@@ -1,5 +1,5 @@
+import type { IRemoveDeviceTokenRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString } from 'class-validator';
-import type { IRemoveDeviceTokenRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class RemoveDeviceTokenRequestDto implements IRemoveDeviceTokenRequestDto {
   @IsString()

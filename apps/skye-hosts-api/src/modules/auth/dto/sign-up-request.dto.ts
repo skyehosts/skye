@@ -1,3 +1,7 @@
+import type {
+  ISignUpRequestDto,
+  SignUpRole,
+} from '@repo/skye-hosts-api-client';
 import {
   IsBoolean,
   IsIn,
@@ -6,10 +10,6 @@ import {
   MinLength,
   Validate,
 } from 'class-validator';
-import type {
-  ISignUpRequestDto,
-  SignUpRole,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 import { Account } from '../../account/entities';
 import { UniqueByPropertyValidator } from '../../common/validators';
 

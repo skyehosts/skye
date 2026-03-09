@@ -1,3 +1,4 @@
+import type { ScheduledMessageStatus } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,
@@ -7,7 +8,6 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import type { ScheduledMessageStatus } from '../../../../../../packages/skye-hosts-api-client/src';
 import { Booking } from '../../booking/entities';
 import { Listing } from '../../listing/entities';
 import { TemplateTrigger } from './template-trigger.entity';

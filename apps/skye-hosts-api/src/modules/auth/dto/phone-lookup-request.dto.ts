@@ -1,5 +1,5 @@
+import type { IPhoneLookupRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString } from 'class-validator';
-import type { IPhoneLookupRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class PhoneLookupRequestDto implements IPhoneLookupRequestDto {
   @IsString()

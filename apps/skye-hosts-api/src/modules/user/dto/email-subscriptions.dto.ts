@@ -1,8 +1,8 @@
-import { IsBoolean } from 'class-validator';
 import {
   IGetEmailSubscriptionsResponseDto,
   ISaveEmailSubscriptionsRequestDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { IsBoolean } from 'class-validator';
 
 export class SaveEmailSubscriptionsRequestDto implements ISaveEmailSubscriptionsRequestDto {
   @IsBoolean()

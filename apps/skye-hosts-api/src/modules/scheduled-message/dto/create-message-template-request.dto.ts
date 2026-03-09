@@ -1,3 +1,8 @@
+import type { MessageChannel } from '@repo/skye-hosts-api-client';
+import {
+  ICreateMessageTemplateRequestDto,
+  MESSAGE_CHANNELS,
+} from '@repo/skye-hosts-api-client';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -7,11 +12,6 @@ import {
   MaxLength,
   ValidateNested,
 } from 'class-validator';
-import type { MessageChannel } from '../../../../../../packages/skye-hosts-api-client/src';
-import {
-  ICreateMessageTemplateRequestDto,
-  MESSAGE_CHANNELS,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 import { TemplateTriggerInputDto } from './template-trigger-input.dto';
 
 export class CreateMessageTemplateRequestDto implements ICreateMessageTemplateRequestDto {

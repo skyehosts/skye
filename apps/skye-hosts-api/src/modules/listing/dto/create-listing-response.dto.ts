@@ -1,4 +1,4 @@
-import type { ICreateListingResponseDto } from '../../../../../../packages/skye-hosts-api-client/src';
+import type { ICreateListingResponseDto } from '@repo/skye-hosts-api-client';
 
 export class CreateListingResponseDto implements ICreateListingResponseDto {
   id: number;

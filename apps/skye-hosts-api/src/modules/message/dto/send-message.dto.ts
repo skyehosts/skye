@@ -1,8 +1,8 @@
-import { IsNumber, IsString, MaxLength, Min } from 'class-validator';
 import type {
   ISendMessageRequestDto,
   ISendMessageResponseDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { IsNumber, IsString, MaxLength, Min } from 'class-validator';
 
 export class SendMessageRequestDto implements ISendMessageRequestDto {
   @IsNumber()

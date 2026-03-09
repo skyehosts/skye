@@ -1,5 +1,5 @@
+import { ILoginRequestDto } from '@repo/skye-hosts-api-client';
 import { IsEmail, IsString } from 'class-validator';
-import { ILoginRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class LoginRequestDto implements ILoginRequestDto {
   @IsEmail()

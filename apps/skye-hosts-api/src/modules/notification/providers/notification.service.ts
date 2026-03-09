@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import type {
   IGetNotificationPreferencesResponseDto,
   IUpdateNotificationPreferenceResponseDto,
   NotificationEventType,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { Repository } from 'typeorm';
 import { NotificationPreference } from '../entities';
 import { EmailNotificationService } from './email-notification.service';
 import { PushNotificationService } from './push-notification.service';

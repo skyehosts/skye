@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import type { NotificationEventType } from '@repo/skye-hosts-api-client';
 import { Repository } from 'typeorm';
-import type { NotificationEventType } from '../../../../../../packages/skye-hosts-api-client/src';
 import { NotificationPreference } from '../entities';
 
 interface SendEmailParams {

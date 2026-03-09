@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import type { UserRole } from '@repo/skye-hosts-api-client';
 import { DeleteResult } from 'typeorm';
-import type { UserRole } from '../../../../../../packages/skye-hosts-api-client/src';
 import { DatabaseService } from '../../common/providers';
 import { StripeService } from '../../stripe/providers';
 import { Account } from '../entities';

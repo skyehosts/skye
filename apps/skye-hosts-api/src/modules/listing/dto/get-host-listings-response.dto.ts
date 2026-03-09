@@ -4,7 +4,7 @@ import type {
   ListingSpaceType,
   ListingStatus,
   ListingTypeId,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
 
 export class HostListingDto implements IHostListingDto {
   id: number;

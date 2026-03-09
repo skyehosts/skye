@@ -18,12 +18,11 @@ describe("createAuthConfig", () => {
 
   beforeEach(() => {
     mockFetch.mockReset();
-    process.env.NEXT_PUBLIC_SKYE_GLAMPING_API_URL =
-      "https://api.skyehosts.co.uk";
+    process.env.NEXT_PUBLIC_SKYE_HOSTS_API_URL = "https://api.skyehosts.co.uk";
   });
 
   afterEach(() => {
-    delete process.env.NEXT_PUBLIC_SKYE_GLAMPING_API_URL;
+    delete process.env.NEXT_PUBLIC_SKYE_HOSTS_API_URL;
   });
 
   describe("session configuration", () => {

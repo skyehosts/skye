@@ -1,3 +1,4 @@
+import type { MessageLogAction } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import type { MessageLogAction } from '../../../../../../packages/skye-hosts-api-client/src';
 import { ScheduledMessage } from './scheduled-message.entity';
 
 @Entity()

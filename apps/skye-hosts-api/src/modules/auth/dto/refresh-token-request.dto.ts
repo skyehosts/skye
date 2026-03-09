@@ -1,5 +1,5 @@
+import type { IRefreshTokenRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString } from 'class-validator';
-import type { IRefreshTokenRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class RefreshTokenRequestDto implements IRefreshTokenRequestDto {
   @IsString()
