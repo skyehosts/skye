@@ -70,7 +70,7 @@ function LogoSvg() {
         fontWeight="700"
         fill="#1976d2"
       >
-        BookSkye
+        skyehosts
       </text>
     </svg>
   );

@@ -2,7 +2,7 @@
 
 ## What changed
 
-- Removed all `"https://api.bookskye.co.uk"` fallbacks from `process.env.NEXT_PUBLIC_API_URL`
+- Removed all `"https://api.skyehosts.co.uk"` fallbacks from `process.env.NEXT_PUBLIC_API_URL`
 - Created `getApiBaseUrl()` in `@repo/skye-hosts-api-client` — throws if `NEXT_PUBLIC_API_URL` is not set
 - All `packages/auth` and `packages/skye-hosts-api-client` files now use `getApiBaseUrl()`
 - Host app (`apps/skye-hosts-host-app`) now uses `EXPO_PUBLIC_API_URL` instead of `Constants.expoConfig.extra.apiUrl`
@@ -14,7 +14,7 @@
 Ensure `NEXT_PUBLIC_API_URL` is set in `.env.local` and production environment:
 
 ```
-NEXT_PUBLIC_API_URL=https://api.bookskye.co.uk
+NEXT_PUBLIC_API_URL=https://api.skyehosts.co.uk
 ```
 
 ### Host app (skye-hosts-host-app)
@@ -22,7 +22,7 @@ NEXT_PUBLIC_API_URL=https://api.bookskye.co.uk
 Create a `.env` file in `apps/skye-hosts-host-app/` with:
 
 ```
-EXPO_PUBLIC_API_URL=https://api.bookskye.co.uk
+EXPO_PUBLIC_API_URL=https://api.skyehosts.co.uk
 ```
 
 Also set this in your EAS build profiles / environment.

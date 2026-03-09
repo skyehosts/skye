@@ -45,7 +45,7 @@ export default function CreateListingIntroScreen() {
 
       <View style={commonStyles.content}>
         <Text style={styles.heading}>
-          It&apos;s easy to get started on BookSkye
+          It&apos;s easy to get started on skyehosts
         </Text>
 
         <View style={styles.steps}>

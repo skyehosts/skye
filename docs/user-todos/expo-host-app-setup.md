@@ -57,8 +57,8 @@ pnpm --filter skye-hosts-host-app start
 
 Already configured in `app.json`:
 
-- iOS: `com.bookskye.host`
-- Android: `com.bookskye.host`
+- iOS: `com.skyehosts.host`
+- Android: `com.skyehosts.host`
 
 Change these if you want different identifiers.
 

@@ -3,7 +3,7 @@ export function getApiBaseUrl(): string {
   if (!url) {
     throw new Error(
       'NEXT_PUBLIC_SKYE_GLAMPING_API_URL environment variable is not set. ' +
-        'Please set it to the API base URL (e.g. https://api.bookskye.co.uk).',
+        'Please set it to the API base URL (e.g. https://api.skyehosts.co.uk).',
     );
   }
   return url;
