@@ -18,7 +18,7 @@
 ### Development (dev client, internal distribution)
 
 ```bash
-cd apps/skye-hosts-host-app
+cd apps/skye-hosts-app
 eas build --platform android --profile development
 eas build --platform ios --profile development
 ```
@@ -26,7 +26,7 @@ eas build --platform ios --profile development
 ### Preview (internal distribution, QA channel)
 
 ```bash
-cd apps/skye-hosts-host-app
+cd apps/skye-hosts-app
 eas build --platform android --profile preview
 eas build --platform ios --profile preview
 ```
@@ -34,7 +34,7 @@ eas build --platform ios --profile preview
 ### Production (store distribution, auto-increment build number)
 
 ```bash
-cd apps/skye-hosts-host-app
+cd apps/skye-hosts-app
 eas build --platform android --profile production
 eas build --platform ios --profile production
 ```
@@ -58,7 +58,7 @@ Build profiles inject `SKYE_ENVIRONMENT` automatically:
 For `SENTRY_DSN` and `API_URL`, set them as EAS secrets:
 
 ```bash
-cd apps/skye-hosts-host-app
+cd apps/skye-hosts-app
 eas secret:create --name SENTRY_DSN --value <your-dsn>
 eas secret:create --name API_URL --value <your-api-url>
 ```

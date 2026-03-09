@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "Skye Hosts",
-    "slug": "skye-hosts-app",
+    "slug": "skye-hosts",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "skye-hosts-host",
+    "scheme": "skye-hosts",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.skyehosts.host"
+      "bundleIdentifier": "uk.co.skyehosts"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,7 +23,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.skyehosts.host",
+      "package": "uk.co.skyehosts",
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -47,9 +47,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "66d898a2-1e55-46e8-8cb0-19eb668136dd"
+        "projectId": "a9d0c9ae-43f2-40b8-ab02-1fd9640dc49c"
       }
     },
-    "owner": "SkyeHosts"
+    "owner": "skyehosts"
   }
 }

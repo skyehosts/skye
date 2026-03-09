@@ -71,7 +71,7 @@ pnpm db-down
 pnpm --filter=skye-hosts-api dev
 pnpm --filter=skye-hosts-guest-website dev
 pnpm --filter=skye-glamping-website dev
-pnpm --filter=skye-hosts-host-app dev # Supports native modules
+pnpm --filter=skye-hosts-app dev # Supports native modules
 
 If changed native modules, the flow is:
 1. eas build --profile development --platform android --local --output ./builds/app.apk
@@ -97,7 +97,7 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
   - Locally: Uses: .env.local
   - CI: (TBD)
   - Production: Set via Browser in Vercel dashboard (Team & project level)
-- skye-hosts-host-app
+- skye-hosts-app
   - Locally: Uses .env.local
   - CI: (TBD)
   - Production: Set via Browser in Expo dashboard

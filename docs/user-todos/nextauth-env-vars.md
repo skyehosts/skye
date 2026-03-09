@@ -5,7 +5,7 @@
 Add `NEXTAUTH_SECRET` to each of these Vercel projects:
 
 - skye-hosts-guest-website
-- skye-hosts-host-app
+- skye-hosts-app
 - skye-glamping-website
 - skye-hosts-admin-website
 

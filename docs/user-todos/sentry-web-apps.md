@@ -1,6 +1,6 @@
 # Sentry Setup
 
-Sentry has been added to `skye-hosts-guest-website`, `skye-glamping-website`, and `skye-hosts-host-app`.
+Sentry has been added to `skye-hosts-guest-website`, `skye-glamping-website`, and `skye-hosts-app`.
 Shared config lives in `packages/sentry` (`@repo/sentry`).
 
 ## Required: Create Sentry Projects
@@ -9,7 +9,7 @@ Create three projects in Sentry:
 
 1. `skye-hosts-guest-website` — Platform: Next.js
 2. `skye-glamping-website` — Platform: Next.js
-3. `skye-hosts-host-app` — Platform: React Native
+3. `skye-hosts-app` — Platform: React Native
 
 ## Required: Environment Variables
 
@@ -23,7 +23,7 @@ variable to be accessible inside the app bundle:
 | ------------------------ | ------------------------------ |
 | skye-hosts-guest-website | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
 | skye-glamping-website    | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
-| skye-hosts-host-app      | `EXPO_PUBLIC_SKYE_ENVIRONMENT` |
+| skye-hosts-app      | `EXPO_PUBLIC_SKYE_ENVIRONMENT` |
 
 ### apps/skye-hosts-guest-website (`.env.local` for dev, hosting provider for prod)
 
@@ -39,7 +39,7 @@ NEXT_PUBLIC_GLAMPING_WEBSITE_SENTRY_DSN=https://xxx@oXXX.ingest.sentry.io/XXX
 NEXT_PUBLIC_SKYE_ENVIRONMENT=production
 ```
 
-### apps/skye-hosts-host-app (`.env` for dev, EAS Secrets for prod)
+### apps/skye-hosts-app (`.env` for dev, EAS Secrets for prod)
 
 ```
 EXPO_PUBLIC_SENTRY_DSN=https://xxx@oXXX.ingest.sentry.io/XXX

@@ -14,7 +14,7 @@ eas login
 
 ## 3. Link to an Expo project
 
-From `apps/skye-hosts-host-app/`, run:
+From `apps/skye-hosts-app/`, run:
 
 ```bash
 eas init
@@ -45,7 +45,7 @@ eas build --profile development --platform android
 Or use Expo Go for quick prototyping:
 
 ```bash
-pnpm --filter skye-hosts-host-app start
+pnpm --filter skye-hosts-app start
 ```
 
 ## 6. Apple Developer & Google Play setup (for production)
@@ -74,8 +74,8 @@ pnpm --filter skye-hosts-api migration:up
 
 ```bash
 # Start Expo dev server
-pnpm --filter skye-hosts-host-app start
+pnpm --filter skye-hosts-app start
 
 # Or via turbo
-pnpm dev --filter skye-hosts-host-app
+pnpm dev --filter skye-hosts-app
 ```

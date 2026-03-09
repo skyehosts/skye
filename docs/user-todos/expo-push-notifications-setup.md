@@ -29,9 +29,9 @@ Migration file: `src/migrations/1772883100000-add-device-token-and-notification-
 `expo-notifications` was added as a dependency and to `app.json` plugins. You need to rebuild the dev client:
 
 ```bash
-pnpm --filter skye-hosts-host-app build:dev:ios
+pnpm --filter skye-hosts-app build:dev:ios
 # or
-pnpm --filter skye-hosts-host-app build:dev:android
+pnpm --filter skye-hosts-app build:dev:android
 ```
 
 ## Device Token Deregistration on Logout
