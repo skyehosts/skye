@@ -5,7 +5,7 @@ const mockPayload = { id: 1, name: 'Test' };
 
 beforeEach(() => {
   jest.restoreAllMocks();
-  process.env.NEXT_PUBLIC_SKYE_GLAMPING_API_URL = 'https://api.bookskye.co.uk';
+  process.env.NEXT_PUBLIC_SKYE_GLAMPING_API_URL = 'https://api.skyehosts.co.uk';
 });
 
 afterEach(() => {
@@ -25,7 +25,7 @@ describe('fetchApi', () => {
 
     expect(result).toEqual(mockPayload);
     expect(fetch).toHaveBeenCalledWith(
-      'https://api.bookskye.co.uk/availability',
+      'https://api.skyehosts.co.uk/availability',
       {
         method: 'GET',
         headers: {},
@@ -46,7 +46,7 @@ describe('fetchApi', () => {
     const result = await fetchApi('/demo', requestBody);
 
     expect(result).toEqual(mockPayload);
-    expect(fetch).toHaveBeenCalledWith('https://api.bookskye.co.uk/demo', {
+    expect(fetch).toHaveBeenCalledWith('https://api.skyehosts.co.uk/demo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody),

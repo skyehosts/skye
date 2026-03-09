@@ -9,7 +9,7 @@
    ```
 
 2. **Set `EXPO_TOKEN` in GitHub Secrets** for CI builds:
-   - Go to https://expo.dev/accounts/bookskye/settings/access-tokens
+   - Go to https://expo.dev/accounts/skyehosts/settings/access-tokens
    - Create a new token (Robot type recommended for CI)
    - Add it as `EXPO_TOKEN` in your repo's GitHub Secrets
 

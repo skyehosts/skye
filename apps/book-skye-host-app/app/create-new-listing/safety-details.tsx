@@ -28,7 +28,7 @@ import {
 } from "../theme";
 import { useCreateListing } from "./context";
 
-const APP_NAME = "BookSkye";
+const APP_NAME = "skyehosts";
 
 const DISCLOSURES = Object.values(ListingSafetyDisclosureId).map((id) => ({
   id,
@@ -157,7 +157,7 @@ export default function SafetyDetailsScreen() {
           Be sure to comply with your{" "}
           <Text
             style={styles.link}
-            onPress={() => Linking.openURL("https://bookskye.com/legal")}
+            onPress={() => Linking.openURL("https://skyehosts.com/legal")}
           >
             local laws
           </Text>{" "}
@@ -165,7 +165,7 @@ export default function SafetyDetailsScreen() {
           <Text
             style={styles.link}
             onPress={() =>
-              Linking.openURL("https://bookskye.com/anti-discrimination")
+              Linking.openURL("https://skyehosts.com/anti-discrimination")
             }
           >
             anti-discrimination policy
@@ -173,7 +173,7 @@ export default function SafetyDetailsScreen() {
           and{" "}
           <Text
             style={styles.link}
-            onPress={() => Linking.openURL("https://bookskye.com/fees")}
+            onPress={() => Linking.openURL("https://skyehosts.com/fees")}
           >
             guest and host fees
           </Text>

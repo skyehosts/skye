@@ -1,4 +1,4 @@
-# BookSkye API
+# skyehosts API
 
 ## Installation
 

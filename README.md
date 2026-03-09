@@ -6,7 +6,7 @@
 
 - (Browser: heroku.com) Resources -> Addon -> Heroku Postgres -> Essential 0
   - It will automatically attach & sort networking to dyno once deployed)
-- (Local CLI): heroku domains:add api.bookskye.co.uk --app skye-hosts-{env} #add custom domain to heroku dyno
+- (Local CLI): heroku domains:add api.skyehosts.co.uk --app skye-hosts-{env} #add custom domain to heroku dyno
 - (Local CLI): heroku certs:auto:enable --app skye-hosts-{env} #add ssl certs to custom domain (even if hosted elsewhere)
 - (Local CLI): heroku domains --app skye-hosts-{env} -> #Provides DNS target for Route 53
 - (Browser: vercel.com)
@@ -24,7 +24,7 @@
 - Then clone with named account like below:
 
 ```bash
-git clone git@github-skye-hosts:bookskye/monorepo.git
+git clone git@github-skye-hosts:skyehosts/monorepo.git
 ```
 
 ### Anthropic / Claude setup
