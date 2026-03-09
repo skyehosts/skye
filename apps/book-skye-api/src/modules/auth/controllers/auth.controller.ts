@@ -1,0 +1,128 @@
+import { Body, Controller, Post } from '@nestjs/common';
+import type {
+  IChangePasswordResponseDto,
+  IForgotPasswordResponseDto,
+  ILoginResponseDto,
+  IPhoneLookupResponseDto,
+  IPhoneRequestOtpResponseDto,
+  IPhoneVerifyOtpResponseDto,
+  IPinSetupResponseDto,
+  IRefreshTokenResponseDto,
+  IResetPasswordResponseDto,
+} from '@repo/book-skye-api-client';
+import {
+  AuthenticatedUser,
+  IgnoreBearerAuthentication,
+} from '../../common/decorators';
+import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
+import {
+  ChangePasswordRequestDto,
+  ForgotPasswordRequestDto,
+  LoginRequestDto,
+  PhoneLookupRequestDto,
+  PhoneRequestOtpRequestDto,
+  PhoneVerifyOtpRequestDto,
+  PinSetupRequestDto,
+  RefreshTokenRequestDto,
+  ResetPasswordRequestDto,
+  SignUpRequestDto,
+} from '../dto';
+import { AuthService } from '../providers';
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @Post('change-password')
+  async onChangePassword(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+    @Body() dto: ChangePasswordRequestDto,
+  ): Promise<IChangePasswordResponseDto> {
+    return this.authService.changePassword(
+      authenticatedUser.sub,
+      dto.currentPassword,
+      dto.newPassword,
+    );
+  }
+
+  @Post('forgot-password')
+  @IgnoreBearerAuthentication()
+  async onForgotPassword(
+    @Body() dto: ForgotPasswordRequestDto,
+  ): Promise<IForgotPasswordResponseDto> {
+    return this.authService.forgotPassword(dto.email);
+  }
+
+  @Post('login')
+  @IgnoreBearerAuthentication()
+  async onLogin(@Body() dto: LoginRequestDto): Promise<ILoginResponseDto> {
+    return this.authService.login(dto.email, dto.password);
+  }
+
+  @Post('logout')
+  async onLogout(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+  ): Promise<void> {
+    await this.authService.logout(authenticatedUser.sub);
+  }
+
+  @Post('phone-lookup')
+  @IgnoreBearerAuthentication()
+  async onPhoneLookup(
+    @Body() dto: PhoneLookupRequestDto,
+  ): Promise<IPhoneLookupResponseDto> {
+    const exists = await this.authService.phoneLookup(dto.phoneNumber);
+    return { exists };
+  }
+
+  @Post('phone-request-otp')
+  @IgnoreBearerAuthentication()
+  async onPhoneRequestOtp(
+    @Body() dto: PhoneRequestOtpRequestDto,
+  ): Promise<IPhoneRequestOtpResponseDto> {
+    return this.authService.phoneRequestOtp(dto.phoneNumber);
+  }
+
+  @Post('phone-verify-otp')
+  @IgnoreBearerAuthentication()
+  async onPhoneVerifyOtp(
+    @Body() dto: PhoneVerifyOtpRequestDto,
+  ): Promise<IPhoneVerifyOtpResponseDto> {
+    return this.authService.phoneVerifyOtp(dto.phoneNumber, dto.code, dto.name);
+  }
+
+  @Post('pin-setup')
+  async onPinSetup(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+    @Body() dto: PinSetupRequestDto,
+  ): Promise<IPinSetupResponseDto> {
+    await this.authService.setupPin(
+      authenticatedUser.sub,
+      dto.pinHash,
+      dto.pinSalt,
+    );
+    return { message: 'PIN set up successfully' };
+  }
+
+  @Post('refresh')
+  @IgnoreBearerAuthentication()
+  async onRefresh(
+    @Body() dto: RefreshTokenRequestDto,
+  ): Promise<IRefreshTokenResponseDto> {
+    return this.authService.refresh(dto.refreshToken);
+  }
+
+  @Post('reset-password')
+  @IgnoreBearerAuthentication()
+  async onResetPassword(
+    @Body() dto: ResetPasswordRequestDto,
+  ): Promise<IResetPasswordResponseDto> {
+    return this.authService.resetPassword(dto.token, dto.password);
+  }
+
+  @Post('sign-up')
+  @IgnoreBearerAuthentication()
+  async onSignUp(@Body() dto: SignUpRequestDto): Promise<void> {
+    await this.authService.signUp(dto);
+  }
+}

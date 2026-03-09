@@ -1,0 +1,87 @@
+name: Deploy AWS Infrastructure
+
+on:
+  workflow_call:
+    inputs:
+      env:
+        description: CDK environment name (e.g. qa, production)
+        required: true
+        type: string
+      node-version:
+        description: Node.js version to use
+        required: false
+        type: string
+        default: '24.13.1'
+    secrets: #Repository level vars & secrets need explicitly defined but environment level ones don't 
+      AWS_ACCESS_KEY_ID:
+        required: true
+      AWS_SECRET_ACCESS_KEY:
+        required: true
+      CDK_DEPLOY_ACCOUNT:
+        required: true
+      SQS_FORWARDER_HEADER_NAME:
+        required: true
+      SQS_FORWARDER_HTTP_SECRET:
+        required: true
+      BOOKINGS_SQS_FORWARDER_SENTRY_DSN:
+        required: true
+      SCHEDULED_MESSAGES_SQS_FORWARDER_SENTRY_DSN:
+        required: true
+      SQS_FORWARDER_SENTRY_DSN_LAYER_ARN:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy CDK stacks (${{ inputs.env }})
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env }} #Required to access Github environment secrets
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build @repo/common
+        run: pnpm --filter @repo/common build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Deploy CDK stacks
+        run: pnpm --filter=aws-infrastructure exec cdk deploy --all --context env=${{ inputs.env }} --require-approval never
+        env:
+          CDK_DEPLOY_ACCOUNT: ${{ secrets.CDK_DEPLOY_ACCOUNT }}
+          BOOKINGS_SQS_FORWARDER_ENDPOINT: ${{ vars.BOOKINGS_SQS_FORWARDER_ENDPOINT }}
+          SCHEDULED_MESSAGES_SQS_FORWARDER_ENDPOINT: ${{ vars.SCHEDULED_MESSAGES_SQS_FORWARDER_ENDPOINT }}
+          SQS_FORWARDER_HEADER_NAME: ${{ vars.SQS_FORWARDER_HEADER_NAME }}
+          SQS_FORWARDER_HTTP_SECRET: ${{ secrets.SQS_FORWARDER_HTTP_SECRET }}
+          BOOKINGS_SQS_FORWARDER_SENTRY_DSN: ${{ vars.BOOKINGS_SQS_FORWARDER_SENTRY_DSN }}
+          SCHEDULED_MESSAGES_SQS_FORWARDER_SENTRY_DSN: ${{ vars.SCHEDULED_MESSAGES_SQS_FORWARDER_SENTRY_DSN }}
+          SQS_FORWARDER_SENTRY_DSN_LAYER_ARN: ${{ vars.SQS_FORWARDER_SENTRY_DSN_LAYER_ARN }}
+

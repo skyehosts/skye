@@ -1,0 +1,45 @@
+{
+  "name": "@repo/book-skye-api-client",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "dev": "pnpm build --watch",
+    "build": "tsc -b -v",
+    "lint": "eslint \"{src,test}/**/*.ts\"",
+    "test": "jest"
+  },
+  "main": "./dist/index.js",
+  "types": "./src/index.ts",
+  "files": [
+    "./dist/**"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./*": {
+      "types": "./src/*.ts",
+      "default": "./dist/*.js"
+    }
+  },
+  "dependencies": {
+    "@repo/common": "workspace:^"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.7.0",
+    "jest": "^30.2.0",
+    "ts-loader": "^9.5.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

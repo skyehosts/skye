@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "999137751997",
+    "project_id": "skye-hosts",
+    "storage_bucket": "skye-hosts.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:999137751997:android:a8dab4d8d43f6e0a1518d4",
+        "android_client_info": {
+          "package_name": "com.bookskye.host"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnWjZgO4r3b2UquxwQe1P1prKx3tjdwsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

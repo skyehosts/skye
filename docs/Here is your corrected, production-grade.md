@@ -1,0 +1,3 @@
+- Now write the associated CRUD endpoints for message templates
+- Assigning listings and triggers to a template aren't separate calls, all combined into a single call alongside the create/edit of template itself
+-

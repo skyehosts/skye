@@ -1,0 +1,10 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": ".",
+    "outDir": "./dist"
+  },
+  "include": ["bin", "lib"],
+  "exclude": ["node_modules", "dist", "cdk.out"]
+}

@@ -1,0 +1,77 @@
+name: Deploy Vercel App
+
+on:
+  workflow_call:
+    inputs:
+      app-name:
+        description: Name of the app (e.g. book-skye-guest-website, book-skye-admin-website)
+        required: true
+        type: string
+      watch-paths:
+        description: Space-separated list of paths to check for changes
+        required: true
+        type: string
+      node-version:
+        description: Node.js version to use
+        required: false
+        type: string
+        default: '24'
+      vercel-org-id:
+        description: Vercel organisation ID
+        required: true
+        type: string
+      vercel-project-id:
+        description: Vercel project ID
+        required: true
+        type: string
+      env:
+        description: CDK environment name (e.g. qa, production)
+        required: true
+        type: string
+    secrets:
+      vercel-token:
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.env }} #Required to access Github environment secrets
+    env:
+      VERCEL_ORG_ID: ${{ inputs.vercel-org-id }}
+      VERCEL_PROJECT_ID: ${{ inputs.vercel-project-id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build workspace packages
+        run: pnpm turbo run build --filter='./packages/*'
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+
+      - name: Pull Vercel environment
+        run: vercel pull --yes --environment=production --token=${{ secrets.vercel-token }}
+
+      - name: Build with Vercel
+        run: vercel build --prod --token=${{ secrets.vercel-token }}
+
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.vercel-token }}

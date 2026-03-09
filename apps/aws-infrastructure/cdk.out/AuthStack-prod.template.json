@@ -1,0 +1,237 @@
+{
+  "Description": "Authentication infrastructure (Cognito) — prod",
+  "Resources": {
+    "UserPool6BA7E5F2": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "AccountRecoverySetting": {
+          "RecoveryMechanisms": [
+            {
+              "Name": "verified_email",
+              "Priority": 1
+            }
+          ]
+        },
+        "AdminCreateUserConfig": {
+          "AllowAdminCreateUserOnly": false
+        },
+        "AutoVerifiedAttributes": ["email"],
+        "EmailVerificationMessage": "Welcome to Skye Glamping! Your verification code is {####}",
+        "EmailVerificationSubject": "Verify your Skye Glamping account",
+        "MfaConfiguration": "OFF",
+        "Policies": {
+          "PasswordPolicy": {
+            "MinimumLength": 8,
+            "RequireLowercase": true,
+            "RequireNumbers": true,
+            "RequireSymbols": false,
+            "RequireUppercase": true,
+            "TemporaryPasswordValidityDays": 7
+          }
+        },
+        "Schema": [
+          {
+            "Mutable": true,
+            "Name": "email",
+            "Required": true
+          },
+          {
+            "Mutable": true,
+            "Name": "given_name",
+            "Required": false
+          },
+          {
+            "Mutable": true,
+            "Name": "family_name",
+            "Required": false
+          }
+        ],
+        "SmsVerificationMessage": "The verification code to your new account is {####}",
+        "UserPoolName": "auth-prod",
+        "UserPoolTags": {
+          "Domain": "auth",
+          "Environment": "prod",
+          "ManagedBy": "cdk",
+          "Project": "skyeglamping"
+        },
+        "UsernameAttributes": ["email"],
+        "UsernameConfiguration": {
+          "CaseSensitive": false
+        },
+        "VerificationMessageTemplate": {
+          "DefaultEmailOption": "CONFIRM_WITH_CODE",
+          "EmailMessage": "Welcome to Skye Glamping! Your verification code is {####}",
+          "EmailSubject": "Verify your Skye Glamping account",
+          "SmsMessage": "The verification code to your new account is {####}"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "AuthStack-prod/UserPool/Resource"
+      }
+    },
+    "UserPoolHostedUIDomain7F20EF9C": {
+      "Type": "AWS::Cognito::UserPoolDomain",
+      "Properties": {
+        "Domain": "book-skye-prod",
+        "UserPoolId": {
+          "Ref": "UserPool6BA7E5F2"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "AuthStack-prod/UserPool/HostedUIDomain/Resource"
+      }
+    },
+    "GoogleAF1E99FA": {
+      "Type": "AWS::Cognito::UserPoolIdentityProvider",
+      "Properties": {
+        "AttributeMapping": {
+          "email": "email",
+          "given_name": "given_name",
+          "family_name": "family_name",
+          "picture": "picture"
+        },
+        "ProviderDetails": {
+          "client_id": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/google/client-id:SecretString:::}}",
+          "client_secret": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/google/client-secret:SecretString:::}}",
+          "authorize_scopes": "openid email profile"
+        },
+        "ProviderName": "Google",
+        "ProviderType": "Google",
+        "UserPoolId": {
+          "Ref": "UserPool6BA7E5F2"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "AuthStack-prod/Google/Resource"
+      }
+    },
+    "FacebookFCE2A2F3": {
+      "Type": "AWS::Cognito::UserPoolIdentityProvider",
+      "Properties": {
+        "AttributeMapping": {
+          "email": "email",
+          "given_name": "name"
+        },
+        "ProviderDetails": {
+          "client_id": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/facebook/client-id:SecretString:::}}",
+          "client_secret": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/facebook/client-secret:SecretString:::}}",
+          "authorize_scopes": "public_profile,email",
+          "api_version": "v19.0"
+        },
+        "ProviderName": "Facebook",
+        "ProviderType": "Facebook",
+        "UserPoolId": {
+          "Ref": "UserPool6BA7E5F2"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "AuthStack-prod/Facebook/Resource"
+      }
+    },
+    "WebAppClient958C5457": {
+      "Type": "AWS::Cognito::UserPoolClient",
+      "Properties": {
+        "AccessTokenValidity": 1440,
+        "AllowedOAuthFlows": ["code"],
+        "AllowedOAuthFlowsUserPoolClient": true,
+        "AllowedOAuthScopes": ["openid", "email", "profile"],
+        "CallbackURLs": ["http://localhost:4001", "http://localhost:4000"],
+        "ClientName": "auth-prod-web",
+        "EnableTokenRevocation": true,
+        "GenerateSecret": false,
+        "IdTokenValidity": 1440,
+        "LogoutURLs": ["http://localhost:4001", "http://localhost:4000"],
+        "PreventUserExistenceErrors": "ENABLED",
+        "RefreshTokenValidity": 259200,
+        "SupportedIdentityProviders": ["COGNITO", "Google", "Facebook"],
+        "TokenValidityUnits": {
+          "AccessToken": "minutes",
+          "IdToken": "minutes",
+          "RefreshToken": "minutes"
+        },
+        "UserPoolId": {
+          "Ref": "UserPool6BA7E5F2"
+        }
+      },
+      "DependsOn": ["FacebookFCE2A2F3", "GoogleAF1E99FA"],
+      "Metadata": {
+        "aws:cdk:path": "AuthStack-prod/WebAppClient/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAA/3WMwQ6CMBBEv4U7rApePGM0niQaz6a0lSyUrmkXiCH8uzEIISaeZubtzMYQJztYB6LzkVRVZDCH/spCVqHo/F1SYZEJ+pvXLiMyYfqws5/MnmqBdnn6kimelLaM/Moctai0OxIVRi8Hv42/04OQOieq5kJqUFte/hrJ8EHnhp8ND6ElpaH0qzbewiaBTVB6xMg1lrHWcBn1DYgdPjQMAQAA"
+      },
+      "Metadata": {
+        "aws:cdk:path": "AuthStack-prod/CDKMetadata/Default"
+      }
+    }
+  },
+  "Outputs": {
+    "UserPoolId": {
+      "Description": "Cognito User Pool ID",
+      "Value": {
+        "Ref": "UserPool6BA7E5F2"
+      },
+      "Export": {
+        "Name": "auth-prod-user-pool-id"
+      }
+    },
+    "UserPoolArn": {
+      "Description": "Cognito User Pool ARN (use this to configure API authorisers)",
+      "Value": {
+        "Fn::GetAtt": ["UserPool6BA7E5F2", "Arn"]
+      },
+      "Export": {
+        "Name": "auth-prod-user-pool-arn"
+      }
+    },
+    "WebClientId": {
+      "Description": "Cognito web app client ID (provide to the frontend)",
+      "Value": {
+        "Ref": "WebAppClient958C5457"
+      },
+      "Export": {
+        "Name": "auth-prod-web-client-id"
+      }
+    },
+    "HostedUiUrl": {
+      "Description": "Base URL for the Cognito Hosted UI (OAuth endpoints)",
+      "Value": "https://book-skye-prod.auth.eu-west-1.amazoncognito.com",
+      "Export": {
+        "Name": "auth-prod-hosted-ui-url"
+      }
+    }
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  ["1", "2", "3", "4", "5"],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,51 @@
+name: EAS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: Platform to build
+        required: true
+        type: choice
+        options:
+          - android
+          - ios
+          - all
+      profile:
+        description: Build profile
+        required: true
+        type: choice
+        options:
+          - development
+          - preview
+          - production
+
+jobs:
+  eas-build:
+    name: EAS Build (${{ inputs.platform }} / ${{ inputs.profile }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.13.1
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Run EAS Build
+        run: eas build --platform ${{ inputs.platform }} --profile ${{ inputs.profile }} --non-interactive
+        working-directory: apps/book-skye-host-app

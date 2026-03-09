@@ -1,0 +1,457 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "constructInfo": { "fqn": "aws-cdk-lib.App", "version": "2.239.0" },
+    "children": {
+      "AuthStack-prod": {
+        "id": "AuthStack-prod",
+        "path": "AuthStack-prod",
+        "constructInfo": { "fqn": "aws-cdk-lib.Stack", "version": "2.239.0" },
+        "children": {
+          "UserPool": {
+            "id": "UserPool",
+            "path": "AuthStack-prod/UserPool",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPool",
+              "version": "2.239.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuthStack-prod/UserPool/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPool",
+                  "version": "2.239.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPool",
+                  "aws:cdk:cloudformation:props": {
+                    "accountRecoverySetting": {
+                      "recoveryMechanisms": [
+                        { "name": "verified_email", "priority": 1 }
+                      ]
+                    },
+                    "adminCreateUserConfig": {
+                      "allowAdminCreateUserOnly": false
+                    },
+                    "autoVerifiedAttributes": ["email"],
+                    "emailVerificationMessage": "Welcome to Skye Glamping! Your verification code is {####}",
+                    "emailVerificationSubject": "Verify your Skye Glamping account",
+                    "mfaConfiguration": "OFF",
+                    "policies": {
+                      "passwordPolicy": {
+                        "temporaryPasswordValidityDays": 7,
+                        "minimumLength": 8,
+                        "requireLowercase": true,
+                        "requireUppercase": true,
+                        "requireNumbers": true,
+                        "requireSymbols": false
+                      }
+                    },
+                    "schema": [
+                      { "name": "email", "mutable": true, "required": true },
+                      {
+                        "name": "given_name",
+                        "mutable": true,
+                        "required": false
+                      },
+                      {
+                        "name": "family_name",
+                        "mutable": true,
+                        "required": false
+                      }
+                    ],
+                    "smsVerificationMessage": "The verification code to your new account is {####}",
+                    "userPoolTags": {
+                      "Domain": "auth",
+                      "Environment": "prod",
+                      "ManagedBy": "cdk",
+                      "Project": "skyeglamping"
+                    },
+                    "usernameAttributes": ["email"],
+                    "usernameConfiguration": { "caseSensitive": false },
+                    "userPoolName": "auth-prod",
+                    "verificationMessageTemplate": {
+                      "defaultEmailOption": "CONFIRM_WITH_CODE",
+                      "emailMessage": "Welcome to Skye Glamping! Your verification code is {####}",
+                      "emailSubject": "Verify your Skye Glamping account",
+                      "smsMessage": "The verification code to your new account is {####}"
+                    }
+                  }
+                }
+              },
+              "HostedUIDomain": {
+                "id": "HostedUIDomain",
+                "path": "AuthStack-prod/UserPool/HostedUIDomain",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.UserPoolDomain",
+                  "version": "2.239.0"
+                },
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "AuthStack-prod/UserPool/HostedUIDomain/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolDomain",
+                      "version": "2.239.0"
+                    },
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolDomain",
+                      "aws:cdk:cloudformation:props": {
+                        "domain": "book-skye-prod",
+                        "userPoolId": { "Ref": "UserPool6BA7E5F2" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "Google": {
+            "id": "Google",
+            "path": "AuthStack-prod/Google",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPoolIdentityProviderGoogle",
+              "version": "2.239.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuthStack-prod/Google/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolIdentityProvider",
+                  "version": "2.239.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolIdentityProvider",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeMapping": {
+                      "email": "email",
+                      "given_name": "given_name",
+                      "family_name": "family_name",
+                      "picture": "picture"
+                    },
+                    "providerDetails": {
+                      "client_id": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/google/client-id:SecretString:::}}",
+                      "client_secret": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/google/client-secret:SecretString:::}}",
+                      "authorize_scopes": "openid email profile"
+                    },
+                    "providerName": "Google",
+                    "providerType": "Google",
+                    "userPoolId": { "Ref": "UserPool6BA7E5F2" }
+                  }
+                }
+              }
+            }
+          },
+          "Facebook": {
+            "id": "Facebook",
+            "path": "AuthStack-prod/Facebook",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPoolIdentityProviderFacebook",
+              "version": "2.239.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuthStack-prod/Facebook/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolIdentityProvider",
+                  "version": "2.239.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolIdentityProvider",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeMapping": {
+                      "email": "email",
+                      "given_name": "name"
+                    },
+                    "providerDetails": {
+                      "client_id": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/facebook/client-id:SecretString:::}}",
+                      "client_secret": "{{resolve:secretsmanager:/skyeglamping/prod/cognito/facebook/client-secret:SecretString:::}}",
+                      "authorize_scopes": "public_profile,email",
+                      "api_version": "v19.0"
+                    },
+                    "providerName": "Facebook",
+                    "providerType": "Facebook",
+                    "userPoolId": { "Ref": "UserPool6BA7E5F2" }
+                  }
+                }
+              }
+            }
+          },
+          "WebAppClient": {
+            "id": "WebAppClient",
+            "path": "AuthStack-prod/WebAppClient",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cognito.UserPoolClient",
+              "version": "2.239.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "AuthStack-prod/WebAppClient/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cognito.CfnUserPoolClient",
+                  "version": "2.239.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Cognito::UserPoolClient",
+                  "aws:cdk:cloudformation:props": {
+                    "accessTokenValidity": 1440,
+                    "allowedOAuthFlows": ["code"],
+                    "allowedOAuthFlowsUserPoolClient": true,
+                    "allowedOAuthScopes": ["openid", "email", "profile"],
+                    "callbackUrLs": [
+                      "http://localhost:4001",
+                      "http://localhost:4000"
+                    ],
+                    "clientName": "auth-prod-web",
+                    "enableTokenRevocation": true,
+                    "generateSecret": false,
+                    "idTokenValidity": 1440,
+                    "logoutUrLs": [
+                      "http://localhost:4001",
+                      "http://localhost:4000"
+                    ],
+                    "preventUserExistenceErrors": "ENABLED",
+                    "refreshTokenValidity": 259200,
+                    "supportedIdentityProviders": [
+                      "COGNITO",
+                      "Google",
+                      "Facebook"
+                    ],
+                    "tokenValidityUnits": {
+                      "idToken": "minutes",
+                      "accessToken": "minutes",
+                      "refreshToken": "minutes"
+                    },
+                    "userPoolId": { "Ref": "UserPool6BA7E5F2" }
+                  }
+                }
+              }
+            }
+          },
+          "UserPoolId": {
+            "id": "UserPoolId",
+            "path": "AuthStack-prod/UserPoolId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "UserPoolArn": {
+            "id": "UserPoolArn",
+            "path": "AuthStack-prod/UserPoolArn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "WebClientId": {
+            "id": "WebClientId",
+            "path": "AuthStack-prod/WebClientId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "HostedUiUrl": {
+            "id": "HostedUiUrl",
+            "path": "AuthStack-prod/HostedUiUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "AuthStack-prod/CDKMetadata",
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.5.1"
+            },
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "AuthStack-prod/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.239.0"
+                }
+              }
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "AuthStack-prod/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.239.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "AuthStack-prod/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.239.0"
+            }
+          }
+        }
+      },
+      "BookingsStack-prod": {
+        "id": "BookingsStack-prod",
+        "path": "BookingsStack-prod",
+        "constructInfo": { "fqn": "aws-cdk-lib.Stack", "version": "2.239.0" },
+        "children": {
+          "BookingsDlq": {
+            "id": "BookingsDlq",
+            "path": "BookingsStack-prod/BookingsDlq",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sqs.Queue",
+              "version": "2.239.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "BookingsStack-prod/BookingsDlq/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.CfnQueue",
+                  "version": "2.239.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SQS::Queue",
+                  "aws:cdk:cloudformation:props": {
+                    "messageRetentionPeriod": 1209600,
+                    "queueName": "bookings-prod-dlq",
+                    "sqsManagedSseEnabled": true,
+                    "tags": [
+                      { "key": "Domain", "value": "bookings" },
+                      { "key": "Environment", "value": "prod" },
+                      { "key": "ManagedBy", "value": "cdk" },
+                      { "key": "Project", "value": "skyeglamping" }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "BookingsQueue": {
+            "id": "BookingsQueue",
+            "path": "BookingsStack-prod/BookingsQueue",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sqs.Queue",
+              "version": "2.239.0"
+            },
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "BookingsStack-prod/BookingsQueue/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.CfnQueue",
+                  "version": "2.239.0"
+                },
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SQS::Queue",
+                  "aws:cdk:cloudformation:props": {
+                    "messageRetentionPeriod": 345600,
+                    "queueName": "bookings-prod",
+                    "receiveMessageWaitTimeSeconds": 20,
+                    "redrivePolicy": {
+                      "deadLetterTargetArn": {
+                        "Fn::GetAtt": ["BookingsDlq536F7731", "Arn"]
+                      },
+                      "maxReceiveCount": 3
+                    },
+                    "sqsManagedSseEnabled": true,
+                    "tags": [
+                      { "key": "Domain", "value": "bookings" },
+                      { "key": "Environment", "value": "prod" },
+                      { "key": "ManagedBy", "value": "cdk" },
+                      { "key": "Project", "value": "skyeglamping" }
+                    ],
+                    "visibilityTimeout": 300
+                  }
+                }
+              }
+            }
+          },
+          "BookingsQueueUrl": {
+            "id": "BookingsQueueUrl",
+            "path": "BookingsStack-prod/BookingsQueueUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "BookingsQueueArn": {
+            "id": "BookingsQueueArn",
+            "path": "BookingsStack-prod/BookingsQueueArn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "BookingsDlqUrl": {
+            "id": "BookingsDlqUrl",
+            "path": "BookingsStack-prod/BookingsDlqUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "BookingsDlqArn": {
+            "id": "BookingsDlqArn",
+            "path": "BookingsStack-prod/BookingsDlqArn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.239.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "BookingsStack-prod/CDKMetadata",
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.5.1"
+            },
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "BookingsStack-prod/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.239.0"
+                }
+              }
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "BookingsStack-prod/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.239.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "BookingsStack-prod/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.239.0"
+            }
+          }
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": { "fqn": "constructs.Construct", "version": "10.5.1" }
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.ts$": ["@swc/jest"]
+  },
+  "testEnvironment": "node",
+  "passWithNoTests": true,
+  "setupFiles": ["./setup-jest.mjs"]
+}

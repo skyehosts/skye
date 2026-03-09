@@ -1,0 +1,39 @@
+services:
+  db:
+    container_name: book-skye-db
+    image: postgres:17
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    environment:
+      POSTGRES_DB: '${DATABASE_NAME}'
+      POSTGRES_USER: '${DATABASE_USERNAME}'
+      POSTGRES_PASSWORD: '${DATABASE_PASSWORD}'
+      TZ: "UTC"
+    ports:
+      - "25433:5432"
+    networks:
+      - nestjs-turbo-network
+
+  pgadmin:
+    container_name: book-skye-pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - "18080:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: '${DATABASE_ADMIN_EMAIL}'
+      PGADMIN_DEFAULT_PASSWORD: '${DATABASE_ADMIN_PASSWORD}'
+    networks:
+      - nestjs-turbo-network
+
+volumes:
+  postgres_data:
+  pgadmin_data:
+  redis_data:
+
+networks:
+  nestjs-turbo-network:
+    driver: bridge

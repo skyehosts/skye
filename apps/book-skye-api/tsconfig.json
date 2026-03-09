@@ -1,0 +1,22 @@
+{
+  "extends": "@repo/typescript-config/nestjs.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "paths": {
+      "@/book-skye-api/*": ["src/book-skye-api/*"],
+      "@/common/*": ["src/common/*"],
+      "@/book-skye-api-client/*": ["src/book-skye-api-client/*"],
+      "@/config/*": ["src/config/*"],
+      "@/constants/*": ["src/constants/*"],
+      "@/database/*": ["src/database/*"],
+      "@/decorators/*": ["src/decorators/*"],
+      "@/exceptions/*": ["src/exceptions/*"],
+      "@/filters/*": ["src/filters/*"],
+      "@/generated/*": ["src/generated/*"],
+      "@/guards/*": ["src/guards/*"],
+      "@/interceptors/*": ["src/interceptors/*"],
+      "@/utils/*": ["src/utils/*"]
+    }
+  }
+}
