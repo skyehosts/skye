@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiBaseUrl } from "@repo/skye-hosts-api-client";
+import { getApiBaseUrl } from "../../../skye-hosts-api-client/src";
 import { ChangePasswordForm } from "@repo/web-components/forms/change-password-form";
 import type { ChangePasswordFormValues } from "@repo/web-components/forms/change-password-form";
 import { useAuth } from "../auth/use-auth";
