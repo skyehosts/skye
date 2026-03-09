@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiBaseUrl } from "@repo/skye-hosts-api-client";
+import { getApiBaseUrl } from "../../../skye-hosts-api-client/src";
 import { ForgotPasswordForm } from "@repo/web-components/forms/forgot-password-form";
 import type { ForgotPasswordFormValues } from "@repo/web-components/forms/forgot-password-form";
 

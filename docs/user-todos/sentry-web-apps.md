@@ -19,10 +19,10 @@ All three apps read a `SKYE_ENVIRONMENT` variable (e.g. `production`, `staging`,
 send it to Sentry so errors can be filtered by environment. Each platform requires a prefix for the
 variable to be accessible inside the app bundle:
 
-| App                     | Variable name                  |
-| ----------------------- | ------------------------------ |
+| App                      | Variable name                  |
+| ------------------------ | ------------------------------ |
 | skye-hosts-guest-website | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
-| skye-glamping-website   | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
+| skye-glamping-website    | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
 | skye-hosts-host-app      | `EXPO_PUBLIC_SKYE_ENVIRONMENT` |
 
 ### apps/skye-hosts-guest-website (`.env.local` for dev, hosting provider for prod)

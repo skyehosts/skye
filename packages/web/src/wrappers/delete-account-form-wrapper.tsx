@@ -1,6 +1,6 @@
 "use client";
 
-import { getApiBaseUrl } from "@repo/skye-hosts-api-client";
+import { getApiBaseUrl } from "../../../skye-hosts-api-client/src";
 import { DeleteAccountForm } from "@repo/web-components/forms/delete-account-form";
 import { useAuth } from "../auth/use-auth";
 
