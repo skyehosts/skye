@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Book Skye Host",
-    "slug": "book-skye-host-app",
+    "name": "Skye Hosts",
+    "slug": "skye-hosts-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -50,6 +50,6 @@
         "projectId": "66d898a2-1e55-46e8-8cb0-19eb668136dd"
       }
     },
-    "owner": "bookskye"
+    "owner": "SkyeHosts"
   }
 }
