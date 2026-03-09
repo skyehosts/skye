@@ -6,7 +6,7 @@
 - Then run pnpm format
 - After you do things, if there are steps I need to take like adding env vars etc, create a new file in /docs/user-todos/x.md
 
-## Guide for: skye-hosts-host-app (React Native / Expo)
+## Guide for: skye-hosts-app (React Native / Expo)
 
 - Uses EAS for all native builds — never use `expo run:android` or `expo run:ios`
 - Dev workflow: `expo start --dev-client` for JS changes (no rebuild needed)
@@ -121,7 +121,7 @@ export default async function DemoPage() {
   - Includes:
     - SQS queue for bookings
 - apps/skye-hosts-api
-  - Services these applications: skye-hosts-admin-website, skye-hosts-guest-website, skye-hosts-host-app, skye-glamping-website
+  - Services these applications: skye-hosts-admin-website, skye-hosts-guest-website, skye-hosts-app, skye-glamping-website
 - apps/skye-hosts-guest-website
   - The glamping listings are stored in skye-hosts-api same as their listings. Only difference is a type differentiator on the model.
   - Does not have it's own database/api, uses skye-hosts's api for handling bookings, payments & listing data etc.
@@ -142,7 +142,7 @@ export default async function DemoPage() {
 - Any bespoke, non-trivial components created should be added to packages/ui and and then referenced in storybook
 - When a component in packages/ui is updated, it's reference should also be updated in storybook (where appropriate)
 
-## Guide for: Styling in skye-hosts-host-app
+## Guide for: Styling in skye-hosts-app
 
 - **Never hardcode colors, spacing, or font sizes** — always import tokens from `app/theme/`.
   - `colors` for all color values (e.g. `colors.textSecondary`, not `"#666"`)
@@ -160,7 +160,7 @@ export default async function DemoPage() {
 - Should send HTTP requests to apps/skye-hosts-api (Not Nextjs API routes)
 - Always use `applyServerErrors` from `@repo/ui/forms/apply-server-errors` in the catch block to map API validation errors onto fields. See canonical examples:
   - Web: `packages/ui/src/auth/sign-up-form.tsx`
-  - Native (host app): `apps/skye-hosts-host-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
+  - Native (host app): `apps/skye-hosts-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
 
 ### 1. Search Intent Optimization
 

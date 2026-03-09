@@ -71,7 +71,7 @@ jobs:
   #       run: pnpm test
   #
   #     - name: Install Playwright browsers
-  #       run: pnpm --filter=skye-hosts-host-app exec playwright install --with-deps chromium
+  #       run: pnpm --filter=skye-hosts-app exec playwright install --with-deps chromium
   #
   #     - name: Tests (e2e)
   #       run: pnpm test:e2e

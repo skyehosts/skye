@@ -1,5 +1,5 @@
 - Implement NextAuth.js
-- Single tenant but it will be used in skye-hosts-guest-website, skye-hosts-host-app & skye-hosts-admin-website. In each case, there are some pages publically available and some protected.
+- Single tenant but it will be used in skye-hosts-guest-website, skye-hosts-app & skye-hosts-admin-website. In each case, there are some pages publically available and some protected.
 - Authorization model is role based (Granular permissions not required). There are three roles "host", "admin", "guest". This maps 1:1 with each app.
 - Common logic should be stored in a package where possible to prevent duplication. Logic related to skye-hosts-api can go in skye-hosts-api-client. Logic only related to frontend could go in a new package, suggest packages/ui/src/auth
 - Use App router, JWT Sessions (Stateless)

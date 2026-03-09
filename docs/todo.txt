@@ -2,9 +2,9 @@
 General
 =======
 - rename
-  - firebase
-  - expo push?
-  - get it all deployed and tested working ok.
+  - Web deployd working ok
+  - app working, and prompting for push notif perm
+- expo build working on real device?
 - env plan: Pipeline green, deployed agian
   - ignore test-results
 - Update pre-push to on qa branch only do aws-infra gate

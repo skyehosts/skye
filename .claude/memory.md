@@ -15,6 +15,6 @@ This monorepo contains the following projects:
   - Marketing website aimed at customers looking for accomodation (Glamping specifically) on the Isle of Skye.
   - Aim to attract users seraching for 'glamping' on seach engines (not BnB)
   - Offers a handful of listings all from a single host at the same property location.
-- apps/skye-hosts-host-app
+- apps/skye-hosts-app
   - Solely aimed at the hosts of listings that are available on skye-hosts-guest-website
   - Includes capability for hosts to manage their listing, configure preferences of payments, listing pricing etc.
