@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf cdk.out dist",
+    "bootstrap:production": "CDK_BOOTSTRAP=1 cdk bootstrap --context env=production aws://902917582592/eu-west-1",
     "build": "tsc -b -v",
     "lint": "eslint \"{bin,lib}/**/*.ts\"",
     "synth:qa": "cdk synth --context env=qa",

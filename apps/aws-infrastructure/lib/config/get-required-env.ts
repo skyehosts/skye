@@ -6,13 +6,12 @@
  */
 export function getRequiredEnv(name: string): string {
   const value = process.env[name];
-
-  if (!value) {
+  if (!value && !process.env.CDK_BOOTSTRAP) {
     throw new Error(
       `Missing required environment variable "${name}". ` +
         `Set it before running cdk deploy.`,
     );
   }
 
-  return value;
+  return value ?? "";
 }
