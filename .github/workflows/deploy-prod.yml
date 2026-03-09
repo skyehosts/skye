@@ -142,7 +142,7 @@ jobs:
       app-name: book-skye-guest-website
       watch-paths: ./apps/book-skye-guest-website ./packages/ui ./packages/config ./packages/auth
       vercel-org-id: ${{ vars.VERCEL_ORG_ID }}
-      vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_BOOK_SKYE_GUEST }}
+      vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_SKYE_GLAMPING_GUEST }}
       env: production
     secrets:
       vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -168,7 +168,7 @@ jobs:
   #     app-name: book-skye-admin-website
   #     watch-paths: ./apps/book-skye-admin-website ./packages/ui ./packages/config ./packages/auth
   #     vercel-org-id: ${{ vars.VERCEL_ORG_ID }}
-  #     vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_BOOK_SKYE_ADMIN }}
+  #     vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_SKYE_GLAMPING_ADMIN }}
   #     env: production
   #   secrets:
   #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
