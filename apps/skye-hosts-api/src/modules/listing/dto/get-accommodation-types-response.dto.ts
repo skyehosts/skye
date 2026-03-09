@@ -1,8 +1,8 @@
 import type {
   IGetAccommodationTypesResponseDto,
   IListingTypeDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
-import { ListingTypeId } from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { ListingTypeId } from '@repo/skye-hosts-api-client';
 
 export class ListingTypeDto implements IListingTypeDto {
   id: ListingTypeId;

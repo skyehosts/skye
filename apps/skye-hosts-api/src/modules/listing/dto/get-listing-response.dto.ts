@@ -8,7 +8,7 @@ import type {
   ListingStatus,
   ListingTypeId,
   PropertySizeUnit,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
 
 export class GetListingResponseDto implements IGetListingResponseDto {
   id: number;

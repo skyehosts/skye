@@ -1,5 +1,5 @@
+import type { IPhoneVerifyOtpRequestDto } from '@repo/skye-hosts-api-client';
 import { IsOptional, IsString, MinLength } from 'class-validator';
-import type { IPhoneVerifyOtpRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class PhoneVerifyOtpRequestDto implements IPhoneVerifyOtpRequestDto {
   @IsString()

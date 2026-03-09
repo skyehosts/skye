@@ -7,12 +7,9 @@ import {
   NestInterceptor,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { IApiResponse, IApiResponseMeta } from '@repo/skye-hosts-api-client';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
-import {
-  IApiResponse,
-  IApiResponseMeta,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 import {
   ConfigService,
   IEnvironmentVariables,

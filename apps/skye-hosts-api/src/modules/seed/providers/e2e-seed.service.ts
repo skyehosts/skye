@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { createHash, randomBytes } from 'crypto';
-import { DataSource } from 'typeorm';
 import {
   ListingAmenityId,
   ListingBookingType,
   ListingHighlightId,
   ListingSpaceType,
   ListingTypeId,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import * as bcrypt from 'bcrypt';
+import { createHash, randomBytes } from 'crypto';
+import { DataSource } from 'typeorm';
 import { Account } from '../../account/entities';
 import { Booking } from '../../booking/entities';
 import { Demo } from '../../demo/entities';

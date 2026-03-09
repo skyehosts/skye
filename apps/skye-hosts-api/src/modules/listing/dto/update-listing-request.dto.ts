@@ -1,3 +1,10 @@
+import type { IUpdateListingRequestDto } from '@repo/skye-hosts-api-client';
+import {
+  LISTING_SPACE_TYPES,
+  LISTING_STATUSES,
+  LISTING_TYPE_IDS,
+  PROPERTY_SIZE_UNITS,
+} from '@repo/skye-hosts-api-client';
 import {
   IsArray,
   IsIn,
@@ -7,13 +14,6 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import type { IUpdateListingRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
-import {
-  LISTING_SPACE_TYPES,
-  LISTING_STATUSES,
-  LISTING_TYPE_IDS,
-  PROPERTY_SIZE_UNITS,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()

@@ -1,10 +1,10 @@
-import { Type } from 'class-transformer';
-import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 import type {
   IGetMessagesRequestDto,
   IGetMessagesResponseDto,
   IMessageDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 
 export class GetMessagesRequestDto implements IGetMessagesRequestDto {
   @Type(() => Number)

@@ -1,4 +1,3 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import type {
   ListingAmenityId,
   ListingBookingType,
@@ -8,7 +7,8 @@ import type {
   ListingStatus,
   ListingTypeId,
   PropertySizeUnit,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Listing {

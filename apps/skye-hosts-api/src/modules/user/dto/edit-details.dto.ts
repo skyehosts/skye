@@ -1,5 +1,5 @@
+import { IUserEditDetailsRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString, MaxLength } from 'class-validator';
-import { IUserEditDetailsRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class UserEditDetailsRequestDto implements IUserEditDetailsRequestDto {
   @IsString()

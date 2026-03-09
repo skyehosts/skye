@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import type { UserRole } from '../../../../../../packages/skye-hosts-api-client/src';
+import type { UserRole } from '@repo/skye-hosts-api-client';
 import { DecoratorKeys } from './keys';
 
 export const AuthoriseRole = (...roles: UserRole[]) =>

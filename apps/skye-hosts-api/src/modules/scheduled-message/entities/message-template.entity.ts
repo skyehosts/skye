@@ -1,3 +1,4 @@
+import type { MessageChannel } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,
@@ -5,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import type { MessageChannel } from '../../../../../../packages/skye-hosts-api-client/src';
 import { Account } from '../../account/entities';
 
 @Entity()

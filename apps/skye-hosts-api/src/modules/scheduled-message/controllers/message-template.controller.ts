@@ -12,7 +12,7 @@ import {
 import type {
   IGetMessageTemplatesResponseDto,
   IMessageTemplateDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
 import { AuthenticatedUser } from '../../common/decorators';
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
 import {

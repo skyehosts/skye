@@ -1,8 +1,8 @@
 import type {
   IGetSpaceTypesResponseDto,
   IListingSpaceTypeDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
-import { ListingSpaceType } from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { ListingSpaceType } from '@repo/skye-hosts-api-client';
 
 export class ListingSpaceTypeDto implements IListingSpaceTypeDto {
   id: ListingSpaceType;

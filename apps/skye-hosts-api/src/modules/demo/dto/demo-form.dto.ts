@@ -1,3 +1,8 @@
+import type {
+  DemoFormPriority,
+  IDemoFormRequestDto,
+  IDemoFormResponseDto,
+} from '@repo/skye-hosts-api-client';
 import {
   IsBoolean,
   IsEmail,
@@ -10,11 +15,6 @@ import {
   MaxLength,
   Min,
 } from 'class-validator';
-import type {
-  DemoFormPriority,
-  IDemoFormRequestDto,
-  IDemoFormResponseDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class DemoFormRequestDto implements IDemoFormRequestDto {
   @IsString()

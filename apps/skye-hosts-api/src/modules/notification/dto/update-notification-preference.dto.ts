@@ -1,8 +1,8 @@
-import { IsBoolean, IsIn, IsString } from 'class-validator';
 import type {
   IUpdateNotificationPreferenceRequestDto,
   NotificationEventType,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { IsBoolean, IsIn, IsString } from 'class-validator';
 
 const EVENT_TYPES: NotificationEventType[] = [
   'booking_requested',

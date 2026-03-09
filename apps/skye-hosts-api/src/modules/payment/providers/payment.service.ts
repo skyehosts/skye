@@ -1,6 +1,6 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { IPaymentIntentResponseDto } from '@repo/skye-hosts-api-client';
 import Stripe from 'stripe';
-import { IPaymentIntentResponseDto } from '../../../../../../packages/skye-hosts-api-client/src';
 import { AccountService } from '../../account/providers';
 import { StripeService } from '../../stripe/providers';
 import {

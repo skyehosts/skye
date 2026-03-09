@@ -4,9 +4,6 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
-import * as jwt from 'jsonwebtoken';
 import type {
   IChangePasswordResponseDto,
   IForgotPasswordResponseDto,
@@ -15,7 +12,10 @@ import type {
   IPhoneVerifyOtpResponseDto,
   IRefreshTokenResponseDto,
   IResetPasswordResponseDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import * as bcrypt from 'bcrypt';
+import { randomBytes } from 'crypto';
+import * as jwt from 'jsonwebtoken';
 import { Account } from '../../account/entities';
 import { AccountService } from '../../account/providers';
 import { DatabaseService } from '../../common/providers';

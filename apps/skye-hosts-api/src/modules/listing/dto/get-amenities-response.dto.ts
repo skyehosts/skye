@@ -2,8 +2,8 @@ import type {
   IGetAmenitiesResponseDto,
   IListingAmenityCategoryDto,
   IListingAmenityDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
-import { ListingAmenityId } from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { ListingAmenityId } from '@repo/skye-hosts-api-client';
 
 export class ListingAmenityDto implements IListingAmenityDto {
   id: ListingAmenityId;

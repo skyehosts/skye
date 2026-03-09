@@ -1,8 +1,8 @@
-import { IsNumber, Min } from 'class-validator';
 import type {
   IMarkMessagesReadRequestDto,
   IMarkMessagesReadResponseDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { IsNumber, Min } from 'class-validator';
 
 export class MarkMessagesReadRequestDto implements IMarkMessagesReadRequestDto {
   @IsNumber()

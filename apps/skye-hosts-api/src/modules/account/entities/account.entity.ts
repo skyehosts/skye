@@ -1,8 +1,5 @@
+import type { IAccountVm, UserRole } from '@repo/skye-hosts-api-client';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import type {
-  IAccountVm,
-  UserRole,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 
 @Entity()
 export class Account {

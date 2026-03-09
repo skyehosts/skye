@@ -1,3 +1,4 @@
+import type { OffsetUnit, TriggerType } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,
@@ -5,10 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import type {
-  OffsetUnit,
-  TriggerType,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 import { MessageTemplate } from './message-template.entity';
 
 @Entity()

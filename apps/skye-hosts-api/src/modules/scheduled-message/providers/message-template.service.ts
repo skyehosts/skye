@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { IsNull } from 'typeorm';
 import type {
   IGetMessageTemplatesResponseDto,
   IMessageTemplateDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { IsNull } from 'typeorm';
 import { DatabaseService } from '../../common/providers';
 import {
   CreateMessageTemplateRequestDto,

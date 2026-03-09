@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
+import type { OffsetUnit, TriggerType } from '@repo/skye-hosts-api-client';
 import { createHash } from 'crypto';
-import type {
-  OffsetUnit,
-  TriggerType,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 import { Booking } from '../../booking/entities';
 import { DatabaseService } from '../../common/providers';
 import { Listing } from '../../listing/entities';

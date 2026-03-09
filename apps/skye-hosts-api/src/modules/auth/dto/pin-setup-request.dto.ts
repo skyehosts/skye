@@ -1,5 +1,5 @@
+import type { IPinSetupRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString } from 'class-validator';
-import type { IPinSetupRequestDto } from '../../../../../../packages/skye-hosts-api-client/src';
 
 export class PinSetupRequestDto implements IPinSetupRequestDto {
   @IsString()

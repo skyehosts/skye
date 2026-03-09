@@ -1,13 +1,10 @@
-import { IsBoolean, IsIn, IsNumber, Min } from 'class-validator';
-import type {
-  OffsetUnit,
-  TriggerType,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+import type { OffsetUnit, TriggerType } from '@repo/skye-hosts-api-client';
 import {
   ITemplateTriggerInputDto,
   OFFSET_UNITS,
   TRIGGER_TYPES,
-} from '../../../../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { IsBoolean, IsIn, IsNumber, Min } from 'class-validator';
 
 export class TemplateTriggerInputDto implements ITemplateTriggerInputDto {
   @IsIn(TRIGGER_TYPES)
