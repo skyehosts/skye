@@ -4,22 +4,22 @@
 
 ### 1. Recreate Docker volumes (to trigger init-db.sh)
 
-The init script creates the `book-skye-test` database automatically when the postgres container initialises for the first time. Since you already have a running container, you need to recreate it:
+The init script creates the `skye-hosts-test` database automatically when the postgres container initialises for the first time. Since you already have a running container, you need to recreate it:
 
 ```bash
-cd apps/book-skye-api
+cd apps/skye-hosts-api
 pnpm db-down   # removes volumes
 pnpm db        # recreates with init-db.sh
 ```
 
 ### 2. Copy `.env.e2e` from `.env.e2e` (already created)
 
-The `.env.e2e` file has been created pointing to the test database (`book-skye-test` on port 25433). It's gitignored. If you need to update secrets, edit it like you would `.env.local`.
+The `.env.e2e` file has been created pointing to the test database (`skye-hosts-test` on port 25433). It's gitignored. If you need to update secrets, edit it like you would `.env.local`.
 
 ### 3. Run migrations on the test database
 
 ```bash
-cd apps/book-skye-api
+cd apps/skye-hosts-api
 env-cmd -f .env.e2e pnpm typeorm migration:run
 ```
 
@@ -30,7 +30,7 @@ Or just start the API with `pnpm dev:e2e` — migrations run automatically on st
 From any frontend app:
 
 ```bash
-# From the app directory (e.g. apps/book-skye-guest-website)
+# From the app directory (e.g. apps/skye-hosts-guest-website)
 pnpm test:e2e
 ```
 

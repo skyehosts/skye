@@ -1,8 +1,8 @@
-import type { MessageChannel } from '@repo/book-skye-api-client';
+import type { MessageChannel } from '@repo/skye-hosts-api-client';
 import {
   ICreateMessageTemplateRequestDto,
   MESSAGE_CHANNELS,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { Type } from 'class-transformer';
 import {
   IsArray,

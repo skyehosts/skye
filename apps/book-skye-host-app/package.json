@@ -1,5 +1,5 @@
 {
-  "name": "book-skye-host-app",
+  "name": "skye-hosts-host-app",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "private": true,
@@ -24,7 +24,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~55.0.6",
     "@react-native-async-storage/async-storage": "^2.1.2",
-    "@repo/book-skye-api-client": "workspace:*",
+    "@repo/skye-hosts-api-client": "workspace:*",
     "@repo/web": "workspace:^",
     "@repo/web-components": "workspace:^",
     "@sentry/react-native": "^8.2.0",

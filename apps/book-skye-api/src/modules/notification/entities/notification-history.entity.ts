@@ -1,4 +1,4 @@
-import type { NotificationEventType } from '@repo/book-skye-api-client';
+import type { NotificationEventType } from '@repo/skye-hosts-api-client';
 import {
   Column,
   CreateDateColumn,

@@ -12,7 +12,7 @@ import type {
   IPhoneVerifyOtpResponseDto,
   IRefreshTokenResponseDto,
   IResetPasswordResponseDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import * as bcrypt from 'bcrypt';
 import { randomBytes } from 'crypto';
 import * as jwt from 'jsonwebtoken';

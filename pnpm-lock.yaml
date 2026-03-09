@@ -32,9 +32,9 @@ importers:
 
   apps/aws-infrastructure:
     dependencies:
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../../packages/book-skye-api-client
+        version: link:../../packages/skye-hosts-api-client
       '@repo/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -67,11 +67,11 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  apps/book-skye-admin-website:
+  apps/skye-hosts-admin-website:
     dependencies:
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../../packages/book-skye-api-client
+        version: link:../../packages/skye-hosts-api-client
       '@repo/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -125,7 +125,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  apps/book-skye-api:
+  apps/skye-hosts-api:
     dependencies:
       '@aws-sdk/client-sqs':
         specifier: ^3.1000.0
@@ -157,9 +157,9 @@ importers:
       '@nestjs/websockets':
         specifier: ^11.1.14
         version: 11.1.14(@nestjs/common@11.1.14(class-transformer@0.5.1)(class-validator@0.14.3)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.14)(@nestjs/platform-socket.io@11.1.14)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../../packages/book-skye-api-client
+        version: link:../../packages/skye-hosts-api-client
       '@repo/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -300,11 +300,11 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  apps/book-skye-guest-website:
+  apps/skye-hosts-guest-website:
     dependencies:
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../../packages/book-skye-api-client
+        version: link:../../packages/skye-hosts-api-client
       '@repo/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -364,7 +364,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  apps/book-skye-host-app:
+  apps/skye-hosts-host-app:
     dependencies:
       '@expo/metro-runtime':
         specifier: ~55.0.6
@@ -372,9 +372,9 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: ^2.1.2
         version: 2.2.0(react-native@0.83.2(@babel/core@7.29.0)(@types/react@19.2.14)(react@19.2.0))
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../../packages/book-skye-api-client
+        version: link:../../packages/skye-hosts-api-client
       '@repo/web':
         specifier: workspace:^
         version: link:../../packages/web
@@ -460,9 +460,9 @@ importers:
 
   apps/skye-glamping-website:
     dependencies:
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../../packages/book-skye-api-client
+        version: link:../../packages/skye-hosts-api-client
       '@repo/common':
         specifier: workspace:*
         version: link:../../packages/common
@@ -519,7 +519,7 @@ importers:
         specifier: ^5.9.3
         version: 5.9.3
 
-  packages/book-skye-api-client:
+  packages/skye-hosts-api-client:
     dependencies:
       '@repo/common':
         specifier: workspace:^
@@ -684,9 +684,9 @@ importers:
 
   packages/web:
     dependencies:
-      '@repo/book-skye-api-client':
+      '@repo/skye-hosts-api-client':
         specifier: workspace:*
-        version: link:../book-skye-api-client
+        version: link:../skye-hosts-api-client
       '@repo/web-components':
         specifier: workspace:^
         version: link:../web-components

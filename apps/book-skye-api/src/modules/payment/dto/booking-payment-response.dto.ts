@@ -1,4 +1,4 @@
-import { IBookingPaymentResponseDto } from '@repo/book-skye-api-client';
+import { IBookingPaymentResponseDto } from '@repo/skye-hosts-api-client';
 
 export class BookingPaymentResponseDto implements IBookingPaymentResponseDto {
   success: boolean;

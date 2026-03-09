@@ -1,7 +1,7 @@
 import {
   ListingHighlightId,
   LISTING_HIGHLIGHT_LABELS,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";

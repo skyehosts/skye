@@ -1,7 +1,7 @@
 import type {
   IGetListingResponseDto,
   IUpdateListingRequestDto,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";

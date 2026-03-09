@@ -1,4 +1,4 @@
-import type { OffsetUnit, TriggerType } from '@repo/book-skye-api-client';
+import type { OffsetUnit, TriggerType } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,

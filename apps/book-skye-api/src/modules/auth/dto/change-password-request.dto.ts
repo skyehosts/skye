@@ -1,4 +1,4 @@
-import { IChangePasswordRequestDto } from '@repo/book-skye-api-client';
+import { IChangePasswordRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString, MinLength } from 'class-validator';
 
 export class ChangePasswordRequestDto implements IChangePasswordRequestDto {

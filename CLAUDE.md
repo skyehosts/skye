@@ -6,28 +6,28 @@
 - Then run pnpm format
 - After you do things, if there are steps I need to take like adding env vars etc, create a new file in /docs/user-todos/x.md
 
-## Guide for: book-skye-host-app (React Native / Expo)
+## Guide for: skye-hosts-host-app (React Native / Expo)
 
 - Uses EAS for all native builds — never use `expo run:android` or `expo run:ios`
 - Dev workflow: `expo start --dev-client` for JS changes (no rebuild needed)
 
 ## Guide for: API → Client → Frontend: Adding a new endpoint
 
-This documents the end-to-end pattern for adding a typed API endpoint into apps/book-skye-api, use `apps/book-skye-api/src/modules/demo` and `apps/book-skye-guest-website/app/demo` as the canonical reference implementation. This applies to all apps that call endpoints on book-skye-api.
+This documents the end-to-end pattern for adding a typed API endpoint into apps/skye-hosts-api, use `apps/skye-hosts-api/src/modules/demo` and `apps/skye-hosts-guest-website/app/demo` as the canonical reference implementation. This applies to all apps that call endpoints on skye-hosts-api.
 
 ---
 
-### 1. Define shared types in `packages/book-skye-api-client`
+### 1. Define shared types in `packages/skye-hosts-api-client`
 
 Add interfaces under `src/dto-interfaces/<module>/`:
 
 ```
-packages/book-skye-api-client/src/dto-interfaces/demo/
+packages/skye-hosts-api-client/src/dto-interfaces/demo/
   demo-request.dto.ts   → export interface IDemoRequestDto { ... }
   demo-response.dto.ts  → export interface IDemoResponseDto { ... }
 ```
 
-Export from `packages/book-skye-api-client/src/index.ts`:
+Export from `packages/skye-hosts-api-client/src/index.ts`:
 
 ```ts
 export * from "./dto-interfaces/demo/demo-request.dto";
@@ -38,22 +38,22 @@ Interface naming: prefix with `I`, suffix with `Dto` (e.g. `IDemoRequestDto`).
 
 ---
 
-### 2. Implement DTOs in `apps/book-skye-api`
+### 2. Implement DTOs in `apps/skye-hosts-api`
 
 NB: Use logger.debug instead of logger.log
 
-Under `apps/book-skye-api/src/modules/<module>/dto/`:
+Under `apps/skye-hosts-api/src/modules/<module>/dto/`:
 
 ```ts
 // demo-request.dto.ts
-import { IDemoRequestDto } from "@repo/book-skye-api-client";
+import { IDemoRequestDto } from "@repo/skye-hosts-api-client";
 export class DemoRequestDto implements IDemoRequestDto {
   @IsString()
   name: string;
 }
 
 // demo-response.dto.ts
-import { IDemoResponseDto } from "@repo/book-skye-api-client";
+import { IDemoResponseDto } from "@repo/skye-hosts-api-client";
 export class DemoResponseDto implements IDemoResponseDto {
   message: string;
   receivedAt: Date;
@@ -65,7 +65,7 @@ Export both from `dto/index.ts`.
 
 ---
 
-### 3. Implement the controller in `apps/book-skye-api`
+### 3. Implement the controller in `apps/skye-hosts-api`
 
 ```ts
 @Controller("demo")
@@ -84,11 +84,11 @@ Register the module in `app.module.ts`.
 
 ---
 
-### 4. Consume in `apps/book-skye-guest-website`
+### 4. Consume in `apps/skye-hosts-guest-website`
 
 ```ts
 // app/demo/page.tsx
-import { IDemoRequestDto, IDemoResponseDto } from '@repo/book-skye-api-client';
+import { IDemoRequestDto, IDemoResponseDto } from '@repo/skye-hosts-api-client';
 import { fetchApi } from '../services/api.service';
 
 // NB: No exporting of 'revalidate' by default, unless you think page warrants it, then ask
@@ -108,41 +108,41 @@ export default async function DemoPage() {
 
 ### Key rules
 
-- **Interfaces live in `@repo/book-skye-api-client`** — never define shared types inside `apps/`.
+- **Interfaces live in `@repo/skye-hosts-api-client`** — never define shared types inside `apps/`.
 - **API DTOs implement the interface** — `class FooResponseDto implements IFooResponseDto`.
 - **Frontend imports the interface** — pass it as the generic to `fetchApi<T>`.
 - **When adding a workspace dependency**: always use `workspace:*` suffix:
-  `pnpm --filter='<pkg>' add '@repo/book-skye-api-client@workspace:*'`
+  `pnpm --filter='<pkg>' add '@repo/skye-hosts-api-client@workspace:*'`
 
 ## Guide for: Relationships between applications
 
 - apps/aws-infrastructure
-  - Infrastructure for book-skye-api
+  - Infrastructure for skye-hosts-api
   - Includes:
     - SQS queue for bookings
-- apps/book-skye-api
-  - Services these applications: book-skye-admin-website, book-skye-guest-website, book-skye-host-app, skye-glamping-website
-- apps/book-skye-guest-website
-  - The glamping listings are stored in book-skye-api same as their listings. Only difference is a type differentiator on the model.
-  - Does not have it's own database/api, uses book-skye's api for handling bookings, payments & listing data etc.
-  - Pretty much all feautres in book-skye-guest-website will also exist in skye-glamping-website. Keeping duplication of code to an absolute minimum is critical. Store logic/components either in ui package.
+- apps/skye-hosts-api
+  - Services these applications: skye-hosts-admin-website, skye-hosts-guest-website, skye-hosts-host-app, skye-glamping-website
+- apps/skye-hosts-guest-website
+  - The glamping listings are stored in skye-hosts-api same as their listings. Only difference is a type differentiator on the model.
+  - Does not have it's own database/api, uses skye-hosts's api for handling bookings, payments & listing data etc.
+  - Pretty much all feautres in skye-hosts-guest-website will also exist in skye-glamping-website. Keeping duplication of code to an absolute minimum is critical. Store logic/components either in ui package.
   - React native app for hosts to create & manage their listings
 
 ## Guide for: E2E tests (frontend apps)
 
-- Frontend e2e tests (Playwright) run against a real API server connected to a separate `book-skye-test` postgres database.
-- When `pnpm test:e2e` runs, Playwright automatically starts the API via `pnpm --filter book-skye-api dev:e2e`, then calls `POST /seed/e2e-reset` to truncate all tables and seed test data before tests begin.
-- **When writing e2e tests that need specific data**, add that data to the e2e seeder at `apps/book-skye-api/src/modules/seed/providers/e2e-seed.service.ts`. This is separate from the existing `SeedService` which is for non-e2e seeding.
+- Frontend e2e tests (Playwright) run against a real API server connected to a separate `skye-hosts-test` postgres database.
+- When `pnpm test:e2e` runs, Playwright automatically starts the API via `pnpm --filter skye-hosts-api dev:e2e`, then calls `POST /seed/e2e-reset` to truncate all tables and seed test data before tests begin.
+- **When writing e2e tests that need specific data**, add that data to the e2e seeder at `apps/skye-hosts-api/src/modules/seed/providers/e2e-seed.service.ts`. This is separate from the existing `SeedService` which is for non-e2e seeding.
 - Seeded test accounts: `host@test.com` (host) and `guest@test.com` (guest), both with password `Password123!`.
 - E2e global setup lives in each app's `e2e/global-setup.ts`.
-- The API e2e env config is at `apps/book-skye-api/.env.e2e` (gitignored).
+- The API e2e env config is at `apps/skye-hosts-api/.env.e2e` (gitignored).
 
 ## Guide for: Adding components
 
 - Any bespoke, non-trivial components created should be added to packages/ui and and then referenced in storybook
 - When a component in packages/ui is updated, it's reference should also be updated in storybook (where appropriate)
 
-## Guide for: Styling in book-skye-host-app
+## Guide for: Styling in skye-hosts-host-app
 
 - **Never hardcode colors, spacing, or font sizes** — always import tokens from `app/theme/`.
   - `colors` for all color values (e.g. `colors.textSecondary`, not `"#666"`)
@@ -157,17 +157,17 @@ export default async function DemoPage() {
 ### 1. Forms
 
 - Use react-hook-form approach
-- Should send HTTP requests to apps/book-skye-api (Not Nextjs API routes)
+- Should send HTTP requests to apps/skye-hosts-api (Not Nextjs API routes)
 - Always use `applyServerErrors` from `@repo/ui/forms/apply-server-errors` in the catch block to map API validation errors onto fields. See canonical examples:
   - Web: `packages/ui/src/auth/sign-up-form.tsx`
-  - Native (host app): `apps/book-skye-host-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
+  - Native (host app): `apps/skye-hosts-host-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
 
 ### 1. Search Intent Optimization
 
 - Identify and align with primary search intent (informational, transactional, navigational, commercial).
 - Ensure the content fully satisfies the dominant intent before adding secondary topics.
 - Provide comprehensive, structured, and directly actionable information.
-- Avoid keyword cannibalization, do not mix 'BnB' (book-skye-website) and 'Glamping' (skye-glamping-website)
+- Avoid keyword cannibalization, do not mix 'BnB' (skye-hosts-website) and 'Glamping' (skye-glamping-website)
 
 ### 2. Keyword Strategy
 

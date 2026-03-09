@@ -1,4 +1,4 @@
-import type { IAccountVm, UserRole } from '@repo/book-skye-api-client';
+import type { IAccountVm, UserRole } from '@repo/skye-hosts-api-client';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()

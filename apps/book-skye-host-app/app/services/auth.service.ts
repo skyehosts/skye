@@ -5,7 +5,7 @@ import type {
   IPhoneRequestOtpResponseDto,
   IPhoneVerifyOtpRequestDto,
   IPhoneVerifyOtpResponseDto,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { fetchApi } from "./api";
 import {
   clearSessionData,

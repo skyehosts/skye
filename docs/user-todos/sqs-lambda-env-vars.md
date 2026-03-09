@@ -6,7 +6,7 @@ The following environment variables are required for the SQS-to-HTTP forwarder L
 
 | Variable                          | Description                                                           | Example                                     |
 | --------------------------------- | --------------------------------------------------------------------- | ------------------------------------------- |
-| `BOOKINGS_SQS_FORWARDER_ENDPOINT` | Full URL of the book-skye-api endpoint that receives booking messages | `https://api.bookskye.com/bookings/webhook` |
+| `BOOKINGS_SQS_FORWARDER_ENDPOINT` | Full URL of the skye-hosts-api endpoint that receives booking messages | `https://api.bookskye.com/bookings/webhook` |
 | `SQS_FORWARDER_HTTP_SECRET`       | Shared secret for authenticating webhook requests                     | _(generate a strong random string)_         |
 | `SQS_FORWARDER_HEADER_NAME`       | HTTP header name used to send the secret                              | `x-webhook-secret`                          |
 

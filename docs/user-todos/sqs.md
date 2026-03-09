@@ -160,6 +160,6 @@ The API will need the queue URL to send booking events. Add it to the API's envi
 # Get the URL
 aws sqs get-queue-url --queue-name bookings-prod --region eu-west-1
 
-# Add to apps/book-skye-api/.env-files/.production.env (or Heroku config vars)
+# Add to apps/skye-hosts-api/.env-files/.production.env (or Heroku config vars)
 SQS_BOOKINGS_QUEUE_URL=https://sqs.eu-west-1.amazonaws.com/<account-id>/bookings-prod
 ```

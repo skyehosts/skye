@@ -1,4 +1,4 @@
-import { IUserEditDetailsRequestDto } from '@repo/book-skye-api-client';
+import { IUserEditDetailsRequestDto } from '@repo/skye-hosts-api-client';
 import { IsString, MaxLength } from 'class-validator';
 
 export class UserEditDetailsRequestDto implements IUserEditDetailsRequestDto {

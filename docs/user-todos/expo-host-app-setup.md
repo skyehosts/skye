@@ -1,4 +1,4 @@
-# Book Skye Host App - Setup Steps
+# Skye Hosts Host App - Setup Steps
 
 ## 1. Install EAS CLI (if not already installed)
 
@@ -14,7 +14,7 @@ eas login
 
 ## 3. Link to an Expo project
 
-From `apps/book-skye-host-app/`, run:
+From `apps/skye-hosts-host-app/`, run:
 
 ```bash
 eas init
@@ -45,7 +45,7 @@ eas build --profile development --platform android
 Or use Expo Go for quick prototyping:
 
 ```bash
-pnpm --filter book-skye-host-app start
+pnpm --filter skye-hosts-host-app start
 ```
 
 ## 6. Apple Developer & Google Play setup (for production)
@@ -67,15 +67,15 @@ Change these if you want different identifiers.
 After deploying the API (or locally), run the migration to add `phoneNumber` column and make `email`/`passwordHash`/`stripeCustomerId` nullable:
 
 ```bash
-pnpm --filter book-skye-api migration:up
+pnpm --filter skye-hosts-api migration:up
 ```
 
 ## 9. Running locally
 
 ```bash
 # Start Expo dev server
-pnpm --filter book-skye-host-app start
+pnpm --filter skye-hosts-host-app start
 
 # Or via turbo
-pnpm dev --filter book-skye-host-app
+pnpm dev --filter skye-hosts-host-app
 ```

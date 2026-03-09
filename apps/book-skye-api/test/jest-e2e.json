@@ -8,9 +8,9 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "moduleNameMapper": {
-    "^@/book-skye-api/(.*)$": "<rootDir>/src/book-skye-api/$1",
+    "^@/skye-hosts-api/(.*)$": "<rootDir>/src/skye-hosts-api/$1",
     "^@/common/(.*)$": "<rootDir>/src/common/$1",
-    "^@/book-skye-api-client/(.*)$": "<rootDir>/src/book-skye-api-client/$1",
+    "^@/skye-hosts-api-client/(.*)$": "<rootDir>/src/skye-hosts-api-client/$1",
     "^@/config/(.*)$": "<rootDir>/src/config/$1",
     "^@/constants/(.*)$": "<rootDir>/src/constants/$1",
     "^@/database/(.*)$": "<rootDir>/src/database/$1",

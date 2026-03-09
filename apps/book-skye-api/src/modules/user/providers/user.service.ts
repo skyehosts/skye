@@ -8,7 +8,7 @@ import {
   IAccountAuthenticatedRequestDto,
   IUserEditDetailsRequestDto,
   IUserSummaryVm,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { Account } from '../../account/entities';
 import { AccountService } from '../../account/providers';
 import { DatabaseService } from '../../common/providers';

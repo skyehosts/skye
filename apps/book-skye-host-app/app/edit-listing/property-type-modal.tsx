@@ -10,7 +10,7 @@ import {
   LISTING_SPACE_TYPES,
   PROPERTY_SIZE_UNIT_LABELS,
   PROPERTY_SIZE_UNITS,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";

@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import type { NotificationEventType } from '@repo/book-skye-api-client';
+import type { NotificationEventType } from '@repo/skye-hosts-api-client';
 import { Repository } from 'typeorm';
 import {
   DeviceToken,

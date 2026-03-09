@@ -9,7 +9,7 @@
 
 ## 2. Add env vars
 
-Add to `apps/book-skye-api/.env.local`:
+Add to `apps/skye-hosts-api/.env.local`:
 
 ```
 TWILIO_ACCOUNT_SID=AC...

@@ -1,4 +1,4 @@
-import type { ScheduledMessageStatus } from '@repo/book-skye-api-client';
+import type { ScheduledMessageStatus } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,

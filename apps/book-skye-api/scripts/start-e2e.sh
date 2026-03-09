@@ -11,8 +11,8 @@ set +a
 
 DB_HOST="${DATABASE_HOST:-localhost}"
 DB_PORT="${DATABASE_PORT:-25433}"
-DB_USER="${DATABASE_USERNAME:-book-skye}"
-DB_NAME="${DATABASE_NAME:-book-skye-test}"
+DB_USER="${DATABASE_USERNAME:-skye-hosts}"
+DB_NAME="${DATABASE_NAME:-skye-hosts-test}"
 
 # Drop and recreate the test database for a clean migration
 echo "Resetting test database: $DB_NAME"

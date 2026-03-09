@@ -25,7 +25,7 @@ export class AwsQueueSendMessageService {
 
   private getQueueName(queue: AwsQueueNames): string {
     const env = this.configService.get<string>('AWS_SQS_ENVIRONMENT');
-    return `book-skye-${queue}-queue-${env}`;
+    return `skye-hosts-${queue}-queue-${env}`;
   }
 
   private async getQueueUrl(queueName: string): Promise<string> {

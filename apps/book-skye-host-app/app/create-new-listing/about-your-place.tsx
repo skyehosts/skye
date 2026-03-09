@@ -1,5 +1,5 @@
-import type { IGetAccommodationTypesResponseDto } from "@repo/book-skye-api-client";
-import { ListingTypeId } from "@repo/book-skye-api-client";
+import type { IGetAccommodationTypesResponseDto } from "@repo/skye-hosts-api-client";
+import { ListingTypeId } from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";

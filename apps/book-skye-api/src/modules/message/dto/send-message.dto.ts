@@ -1,7 +1,7 @@
 import type {
   ISendMessageRequestDto,
   ISendMessageResponseDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { IsNumber, IsString, MaxLength, Min } from 'class-validator';
 
 export class SendMessageRequestDto implements ISendMessageRequestDto {

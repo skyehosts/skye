@@ -3,10 +3,10 @@ import { Environments } from "@repo/common";
 import { getRequiredEnv } from "./get-required-env";
 
 /** Canonical project identifier — used in resource names, tags, and secret paths. */
-export const PROJECT_NAME = "book-skye";
+export const PROJECT_NAME = "skye-hosts";
 
 /** Human-readable project name — used in user-facing copy (emails, UI text). */
-export const PROJECT_DISPLAY_NAME = "Book Skye";
+export const PROJECT_DISPLAY_NAME = "Skye Hosts";
 
 /** Default AWS region for all environments. */
 export const DEFAULT_REGION = "eu-west-1";

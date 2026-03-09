@@ -1,5 +1,5 @@
-import type { ListingAmenityId } from "@repo/book-skye-api-client";
-import { LISTING_AMENITY_CATEGORIES } from "@repo/book-skye-api-client";
+import type { ListingAmenityId } from "@repo/skye-hosts-api-client";
+import { LISTING_AMENITY_CATEGORIES } from "@repo/skye-hosts-api-client";
 import { useEffect, useState } from "react";
 import {
   FlatList,

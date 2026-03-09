@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { IPaymentIntentResponseDto } from '@repo/book-skye-api-client';
+import { IPaymentIntentResponseDto } from '@repo/skye-hosts-api-client';
 import {
   AuthenticatedUser,
   IgnoreBearerAuthentication,

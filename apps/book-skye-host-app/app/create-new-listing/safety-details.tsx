@@ -1,8 +1,8 @@
-import type { ICreateListingResponseDto } from "@repo/book-skye-api-client";
+import type { ICreateListingResponseDto } from "@repo/skye-hosts-api-client";
 import {
   ListingSafetyDisclosureId,
   LISTING_SAFETY_DISCLOSURE_LABELS,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {

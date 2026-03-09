@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Book Skye - Admin",
-  description: "Book Skye administration portal",
+  title: "Skye Hosts - Admin",
+  description: "Skye Hosts administration portal",
 };
 
 export default function RootLayout({

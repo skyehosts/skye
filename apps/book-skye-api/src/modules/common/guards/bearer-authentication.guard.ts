@@ -6,7 +6,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import type { UserRole } from '@repo/book-skye-api-client';
+import type { UserRole } from '@repo/skye-hosts-api-client';
 import * as jwt from 'jsonwebtoken';
 import {
   ConfigService,

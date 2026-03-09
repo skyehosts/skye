@@ -4,7 +4,7 @@ import type {
   IGetNotificationPreferencesResponseDto,
   IUpdateNotificationPreferenceResponseDto,
   NotificationEventType,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { Repository } from 'typeorm';
 import { NotificationPreference } from '../entities';
 import { EmailNotificationService } from './email-notification.service';

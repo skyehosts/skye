@@ -3,7 +3,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./e2e",
   testMatch: /\.e2e-spec\.ts$/,
-  globalSetup: "../../packages/book-skye-api-client/src/e2e/global-setup.ts",
+  globalSetup: "../../packages/skye-hosts-api-client/src/e2e/global-setup.ts",
   timeout: 30_000,
   retries: 1,
   use: {
@@ -12,7 +12,7 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "pnpm --filter book-skye-api dev:e2e",
+      command: "pnpm --filter skye-hosts-api dev:e2e",
       port: 3003,
       reuseExistingServer: true,
       timeout: 120_000,

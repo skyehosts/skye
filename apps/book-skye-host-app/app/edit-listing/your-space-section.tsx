@@ -1,12 +1,12 @@
 import type {
   IGetListingResponseDto,
   IUpdateListingRequestDto,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import {
   LISTING_AMENITY_MAP,
   LISTING_SPACE_TYPE_LABELS,
   LISTING_TYPE_LABELS,
-} from "@repo/book-skye-api-client";
+} from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";

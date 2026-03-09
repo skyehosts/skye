@@ -1,10 +1,10 @@
-import type { IUpdateListingRequestDto } from '@repo/book-skye-api-client';
+import type { IUpdateListingRequestDto } from '@repo/skye-hosts-api-client';
 import {
   LISTING_SPACE_TYPES,
   LISTING_STATUSES,
   LISTING_TYPE_IDS,
   PROPERTY_SIZE_UNITS,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import {
   IsArray,
   IsIn,

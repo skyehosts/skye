@@ -1,8 +1,8 @@
-import type { ICreateListingRequestDto } from '@repo/book-skye-api-client';
+import type { ICreateListingRequestDto } from '@repo/skye-hosts-api-client';
 import {
   LISTING_SPACE_TYPES,
   LISTING_TYPE_IDS,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import {
   IsArray,
   IsIn,

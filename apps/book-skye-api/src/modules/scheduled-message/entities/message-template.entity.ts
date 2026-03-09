@@ -1,4 +1,4 @@
-import type { MessageChannel } from '@repo/book-skye-api-client';
+import type { MessageChannel } from '@repo/skye-hosts-api-client';
 import {
   Column,
   Entity,

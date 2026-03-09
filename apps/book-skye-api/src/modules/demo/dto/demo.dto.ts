@@ -1,4 +1,4 @@
-import { IDemoRequestDto, IDemoResponseDto } from '@repo/book-skye-api-client';
+import { IDemoRequestDto, IDemoResponseDto } from '@repo/skye-hosts-api-client';
 import { IsString, MaxLength } from 'class-validator';
 
 export class DemoRequestDto implements IDemoRequestDto {

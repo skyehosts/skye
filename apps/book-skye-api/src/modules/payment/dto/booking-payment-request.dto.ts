@@ -1,4 +1,4 @@
-import { IBookingPaymentRequestDto } from '@repo/book-skye-api-client';
+import { IBookingPaymentRequestDto } from '@repo/skye-hosts-api-client';
 import { IsDateString, IsNumber } from 'class-validator';
 
 export class BookingPaymentRequestDto implements IBookingPaymentRequestDto {

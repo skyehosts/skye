@@ -2,7 +2,7 @@ import type {
   IGetMessagesRequestDto,
   IGetMessagesResponseDto,
   IMessageDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import { Type } from 'class-transformer';
 import { IsNumber, IsOptional, Max, Min } from 'class-validator';
 

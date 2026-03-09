@@ -1,5 +1,5 @@
 {
-  "name": "book-skye-api",
+  "name": "skye-hosts-api",
   "version": "0.0.1",
   "description": "",
   "author": "vndevteam",
@@ -40,7 +40,7 @@
     "@nestjs/schedule": "^6.1.1",
     "@nestjs/typeorm": "^11.0.0",
     "@nestjs/websockets": "^11.1.14",
-    "@repo/book-skye-api-client": "workspace:*",
+    "@repo/skye-hosts-api-client": "workspace:*",
     "@repo/common": "workspace:*",
     "@sentry/nestjs": "^10.39.0",
     "axios": "^1.13.5",

@@ -1,6 +1,6 @@
 'use client';
 
-import { ISignUpRequestDto, fetchApi } from '@repo/book-skye-api-client';
+import { ISignUpRequestDto, fetchApi } from '@repo/skye-hosts-api-client';
 import {
   SignUpForm,
   SignUpFormResult,

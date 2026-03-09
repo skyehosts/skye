@@ -9,7 +9,7 @@ import type {
   IPinSetupResponseDto,
   IRefreshTokenResponseDto,
   IResetPasswordResponseDto,
-} from '@repo/book-skye-api-client';
+} from '@repo/skye-hosts-api-client';
 import {
   AuthenticatedUser,
   IgnoreBearerAuthentication,
