@@ -2,9 +2,9 @@
 General
 =======
 - rename
-  - twilio
   - firebase
   - expo push?
+  - get it all deployed and tested working ok.
 - env plan: Pipeline green, deployed agian
   - ignore test-results
 - Update pre-push to on qa branch only do aws-infra gate

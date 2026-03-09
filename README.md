@@ -4,6 +4,7 @@
 
 ### Infrastructure (manual)
 
+- pnpm --filter=aws-infrastructure bootstrap:production
 - (Browser: heroku.com) Resources -> Addon -> Heroku Postgres -> Essential 0
   - It will automatically attach & sort networking to dyno once deployed)
 - (Local CLI): heroku domains:add api.skyehosts.co.uk --app skye-hosts-{env} #add custom domain to heroku dyno
