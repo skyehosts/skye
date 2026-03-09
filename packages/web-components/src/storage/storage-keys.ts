@@ -1,0 +1,3 @@
+export enum StorageKey {
+  COOKIE_PERMISSION_STATE = 'COOKIE_PERMISSION_STATE',
+}

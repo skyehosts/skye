@@ -1,0 +1,42 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "concurrency": "11",
+  "globalEnv": ["SKYE_ENVIRONMENT", "NODE_ENV"],
+  "tasks": {
+    "clean": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "out/**",
+        "dist/**",
+        "storybook-static/**"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {},
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "test:e2e": {
+      "cache": false
+    },
+    "@repo/book-skye-api#migration:up": {
+      "cache": false
+    },
+    "@repo/book-skye-api#migration:down": {
+      "cache": false
+    },
+    "@repo/book-skye-api#migration:generate": {
+      "cache": false
+    }
+  }
+}

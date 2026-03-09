@@ -1,0 +1,43 @@
+{
+  "name": "@repo/web",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./change-email-subscriptions-wrapper": "./src/wrappers/change-email-subscriptions-wrapper.tsx",
+    "./change-password-form-wrapper": "./src/wrappers/change-password-form-wrapper.tsx",
+    "./config": "./src/auth/config.ts",
+    "./delete-account-form-wrapper": "./src/wrappers/delete-account-form-wrapper.tsx",
+    "./cookie-disclaimer-wrapper": "./src/wrappers/cookie-disclaimer-wrapper.tsx",
+    "./forgot-password-form-wrapper": "./src/wrappers/forgot-password-form-wrapper.tsx",
+    "./login-form-wrapper": "./src/wrappers/login-form-wrapper.tsx",
+    "./reset-password-form-wrapper": "./src/wrappers/reset-password-form-wrapper.tsx",
+    "./sentry": "./src/sentry/index.ts",
+    "./session-provider": "./src/auth/session-provider.tsx",
+    "./types": "./src/auth/types.ts",
+    "./use-auth": "./src/auth/use-auth.ts"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint \"{src,test}/**/*.{ts,tsx}\" --fix",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@repo/book-skye-api-client": "workspace:*",
+    "@repo/web-components": "workspace:^",
+    "next-auth": "^5.0.0-beta.25"
+  },
+  "peerDependencies": {
+    "next": ">=15",
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@swc/jest": "^0.2.39",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.2.4",
+    "jest": "^30.2.0",
+    "typescript": "^5.9.3"
+  }
+}

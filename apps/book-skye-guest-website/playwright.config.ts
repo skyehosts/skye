@@ -1,0 +1,32 @@
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './e2e',
+  testMatch: /\.e2e-spec\.ts$/,
+  globalSetup: '../../packages/book-skye-api-client/src/e2e/global-setup.ts',
+  timeout: 30_000,
+  retries: 1,
+  use: {
+    baseURL: 'http://localhost:4002',
+    headless: true,
+  },
+  webServer: [
+    {
+      command: 'pnpm --filter book-skye-api dev:e2e',
+      port: 3003,
+      reuseExistingServer: true,
+      timeout: 120_000,
+    },
+    {
+      command: 'pnpm dev',
+      port: 4002,
+      reuseExistingServer: true,
+      timeout: 60_000,
+      env: {
+        NEXT_PUBLIC_BOOK_SKYE_API_URL: 'http://localhost:3003',
+        NEXTAUTH_SECRET: 'test-secret',
+        NEXT_PUBLIC_SKYE_ENVIRONMENT: 'local',
+      },
+    },
+  ],
+});

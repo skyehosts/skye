@@ -1,0 +1,32 @@
+import * as dotenv from 'dotenv';
+
+// On local only, this is needed to access ENV vars directly on process.env (without ConfigService as it hasn't initialised yet)
+// In deployed environments, env vars are already injected into process from Heroku
+dotenv.config({ path: constants.envPath });
+
+// Must preceed all except dotenv
+// Deliberately using require not import to prevent hoisting it above dotenv.config
+// as it relies on process.env.BOOK_SKYE_API_SENTRY_DSN
+require('./instrument');
+
+import { Logger } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
+import { Environments } from '@repo/common';
+import { constants } from './constants';
+import { mainConfig } from './main.config';
+import { AppModule } from './modules/app/app.module';
+import { ErrorFormatFilter } from './modules/common/filters';
+
+async function bootstrap() {
+  const isLocal = process.env.SKYE_ENVIRONMENT === Environments.LOCAL;
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalFilters(new ErrorFormatFilter());
+  const logger = new Logger(bootstrap.name);
+  if (!isLocal) {
+    logger.debug('main', 'env vars', process.env);
+  }
+  mainConfig(app);
+  const port = isLocal ? 3003 : parseInt(process.env.PORT, 10);
+  await app.listen(port);
+}
+bootstrap();

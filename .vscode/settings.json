@@ -1,0 +1,15 @@
+{
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/cdk.out": true,
+    "**/.turbo": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/*.js.map": true
+  }
+}

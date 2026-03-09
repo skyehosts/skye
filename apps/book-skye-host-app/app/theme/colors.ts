@@ -1,0 +1,16 @@
+export const colors = {
+  background: "#fff",
+  textPrimary: "#333",
+  textSecondary: "#666",
+  border: "#ddd",
+  danger: "#FF3B30",
+  success: "#34C759",
+  warning: "#FF9500",
+  successBackground: "#EAF7EC",
+  inputBackground: "#F6F6F6",
+  messageSent: "#007AFF",
+  messageReceived: "#E9E9EB",
+  messageSentText: "#fff",
+  messageSentTimestamp: "rgba(255,255,255,0.7)",
+  placeholder: "#f0f0f0",
+} as const;

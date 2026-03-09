@@ -1,0 +1,60 @@
+{
+  "name": "@repo/web-components",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./primitives/button": "./src/primitives/button.tsx",
+    "./primitives/card": "./src/primitives/card.tsx",
+    "./primitives/code": "./src/primitives/code.tsx",
+    "./demo/demo-form": "./src/demo/demo-form.tsx",
+    "./forms/apply-server-errors": "./src/forms/apply-server-errors.ts",
+    "./forms/change-password-form": "./src/forms/change-password-form.tsx",
+    "./forms/forgot-password-form": "./src/forms/forgot-password-form.tsx",
+    "./forms/login-form": "./src/forms/login-form.tsx",
+    "./forms/reset-password-form": "./src/forms/reset-password-form.tsx",
+    "./forms/delete-account-form": "./src/forms/delete-account-form.tsx",
+    "./forms/sign-up-form": "./src/forms/sign-up-form.tsx",
+    "./listings/create-listing-form": "./src/listings/create-listing-form.tsx",
+    "./listings/glamping-info-card": "./src/listings/glamping-info-card.tsx",
+    "./listings/edit-listing-form": "./src/listings/edit-listing-form.tsx",
+    "./listings/host-listings-table": "./src/listings/host-listings-table.tsx",
+    "./navigation/header": "./src/navigation/header.tsx",
+    "./providers/mui-provider": "./src/providers/mui-provider.tsx",
+    "./email-subscriptions/change-email-subscriptions": "./src/email-subscriptions/change-email-subscriptions.tsx",
+    "./cookie-disclaimer/cookie-disclaimer": "./src/cookie-disclaimer/cookie-disclaimer.tsx",
+    "./storage/storage-provider": "./src/storage/storage-provider.tsx",
+    "./storage/storage-keys": "./src/storage/storage-keys.ts",
+    "./storage/storage-config": "./src/storage/storage-config.ts"
+  },
+  "scripts": {
+    "clean": "rm -rf dist",
+    "lint": "eslint \"{src,turbo,test}/**/*.ts\" --fix",
+    "test": "jest",
+    "generate:component": "turbo gen react-component"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@swc/jest": "^0.2.39",
+    "@turbo/gen": "^2.5.2",
+    "@types/eslint": "^9.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.7.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.3",
+    "eslint": "^9.25.1",
+    "jest": "^30.2.0",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.3.8",
+    "@mui/material": "^7.3.8",
+    "@mui/material-nextjs": "^7.3.8",
+    "@mui/x-data-grid": "^8.27.1",
+    "@mui/x-date-pickers": "^8.27.2",
+    "react": "^19.1.0",
+    "react-hook-form": "^7.71.2"
+  }
+}

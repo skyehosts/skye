@@ -1,0 +1,99 @@
+import { CommonActions } from "@react-navigation/native";
+import { Tabs } from "expo-router";
+import { BottomNavigation, Icon } from "react-native-paper";
+import { colors } from "../theme";
+
+export default function TabsLayout() {
+  return (
+    <Tabs
+      tabBar={({ navigation, state, descriptors, insets }) => (
+        <BottomNavigation.Bar
+          navigationState={state}
+          safeAreaInsets={insets}
+          activeColor={colors.textPrimary}
+          inactiveColor={colors.textSecondary}
+          style={{ backgroundColor: colors.background }}
+          onTabPress={({ route, preventDefault }) => {
+            const event = navigation.emit({
+              type: "tabPress",
+              target: route.key,
+              canPreventDefault: true,
+            });
+            if (event.defaultPrevented) {
+              preventDefault();
+            } else {
+              navigation.dispatch({
+                ...CommonActions.navigate(route.name, route.params),
+                target: state.key,
+              });
+            }
+          }}
+          renderIcon={({ route, focused, color }) =>
+            descriptors[route.key].options.tabBarIcon?.({
+              focused,
+              color,
+              size: 24,
+            }) ?? null
+          }
+          getLabelText={({ route }) =>
+            (descriptors[route.key].options.tabBarLabel as string) ??
+            descriptors[route.key].options.title ??
+            route.name
+          }
+        />
+      )}
+      screenOptions={{ headerShown: false }}
+    >
+      <Tabs.Screen
+        name="today"
+        options={{
+          title: "Today",
+          tabBarLabel: "Today",
+          tabBarIcon: ({ color, size }) => (
+            <Icon source="calendar-today" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          title: "Calendar",
+          tabBarLabel: "Calendar",
+          tabBarIcon: ({ color, size }) => (
+            <Icon source="calendar-month" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="listings"
+        options={{
+          title: "Listings",
+          tabBarLabel: "Listings",
+          tabBarIcon: ({ color, size }) => (
+            <Icon source="home-group" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="messages"
+        options={{
+          title: "Messages",
+          tabBarLabel: "Messages",
+          tabBarIcon: ({ color, size }) => (
+            <Icon source="message-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="more"
+        options={{
+          title: "More",
+          tabBarLabel: "More",
+          tabBarIcon: ({ color, size }) => (
+            <Icon source="menu" size={size} color={color} />
+          ),
+        }}
+      />
+    </Tabs>
+  );
+}

@@ -1,0 +1,8 @@
+{
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.(ts|js)$": ["@swc/jest"]
+  },
+  "transformIgnorePatterns": ["node_modules/(?!(next-auth|@auth)/)"],
+  "testEnvironment": "node"
+}

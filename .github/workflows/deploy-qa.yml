@@ -1,0 +1,23 @@
+name: Deploy QA
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - qa
+
+jobs:
+  deploy-infrastructure-qa:
+    name: Deploy AWS Infrastructure (qa)
+    uses: ./.github/workflows/_deploy-aws-infrastructure.yml
+    with:
+      env: qa
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      BOOKINGS_SQS_FORWARDER_SENTRY_DSN:  ${{ vars.BOOKINGS_SQS_FORWARDER_SENTRY_DSN }}
+      CDK_DEPLOY_ACCOUNT: ${{ secrets.CDK_DEPLOY_ACCOUNT }}
+      SCHEDULED_MESSAGES_SQS_FORWARDER_SENTRY_DSN:  ${{ vars.SCHEDULED_MESSAGES_SQS_FORWARDER_SENTRY_DSN }}
+      SQS_FORWARDER_HEADER_NAME: ${{ vars.SQS_FORWARDER_HEADER_NAME }}
+      SQS_FORWARDER_HTTP_SECRET: ${{ secrets.SQS_FORWARDER_HTTP_SECRET }}
+      SQS_FORWARDER_SENTRY_DSN_LAYER_ARN:  ${{ vars.SQS_FORWARDER_SENTRY_DSN_LAYER_ARN }}
