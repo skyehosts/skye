@@ -5,7 +5,7 @@ General
   - ignore test-results
 - Update pre-push to on qa branch only do aws-infra gate
 - Update deploy-prod, to only deploy cdk if there's been a change
-
+- add sentry dsn to expo vars for deployed app?
 =============
 Admin website
 =============
@@ -66,56 +66,13 @@ Logins
 - [Book skye] Aws --> A...[pin]$$$
 - [williamsandonz] Donk...[pin]$
 
-I want to support Expo push notifications. These can be sent in the following scenarios (detailed on /settings/notifications) in host app
-- This includes scheduled and non scheduled messages.
-- I'm thinking best approach is to create a new sqs queue for notifications
-- Pay close attention to scheduled message architecture in book-skye-api, I think it will add notifications to queue inside apps/book-skye-api/src/modules/scheduled-message/providers/scheduled-message-delivery.service.ts
-- The queue will also receive notifications from POST /message onSendMessage handler
-- and in POST /booking/on-sqs-message-for-successful-booking-payment
-- And in future implementations on booking requested, cancelled, etc.
-
-Can you:
-- Review the optimality of my plan, if it doesn't sound like best approach, feel free to change plan and ask me questions
-- Come up with a plan that you think is best and ask me for any major decisions
-- Describe the plan to me
-- Then implement the queue, the boilerplate stuff for expo push notifications
-- Any shared/common services that will needed within Nestjs
-- Code to add items to queue for
-  - POST /booking/on-sqs-message-for-successful-booking-payment
-  - POST /message onSendMessage 
-  - Scheduled message sent
-- Only send push notifications if user has opted in (from /settings/notifications) page
-- Ignore sending email for now.
-- Seutp retry/failurem Deduplication & batching handling you think most appropraite for each situation
-- Create data in db for (if you agree practi practice): Notification history, Notification templates, Device token storage
-- I think deliver() in ScheduledMessageDeliveryService should also be wrapped in a typeorm transaction
-
 ===============
 Pending prompts
 ===============
 - Any major decisions, ask
 - Another another card to bottom of edit listing page in hots app
-- title: Amenities:
-- card content:
-  - Shows first 3 amentities from existing listing data
-  - Each amenitties has:
-    - Icon on left (Choose most appropriate)
-    - Text to the right of icon.
-  - Below the 3, it says '+ 24 more' where 24 is remaining amenities from actual listing data.
-- Tap behaviour: 
-  - Goes to new page with app bar, back button on Left, on right 'Edit button' and a '+' button (Re-use, xtend existing app bar component or styles wher epossible but if best practice is a new component, thats o k)
-  - top of page content has 'Amenities' title and under a p that says 'you've added these to your listing so far:'
-  - Tapping on + icon, opens a modal. In this modal:
-    - all possible amenities categories displayed in a horizontally scrolling list at top, whent apped, it filters vertical list of amenities below
-    - Vertical list of amenities (scrollable) (Use same components if poss as other scrollable lists within app already)
-    - Each amentiies has either a '+' icon on right to add it, or a 'filled circle with tick to indicate its already eadded'
-    - If an amenities with filled circle is tapped, it is unselected
-  - If edit button clicked
-    - Goes to page which only contains vertical scrollale list of amenities, with
-      - '-' unfilled circle icon on left, which tapped, removes amenitiy.
-      - text to right of '-' icon.
-  - Vertically lists amentities (LISTING_AMENITIES_STANDOUT), with ample space between them.
-  - Each amentities has icon on left, text on right
-- Update static list of all possible maneities with this.
-  - Each one belongs to a category and and has an icon (you choose best icon)
-  - Keep in mind there are existing amenities defined in amenities.tsx so may require some consolidation
+- title: Accessibility features
+- Subtext: 'Add details' (if none exist)
+- tap behaviour: new page, with standard app bar, (back button on left)
+- Show title 'Accessibility features' 
+- Don't implement anything else
