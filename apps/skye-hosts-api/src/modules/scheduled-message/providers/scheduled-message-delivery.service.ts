@@ -3,6 +3,8 @@ import { Booking } from '../../booking/entities';
 import { DatabaseService } from '../../common/providers';
 import { Listing } from '../../listing/entities';
 import { Message } from '../../message/entities';
+import { MessageGateway } from '../../message/gateways';
+import { MessageService } from '../../message/providers';
 import { NotificationService } from '../../notification/providers';
 import { MessageLog, ScheduledMessage, SentMessage } from '../entities';
 
@@ -12,6 +14,8 @@ export class ScheduledMessageDeliveryService {
 
   constructor(
     private readonly databaseService: DatabaseService,
+    private readonly messageGateway: MessageGateway,
+    private readonly messageService: MessageService,
     private readonly notificationService: NotificationService,
   ) {}
 
@@ -59,11 +63,12 @@ export class ScheduledMessageDeliveryService {
     const content = scheduledMessage.templateVersion.content;
 
     const queryRunner = await this.databaseService.startTransaction();
+    let savedMessage: Message;
 
     try {
       const manager = queryRunner.manager;
 
-      await manager.getRepository(Message).save({
+      savedMessage = await manager.getRepository(Message).save({
         bookingId: scheduledMessage.bookingId,
         senderId: listing.hostId,
         content,
@@ -100,6 +105,18 @@ export class ScheduledMessageDeliveryService {
     this.logger.debug(
       `Scheduled message #${scheduledMessageId} delivered to booking #${scheduledMessage.bookingId}`,
     );
+
+    // Broadcast via WebSocket after transaction commits
+    const senderName = await this.messageService.getSenderName(listing.hostId);
+
+    this.messageGateway.emitNewMessage(scheduledMessage.bookingId, {
+      id: savedMessage.id,
+      bookingId: scheduledMessage.bookingId,
+      senderId: listing.hostId,
+      senderName,
+      content,
+      createdAt: now,
+    });
 
     // Send push notification after transaction commits (fire-and-forget)
     const booking = await this.databaseService

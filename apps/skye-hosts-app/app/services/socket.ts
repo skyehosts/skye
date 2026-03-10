@@ -14,7 +14,6 @@ export async function getSocket(): Promise<Socket> {
 
   socket = io(`${baseUrl}/messaging`, {
     auth: { token },
-    transports: ["websocket"],
     autoConnect: true,
   });
 
