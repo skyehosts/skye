@@ -9,6 +9,7 @@ interface CreateBookingParams {
   checkInAt: string;
   checkOutAt: string;
   totalPrice: number;
+  isTestBooking?: boolean;
 }
 
 @Injectable()
@@ -44,6 +45,7 @@ export class BookingService {
       await this.scheduledMessageCreationService.createForBooking(
         booking,
         listingWithHost.listing,
+        params.isTestBooking,
       );
 
       await queryRunner.commitTransaction();
