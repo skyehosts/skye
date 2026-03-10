@@ -12,6 +12,30 @@ export interface CreateAuthConfigOptions {
   secret: string;
 }
 
+/**
+ * Per-role refresh state stored on globalThis so it is shared across all
+ * Next.js module layers (RSC, SSR, route-handlers) that may each get their
+ * own copy of the closure created by createAuthConfig().
+ */
+interface RefreshState {
+  promise: Promise<{ accessToken: string; refreshToken: string } | null> | null;
+  lastResult: {
+    accessToken: string;
+    refreshToken: string;
+    consumedRefreshToken: string;
+    timestamp: number;
+  } | null;
+}
+
+const GLOBAL_KEY = "__auth_refresh_state" as const;
+
+function getRefreshState(role: string): RefreshState {
+  const store =
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ((globalThis as any)[GLOBAL_KEY] ??= {} as Record<string, RefreshState>);
+  return (store[role] ??= { promise: null, lastResult: null });
+}
+
 export interface NextAuthRequest extends NextRequest {
   auth: Session | null;
 }
@@ -51,6 +75,8 @@ export function createAuthConfig(
 ): NextAuthConfig {
   const { role, secret } = options;
   const apiUrl = options.apiUrl || getApiBaseUrl();
+
+  const refreshState = getRefreshState(role);
 
   return {
     providers: [
@@ -148,32 +174,77 @@ export function createAuthConfig(
           token.apiTokenExpiry &&
           Date.now() > token.apiTokenExpiry - 60 * 1000
         ) {
-          try {
-            const res = await fetch(`${apiUrl}/auth/refresh`, {
+          // If the refresh token in this request was already consumed by a
+          // previous refresh, reuse the cached result. This is critical because
+          // Server Components run the JWT callback but cannot write the updated
+          // cookie back, so subsequent requests arrive with the old (consumed)
+          // refresh token. Without this check, the API would see refresh-token
+          // reuse and revoke all sessions.
+          const MAX_CACHE_AGE = 5 * 60 * 1000; // 5 minutes hard ceiling
+          if (
+            refreshState.lastResult &&
+            Date.now() - refreshState.lastResult.timestamp < MAX_CACHE_AGE &&
+            (token.refreshToken ===
+              refreshState.lastResult.consumedRefreshToken ||
+              token.refreshToken === refreshState.lastResult.refreshToken)
+          ) {
+            token.apiToken = refreshState.lastResult.accessToken;
+            token.refreshToken = refreshState.lastResult.refreshToken;
+            token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
+            return token;
+          }
+
+          // Deduplicate concurrent in-flight refresh calls
+          const currentRefreshToken = token.refreshToken;
+          if (!refreshState.promise) {
+            refreshState.promise = fetch(`${apiUrl}/auth/refresh`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ refreshToken: token.refreshToken }),
-            });
+              body: JSON.stringify({ refreshToken: currentRefreshToken }),
+            })
+              .then(async (res) => {
+                if (res.ok) {
+                  const data = await res.json();
+                  const payload = data.payload ?? data;
+                  const result = {
+                    accessToken: payload.accessToken as string,
+                    refreshToken: payload.refreshToken as string,
+                  };
+                  // Write cache INSIDE .then() so it is visible to other
+                  // callers before .finally() clears the promise reference.
+                  refreshState.lastResult = {
+                    ...result,
+                    consumedRefreshToken: currentRefreshToken,
+                    timestamp: Date.now(),
+                  };
+                  return result;
+                }
+                return null;
+              })
+              .catch(() => null)
+              .finally(() => {
+                refreshState.promise = null;
+              });
+          }
 
-            if (res.ok) {
-              const data = await res.json();
-              const payload = data.payload ?? data;
-              token.apiToken = payload.accessToken;
-              token.refreshToken = payload.refreshToken;
-              token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
-            } else {
-              // Refresh failed — invalidate session so user is redirected to login
-              token.apiToken = undefined;
-              token.refreshToken = undefined;
-              token.apiTokenExpiry = undefined;
-              return { ...token, id: undefined as unknown as string };
-            }
-          } catch {
-            // Network error during refresh — invalidate session
+          const result = await refreshState.promise;
+
+          if (result) {
+            token.apiToken = result.accessToken;
+            token.refreshToken = result.refreshToken;
+            token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
+          } else if (!refreshState.lastResult) {
             token.apiToken = undefined;
             token.refreshToken = undefined;
             token.apiTokenExpiry = undefined;
             return { ...token, id: undefined as unknown as string };
+          } else {
+            // The promise returned null (e.g. we awaited a stale reference
+            // that was already cleared), but a successful result exists in
+            // the cache from another caller — use it.
+            token.apiToken = refreshState.lastResult.accessToken;
+            token.refreshToken = refreshState.lastResult.refreshToken;
+            token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
           }
         }
 
