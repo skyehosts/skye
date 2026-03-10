@@ -65,6 +65,19 @@ export interface AuthResult {
   signOut: (options?: Record<string, unknown>) => Promise<unknown>;
 }
 
+/** Extract the expiry (ms since epoch) from a JWT's `exp` claim. */
+function getTokenExpiry(accessToken: string): number {
+  try {
+    const base64 = accessToken.split(".")[1] ?? "";
+    const json = globalThis.atob(base64);
+    const payload = JSON.parse(json);
+    return (payload.exp as number) * 1000;
+  } catch {
+    // Fallback: assume 15 minutes from now if token can't be parsed
+    return Date.now() + 15 * 60 * 1000;
+  }
+}
+
 export function createAuth(options: CreateAuthConfigOptions): AuthResult {
   return NextAuth(createAuthConfig(options)) as unknown as AuthResult;
 }
@@ -126,7 +139,9 @@ export function createAuthConfig(
               role: user.role,
               apiToken: accessToken || undefined,
               refreshToken: refreshToken || undefined,
-              apiTokenExpiry: Date.now() + 15 * 60 * 1000,
+              apiTokenExpiry: accessToken
+                ? getTokenExpiry(accessToken)
+                : Date.now() + 15 * 60 * 1000,
             };
           } catch {
             return null;
@@ -168,12 +183,13 @@ export function createAuthConfig(
           token.apiTokenExpiry = user.apiTokenExpiry;
         }
 
-        // Auto-refresh if token expires within 1 minute
-        if (
+        const needsRefresh =
           token.refreshToken &&
           token.apiTokenExpiry &&
-          Date.now() > token.apiTokenExpiry - 60 * 1000
-        ) {
+          Date.now() > token.apiTokenExpiry - 60 * 1000;
+
+        // Auto-refresh if token expires within 1 minute
+        if (needsRefresh) {
           // If the refresh token in this request was already consumed by a
           // previous refresh, reuse the cached result. This is critical because
           // Server Components run the JWT callback but cannot write the updated
@@ -181,7 +197,13 @@ export function createAuthConfig(
           // refresh token. Without this check, the API would see refresh-token
           // reuse and revoke all sessions.
           const MAX_CACHE_AGE = 5 * 60 * 1000; // 5 minutes hard ceiling
+          const cachedTokenExpiry = refreshState.lastResult
+            ? getTokenExpiry(refreshState.lastResult.accessToken)
+            : 0;
+          const cachedTokenStillValid =
+            cachedTokenExpiry > Date.now() + 60 * 1000;
           if (
+            cachedTokenStillValid &&
             refreshState.lastResult &&
             Date.now() - refreshState.lastResult.timestamp < MAX_CACHE_AGE &&
             (token.refreshToken ===
@@ -190,12 +212,14 @@ export function createAuthConfig(
           ) {
             token.apiToken = refreshState.lastResult.accessToken;
             token.refreshToken = refreshState.lastResult.refreshToken;
-            token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
+            token.apiTokenExpiry = getTokenExpiry(
+              refreshState.lastResult.accessToken,
+            );
             return token;
           }
 
           // Deduplicate concurrent in-flight refresh calls
-          const currentRefreshToken = token.refreshToken;
+          const currentRefreshToken = token.refreshToken as string;
           if (!refreshState.promise) {
             refreshState.promise = fetch(`${apiUrl}/auth/refresh`, {
               method: "POST",
@@ -221,7 +245,9 @@ export function createAuthConfig(
                 }
                 return null;
               })
-              .catch(() => null)
+              .catch(() => {
+                return null;
+              })
               .finally(() => {
                 refreshState.promise = null;
               });
@@ -232,8 +258,12 @@ export function createAuthConfig(
           if (result) {
             token.apiToken = result.accessToken;
             token.refreshToken = result.refreshToken;
-            token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
-          } else if (!refreshState.lastResult) {
+            token.apiTokenExpiry = getTokenExpiry(result.accessToken);
+          } else if (
+            !refreshState.lastResult ||
+            getTokenExpiry(refreshState.lastResult.accessToken) <=
+              Date.now() + 60 * 1000
+          ) {
             token.apiToken = undefined;
             token.refreshToken = undefined;
             token.apiTokenExpiry = undefined;
@@ -244,7 +274,9 @@ export function createAuthConfig(
             // the cache from another caller — use it.
             token.apiToken = refreshState.lastResult.accessToken;
             token.refreshToken = refreshState.lastResult.refreshToken;
-            token.apiTokenExpiry = Date.now() + 15 * 60 * 1000;
+            token.apiTokenExpiry = getTokenExpiry(
+              refreshState.lastResult.accessToken,
+            );
           }
         }
 

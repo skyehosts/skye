@@ -12,7 +12,7 @@ export function HeaderWrapper() {
     <Header
       isAuthenticated={isAuthenticated}
       isLoading={isLoading}
-      onLogout={() => signOut()}
+      onLogout={() => signOut({ redirectTo: '/login' })}
       links={isAuthenticated ? authenticatedLinks : []}
     />
   );

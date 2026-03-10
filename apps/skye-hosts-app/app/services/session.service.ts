@@ -19,7 +19,9 @@ import { isTokenExpired } from "./token-utils.service";
 let refreshPromise: Promise<IRefreshTokenResponseDto> | null = null;
 
 export async function refreshSession(): Promise<IRefreshTokenResponseDto> {
-  if (refreshPromise) return refreshPromise;
+  if (refreshPromise) {
+    return refreshPromise;
+  }
 
   refreshPromise = (async () => {
     try {
@@ -52,7 +54,9 @@ export async function refreshSession(): Promise<IRefreshTokenResponseDto> {
 
 export async function ensureValidToken(): Promise<boolean> {
   const token = await getToken();
-  if (!token) return false;
+  if (!token) {
+    return false;
+  }
 
   if (!isTokenExpired(token)) return true;
 

@@ -106,22 +106,27 @@ export class ScheduledMessageDeliveryService {
       `Scheduled message #${scheduledMessageId} delivered to booking #${scheduledMessage.bookingId}`,
     );
 
-    // Broadcast via WebSocket after transaction commits
-    const senderName = await this.messageService.getSenderName(listing.hostId);
-
-    this.messageGateway.emitNewMessage(scheduledMessage.bookingId, {
-      id: savedMessage.id,
-      bookingId: scheduledMessage.bookingId,
-      senderId: listing.hostId,
-      senderName,
-      content,
-      createdAt: now,
-    });
-
-    // Send push notification after transaction commits (fire-and-forget)
+    // Send push notification and broadcast via WebSocket after transaction commits
     const booking = await this.databaseService
       .getRepository(Booking)
       .findOne({ where: { id: scheduledMessage.bookingId } });
+
+    const senderName = await this.messageService.getSenderName(listing.hostId);
+
+    this.messageGateway.emitNewMessage(
+      scheduledMessage.bookingId,
+      {
+        id: savedMessage.id,
+        bookingId: scheduledMessage.bookingId,
+        senderId: listing.hostId,
+        senderName,
+        content,
+        createdAt: now,
+      },
+      booking
+        ? { senderId: listing.hostId, recipientId: booking.guestId }
+        : undefined,
+    );
 
     if (booking) {
       await this.notificationService.send({

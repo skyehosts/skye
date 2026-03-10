@@ -4,17 +4,33 @@ import { useCallback } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 
 export function useAuth() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
 
   const authFetch = useCallback(
     async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
       const res = await fetch(input, init);
       if (res.status === 401 || res.status === 498) {
+        // Token may have expired — trigger a session refresh via NextAuth
+        // and retry once with the new token before signing out.
+        const refreshedSession = await update();
+        if (refreshedSession?.apiToken) {
+          const retryInit = {
+            ...init,
+            headers: {
+              ...init?.headers,
+              Authorization: `Bearer ${refreshedSession.apiToken}`,
+            },
+          };
+          const retryRes = await fetch(input, retryInit);
+          if (retryRes.status !== 401 && retryRes.status !== 498) {
+            return retryRes;
+          }
+        }
         await signOut({ redirectTo: "/login" });
       }
       return res;
     },
-    [],
+    [update],
   );
 
   // The server may return an empty session ({}) when a token refresh fails.

@@ -21,7 +21,7 @@ import { Appbar, Icon } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
 import { fetchApi } from "../services/api";
-import { disconnectSocket, getSocket } from "../services/socket";
+import { getSocket } from "../services/socket";
 import {
   borderRadius,
   colors,
@@ -74,18 +74,22 @@ export default function ConversationScreen() {
 
       socket.on("newMessage", (message: IWsNewMessageEvent) => {
         if (!mounted) return;
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: message.id,
-            bookingId: message.bookingId,
-            senderId: message.senderId,
-            senderName: message.senderName,
-            content: message.content,
-            readAt: null,
-            createdAt: message.createdAt,
-          },
-        ]);
+        if (message.bookingId !== Number(bookingId)) return;
+        setMessages((prev) => {
+          if (prev.some((m) => m.id === message.id)) return prev;
+          return [
+            ...prev,
+            {
+              id: message.id,
+              bookingId: message.bookingId,
+              senderId: message.senderId,
+              senderName: message.senderName,
+              content: message.content,
+              readAt: null,
+              createdAt: message.createdAt,
+            },
+          ];
+        });
 
         if (message.senderId !== user?.id) {
           socket.emit("markRead", { bookingId: Number(bookingId) });
@@ -110,11 +114,10 @@ export default function ConversationScreen() {
 
     return () => {
       mounted = false;
-      getSocket().then((socket) => {
-        socket.emit("leaveBooking", { bookingId: Number(bookingId) });
-        socket.off("newMessage");
-        socket.off("messagesRead");
-        disconnectSocket();
+      getSocket().then((s) => {
+        s.emit("leaveBooking", { bookingId: Number(bookingId) });
+        s.off("newMessage");
+        s.off("messagesRead");
       });
     };
   }, [bookingId, user?.id]);
