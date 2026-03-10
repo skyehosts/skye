@@ -17,11 +17,15 @@ export function useAuth() {
     [],
   );
 
+  // The server may return an empty session ({}) when a token refresh fails.
+  // Guard against status being "authenticated" with no actual user data.
+  const isAuthenticated = status === "authenticated" && !!session?.user?.id;
+
   return {
     session,
     user: session?.user,
     apiToken: session?.apiToken,
-    isAuthenticated: status === "authenticated",
+    isAuthenticated,
     isLoading: status === "loading",
     signIn,
     signOut,
