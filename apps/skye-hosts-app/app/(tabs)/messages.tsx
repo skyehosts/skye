@@ -69,11 +69,28 @@ export default function MessagesScreen() {
   }, [loadConversations]);
 
   useEffect(() => {
+    let isFetchingNewConversation = false;
+
     const unsubMessage = onNewMessage((message) => {
       if (seenMessageIds.current.has(message.id)) return;
       seenMessageIds.current.add(message.id);
 
       setConversations((prev) => {
+        const exists = prev.some((c) => c.bookingId === message.bookingId);
+
+        if (!exists) {
+          if (!isFetchingNewConversation) {
+            isFetchingNewConversation = true;
+            fetchApi<IGetConversationsResponseDto>("/message/conversations")
+              .then((data) => setConversations(data.conversations))
+              .catch(() => {})
+              .finally(() => {
+                isFetchingNewConversation = false;
+              });
+          }
+          return prev;
+        }
+
         const updated = prev.map((c) =>
           c.bookingId === message.bookingId
             ? {

@@ -104,14 +104,39 @@ export default function MessagesClient() {
     });
 
     const seenMessageIds = new Set<number>();
+    let isFetchingNewConversation = false;
 
     socket.on('newMessage', (event: IWsNewMessageEvent) => {
       if (seenMessageIds.has(event.id)) return;
       seenMessageIds.add(event.id);
 
       // Update conversation list
-      setConversations((prev) =>
-        prev
+      setConversations((prev) => {
+        const exists = prev.some((c) => c.bookingId === event.bookingId);
+
+        if (!exists) {
+          if (!isFetchingNewConversation) {
+            isFetchingNewConversation = true;
+            authFetch(`${getApiBaseUrl()}/message/conversations`, {
+              headers: { Authorization: `Bearer ${apiToken}` },
+            })
+              .then((res) => (res.ok ? res.json() : null))
+              .then(
+                (data: { payload: IGetConversationsResponseDto } | null) => {
+                  if (data) {
+                    setConversations(data.payload.conversations);
+                  }
+                },
+              )
+              .catch(() => {})
+              .finally(() => {
+                isFetchingNewConversation = false;
+              });
+          }
+          return prev;
+        }
+
+        return prev
           .map((c) =>
             c.bookingId === event.bookingId
               ? {
@@ -129,8 +154,8 @@ export default function MessagesClient() {
             (a, b) =>
               new Date(b.lastMessageAt).getTime() -
               new Date(a.lastMessageAt).getTime(),
-          ),
-      );
+          );
+      });
 
       // Append to messages if viewing this conversation
       setSelectedBookingId((currentBookingId) => {
