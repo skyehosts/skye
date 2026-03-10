@@ -230,7 +230,11 @@ export default function MessagesClient() {
         );
         if (!res.ok) return;
         const data = (await res.json()) as { payload: IGetMessagesResponseDto };
-        setMessages(data.payload.messages);
+        const sorted = [...data.payload.messages].sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+        );
+        setMessages(sorted);
       } finally {
         setLoadingMessages(false);
       }
@@ -342,7 +346,7 @@ export default function MessagesClient() {
               noWrap
               display="block"
             >
-              {conv.listingTitle}
+              {conv.listingTitle} · #{conv.bookingId}
             </Typography>
             <Box
               sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}
