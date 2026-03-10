@@ -61,7 +61,9 @@ export class ScheduledMessageDeliveryService {
     const queryRunner = await this.databaseService.startTransaction();
 
     try {
-      await this.databaseService.getRepository(Message).save({
+      const manager = queryRunner.manager;
+
+      await manager.getRepository(Message).save({
         bookingId: scheduledMessage.bookingId,
         senderId: listing.hostId,
         content,
@@ -69,7 +71,7 @@ export class ScheduledMessageDeliveryService {
         createdAt: now,
       } as Message);
 
-      await this.databaseService.getRepository(SentMessage).save({
+      await manager.getRepository(SentMessage).save({
         scheduledMessageId,
         renderedContent: content,
         deliveryMetadata: null,
@@ -78,11 +80,9 @@ export class ScheduledMessageDeliveryService {
 
       scheduledMessage.status = 'sent';
       scheduledMessage.updatedAt = now;
-      await this.databaseService
-        .getRepository(ScheduledMessage)
-        .save(scheduledMessage);
+      await manager.getRepository(ScheduledMessage).save(scheduledMessage);
 
-      await this.databaseService.getRepository(MessageLog).save({
+      await manager.getRepository(MessageLog).save({
         scheduledMessageId,
         action: 'sent',
         details: null,
@@ -94,7 +94,7 @@ export class ScheduledMessageDeliveryService {
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
-      await this.databaseService.releaseTransaction();
+      await queryRunner.release();
     }
 
     this.logger.debug(
