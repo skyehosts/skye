@@ -1,11 +1,9 @@
 import type {
   IConversationDto,
   IGetConversationsResponseDto,
-  IWsMessageReadEvent,
-  IWsNewMessageEvent,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -17,8 +15,8 @@ import {
 import { Appbar, Badge, Button } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
+import { useSocket } from "../contexts/socket-context";
 import { fetchApi } from "../services/api";
-import { disconnectSocket, getSocket } from "../services/socket";
 import {
   colors,
   commonStyles,
@@ -44,10 +42,12 @@ function formatRelativeTime(date: Date): string {
 export default function MessagesScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { onNewMessage, onMessagesRead } = useSocket();
   const [conversations, setConversations] = useState<IConversationDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const seenMessageIds = useRef(new Set<number>());
 
   const loadConversations = useCallback(async () => {
     try {
@@ -69,59 +69,47 @@ export default function MessagesScreen() {
   }, [loadConversations]);
 
   useEffect(() => {
-    let mounted = true;
+    const unsubMessage = onNewMessage((message) => {
+      if (seenMessageIds.current.has(message.id)) return;
+      seenMessageIds.current.add(message.id);
 
-    async function connectSocket() {
-      const socket = await getSocket();
-
-      const seenMessageIds = new Set<number>();
-
-      socket.on("newMessage", (message: IWsNewMessageEvent) => {
-        if (!mounted) return;
-        if (seenMessageIds.has(message.id)) return;
-        seenMessageIds.add(message.id);
-
-        setConversations((prev) => {
-          const updated = prev.map((c) =>
-            c.bookingId === message.bookingId
-              ? {
-                  ...c,
-                  lastMessageContent: message.content,
-                  lastMessageAt: message.createdAt,
-                  unreadCount:
-                    message.senderId !== user?.id
-                      ? c.unreadCount + 1
-                      : c.unreadCount,
-                }
-              : c,
-          );
-          return updated.sort(
-            (a, b) =>
-              new Date(b.lastMessageAt).getTime() -
-              new Date(a.lastMessageAt).getTime(),
-          );
-        });
+      setConversations((prev) => {
+        const updated = prev.map((c) =>
+          c.bookingId === message.bookingId
+            ? {
+                ...c,
+                lastMessageContent: message.content,
+                lastMessageAt: message.createdAt,
+                unreadCount:
+                  message.senderId !== user?.id
+                    ? c.unreadCount + 1
+                    : c.unreadCount,
+              }
+            : c,
+        );
+        return updated.sort(
+          (a, b) =>
+            new Date(b.lastMessageAt).getTime() -
+            new Date(a.lastMessageAt).getTime(),
+        );
       });
+    });
 
-      socket.on("messagesRead", (event: IWsMessageReadEvent) => {
-        if (!mounted) return;
-        if (event.readByUserId === user?.id) {
-          setConversations((prev) =>
-            prev.map((c) =>
-              c.bookingId === event.bookingId ? { ...c, unreadCount: 0 } : c,
-            ),
-          );
-        }
-      });
-    }
-
-    connectSocket();
+    const unsubRead = onMessagesRead((event) => {
+      if (event.readByUserId === user?.id) {
+        setConversations((prev) =>
+          prev.map((c) =>
+            c.bookingId === event.bookingId ? { ...c, unreadCount: 0 } : c,
+          ),
+        );
+      }
+    });
 
     return () => {
-      mounted = false;
-      disconnectSocket();
+      unsubMessage();
+      unsubRead();
     };
-  }, [user?.id]);
+  }, [user?.id, onNewMessage, onMessagesRead]);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);

@@ -1,8 +1,6 @@
 import type {
   IGetMessagesResponseDto,
   IMessageDto,
-  IWsMessageReadEvent,
-  IWsNewMessageEvent,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -20,8 +18,8 @@ import {
 import { Appbar, Icon } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
+import { useSocket } from "../contexts/socket-context";
 import { fetchApi } from "../services/api";
-import { getSocket } from "../services/socket";
 import {
   borderRadius,
   colors,
@@ -37,6 +35,14 @@ export default function ConversationScreen() {
     otherPartyName: string;
   }>();
   const { user } = useAuth();
+  const {
+    joinBooking,
+    leaveBooking,
+    sendMessage,
+    markRead,
+    onNewMessage,
+    onMessagesRead,
+  } = useSocket();
 
   const [messages, setMessages] = useState<IMessageDto[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +50,8 @@ export default function ConversationScreen() {
   const [inputText, setInputText] = useState("");
   const [isSending, setIsSending] = useState(false);
   const flatListRef = useRef<FlatList<IMessageDto>>(null);
+
+  const numericBookingId = Number(bookingId);
 
   const loadMessages = useCallback(async () => {
     try {
@@ -63,66 +71,62 @@ export default function ConversationScreen() {
     loadMessages();
   }, [loadMessages]);
 
+  // Join/leave booking room and subscribe to events
   useEffect(() => {
-    let mounted = true;
+    joinBooking(numericBookingId);
+    markRead(numericBookingId);
 
-    async function setupSocket() {
-      const socket = await getSocket();
-
-      socket.emit("joinBooking", { bookingId: Number(bookingId) });
-      socket.emit("markRead", { bookingId: Number(bookingId) });
-
-      socket.on("newMessage", (message: IWsNewMessageEvent) => {
-        if (!mounted) return;
-        if (message.bookingId !== Number(bookingId)) return;
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === message.id)) return prev;
-          return [
-            ...prev,
-            {
-              id: message.id,
-              bookingId: message.bookingId,
-              senderId: message.senderId,
-              senderName: message.senderName,
-              content: message.content,
-              readAt: null,
-              createdAt: message.createdAt,
-            },
-          ];
-        });
-
-        if (message.senderId !== user?.id) {
-          socket.emit("markRead", { bookingId: Number(bookingId) });
-        }
+    const unsubMessage = onNewMessage((message) => {
+      if (message.bookingId !== numericBookingId) return;
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === message.id)) return prev;
+        return [
+          ...prev,
+          {
+            id: message.id,
+            bookingId: message.bookingId,
+            senderId: message.senderId,
+            senderName: message.senderName,
+            content: message.content,
+            readAt: null,
+            createdAt: message.createdAt,
+          },
+        ];
       });
 
-      socket.on("messagesRead", (event: IWsMessageReadEvent) => {
-        if (!mounted) return;
-        if (event.readByUserId !== user?.id) {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.senderId === user?.id && !m.readAt
-                ? { ...m, readAt: new Date() }
-                : m,
-            ),
-          );
-        }
-      });
-    }
+      if (message.senderId !== user?.id) {
+        markRead(numericBookingId);
+      }
+    });
 
-    setupSocket();
+    const unsubRead = onMessagesRead((event) => {
+      if (event.readByUserId !== user?.id) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.senderId === user?.id && !m.readAt
+              ? { ...m, readAt: new Date() }
+              : m,
+          ),
+        );
+      }
+    });
 
     return () => {
-      mounted = false;
-      getSocket().then((s) => {
-        s.emit("leaveBooking", { bookingId: Number(bookingId) });
-        s.off("newMessage");
-        s.off("messagesRead");
-      });
+      leaveBooking(numericBookingId);
+      unsubMessage();
+      unsubRead();
     };
-  }, [bookingId, user?.id]);
+  }, [
+    numericBookingId,
+    user?.id,
+    joinBooking,
+    leaveBooking,
+    markRead,
+    onNewMessage,
+    onMessagesRead,
+  ]);
 
-  const handleSend = useCallback(async () => {
+  const handleSend = useCallback(() => {
     const content = inputText.trim();
     if (!content || isSending) return;
 
@@ -130,17 +134,13 @@ export default function ConversationScreen() {
     setInputText("");
 
     try {
-      const socket = await getSocket();
-      socket.emit("sendMessage", {
-        bookingId: Number(bookingId),
-        content,
-      });
+      sendMessage(numericBookingId, content);
     } catch {
       setInputText(content);
     } finally {
       setIsSending(false);
     }
-  }, [inputText, isSending, bookingId]);
+  }, [inputText, isSending, numericBookingId, sendMessage]);
 
   const formatTime = (date: Date) => {
     const d = new Date(date);
