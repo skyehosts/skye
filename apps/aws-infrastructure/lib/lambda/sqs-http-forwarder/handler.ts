@@ -27,8 +27,6 @@ const rawHandler: SQSHandler = async (event: SQSEvent): Promise<void> => {
 
     console.log(`Processing message ${messageId}`);
 
-    throw new Error("test_sentry_error");
-
     let body: ISqsBookingMessageDto;
     try {
       body = JSON.parse(record.body) as ISqsBookingMessageDto;
