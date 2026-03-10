@@ -1,6 +1,7 @@
 =======
 General
 =======
+- Shift postman to skyehosts email
 - rename
   - Web deployd working ok
   - app working, and prompting for push notif perm
