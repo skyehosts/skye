@@ -9,21 +9,21 @@ export class LoggerService extends ConsoleLogger {
 
   debug(method: string, subject?: string, ...rest: any): void {
     const { classname, combined } = this.parse(method, subject, ...rest);
-    super.debug(combined, classname);
+    super.debug(combined, classname ?? '');
     const userContext = this.getRequestContext();
     // Send to something like Azure application insights?
   }
 
   warn(method: string, subject?: string, ...rest: any): void {
     const { classname, combined } = this.parse(method, subject, ...rest);
-    super.warn(combined, classname);
+    super.warn(combined, classname ?? '');
     const userContext = this.getRequestContext();
     // Send to something like Azure application insights?
   }
 
   error(method: string, subject?: string, ...rest: any): void {
     const { classname, combined, stack } = this.parse(method, subject, ...rest);
-    super.error(combined, stack, classname);
+    super.error(combined, stack, classname ?? '');
     const userContext = this.getRequestContext();
     // Send to something like Azure application insights?
   }

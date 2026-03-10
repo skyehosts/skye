@@ -43,7 +43,6 @@ export class AwsQueueSendMessageService {
   async sendMessage<T>(queueOrTopic: AwsQueueNames, messageBody: T) {
     const queueName = this.getQueueName(queueOrTopic);
     try {
-      console.log('====');
       this.logger.debug(`Attempting to send message to queue ${queueName}`);
       const queueUrl = await this.getQueueUrl(queueName);
 

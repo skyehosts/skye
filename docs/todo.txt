@@ -1,7 +1,12 @@
 =======
 General
 =======
+- SQS 500
+  https://skye-hosts.sentry.io/issues/102231076/?alert_rule_id=449558&alert_timestamp=1773161511414&alert_type=email&environment=qa&notification_uuid=57cf6a85-fcfe-4238-a314-7c2d6740aaef&project=4511015460339792&referrer=alert_email
+- messages page in gust website stalling and doesnt load page sometimes (maybe when token expired)
+- if im on messages page and a message come in on guest website, i dont see it until i refresh
 - Shift postman to skyehosts email
+- Shift stripe to skyehosts email & update secrets
 - rename
   - Web deployd working ok
   - app working, and prompting for push notif perm
@@ -11,6 +16,7 @@ General
 - Update pre-push to on qa branch only do aws-infra gate
 - Update deploy-prod, to only deploy cdk if there's been a change
 - add sentry dsn to expo vars for deployed app?
+
 =============
 Admin website
 =============
@@ -27,7 +33,6 @@ Host App
 ========
 - Listing title, vertical height is too long
 - Test
-  - Scheduled message
   - Notification
 - Login / Sign - up separation in app.
   - Context if you return to app and need login again, it reads as though you need sign up again, need login button
