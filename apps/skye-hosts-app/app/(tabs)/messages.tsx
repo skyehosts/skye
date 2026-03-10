@@ -129,15 +129,20 @@ export default function MessagesScreen() {
     return (
       <TouchableOpacity
         style={styles.conversationRow}
-        onPress={() =>
+        onPress={() => {
+          setConversations((prev) =>
+            prev.map((c) =>
+              c.bookingId === item.bookingId ? { ...c, unreadCount: 0 } : c,
+            ),
+          );
           router.push({
             pathname: "/conversation/[bookingId]",
             params: {
               bookingId: item.bookingId,
               otherPartyName: item.otherPartyName,
             },
-          })
-        }
+          });
+        }}
       >
         <View style={styles.conversationContent}>
           <View style={commonStyles.row}>
