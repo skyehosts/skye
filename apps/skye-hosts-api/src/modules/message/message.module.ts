@@ -10,7 +10,7 @@ import { MessageService } from './providers';
 
 @Module({
   controllers: [MessageController],
-  exports: [],
+  exports: [MessageGateway, MessageService],
   imports: [
     CommonModule,
     ConfigModule,

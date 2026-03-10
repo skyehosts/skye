@@ -1,10 +1,11 @@
 =======
 General
 =======
-- SQS 500
-  https://skye-hosts.sentry.io/issues/102231076/?alert_rule_id=449558&alert_timestamp=1773161511414&alert_type=email&environment=qa&notification_uuid=57cf6a85-fcfe-4238-a314-7c2d6740aaef&project=4511015460339792&referrer=alert_email
+- Scheduled messages should indicate somehow that it is such. Check how AirBnB does it
+- is messages per booking or per guest/host pair. sth possibly not right
 - messages page in gust website stalling and doesnt load page sometimes (maybe when token expired)
 - if im on messages page and a message come in on guest website, i dont see it until i refresh
+- Conversation should show date short hand of booking
 - Shift postman to skyehosts email
 - Shift stripe to skyehosts email & update secrets
 - rename
@@ -34,9 +35,7 @@ Host App
 - Listing title, vertical height is too long
 - Test
   - Notification
-- Login / Sign - up separation in app.
-  - Context if you return to app and need login again, it reads as though you need sign up again, need login button
-  - also i think it asks you to set a pin again?
+- Login / Sign - up separation in app.?
 - deploy to device succesfully via eas / gha
 - Test scheduled messages arriving after booking
 - Notifications (Messages from guest)
@@ -58,8 +57,6 @@ Long term TODOs
 ===============
 - email verification (using same twilio sms service)
 - How can I test host app from my device if not dev API, does it matter?
-- eas build --local
-  - Circumvents free tier and queue wait times of expo distribute costs, by building locally to spot issues
 - Enable tracing for sentry? - Can exceed free tier though...
 - Stripe secret and publishable key on prod are using sandbox creds, need replaced
 - Review const protectedPaths = ['/dashboard', '/bookings', '/account']; in each app

@@ -13,6 +13,7 @@ import {
   useMediaQuery,
 } from '@mui/material';
 import { useAuth } from '@repo/web/use-auth';
+import * as Sentry from '@sentry/nextjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { io, type Socket } from 'socket.io-client';
 import type {
@@ -78,10 +79,29 @@ export default function MessagesClient() {
 
     const socket = io(`${getApiBaseUrl()}/messaging`, {
       auth: { token: apiToken },
-      transports: ['websocket'],
     });
 
     socketRef.current = socket;
+
+    socket.on('connect_error', (err) => {
+      Sentry.captureException(err, { tags: { component: 'messaging-ws' } });
+    });
+
+    socket.on('disconnect', (reason) => {
+      if (reason === 'io server disconnect' || reason === 'transport error') {
+        Sentry.captureMessage(`WebSocket disconnected: ${reason}`, {
+          level: 'warning',
+          tags: { component: 'messaging-ws' },
+        });
+      }
+    });
+
+    socket.io.on('reconnect_failed', () => {
+      Sentry.captureMessage('WebSocket reconnection failed', {
+        level: 'error',
+        tags: { component: 'messaging-ws' },
+      });
+    });
 
     socket.on('newMessage', (event: IWsNewMessageEvent) => {
       // Update conversation list
@@ -176,10 +196,29 @@ export default function MessagesClient() {
       ),
     );
 
-    // Join new room
+    // Join new room — wait for connection if not yet connected
     if (socket) {
-      socket.emit('joinBooking', { bookingId: selectedBookingId });
-      socket.emit('markRead', { bookingId: selectedBookingId });
+      const joinRoom = () => {
+        socket.emit(
+          'joinBooking',
+          { bookingId: selectedBookingId },
+          (ack: { success: boolean; error?: string }) => {
+            if (!ack?.success) {
+              Sentry.captureMessage(
+                `joinBooking failed: ${ack?.error ?? 'unknown'}`,
+                { level: 'error', tags: { component: 'messaging-ws' } },
+              );
+            }
+          },
+        );
+        socket.emit('markRead', { bookingId: selectedBookingId });
+      };
+
+      if (socket.connected) {
+        joinRoom();
+      } else {
+        socket.once('connect', joinRoom);
+      }
     }
 
     const fetchMessages = async () => {
@@ -208,10 +247,18 @@ export default function MessagesClient() {
   const handleSend = () => {
     if (!inputText.trim() || selectedBookingId === null || !socketRef.current)
       return;
-    socketRef.current.emit('sendMessage', {
-      bookingId: selectedBookingId,
-      content: inputText.trim(),
-    });
+    socketRef.current.emit(
+      'sendMessage',
+      { bookingId: selectedBookingId, content: inputText.trim() },
+      (ack: { success: boolean; error?: string }) => {
+        if (!ack?.success) {
+          Sentry.captureMessage(
+            `sendMessage failed: ${ack?.error ?? 'unknown'}`,
+            { level: 'error', tags: { component: 'messaging-ws' } },
+          );
+        }
+      },
+    );
     setInputText('');
   };
 
