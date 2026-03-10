@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { CronJob } from 'cron';
 import { DataSource } from 'typeorm';
 import { AwsQueueSendMessageService } from '../../queue/providers';
 import { AwsQueueNames } from '../../queue/types';
@@ -9,18 +10,31 @@ const BATCH_SIZE = 50;
 const STUCK_JOB_TIMEOUT_MINUTES = 5;
 
 @Injectable()
-export class ScheduledMessageSchedulerService {
+export class ScheduledMessageSchedulerService implements OnModuleInit {
   private readonly logger = new Logger(ScheduledMessageSchedulerService.name);
 
   constructor(
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly queueService: AwsQueueSendMessageService,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
 
+  onModuleInit() {
+    const expression =
+      process.env.SKYE_ENVIRONMENT === 'local'
+        ? '*/30 * * * * *' // every 30s
+        : '0 * * * *'; // every 1h
+
+    const job = CronJob.from({
+      cronTime: expression,
+      onTick: () => this.pollAndDispatch(),
+      start: true,
+    });
+    this.schedulerRegistry.addCronJob('scheduled-message-poll', job);
+    this.logger.debug(`Scheduled message poller registered (${expression})`);
+  }
+
   /** Production: every hour. Local: every 30 seconds. */
-  @Cron(
-    process.env.SKYE_ENVIRONMENT === 'local' ? '*/30 * * * * *' : '0 * * * *',
-  )
   async pollAndDispatch(): Promise<void> {
     this.logger.debug('Scheduled message poll started');
 
