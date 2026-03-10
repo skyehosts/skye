@@ -44,6 +44,7 @@ export class MessageGateway
       const claims = jwt.verify(token, jwtSecret) as unknown as IJwtClaims;
       client.data.userId = claims.sub;
       client.data.userName = claims.name;
+      void client.join(`user:${claims.sub}`);
       this.logger.debug(`Client connected: userId=${claims.sub}`);
     } catch {
       this.logger.warn('Client connected with invalid token, disconnecting');
@@ -104,15 +105,28 @@ export class MessageGateway
         client.data.userId,
       );
 
-      const room = `booking:${data.bookingId}`;
-      this.server.to(room).emit('newMessage', {
+      const messagePayload = {
         id: result.id,
         bookingId: result.bookingId,
         senderId: result.senderId,
         senderName,
         content: result.content,
         createdAt: result.createdAt,
-      });
+      };
+
+      // Emit to booking room (for open conversation screens)
+      const room = `booking:${data.bookingId}`;
+      this.server.to(room).emit('newMessage', messagePayload);
+
+      // Also emit to both participants' user rooms (for conversation list screens)
+      const recipientId = await this.messageService.getRecipientId(
+        data.bookingId,
+        client.data.userId,
+      );
+      this.server
+        .to(`user:${client.data.userId}`)
+        .to(`user:${recipientId}`)
+        .emit('newMessage', messagePayload);
 
       return { success: true };
     } catch (error) {
@@ -160,9 +174,17 @@ export class MessageGateway
       content: string;
       createdAt: Date;
     },
+    participantIds?: { senderId: number; recipientId: number },
   ): void {
     const room = `booking:${bookingId}`;
     this.server.to(room).emit('newMessage', payload);
+
+    if (participantIds) {
+      this.server
+        .to(`user:${participantIds.senderId}`)
+        .to(`user:${participantIds.recipientId}`)
+        .emit('newMessage', payload);
+    }
   }
 
   emitMessagesRead(

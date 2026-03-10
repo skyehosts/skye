@@ -74,8 +74,13 @@ export default function MessagesScreen() {
     async function connectSocket() {
       const socket = await getSocket();
 
+      const seenMessageIds = new Set<number>();
+
       socket.on("newMessage", (message: IWsNewMessageEvent) => {
         if (!mounted) return;
+        if (seenMessageIds.has(message.id)) return;
+        seenMessageIds.add(message.id);
+
         setConversations((prev) => {
           const updated = prev.map((c) =>
             c.bookingId === message.bookingId

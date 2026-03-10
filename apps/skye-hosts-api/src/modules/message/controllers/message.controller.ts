@@ -44,19 +44,22 @@ export class MessageController {
     );
 
     const senderName = await this.messageService.getSenderName(user.sub);
-
-    this.messageGateway.emitNewMessage(body.bookingId, {
-      id: result.id,
-      bookingId: result.bookingId,
-      senderId: result.senderId,
-      senderName,
-      content: result.content,
-      createdAt: result.createdAt,
-    });
-
     const recipientId = await this.messageService.getRecipientId(
       body.bookingId,
       user.sub,
+    );
+
+    this.messageGateway.emitNewMessage(
+      body.bookingId,
+      {
+        id: result.id,
+        bookingId: result.bookingId,
+        senderId: result.senderId,
+        senderName,
+        content: result.content,
+        createdAt: result.createdAt,
+      },
+      recipientId ? { senderId: user.sub, recipientId } : undefined,
     );
 
     if (recipientId) {

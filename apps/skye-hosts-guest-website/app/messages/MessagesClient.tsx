@@ -103,7 +103,12 @@ export default function MessagesClient() {
       });
     });
 
+    const seenMessageIds = new Set<number>();
+
     socket.on('newMessage', (event: IWsNewMessageEvent) => {
+      if (seenMessageIds.has(event.id)) return;
+      seenMessageIds.add(event.id);
+
       // Update conversation list
       setConversations((prev) =>
         prev
