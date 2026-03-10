@@ -28,6 +28,7 @@ interface SuccessfulBookingPaymentMessage extends AwsQueueBaseMessageBody {
     checkInAt: string;
     checkOutAt: string;
     totalPrice: number;
+    isTestBooking?: boolean;
   };
   timestamp: string;
 }
@@ -80,6 +81,7 @@ export class BookingController {
       checkInAt: payload.checkInAt,
       checkOutAt: payload.checkOutAt,
       totalPrice: payload.totalPrice,
+      isTestBooking: payload.isTestBooking,
     });
 
     const bookingWithListing = await this.bookingService.findByIdWithListing(

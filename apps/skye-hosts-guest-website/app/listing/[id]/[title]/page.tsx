@@ -1,9 +1,6 @@
+import { fetchApi, IGetListingResponseDto } from '@repo/skye-hosts-api-client';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  fetchApi,
-  IGetListingResponseDto,
-} from '../../../../../../packages/skye-hosts-api-client/src';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
 

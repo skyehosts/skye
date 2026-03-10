@@ -23,7 +23,7 @@ variable to be accessible inside the app bundle:
 | ------------------------ | ------------------------------ |
 | skye-hosts-guest-website | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
 | skye-glamping-website    | `NEXT_PUBLIC_SKYE_ENVIRONMENT` |
-| skye-hosts-app      | `EXPO_PUBLIC_SKYE_ENVIRONMENT` |
+| skye-hosts-app           | `EXPO_PUBLIC_SKYE_ENVIRONMENT` |
 
 ### apps/skye-hosts-guest-website (`.env.local` for dev, hosting provider for prod)
 

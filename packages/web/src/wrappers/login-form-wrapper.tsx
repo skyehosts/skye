@@ -15,9 +15,13 @@ const ROLE_LABELS: Record<UserRole, string> = {
 
 export interface LoginFormWrapperProps {
   role: UserRole;
+  defaultRedirect?: string;
 }
 
-export function LoginFormWrapper({ role }: LoginFormWrapperProps) {
+export function LoginFormWrapper({
+  role,
+  defaultRedirect = "/dashboard",
+}: LoginFormWrapperProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered") === "true";
@@ -52,7 +56,7 @@ export function LoginFormWrapper({ role }: LoginFormWrapperProps) {
       throw new Error("Invalid email or password");
     }
 
-    const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+    const callbackUrl = searchParams.get("callbackUrl") || defaultRedirect;
     router.push(callbackUrl);
   };
 

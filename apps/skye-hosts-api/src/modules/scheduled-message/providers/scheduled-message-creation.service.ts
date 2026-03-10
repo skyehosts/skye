@@ -12,13 +12,25 @@ import {
   TemplateVersion,
 } from '../entities';
 
+/** Staggered sendAt offsets for test bookings (minutes from now) */
+const TEST_TRIGGER_OFFSETS: Record<TriggerType, number> = {
+  booking_confirmed: 0,
+  before_check_in: 1,
+  before_checkout: 2,
+  after_checkout: 3,
+};
+
 @Injectable()
 export class ScheduledMessageCreationService {
   private readonly logger = new Logger(ScheduledMessageCreationService.name);
 
   constructor(private readonly databaseService: DatabaseService) {}
 
-  async createForBooking(booking: Booking, listing: Listing): Promise<void> {
+  async createForBooking(
+    booking: Booking,
+    listing: Listing,
+    isTestBooking?: boolean,
+  ): Promise<void> {
     const attachments = await this.databaseService
       .getRepository(ListingMessageTemplate)
       .find({ where: { listingId: listing.id } });
@@ -46,6 +58,7 @@ export class ScheduledMessageCreationService {
           booking,
           trigger,
           activeVersion,
+          isTestBooking,
         );
       }
     }
@@ -55,6 +68,7 @@ export class ScheduledMessageCreationService {
     booking: Booking,
     trigger: TemplateTrigger,
     activeVersion: TemplateVersion,
+    isTestBooking?: boolean,
   ): Promise<void> {
     if (!trigger.allowMultiplePerBooking) {
       const existing = await this.databaseService
@@ -70,7 +84,10 @@ export class ScheduledMessageCreationService {
       }
     }
 
-    const sendAt = this.computeSendAt(trigger, booking);
+    const sendAt = isTestBooking
+      ? this.computeTestSendAt(trigger)
+      : this.computeSendAt(trigger, booking);
+
     if (sendAt === null) {
       this.logger.debug(
         `Skipping trigger #${trigger.id} for booking #${booking.id}: sendAt is in the past and sendIfPast = false`,
@@ -120,8 +137,16 @@ export class ScheduledMessageCreationService {
     } as MessageLog);
 
     this.logger.debug(
-      `Scheduled message #${scheduledMessage.id} created for booking #${booking.id}, sendAt: ${sendAt.toISOString()}`,
+      `Scheduled message #${scheduledMessage.id} created for booking #${booking.id}, ` +
+        `trigger=${trigger.triggerType}, sendAt: ${sendAt.toISOString()}` +
+        (isTestBooking ? ' (TEST)' : ''),
     );
+  }
+
+  private computeTestSendAt(trigger: TemplateTrigger): Date {
+    const offsetMinutes =
+      TEST_TRIGGER_OFFSETS[trigger.triggerType as TriggerType] ?? 0;
+    return new Date(Date.now() + offsetMinutes * 60 * 1000);
   }
 
   private computeSendAt(

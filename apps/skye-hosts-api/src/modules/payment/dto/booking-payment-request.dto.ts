@@ -1,5 +1,5 @@
 import { IBookingPaymentRequestDto } from '@repo/skye-hosts-api-client';
-import { IsDateString, IsNumber } from 'class-validator';
+import { IsBoolean, IsDateString, IsNumber, IsOptional } from 'class-validator';
 
 export class BookingPaymentRequestDto implements IBookingPaymentRequestDto {
   @IsNumber()
@@ -16,4 +16,8 @@ export class BookingPaymentRequestDto implements IBookingPaymentRequestDto {
 
   @IsNumber()
   totalPrice: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isTestBooking?: boolean;
 }

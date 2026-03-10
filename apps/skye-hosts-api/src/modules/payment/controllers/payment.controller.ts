@@ -52,6 +52,7 @@ export class PaymentController {
         checkInAt: dto.checkInAt,
         checkOutAt: dto.checkOutAt,
         totalPrice: dto.totalPrice,
+        isTestBooking: dto.isTestBooking ?? false,
       },
       timestamp: new Date().toISOString(),
     });

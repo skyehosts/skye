@@ -17,7 +17,10 @@ export class ScheduledMessageSchedulerService {
     private readonly queueService: AwsQueueSendMessageService,
   ) {}
 
-  @Cron('0 * * * *')
+  /** Production: every hour. Local: every 30 seconds. */
+  @Cron(
+    process.env.SKYE_ENVIRONMENT === 'local' ? '*/30 * * * * *' : '0 * * * *',
+  )
   async pollAndDispatch(): Promise<void> {
     this.logger.debug('Scheduled message poll started');
 
