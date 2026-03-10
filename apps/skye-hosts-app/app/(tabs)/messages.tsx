@@ -152,7 +152,7 @@ export default function MessagesScreen() {
             </Text>
           </View>
           <Text style={styles.listingTitle} numberOfLines={1}>
-            {item.listingTitle}
+            {item.listingTitle} · #{item.bookingId}
           </Text>
           <View style={commonStyles.row}>
             <Text style={styles.lastMessageText} numberOfLines={1}>
