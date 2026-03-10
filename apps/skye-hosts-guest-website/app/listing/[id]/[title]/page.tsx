@@ -23,7 +23,7 @@ export async function generateMetadata({
 }
 
 export default async function ListingPage({ params }: ListingPageProps) {
-  const { id } = await params;
+  const { id, title } = await params;
   const listing = await fetchApi<IGetListingResponseDto>(`/listing/${id}`);
   const session = await auth();
   const guestId = session?.user?.id ? Number(session.user.id) : null;
@@ -33,7 +33,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
       <h1>{listing.title}</h1>
       <pre>{JSON.stringify(listing, null, 2)}</pre>
       {/* TODO: Replace hardcoded values with actual booking form data */}
-      {guestId && (
+      {guestId ? (
         <BookNowButton
           listingId={listing.id}
           guestId={guestId}
@@ -41,6 +41,10 @@ export default async function ListingPage({ params }: ListingPageProps) {
           checkOutAt="2026-04-05"
           totalPrice={500}
         />
+      ) : (
+        <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
+          Log in to book
+        </Link>
       )}
     </div>
   );
