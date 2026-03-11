@@ -5,7 +5,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import {
   AppBar,
   Box,
-  Button,
   CircularProgress,
   Drawer,
   IconButton,
@@ -16,6 +15,7 @@ import {
   ListItemText,
   Stack,
   Toolbar,
+  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 
@@ -74,6 +74,36 @@ function LogoSvg() {
   );
 }
 
+const navLinkSx = (theme: import('@mui/material/styles').Theme) =>
+  ({
+    textDecoration: 'none',
+    color: theme.palette.header.linkText,
+    fontSize: '1rem',
+    fontFamily: theme.typography.fontFamily,
+    fontWeight: 500,
+    px: 1.5,
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      width: 0,
+      height: '3px',
+      backgroundColor: theme.palette.header.linkUnderline,
+      transition: 'width 0.2s ease',
+    },
+    '&:hover::after': {
+      width: '100%',
+    },
+    '&:hover': {
+      color: theme.palette.header.linkTextHover,
+      textDecoration: 'none',
+    },
+  }) as const;
+
 export function Header({
   isAuthenticated,
   isLoading = false,
@@ -103,9 +133,9 @@ export function Header({
       position="static"
       color="default"
       elevation={0}
-      sx={{ backgroundColor: 'white' }}
+      sx={{ bgcolor: 'header.background' }}
     >
-      <Toolbar>
+      <Toolbar disableGutters sx={{ px: 2, alignItems: 'stretch' }}>
         <Link
           href={logoHref}
           sx={{
@@ -113,40 +143,58 @@ export function Header({
             alignItems: 'center',
             textDecoration: 'none',
             flexShrink: 0,
+            mr: 3,
           }}
         >
           <LogoSvg />
         </Link>
 
-        <Box sx={{ flexGrow: 1 }} />
-
-        {/* Desktop navigation */}
+        {/* Desktop navigation links (left-aligned) */}
         <Stack
           direction="row"
-          spacing={1}
-          alignItems="center"
+          spacing={0.5}
+          alignItems="stretch"
           sx={{ display: { xs: 'none', md: 'flex' } }}
         >
           {links.map((link) => (
-            <Button key={link.href} href={link.href} color="inherit">
+            <Link key={link.href} href={link.href} sx={navLinkSx}>
               {link.label}
-            </Button>
+            </Link>
           ))}
+        </Stack>
 
+        <Box sx={{ flexGrow: 1 }} />
+
+        {/* Desktop auth links (right-aligned) */}
+        <Stack
+          direction="row"
+          spacing={1}
+          alignItems="stretch"
+          sx={{ display: { xs: 'none', md: 'flex' } }}
+        >
           {isLoading ? (
             <CircularProgress size={24} />
           ) : isAuthenticated ? (
-            <Button variant="outlined" onClick={onLogout}>
+            <Typography
+              component="button"
+              onClick={onLogout}
+              sx={(theme) => ({
+                ...navLinkSx(theme),
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+              })}
+            >
               Log out
-            </Button>
+            </Typography>
           ) : (
             <>
-              <Button href={authLinks.login.href} color="inherit">
+              <Link href={authLinks.login.href} sx={navLinkSx}>
                 {authLinks.login.label}
-              </Button>
-              <Button href={authLinks.signUp.href} variant="contained">
+              </Link>
+              <Link href={authLinks.signUp.href} sx={navLinkSx}>
                 {authLinks.signUp.label}
-              </Button>
+              </Link>
             </>
           )}
         </Stack>
