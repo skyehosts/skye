@@ -8,7 +8,6 @@ import {
   Link,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -51,7 +50,7 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
 
   if (submitted) {
     return (
-      <Box sx={{ maxWidth: 480 }}>
+      <Box>
         <Alert severity="success" sx={{ mb: 2 }}>
           If an account with that email exists, we have sent a password reset
           link. Please check your inbox.
@@ -62,21 +61,7 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
   }
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(handleFormSubmit)}
-      noValidate
-      sx={{ maxWidth: 480 }}
-    >
-      <Typography variant="h6" mb={1}>
-        Forgot your password?
-      </Typography>
-
-      <Typography variant="body2" color="text.secondary" mb={3}>
-        Enter your email address and we&apos;ll send you a link to reset your
-        password.
-      </Typography>
-
+    <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Stack spacing={3}>
         <TextField
           label="Email"
@@ -99,6 +84,7 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
           type="submit"
           variant="contained"
           disabled={isSubmitting}
+          sx={{ alignSelf: 'flex-start' }}
           startIcon={
             isSubmitting ? <CircularProgress size={16} color="inherit" /> : null
           }

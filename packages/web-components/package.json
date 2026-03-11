@@ -18,6 +18,7 @@
     "./listings/glamping-info-card": "./src/listings/glamping-info-card.tsx",
     "./listings/edit-listing-form": "./src/listings/edit-listing-form.tsx",
     "./listings/host-listings-table": "./src/listings/host-listings-table.tsx",
+    "./layout/form-card": "./src/layout/form-card.tsx",
     "./layout/heading-panel": "./src/layout/heading-panel.tsx",
     "./navigation/header": "./src/navigation/header.tsx",
     "./navigation/footer": "./src/navigation/footer.tsx",

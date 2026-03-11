@@ -75,16 +75,7 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(handleFormSubmit)}
-      noValidate
-      sx={{ maxWidth: 480 }}
-    >
-      <Typography variant="h6" mb={3}>
-        Create your account
-      </Typography>
-
+    <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Stack spacing={3}>
         <TextField
           label="Full name"
@@ -213,6 +204,7 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
           type="submit"
           variant="contained"
           disabled={isSubmitting}
+          sx={{ alignSelf: 'flex-start' }}
           startIcon={
             isSubmitting ? <CircularProgress size={16} color="inherit" /> : null
           }

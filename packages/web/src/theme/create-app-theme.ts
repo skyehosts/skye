@@ -85,6 +85,9 @@ export function createAppTheme({
       header: { ...defaultPalette.header, ...palette?.header },
       footer: { ...defaultPalette.footer, ...palette?.footer },
     },
+    shape: {
+      borderRadius: 4,
+    },
     typography: {
       fontFamily: fontBody,
       h1: { fontFamily: fontHeading, fontStyle: "normal" },

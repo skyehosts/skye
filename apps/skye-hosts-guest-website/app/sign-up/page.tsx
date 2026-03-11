@@ -1,10 +1,10 @@
+import { FormCard } from '@repo/web-components/layout/form-card';
 import { SignUpFormWrapper } from './SignUpFormWrapper';
 
 export default function SignUpPage() {
   return (
-    <main>
-      <h1>Sign up as a guest</h1>
+    <FormCard title="Sign up">
       <SignUpFormWrapper />
-    </main>
+    </FormCard>
   );
 }

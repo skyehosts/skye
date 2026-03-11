@@ -1,13 +1,13 @@
+import { FormCard } from '@repo/web-components/layout/form-card';
 import { Suspense } from 'react';
 import { ResetPasswordFormWrapper } from './ResetPasswordFormWrapper';
 
 export default function ResetPasswordPage() {
   return (
-    <main>
-      <h1>Reset password</h1>
+    <FormCard title="Reset password">
       <Suspense>
         <ResetPasswordFormWrapper />
       </Suspense>
-    </main>
+    </FormCard>
   );
 }
