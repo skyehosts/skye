@@ -18,7 +18,6 @@ export default async function Home() {
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
           gap: '16px',
-          padding: '16px',
         }}
       >
         {data.listings.map((listing) => (
