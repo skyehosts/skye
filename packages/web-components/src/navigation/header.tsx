@@ -36,8 +36,6 @@ export interface HeaderProps {
   };
 }
 
-const MAX_WIDTH = 1200;
-
 function LogoSvg() {
   return (
     <svg
@@ -104,17 +102,10 @@ export function Header({
     <AppBar
       position="static"
       color="default"
-      elevation={1}
+      elevation={0}
       sx={{ backgroundColor: 'white' }}
     >
-      <Toolbar
-        sx={{
-          maxWidth: MAX_WIDTH,
-          width: '100%',
-          mx: 'auto',
-          px: { xs: 2, sm: 3 },
-        }}
-      >
+      <Toolbar>
         <Link
           href={logoHref}
           sx={{

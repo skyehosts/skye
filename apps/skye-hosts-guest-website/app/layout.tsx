@@ -1,3 +1,4 @@
+import Container from '@mui/material/Container';
 import { MuiProvider } from '@repo/web-components/providers/mui-provider';
 import { StorageProvider } from '@repo/web-components/storage/storage-provider';
 import { CookieDisclaimerWrapper } from '@repo/web/cookie-disclaimer-wrapper';
@@ -36,7 +37,7 @@ export default async function RootLayout({
           <StorageProvider>
             <AuthSessionProvider session={session}>
               <HeaderWrapper />
-              {children}
+              <Container maxWidth="lg">{children}</Container>
               <CookieDisclaimerWrapper />
             </AuthSessionProvider>
           </StorageProvider>
