@@ -5,6 +5,9 @@ export interface IConversationDto {
   lastMessageContent: string;
   lastMessageAt: Date;
   unreadCount: number;
+  checkInAt: Date;
+  checkOutAt: Date;
+  bookingStatus: string;
 }
 
 export interface IGetConversationsResponseDto {
