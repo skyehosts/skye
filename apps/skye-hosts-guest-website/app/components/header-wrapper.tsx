@@ -3,7 +3,7 @@
 import { Header } from '@repo/web-components/navigation/header';
 import { useAuth } from '@repo/web/use-auth';
 
-const publicLinks = [{ label: 'Example', href: '/' }];
+const publicLinks = [{ label: 'Listings', href: '/' }];
 
 const authenticatedLinks = [
   ...publicLinks,

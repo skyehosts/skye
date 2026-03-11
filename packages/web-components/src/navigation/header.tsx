@@ -17,6 +17,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
+import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
 export interface HeaderLink {
@@ -74,10 +75,15 @@ function LogoSvg() {
   );
 }
 
-const navLinkSx = (theme: import('@mui/material/styles').Theme) =>
+const navLinkSx = (
+  theme: import('@mui/material/styles').Theme,
+  isActive: boolean,
+) =>
   ({
     textDecoration: 'none',
-    color: theme.palette.header.linkText,
+    color: isActive
+      ? theme.palette.header.linkTextHover
+      : theme.palette.header.linkText,
     fontSize: '1rem',
     fontFamily: theme.typography.fontFamily,
     fontWeight: 500,
@@ -90,13 +96,10 @@ const navLinkSx = (theme: import('@mui/material/styles').Theme) =>
       position: 'absolute',
       bottom: 0,
       left: 0,
-      width: 0,
+      width: isActive ? '100%' : 0,
       height: '3px',
       backgroundColor: theme.palette.header.linkUnderline,
       transition: 'width 0.2s ease',
-    },
-    '&:hover::after': {
-      width: '100%',
     },
     '&:hover': {
       color: theme.palette.header.linkTextHover,
@@ -115,6 +118,7 @@ export function Header({
     signUp: { label: 'Sign up', href: '/sign-up' },
   },
 }: HeaderProps) {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleDrawerToggle = () => {
@@ -156,11 +160,21 @@ export function Header({
           alignItems="stretch"
           sx={{ display: { xs: 'none', md: 'flex' } }}
         >
-          {links.map((link) => (
-            <Link key={link.href} href={link.href} sx={navLinkSx}>
-              {link.label}
-            </Link>
-          ))}
+          {links.map((link) => {
+            const isActive =
+              link.href === '/'
+                ? pathname === '/'
+                : pathname.startsWith(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                sx={(theme) => navLinkSx(theme, isActive)}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </Stack>
 
         <Box sx={{ flexGrow: 1 }} />
@@ -179,7 +193,7 @@ export function Header({
               component="button"
               onClick={onLogout}
               sx={(theme) => ({
-                ...navLinkSx(theme),
+                ...navLinkSx(theme, false),
                 border: 'none',
                 background: 'none',
                 cursor: 'pointer',
@@ -189,10 +203,20 @@ export function Header({
             </Typography>
           ) : (
             <>
-              <Link href={authLinks.login.href} sx={navLinkSx}>
+              <Link
+                href={authLinks.login.href}
+                sx={(theme) =>
+                  navLinkSx(theme, pathname === authLinks.login.href)
+                }
+              >
                 {authLinks.login.label}
               </Link>
-              <Link href={authLinks.signUp.href} sx={navLinkSx}>
+              <Link
+                href={authLinks.signUp.href}
+                sx={(theme) =>
+                  navLinkSx(theme, pathname === authLinks.signUp.href)
+                }
+              >
                 {authLinks.signUp.label}
               </Link>
             </>
