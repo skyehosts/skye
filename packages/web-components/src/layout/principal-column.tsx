@@ -14,8 +14,6 @@ export function PrincipalColumn({ children, sx }: PrincipalColumnProps) {
       sx={[
         {
           mx: 'auto',
-          textAlign: 'center',
-          justifyContent: 'center',
           display: 'flex',
           flexDirection: 'column',
           fontSize: {

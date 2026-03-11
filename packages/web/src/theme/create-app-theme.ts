@@ -48,13 +48,13 @@ declare module "@mui/material/styles" {
 const defaultPalette: PaletteOptions = {
   brand: {
     primary: "#1976d2",
-    accent: "#00bcd4",
+    accent: "#1eb9d6",
   },
   header: {
     background: "#ffffff",
     linkText: "#333333",
     linkTextHover: "#000000",
-    linkUnderline: "#00bcd4",
+    linkUnderline: "#1eb9d6",
   },
   footer: {
     background: "#0f2105",

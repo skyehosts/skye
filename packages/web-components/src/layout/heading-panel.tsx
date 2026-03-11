@@ -17,6 +17,7 @@ export function HeadingPanel({ title, component = 'h1' }: HeadingPanelProps) {
         return {
           pt: { xs: '40px', md: '55px' },
           pb: '38px',
+          mb: '40px',
           textAlign: 'center',
           borderBottom: 1,
           borderColor: 'divider',
