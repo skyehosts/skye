@@ -40,9 +40,9 @@ export interface HeaderProps {
 function LogoSvg() {
   return (
     <svg
-      width="120"
+      width="135"
       height="32"
-      viewBox="0 0 120 32"
+      viewBox="0 0 135 32"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -69,7 +69,7 @@ function LogoSvg() {
         fontWeight="700"
         fill="#1976d2"
       >
-        skyehosts
+        SkyeHosts
       </text>
     </svg>
   );
