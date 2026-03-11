@@ -1,10 +1,10 @@
+import { FormCard } from '@repo/web-components/layout/form-card';
 import { ForgotPasswordFormWrapper } from './ForgotPasswordFormWrapper';
 
 export default function ForgotPasswordPage() {
   return (
-    <main>
-      <h1>Forgot password</h1>
+    <FormCard title="Forgot password">
       <ForgotPasswordFormWrapper />
-    </main>
+    </FormCard>
   );
 }

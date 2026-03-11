@@ -1,13 +1,13 @@
+import { FormCard } from '@repo/web-components/layout/form-card';
 import { Suspense } from 'react';
 import { LoginFormWrapper } from './LoginFormWrapper';
 
 export default function LoginPage() {
   return (
-    <main>
-      <h1>Log in</h1>
+    <FormCard title="Log in">
       <Suspense>
         <LoginFormWrapper />
       </Suspense>
-    </main>
+    </FormCard>
   );
 }

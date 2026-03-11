@@ -7,7 +7,6 @@ import {
   CircularProgress,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -55,30 +54,15 @@ export function ResetPasswordForm({
 
   if (tokenMissing) {
     return (
-      <Box sx={{ maxWidth: 480 }}>
-        <Alert severity="error">
-          Invalid or missing reset token. Please request a new password reset
-          link.
-        </Alert>
-      </Box>
+      <Alert severity="error">
+        Invalid or missing reset token. Please request a new password reset
+        link.
+      </Alert>
     );
   }
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(handleFormSubmit)}
-      noValidate
-      sx={{ maxWidth: 480 }}
-    >
-      <Typography variant="h6" mb={1}>
-        Reset your password
-      </Typography>
-
-      <Typography variant="body2" color="text.secondary" mb={3}>
-        Enter your new password below.
-      </Typography>
-
+    <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Stack spacing={3}>
         <TextField
           label="New password"
@@ -129,6 +113,7 @@ export function ResetPasswordForm({
           type="submit"
           variant="contained"
           disabled={isSubmitting}
+          sx={{ alignSelf: 'flex-start' }}
           startIcon={
             isSubmitting ? <CircularProgress size={16} color="inherit" /> : null
           }

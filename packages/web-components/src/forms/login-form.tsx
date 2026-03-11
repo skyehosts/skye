@@ -8,7 +8,6 @@ import {
   Link,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -51,16 +50,7 @@ export function LoginForm({ onSubmit, infoMessage }: LoginFormProps) {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(handleFormSubmit)}
-      noValidate
-      sx={{ maxWidth: 480 }}
-    >
-      <Typography variant="h6" mb={3}>
-        Log in to your account
-      </Typography>
-
+    <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} noValidate>
       <Stack spacing={3}>
         {infoMessage && <Alert severity="info">{infoMessage}</Alert>}
 
@@ -96,6 +86,7 @@ export function LoginForm({ onSubmit, infoMessage }: LoginFormProps) {
           type="submit"
           variant="contained"
           disabled={isSubmitting}
+          sx={{ alignSelf: 'flex-start' }}
           startIcon={
             isSubmitting ? <CircularProgress size={16} color="inherit" /> : null
           }
@@ -104,9 +95,9 @@ export function LoginForm({ onSubmit, infoMessage }: LoginFormProps) {
         </Button>
 
         <Stack direction="row" justifyContent="space-between">
-          <Typography variant="body2">
-            Don&apos;t have an account? <Link href="/sign-up">Sign up</Link>
-          </Typography>
+          <Link href="/sign-up" variant="body2">
+            Don&apos;t have an account? Sign up
+          </Link>
           <Link href="/forgot-password" variant="body2">
             Forgot password?
           </Link>
