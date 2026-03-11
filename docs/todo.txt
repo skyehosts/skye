@@ -1,6 +1,7 @@
 =======
 General
 =======
+- flex-grow on <main not working>
 - Scheduled messages should indicate somehow that it is such. Check how AirBnB does it. maybe not in thread at all?
 - Shift postman to skyehosts email
 - Shift stripe to skyehosts email & update secrets

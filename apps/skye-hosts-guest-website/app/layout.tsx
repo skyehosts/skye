@@ -46,6 +46,7 @@ export default async function RootLayout({
                     display: 'flex',
                     flexDirection: 'column',
                     minHeight: '100vh',
+                    bgcolor: 'mainBackground',
                   }}
                 >
                   <HeaderWrapper />

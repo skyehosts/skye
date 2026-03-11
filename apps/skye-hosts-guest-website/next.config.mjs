@@ -12,6 +12,12 @@ const nextConfig = {
     unoptimized: true,
   },
   outputFileTracingRoot: monorepoRoot,
+  compiler: {
+    emotion: {
+      autoLabel: 'dev-only',
+      labelFormat: '[dirname]--[local]',
+    },
+  },
   turbopack: {
     root: monorepoRoot,
   }
