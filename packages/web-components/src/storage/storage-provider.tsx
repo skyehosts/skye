@@ -16,6 +16,7 @@ type StorageContextValue = {
   get: <T>(key: StorageKey) => T;
   set: <T>(key: StorageKey, value: T) => void;
   remove: (key: StorageKey) => void;
+  isHydrated: boolean;
 };
 
 const StorageContext = createContext<StorageContextValue | null>(null);
@@ -35,6 +36,7 @@ export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   const hydrated = useRef(false);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     if (hydrated.current) return;
@@ -52,6 +54,7 @@ export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({
     }
 
     setState(hydratedState);
+    setIsHydrated(true);
   }, []);
 
   const set = <T,>(key: StorageKey, value: T) => {
@@ -85,7 +88,7 @@ export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   return (
-    <StorageContext.Provider value={{ get, set, remove }}>
+    <StorageContext.Provider value={{ get, set, remove, isHydrated }}>
       {children}
     </StorageContext.Provider>
   );

@@ -14,12 +14,12 @@ export interface CookieDisclaimerProps {
 }
 
 export function CookieDisclaimer({ onResponse }: CookieDisclaimerProps) {
-  const { get, set } = useStorage();
+  const { get, set, isHydrated } = useStorage();
   const [submitting, setSubmitting] = useState(false);
 
   const state = get<CookiePermissionState>(StorageKey.COOKIE_PERMISSION_STATE);
 
-  if (state !== 'unanswered') return null;
+  if (!isHydrated || state !== 'unanswered') return null;
 
   const handleResponse = async (accepted: boolean) => {
     setSubmitting(true);
