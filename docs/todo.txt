@@ -1,14 +1,7 @@
 =======
 General
 =======
-- web socket fix seeing messages from other conversations or whilst in convo list, in app.
-  ( Same fixes from guest website need appplied )
-- Scheduled messages should indicate somehow that it is such. Check how AirBnB does it
-- is messages per booking or per guest/host pair. sth possibly not right
-- messages page in gust website stalling and doesnt load page sometimes (maybe when token expired)
-  - test?
-- if im on messages page and a message come in on guest website, i dont see it until i refresh
-- Conversation should show date short hand of booking
+- Scheduled messages should indicate somehow that it is such. Check how AirBnB does it. maybe not in thread at all?
 - Shift postman to skyehosts email
 - Shift stripe to skyehosts email & update secrets
 - rename

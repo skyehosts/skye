@@ -2,6 +2,7 @@ import type {
   IGetMessagesResponseDto,
   IMessageDto,
 } from "../../../../packages/skye-hosts-api-client/src";
+import { formatShortDateRange } from "@repo/web/format-short-date-range";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -24,15 +25,27 @@ import {
   borderRadius,
   colors,
   commonStyles,
+  fontWeight,
   spacing,
   typography,
 } from "../theme";
 
 export default function ConversationScreen() {
   const router = useRouter();
-  const { bookingId, otherPartyName } = useLocalSearchParams<{
+  const {
+    bookingId,
+    otherPartyName,
+    listingTitle,
+    checkInAt,
+    checkOutAt,
+    bookingStatus,
+  } = useLocalSearchParams<{
     bookingId: string;
     otherPartyName: string;
+    listingTitle: string;
+    checkInAt: string;
+    checkOutAt: string;
+    bookingStatus: string;
   }>();
   const { user } = useAuth();
   const {
@@ -195,10 +208,45 @@ export default function ConversationScreen() {
 
   return (
     <ScreenContainer>
-      <Appbar.Header>
+      <View style={styles.header}>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title={otherPartyName ?? "Conversation"} />
-      </Appbar.Header>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerName}>
+            {otherPartyName ?? "Conversation"}
+          </Text>
+          <Text style={styles.headerSubtitle} numberOfLines={1}>
+            {checkInAt && checkOutAt
+              ? formatShortDateRange(checkInAt, checkOutAt)
+              : ""}
+            {listingTitle ? ` - ${listingTitle}` : ""}
+          </Text>
+          {bookingStatus && (
+            <View style={styles.headerStatusRow}>
+              <View
+                style={[
+                  styles.headerStatusDot,
+                  {
+                    backgroundColor:
+                      bookingStatus === "confirmed"
+                        ? colors.success
+                        : bookingStatus === "cancelled"
+                          ? colors.danger
+                          : colors.warning,
+                  },
+                ]}
+              />
+              <Text style={styles.headerStatusText}>
+                {bookingStatus === "confirmed"
+                  ? "Confirmed"
+                  : bookingStatus === "cancelled"
+                    ? "Cancelled"
+                    : "Requested"}
+              </Text>
+            </View>
+          )}
+        </View>
+        <View style={{ width: 48 }} />
+      </View>
 
       <KeyboardAvoidingView
         style={commonStyles.flex}
@@ -265,6 +313,44 @@ export default function ConversationScreen() {
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.background,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  headerCenter: {
+    flex: 1,
+    alignItems: "center",
+    gap: 2,
+    paddingHorizontal: spacing.xs,
+  },
+  headerName: {
+    fontSize: typography.md,
+    fontWeight: fontWeight.bold,
+    color: colors.textPrimary,
+  },
+  headerSubtitle: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
+  headerStatusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  headerStatusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  headerStatusText: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
   messagesContent: {
     padding: spacing.md,
     flexGrow: 1,

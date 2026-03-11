@@ -2,6 +2,7 @@ import type {
   IConversationDto,
   IGetConversationsResponseDto,
 } from "../../../../packages/skye-hosts-api-client/src";
+import { formatShortDateRange } from "@repo/web/format-short-date-range";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -150,6 +151,10 @@ export default function MessagesScreen() {
             params: {
               bookingId: item.bookingId,
               otherPartyName: item.otherPartyName,
+              listingTitle: item.listingTitle,
+              checkInAt: new Date(item.checkInAt).toISOString(),
+              checkOutAt: new Date(item.checkOutAt).toISOString(),
+              bookingStatus: item.bookingStatus,
             },
           });
         }}
@@ -161,14 +166,51 @@ export default function MessagesScreen() {
               numberOfLines={1}
             >
               {item.otherPartyName}
+              <Text style={styles.listingTitleInline}>
+                {" "}
+                · {item.listingTitle}
+              </Text>
             </Text>
             <Text style={styles.timeText}>
               {formatRelativeTime(item.lastMessageAt)}
             </Text>
           </View>
-          <Text style={styles.listingTitle} numberOfLines={1}>
-            {item.listingTitle} · #{item.bookingId}
-          </Text>
+          <View style={styles.statusRow}>
+            {item.bookingStatus === "confirmed" && (
+              <View style={styles.statusBadge}>
+                <View
+                  style={[
+                    styles.statusDot,
+                    { backgroundColor: colors.success },
+                  ]}
+                />
+                <Text style={styles.statusText}>Confirmed</Text>
+              </View>
+            )}
+            {item.bookingStatus === "requested" && (
+              <View style={styles.statusBadge}>
+                <View
+                  style={[
+                    styles.statusDot,
+                    { backgroundColor: colors.warning },
+                  ]}
+                />
+                <Text style={styles.statusText}>Requested</Text>
+              </View>
+            )}
+            {item.bookingStatus === "cancelled" && (
+              <View style={styles.statusBadge}>
+                <View
+                  style={[styles.statusDot, { backgroundColor: colors.danger }]}
+                />
+                <Text style={styles.statusText}>Cancelled</Text>
+              </View>
+            )}
+            <Text style={styles.listingTitle} numberOfLines={1}>
+              {formatShortDateRange(item.checkInAt, item.checkOutAt)} · #
+              {item.bookingId}
+            </Text>
+          </View>
           <View style={commonStyles.row}>
             <Text style={styles.lastMessageText} numberOfLines={1}>
               {item.lastMessageContent}
@@ -256,9 +298,33 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     marginLeft: spacing.sm,
   },
+  statusRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusText: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
   listingTitle: {
     fontSize: typography.sm,
     color: colors.textSecondary,
+  },
+  listingTitleInline: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    fontWeight: "normal",
   },
   lastMessageText: {
     fontSize: typography.sm,

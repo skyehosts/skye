@@ -10,6 +10,9 @@ export class ConversationDto implements IConversationDto {
   lastMessageContent: string;
   lastMessageAt: Date;
   unreadCount: number;
+  checkInAt: Date;
+  checkOutAt: Date;
+  bookingStatus: string;
 }
 
 export class GetConversationsResponseDto implements IGetConversationsResponseDto {

@@ -14,7 +14,8 @@
     "./sentry": "./src/sentry/index.ts",
     "./session-provider": "./src/auth/session-provider.tsx",
     "./types": "./src/auth/types.ts",
-    "./use-auth": "./src/auth/use-auth.ts"
+    "./use-auth": "./src/auth/use-auth.ts",
+    "./format-short-date-range": "./src/utils/format-short-date-range.ts"
   },
   "scripts": {
     "clean": "rm -rf dist",
@@ -24,6 +25,7 @@
   "dependencies": {
     "@repo/skye-hosts-api-client": "workspace:*",
     "@repo/web-components": "workspace:^",
+    "date-fns": "^4.1.0",
     "next-auth": "^5.0.0-beta.25"
   },
   "peerDependencies": {

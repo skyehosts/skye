@@ -12,6 +12,7 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material';
+import { formatShortDateRange } from '@repo/web/format-short-date-range';
 import { useAuth } from '@repo/web/use-auth';
 import * as Sentry from '@sentry/nextjs';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -65,6 +66,10 @@ export default function MessagesClient() {
           payload: IGetConversationsResponseDto;
         };
         setConversations(data.payload.conversations);
+        const first = data.payload.conversations[0];
+        if (first) {
+          setSelectedBookingId((prev) => prev ?? first.bookingId);
+        }
       } finally {
         setLoadingConversations(false);
       }
@@ -303,6 +308,33 @@ export default function MessagesClient() {
     }
   };
 
+  const statusConfig: Record<string, { color: string; label: string }> = {
+    confirmed: { color: 'success.main', label: 'Confirmed' },
+    requested: { color: 'warning.main', label: 'Requested' },
+    cancelled: { color: 'error.main', label: 'Cancelled' },
+  };
+
+  const statusBadge = (status: string) => {
+    const config = statusConfig[status];
+    if (!config) return null;
+    return (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: config.color,
+            flexShrink: 0,
+          }}
+        />
+        <Typography variant="caption" color="text.secondary">
+          {config.label}
+        </Typography>
+      </Box>
+    );
+  };
+
   const formatTime = (date: Date | string) => {
     const d = new Date(date);
     const now = new Date();
@@ -361,6 +393,14 @@ export default function MessagesClient() {
             >
               <Typography variant="subtitle2" noWrap sx={{ flex: 1 }}>
                 {conv.otherPartyName}
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ ml: 0.75 }}
+                >
+                  · {conv.listingTitle}
+                </Typography>
               </Typography>
               <Typography
                 variant="caption"
@@ -370,14 +410,13 @@ export default function MessagesClient() {
                 {formatTime(conv.lastMessageAt)}
               </Typography>
             </Box>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              noWrap
-              display="block"
-            >
-              {conv.listingTitle} · #{conv.bookingId}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+              {statusBadge(conv.bookingStatus)}
+              <Typography variant="caption" color="text.secondary" noWrap>
+                {formatShortDateRange(conv.checkInAt, conv.checkOutAt)} · #
+                {conv.bookingId}
+              </Typography>
+            </Box>
             <Box
               sx={{ display: 'flex', justifyContent: 'space-between', mt: 0.5 }}
             >
@@ -429,7 +468,7 @@ export default function MessagesClient() {
             <ArrowBackIcon />
           </IconButton>
         )}
-        <Box>
+        <Box sx={{ flex: 1 }}>
           <Typography variant="subtitle1">
             {selectedConversation?.otherPartyName}
           </Typography>
@@ -437,6 +476,31 @@ export default function MessagesClient() {
             {selectedConversation?.listingTitle}
           </Typography>
         </Box>
+        {!isDesktop && (
+          <Box sx={{ textAlign: 'right' }}>
+            {selectedConversation && (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  gap: 0.5,
+                  mb: 0.25,
+                }}
+              >
+                {statusBadge(selectedConversation.bookingStatus)}
+              </Box>
+            )}
+            {selectedConversation && (
+              <Typography variant="caption" color="text.secondary">
+                {formatShortDateRange(
+                  selectedConversation.checkInAt,
+                  selectedConversation.checkOutAt,
+                )}
+              </Typography>
+            )}
+          </Box>
+        )}
       </Box>
 
       {/* Messages area */}
