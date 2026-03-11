@@ -20,6 +20,7 @@
     "./listings/host-listings-table": "./src/listings/host-listings-table.tsx",
     "./layout/form-card": "./src/layout/form-card.tsx",
     "./layout/heading-panel": "./src/layout/heading-panel.tsx",
+    "./layout/principal-column": "./src/layout/principal-column.tsx",
     "./navigation/header": "./src/navigation/header.tsx",
     "./navigation/footer": "./src/navigation/footer.tsx",
     "./providers/mui-provider": "./src/providers/mui-provider.tsx",
