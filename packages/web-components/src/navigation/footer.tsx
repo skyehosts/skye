@@ -27,7 +27,7 @@ export function Footer({
       sx={{
         bgcolor: 'footer.background',
         color: 'footer.text',
-        mt: 'auto',
+        mt: '50px',
         py: 4,
         px: 3,
       }}
