@@ -607,6 +607,8 @@ export default function MessagesClient() {
         display: 'flex',
         height: 'calc(100vh - 64px)',
         overflow: 'hidden',
+        ml: (theme) => `-${theme.spacing(2)}`,
+        mr: (theme) => `-${theme.spacing(2)}`,
       }}
     >
       {showList && conversationList}
