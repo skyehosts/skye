@@ -3,7 +3,12 @@
 import { Header } from '@repo/web-components/navigation/header';
 import { useAuth } from '@repo/web/use-auth';
 
-const authenticatedLinks = [{ label: 'Messages', href: '/messages' }];
+const publicLinks = [{ label: 'Example', href: '/' }];
+
+const authenticatedLinks = [
+  ...publicLinks,
+  { label: 'Messages', href: '/messages' },
+];
 
 export function HeaderWrapper() {
   const { isAuthenticated, isLoading, signOut } = useAuth();
@@ -13,7 +18,7 @@ export function HeaderWrapper() {
       isAuthenticated={isAuthenticated}
       isLoading={isLoading}
       onLogout={() => signOut({ redirectTo: '/login' })}
-      links={isAuthenticated ? authenticatedLinks : []}
+      links={isAuthenticated ? authenticatedLinks : publicLinks}
     />
   );
 }
