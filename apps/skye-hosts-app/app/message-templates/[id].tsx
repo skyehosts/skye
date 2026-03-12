@@ -1,3 +1,5 @@
+// TODO: In future, support injecting {{wifiNetwork}} and {{wifiPassword}} as template variables
+// so hosts can reference the listing's Wi-Fi credentials in automated messages.
 import type {
   ICreateMessageTemplateRequestDto,
   IGetHostListingsResponseDto,
@@ -7,7 +9,6 @@ import type {
   TriggerType,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { TRIGGER_TYPE_LABELS } from "../../../../packages/skye-hosts-api-client/src";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -31,6 +32,7 @@ import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 interface FormValues {
   name: string;
@@ -143,12 +145,7 @@ export default function MessageTemplateFormScreen() {
       router.back();
     } catch (e) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (applyServerErrors(e, setError as any)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
-      );
+      handleFormError(e, setError as any, setServerError);
     }
   };
 

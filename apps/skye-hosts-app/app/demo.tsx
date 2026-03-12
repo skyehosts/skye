@@ -25,7 +25,6 @@ import {
   TextInput,
 } from "react-native-paper";
 import { AppSnackbar } from "./components/app-snackbar";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { ScreenContainer } from "./components/screen-container";
 import { fetchApi } from "./services/api";
 import {
@@ -36,6 +35,7 @@ import {
   spacing,
   typography,
 } from "./theme";
+import { handleFormError } from "./utils/form-error-handler";
 
 interface DemoFormValues {
   name: string;
@@ -108,12 +108,7 @@ export default function DemoScreen() {
       });
       setResult(response);
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
-      );
+      handleFormError(e, setError, setServerError);
     }
   };
 

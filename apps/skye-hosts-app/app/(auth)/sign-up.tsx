@@ -4,10 +4,10 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { ScreenContainer } from "../components/screen-container";
 import { phoneLookup, requestOtp } from "../services/auth.service";
 import { colors, commonStyles, spacing } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 interface SignUpFormValues {
   name: string;
@@ -50,12 +50,7 @@ export default function SignUpScreen() {
         });
       }
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
-      );
+      handleFormError(e, setError, setServerError);
     }
   };
 
@@ -68,12 +63,7 @@ export default function SignUpScreen() {
         params: { phoneNumber: data.phoneNumber, name: data.name },
       });
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Failed to send verification code. Please try again.",
-      );
+      handleFormError(e, setError, setServerError);
     }
   };
 
@@ -155,7 +145,9 @@ export default function SignUpScreen() {
               mode="contained"
               onPress={onPhoneContinue}
               loading={isSubmitting}
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting || phoneNumber.replace(/\s/g, "").length < 10
+              }
             >
               Continue
             </Button>

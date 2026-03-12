@@ -138,6 +138,9 @@ export class ListingService {
       checkInTimeStart: listing.checkInTimeStart,
       checkInTimeEnd: listing.checkInTimeEnd,
       checkOutTime: listing.checkOutTime,
+      directions: listing.directions,
+      wifiNetwork: listing.wifiNetwork,
+      wifiPassword: listing.wifiPassword,
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
@@ -190,6 +193,12 @@ export class ListingService {
       listing.checkInTimeEnd = dto.checkInTimeEnd ?? null;
     if (dto.checkOutTime !== undefined)
       listing.checkOutTime = dto.checkOutTime ?? null;
+    if (dto.directions !== undefined)
+      listing.directions = dto.directions ?? null;
+    if (dto.wifiNetwork !== undefined)
+      listing.wifiNetwork = dto.wifiNetwork ?? null;
+    if (dto.wifiPassword !== undefined)
+      listing.wifiPassword = dto.wifiPassword ?? null;
     if (dto.status !== undefined) listing.status = dto.status;
     listing.updatedAt = new Date();
 
@@ -224,6 +233,9 @@ export class ListingService {
       checkInTimeStart: updated.checkInTimeStart,
       checkInTimeEnd: updated.checkInTimeEnd,
       checkOutTime: updated.checkOutTime,
+      directions: updated.directions,
+      wifiNetwork: updated.wifiNetwork,
+      wifiPassword: updated.wifiPassword,
       status: updated.status,
       createdAt: updated.createdAt,
       updatedAt: updated.updatedAt,

@@ -35,5 +35,8 @@ export interface IUpdateListingRequestDto {
   checkInTimeStart?: string | null;
   checkInTimeEnd?: string | null;
   checkOutTime?: string | null;
+  directions?: string | null;
+  wifiNetwork?: string | null;
+  wifiPassword?: string | null;
   status?: ListingStatus;
 }

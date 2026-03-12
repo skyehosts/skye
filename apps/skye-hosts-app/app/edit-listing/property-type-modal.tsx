@@ -11,12 +11,12 @@ import {
   PROPERTY_SIZE_UNIT_LABELS,
   PROPERTY_SIZE_UNITS,
 } from "../../../../packages/skye-hosts-api-client/src";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, Modal, Portal, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { AppSnackbar } from "../components/app-snackbar";
 import { DropdownField } from "../components/dropdown-field";
 import { NumberStepper } from "../components/number-stepper";
 import { fetchApi } from "../services/api";
@@ -27,6 +27,7 @@ import {
   spacing,
   typography,
 } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 interface PropertyTypeModalProps {
   visible: boolean;
@@ -68,6 +69,7 @@ export function PropertyTypeModal({
 }: PropertyTypeModalProps) {
   const { setError } = useForm();
   const [saving, setSaving] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [form, setForm] = useState<FormState>({
     typeId: listing.typeId,
     spaceType: listing.spaceType,
@@ -120,8 +122,7 @@ export function PropertyTypeModal({
       );
       onSaved(updated);
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      throw e;
+      handleFormError(e, setError, setServerError);
     } finally {
       setSaving(false);
     }
@@ -224,6 +225,7 @@ export function PropertyTypeModal({
           </Button>
         </View>
       </Modal>
+      <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </Portal>
   );
 }

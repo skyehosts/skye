@@ -36,6 +36,9 @@ export interface IGetListingResponseDto {
   checkInTimeStart: string | null;
   checkInTimeEnd: string | null;
   checkOutTime: string | null;
+  directions: string | null;
+  wifiNetwork: string | null;
+  wifiPassword: string | null;
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

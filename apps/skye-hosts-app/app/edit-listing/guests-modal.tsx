@@ -2,12 +2,12 @@ import type {
   IGetListingResponseDto,
   IUpdateListingRequestDto,
 } from "../../../../packages/skye-hosts-api-client/src";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Button, IconButton, Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { AppSnackbar } from "../components/app-snackbar";
 import { fetchApi } from "../services/api";
 import {
   colors,
@@ -16,6 +16,7 @@ import {
   spacing,
   typography,
 } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 interface GuestsModalProps {
   visible: boolean;
@@ -32,6 +33,7 @@ export function GuestsModal({
 }: GuestsModalProps) {
   const { setError } = useForm();
   const [saving, setSaving] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [maxGuests, setMaxGuests] = useState(listing.maxGuests);
 
   useEffect(() => {
@@ -49,8 +51,7 @@ export function GuestsModal({
       >(`/listing/${listing.id}`, { maxGuests }, { method: "PATCH" });
       onSaved(updated);
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      throw e;
+      handleFormError(e, setError, setServerError);
     } finally {
       setSaving(false);
     }
@@ -107,6 +108,7 @@ export function GuestsModal({
           </Button>
         </View>
       </Modal>
+      <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </Portal>
   );
 }
