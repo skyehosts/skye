@@ -49,8 +49,8 @@ export class PaymentController {
       payload: {
         listingId: dto.listingId,
         guestId: dto.guestId,
-        checkInAt: dto.checkInAt,
-        checkOutAt: dto.checkOutAt,
+        checkInDate: dto.checkInDate,
+        checkOutDate: dto.checkOutDate,
         totalPrice: dto.totalPrice,
         isTestBooking: dto.isTestBooking ?? false,
       },

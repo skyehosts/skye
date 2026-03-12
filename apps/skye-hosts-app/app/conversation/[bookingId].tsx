@@ -36,15 +36,15 @@ export default function ConversationScreen() {
     bookingId,
     otherPartyName,
     listingTitle,
-    checkInAt,
-    checkOutAt,
+    checkInDate,
+    checkOutDate,
     bookingStatus,
   } = useLocalSearchParams<{
     bookingId: string;
     otherPartyName: string;
     listingTitle: string;
-    checkInAt: string;
-    checkOutAt: string;
+    checkInDate: string;
+    checkOutDate: string;
     bookingStatus: string;
   }>();
   const { user } = useAuth();
@@ -215,8 +215,8 @@ export default function ConversationScreen() {
             {otherPartyName ?? "Conversation"}
           </Text>
           <Text style={styles.headerSubtitle} numberOfLines={1}>
-            {checkInAt && checkOutAt
-              ? formatShortDateRange(checkInAt, checkOutAt)
+            {checkInDate && checkOutDate
+              ? formatShortDateRange(checkInDate, checkOutDate)
               : ""}
             {listingTitle ? ` - ${listingTitle}` : ""}
           </Text>

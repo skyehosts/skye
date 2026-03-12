@@ -162,13 +162,13 @@ export class ScheduledMessageCreationService {
         sendAt = new Date(now.getTime() + offsetMs);
         break;
       case 'before_check_in':
-        sendAt = new Date(booking.checkInAt.getTime() - offsetMs);
+        sendAt = new Date(new Date(booking.checkInDate).getTime() - offsetMs);
         break;
       case 'before_checkout':
-        sendAt = new Date(booking.checkOutAt.getTime() - offsetMs);
+        sendAt = new Date(new Date(booking.checkOutDate).getTime() - offsetMs);
         break;
       case 'after_checkout':
-        sendAt = new Date(booking.checkOutAt.getTime() + offsetMs);
+        sendAt = new Date(new Date(booking.checkOutDate).getTime() + offsetMs);
         break;
       default:
         return null;

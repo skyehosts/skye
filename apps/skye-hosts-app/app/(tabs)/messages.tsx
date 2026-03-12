@@ -152,8 +152,8 @@ export default function MessagesScreen() {
               bookingId: item.bookingId,
               otherPartyName: item.otherPartyName,
               listingTitle: item.listingTitle,
-              checkInAt: new Date(item.checkInAt).toISOString(),
-              checkOutAt: new Date(item.checkOutAt).toISOString(),
+              checkInDate: item.checkInDate,
+              checkOutDate: item.checkOutDate,
               bookingStatus: item.bookingStatus,
             },
           });
@@ -207,7 +207,7 @@ export default function MessagesScreen() {
               </View>
             )}
             <Text style={styles.listingTitle} numberOfLines={1}>
-              {formatShortDateRange(item.checkInAt, item.checkOutAt)} · #
+              {formatShortDateRange(item.checkInDate, item.checkOutDate)} · #
               {item.bookingId}
             </Text>
           </View>

@@ -25,8 +25,8 @@ interface SuccessfulBookingPaymentMessage extends AwsQueueBaseMessageBody {
   payload: {
     listingId: number;
     guestId: number;
-    checkInAt: string;
-    checkOutAt: string;
+    checkInDate: string;
+    checkOutDate: string;
     totalPrice: number;
     isTestBooking?: boolean;
   };
@@ -57,8 +57,8 @@ export class BookingController {
       id: booking.id,
       listingTitle: booking.listing.title,
       guestName: booking.guest.name,
-      checkInAt: booking.checkInAt.toISOString(),
-      checkOutAt: booking.checkOutAt.toISOString(),
+      checkInDate: booking.checkInDate,
+      checkOutDate: booking.checkOutDate,
       totalPrice: Number(booking.totalPrice),
       status: booking.status,
       createdAt: booking.createdAt.toISOString(),
@@ -78,8 +78,8 @@ export class BookingController {
     const booking = await this.bookingService.createBooking({
       listingId: payload.listingId,
       guestId: payload.guestId,
-      checkInAt: payload.checkInAt,
-      checkOutAt: payload.checkOutAt,
+      checkInDate: payload.checkInDate,
+      checkOutDate: payload.checkOutDate,
       totalPrice: payload.totalPrice,
       isTestBooking: payload.isTestBooking,
     });
@@ -93,7 +93,7 @@ export class BookingController {
         recipientAccountId: bookingWithListing.listing.hostId,
         eventType: 'booking_confirmed',
         title: 'Booking Confirmed',
-        body: `You have a new booking from ${new Date(payload.checkInAt).toLocaleDateString()} to ${new Date(payload.checkOutAt).toLocaleDateString()}.`,
+        body: `You have a new booking from ${new Date(payload.checkInDate).toLocaleDateString()} to ${new Date(payload.checkOutDate).toLocaleDateString()}.`,
         data: { bookingId: booking.id, url: `/booking/${booking.id}` },
       });
     }

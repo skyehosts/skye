@@ -6,8 +6,8 @@ import { Booking } from '../entities';
 interface CreateBookingParams {
   listingId: number;
   guestId: number;
-  checkInAt: string;
-  checkOutAt: string;
+  checkInDate: string;
+  checkOutDate: string;
   totalPrice: number;
   isTestBooking?: boolean;
 }
@@ -28,8 +28,8 @@ export class BookingService {
       const booking = await this.databaseService.getRepository(Booking).save({
         listingId: params.listingId,
         guestId: params.guestId,
-        checkInAt: new Date(params.checkInAt),
-        checkOutAt: new Date(params.checkOutAt),
+        checkInDate: params.checkInDate,
+        checkOutDate: params.checkOutDate,
         totalPrice: params.totalPrice,
         status: 'confirmed',
         createdAt: new Date(),

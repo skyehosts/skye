@@ -19,11 +19,11 @@ export class Booking {
   @Column({ type: 'integer' })
   guestId: number;
 
-  @Column({ type: 'timestamptz' })
-  checkInAt: Date;
+  @Column({ type: 'date' })
+  checkInDate: string;
 
-  @Column({ type: 'timestamptz' })
-  checkOutAt: Date;
+  @Column({ type: 'date' })
+  checkOutDate: string;
 
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   totalPrice: number;
