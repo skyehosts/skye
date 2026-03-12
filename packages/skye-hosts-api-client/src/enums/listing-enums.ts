@@ -315,3 +315,96 @@ export const LISTING_SPACE_TYPE_LABELS: Record<ListingSpaceType, string> = {
   [ListingSpaceType.Room]: 'Room',
   [ListingSpaceType.SharedRoom]: 'Shared room',
 };
+
+export enum HostInteractionId {
+  NotAvailable = 'not_available',
+  UrgentOnly = 'urgent_only',
+  HappyToSocialise = 'happy_to_socialise',
+  Flexible = 'flexible',
+}
+
+export const HOST_INTERACTION_OPTIONS: {
+  id: HostInteractionId;
+  label: string;
+}[] = [
+  {
+    id: HostInteractionId.NotAvailable,
+    label: "I won't be available in person, but you can reach me via the app",
+  },
+  {
+    id: HostInteractionId.UrgentOnly,
+    label:
+      'I will be available for your urgent needs but otherwise keep to myself',
+  },
+  {
+    id: HostInteractionId.HappyToSocialise,
+    label:
+      "I'm happy to socialise and have a chat, and ask any questions you may have",
+  },
+  {
+    id: HostInteractionId.Flexible,
+    label: "I'm not fussed, will adjust to your preferences",
+  },
+];
+
+export enum CheckoutInstructionId {
+  Towels = 'towels',
+  Rubbish = 'rubbish',
+  TurnThingsOff = 'turn_things_off',
+  LockUp = 'lock_up',
+  ReturnKeys = 'return_keys',
+  Additions = 'additions',
+}
+
+export const CHECKOUT_INSTRUCTION_OPTIONS: {
+  id: CheckoutInstructionId;
+  title: string;
+  defaultText: string;
+  icon: string;
+  field: string;
+}[] = [
+  {
+    id: CheckoutInstructionId.Towels,
+    title: 'Gather used towels',
+    defaultText: 'Please put used towels in the shower tray',
+    icon: 'water-outline',
+    field: 'checkoutInstructionTowels',
+  },
+  {
+    id: CheckoutInstructionId.Rubbish,
+    title: 'Throw rubbish away',
+    defaultText: 'Please bag up any rubbish and place it in the bins outside',
+    icon: 'trash-outline',
+    field: 'checkoutInstructionRubbish',
+  },
+  {
+    id: CheckoutInstructionId.TurnThingsOff,
+    title: 'Turn things off',
+    defaultText:
+      'Please turn off all lights, heating and appliances before you leave',
+    icon: 'power-outline',
+    field: 'checkoutInstructionTurnThingsOff',
+  },
+  {
+    id: CheckoutInstructionId.LockUp,
+    title: 'Lock up',
+    defaultText:
+      'Please ensure all doors and windows are locked when you leave',
+    icon: 'lock-closed-outline',
+    field: 'checkoutInstructionLockUp',
+  },
+  {
+    id: CheckoutInstructionId.ReturnKeys,
+    title: 'Return keys',
+    defaultText: 'Please return all keys to the lockbox',
+    icon: 'key-outline',
+    field: 'checkoutInstructionReturnKeys',
+  },
+  {
+    id: CheckoutInstructionId.Additions,
+    title: 'Additional requests',
+    defaultText: '',
+    icon: 'add-circle-outline',
+    field: 'checkoutInstructionAdditions',
+  },
+];

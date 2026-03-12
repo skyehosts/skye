@@ -4,11 +4,11 @@ import type {
 } from "../../../../../packages/skye-hosts-api-client/src";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { FormInputModal } from "../../components/form-input-modal";
 import { fetchApi } from "../../services/api";
-import { commonStyles, spacing } from "../../theme";
+import { commonStyles } from "../../theme";
 import { handleFormError } from "../../utils/form-error-handler";
 
 interface HouseManualCardProps {
@@ -54,10 +54,7 @@ export function HouseManualCard({
         onPress={() => setModalVisible(true)}
       >
         <Text style={commonStyles.itemTitle}>House manual</Text>
-        <Text
-          style={[commonStyles.itemSubtext, styles.subtext]}
-          numberOfLines={3}
-        >
+        <Text style={commonStyles.cardSubtext} numberOfLines={3}>
           {houseManual ?? "Add details"}
         </Text>
       </Pressable>
@@ -78,9 +75,3 @@ export function HouseManualCard({
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  subtext: {
-    marginTop: spacing.xs,
-  },
-});

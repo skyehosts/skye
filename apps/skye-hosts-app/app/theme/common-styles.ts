@@ -133,6 +133,12 @@ export const commonStyles = StyleSheet.create({
     color: colors.textSecondary,
   },
 
+  cardSubtext: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+
   editSection: {
     gap: spacing.sm,
   },

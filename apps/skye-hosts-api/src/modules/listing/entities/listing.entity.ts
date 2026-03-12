@@ -1,4 +1,5 @@
 import type {
+  HostInteractionId,
   ListingAmenityId,
   ListingBookingType,
   ListingHighlightId,
@@ -104,6 +105,27 @@ export class Listing {
 
   @Column({ type: 'text', nullable: true, default: null })
   houseManual: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  checkoutInstructionTowels: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  checkoutInstructionRubbish: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  checkoutInstructionTurnThingsOff: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  checkoutInstructionLockUp: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  checkoutInstructionReturnKeys: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  checkoutInstructionAdditions: string | null;
+
+  @Column({ type: 'character varying', nullable: true, default: null })
+  hostInteraction: HostInteractionId | null;
 
   @Column({ type: 'character varying', default: 'Europe/London' })
   timezone: string;

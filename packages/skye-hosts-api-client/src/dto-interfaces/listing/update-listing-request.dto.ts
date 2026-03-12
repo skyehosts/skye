@@ -1,4 +1,5 @@
 import type {
+  HostInteractionId,
   ListingAmenityId,
   ListingBookingType,
   ListingHighlightId,
@@ -39,5 +40,12 @@ export interface IUpdateListingRequestDto {
   wifiNetwork?: string | null;
   wifiPassword?: string | null;
   houseManual?: string | null;
+  checkoutInstructionTowels?: string | null;
+  checkoutInstructionRubbish?: string | null;
+  checkoutInstructionTurnThingsOff?: string | null;
+  checkoutInstructionLockUp?: string | null;
+  checkoutInstructionReturnKeys?: string | null;
+  checkoutInstructionAdditions?: string | null;
+  hostInteraction?: HostInteractionId | null;
   status?: ListingStatus;
 }
