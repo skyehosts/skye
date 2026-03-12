@@ -39,6 +39,7 @@ export interface IGetListingResponseDto {
   directions: string | null;
   wifiNetwork: string | null;
   wifiPassword: string | null;
+  houseManual: string | null;
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

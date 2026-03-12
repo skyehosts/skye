@@ -38,5 +38,6 @@ export interface IUpdateListingRequestDto {
   directions?: string | null;
   wifiNetwork?: string | null;
   wifiPassword?: string | null;
+  houseManual?: string | null;
   status?: ListingStatus;
 }
