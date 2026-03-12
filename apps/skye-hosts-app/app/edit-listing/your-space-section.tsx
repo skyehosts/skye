@@ -23,14 +23,7 @@ import { FormInputModal } from "../components/form-input-modal";
 import { GuestsModal } from "./guests-modal";
 import { PropertyTypeModal } from "./property-type-modal";
 import { fetchApi } from "../services/api";
-import {
-  borderRadius,
-  colors,
-  commonStyles,
-  fontWeight,
-  spacing,
-  typography,
-} from "../theme";
+import { borderRadius, colors, commonStyles, spacing } from "../theme";
 
 interface YourSpaceSectionProps {
   listingId: string;
@@ -83,31 +76,31 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
 
   if (loading) {
     return (
-      <View style={styles.section}>
+      <View style={commonStyles.editSection}>
         <Text style={commonStyles.sectionTitle}>Your space</Text>
         <Text style={commonStyles.sectionSubtext}>
           Edit the details about your listing space.
         </Text>
-        <ActivityIndicator style={styles.loader} />
+        <ActivityIndicator style={commonStyles.sectionLoader} />
       </View>
     );
   }
 
   return (
-    <View style={styles.section}>
+    <View style={commonStyles.editSection}>
       <Text style={commonStyles.sectionTitle}>Your space</Text>
       <Text style={commonStyles.sectionSubtext}>
         Edit the details about your listing space.
       </Text>
 
-      <View style={styles.cards}>
+      <View style={commonStyles.editSectionCards}>
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => router.push("/edit-listing/edit-photos")}
         >
-          <Text style={styles.cardTitle}>Photo tour</Text>
+          <Text style={commonStyles.itemTitle}>Photo tour</Text>
           {listing && (
-            <Text style={styles.cardSubtext}>
+            <Text style={commonStyles.itemSubtext}>
               {listing.bedrooms} bedroom{listing.bedrooms !== 1 ? "s" : ""} •{" "}
               {listing.beds} bed{listing.beds !== 1 ? "s" : ""} •{" "}
               {listing.bathrooms} bath
@@ -120,9 +113,9 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => setTitleModalVisible(true)}
         >
-          <Text style={styles.cardTitle}>Title</Text>
+          <Text style={commonStyles.itemTitle}>Title</Text>
           {listing && (
-            <Text style={styles.cardSubtext} numberOfLines={2}>
+            <Text style={commonStyles.itemSubtext} numberOfLines={2}>
               {listing.title}
             </Text>
           )}
@@ -132,9 +125,9 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => setGuestsModalVisible(true)}
         >
-          <Text style={styles.cardTitle}>Number of guests</Text>
+          <Text style={commonStyles.itemTitle}>Number of guests</Text>
           {listing && (
-            <Text style={styles.cardSubtext}>
+            <Text style={commonStyles.itemSubtext}>
               {listing.maxGuests} guest{listing.maxGuests !== 1 ? "s" : ""}
             </Text>
           )}
@@ -144,19 +137,19 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => router.push("/edit-listing/pricing")}
         >
-          <Text style={styles.cardTitle}>Pricing</Text>
-          <Text style={styles.cardSubtext}>£120 per night</Text>
-          <Text style={styles.cardSubtext}>£120 weekend price</Text>
-          <Text style={styles.cardSubtext}>25% weekly discount</Text>
+          <Text style={commonStyles.itemTitle}>Pricing</Text>
+          <Text style={commonStyles.itemSubtext}>£120 per night</Text>
+          <Text style={commonStyles.itemSubtext}>£120 weekend price</Text>
+          <Text style={commonStyles.itemSubtext}>25% weekly discount</Text>
         </Pressable>
 
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => router.push("/edit-listing/availability")}
         >
-          <Text style={styles.cardTitle}>Availability</Text>
-          <Text style={styles.cardSubtext}>2-7 night stays</Text>
-          <Text style={styles.cardSubtext}>Same-day advance notice</Text>
+          <Text style={commonStyles.itemTitle}>Availability</Text>
+          <Text style={commonStyles.itemSubtext}>2-7 night stays</Text>
+          <Text style={commonStyles.itemSubtext}>Same-day advance notice</Text>
         </Pressable>
 
         <Pressable
@@ -168,9 +161,9 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
             })
           }
         >
-          <Text style={styles.cardTitle}>Description</Text>
+          <Text style={commonStyles.itemTitle}>Description</Text>
           {listing && (
-            <Text style={styles.cardSubtext} numberOfLines={4}>
+            <Text style={commonStyles.itemSubtext} numberOfLines={4}>
               {listing.description}
             </Text>
           )}
@@ -180,9 +173,9 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => setPropertyTypeModalVisible(true)}
         >
-          <Text style={styles.cardTitle}>Property type</Text>
+          <Text style={commonStyles.itemTitle}>Property type</Text>
           {listing && (
-            <Text style={styles.cardSubtext}>
+            <Text style={commonStyles.itemSubtext}>
               {LISTING_SPACE_TYPE_LABELS[listing.spaceType]} {"\u2022"}{" "}
               {LISTING_TYPE_LABELS[listing.typeId]}
             </Text>
@@ -197,7 +190,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
             })
           }
         >
-          <Text style={styles.cardTitle}>Amenities</Text>
+          <Text style={commonStyles.itemTitle}>Amenities</Text>
           {listing && listing.amenities.length > 0 && (
             <View style={styles.amenityPreview}>
               {listing.amenities.slice(0, 3).map((id) => {
@@ -210,12 +203,12 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
                       size={18}
                       color={colors.textSecondary}
                     />
-                    <Text style={styles.cardSubtext}>{meta.title}</Text>
+                    <Text style={commonStyles.itemSubtext}>{meta.title}</Text>
                   </View>
                 );
               })}
               {listing.amenities.length > 3 && (
-                <Text style={styles.cardSubtext}>
+                <Text style={commonStyles.itemSubtext}>
                   + {listing.amenities.length - 3} more
                 </Text>
               )}
@@ -227,8 +220,8 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           style={[commonStyles.card, { gap: spacing.sm }]}
           onPress={() => router.push("/edit-listing/accessibility")}
         >
-          <Text style={styles.cardTitle}>Accessibility features</Text>
-          <Text style={styles.cardSubtext}>Add details</Text>
+          <Text style={commonStyles.itemTitle}>Accessibility features</Text>
+          <Text style={commonStyles.itemSubtext}>Add details</Text>
         </Pressable>
       </View>
 
@@ -270,25 +263,6 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    gap: spacing.sm,
-  },
-  loader: {
-    marginTop: spacing.lg,
-  },
-  cards: {
-    gap: spacing.md,
-    marginTop: spacing.sm,
-  },
-  cardTitle: {
-    fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.textPrimary,
-  },
-  cardSubtext: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-  },
   amenityPreview: {
     gap: spacing.sm,
   },

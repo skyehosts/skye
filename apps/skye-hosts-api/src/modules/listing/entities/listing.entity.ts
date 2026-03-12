@@ -84,6 +84,15 @@ export class Listing {
   @Column({ type: 'simple-array' })
   safetyDisclosures: ListingSafetyDisclosureId[];
 
+  @Column({ type: 'character varying', nullable: true, default: null })
+  checkInTimeStart: string | null;
+
+  @Column({ type: 'character varying', nullable: true, default: null })
+  checkInTimeEnd: string | null;
+
+  @Column({ type: 'character varying', nullable: true, default: null })
+  checkOutTime: string | null;
+
   @Column({ type: 'character varying', default: 'Europe/London' })
   timezone: string;
 

@@ -104,6 +104,11 @@ export default async function DemoPage() {
 - Unwraps `IApiResponse<T>` envelope and returns `payload` directly.
 - Whenever receiveing data from api, be aware that .payload needs unwrapped.
 
+### 5. Create TypeOrm migration
+
+- If there are any typeorm entities that were create, don't forgot to create migraton by using command:
+  pnpm --filter=skye-hosts-api migration:generate src/migrations/name
+
 ---
 
 ### Key rules
@@ -151,6 +156,8 @@ export default async function DemoPage() {
 - **Wrap every screen in `<ScreenContainer>`** (from `app/components/screen-container.tsx`). Pass additional layout styles via the `style` prop.
 - **Keep `StyleSheet.create()` colocated** at the bottom of each screen file — no separate `styles.ts` files.
 - If a new color, spacing value, or font size is needed, add it to the relevant token file rather than inlining it.
+- **Check `commonStyles` before writing any new local style.** `app/theme/common-styles.ts` is the single source of truth for shared patterns. Before adding a style to a local `StyleSheet.create()`, check if an equivalent already exists in `commonStyles` and use that instead.
+- **Promote repeated styles to `commonStyles`.** If the same style object appears in more than one file, move it to `common-styles.ts` and replace all local copies. Key shared patterns already there include: `card`, `modal`, `modalTitle`, `row`, `divider`, `borderedRows`, `itemTitle`, `itemSubtext`, `editSection`, `editSectionCards`, `sectionLoader` — use these rather than redefining them locally.
 
 ## Guide for frontend implementations
 

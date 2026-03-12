@@ -1,3 +1,13 @@
+===
+MVP
+===
+- App: Edit listing (Your space)
+- App: Edit listing (Arrival guide)
+- App: Listing photos
+- App: Draft or Publish after creation?
+- App: Calendar
+- App: Co-host
+
 =======
 General
 =======
@@ -5,9 +15,6 @@ General
 - Scheduled messages should indicate somehow that it is such. Check how AirBnB does it. maybe not in thread at all?
 - Shift postman to skyehosts email
 - Shift stripe to skyehosts email & update secrets
-- rename
-  - Web deployd working ok
-  - app working, and prompting for push notif perm
 - expo build working on real device?
 - env plan: Pipeline green, deployed agian
   - ignore test-results
@@ -73,10 +80,34 @@ Logins
 ===============
 Pending prompts
 ===============
-- Any major decisions, ask
-- Another another card to bottom of edit listing page in hots app
-- title: Accessibility features
-- Subtext: 'Add details' (if none exist)
-- tap behaviour: new page, with standard app bar, (back button on left)
-- Show title 'Accessibility features' 
-- Don't implement anything else
+In apps/skye-hosts-app/app/edit-listing/arrival-guide-section.tsx
+Add a vertically stacked card (Uses same design as apps/skye-hosts-app/app/edit-listing/your-space-section.tsx)
+Design & behaviour of card:
+- Centered, vertical separator (With gutter above and below)
+- On left:
+  - Title: Check-in
+  - Underneath:
+    - Shows check-in window (Example format: 16:00 - 21:00) (Accept checkin window is between these two times)
+    - Create new properties on listing.entity.ts called checkInTimeStart and checkInTimeEnd and use that.
+- On right:
+  - Title: Checkout
+  - Underneath:
+    - Shows checkout time (Example format: 16:00 - 21:00)
+    - Create new property on listing.entity.ts called checkOutTime and use that
+- Behaviour when card is tapped anywhere:
+  - Open modal with title 'Check-in & checkout times'
+  - Modal has 'x' close icon top right
+  - Re-use an existing modal component if possible
+  - text:
+    'Check-in window'
+  - Below the text:
+  - Two dropdowns horizontally adjacent
+    - First one: 
+      - Label: Start time
+      - Attached to listing.checkInTime
+      - Should automatically show currently saved value.
+    - Second one: 
+      - Label: End time
+      - Attached to listing.checkOutTime
+      - Should automatically show currently saved value.
+  - text: 'Checkout time'

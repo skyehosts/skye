@@ -32,5 +32,8 @@ export interface IUpdateListingRequestDto {
   yearBuilt?: string;
   propertySize?: string;
   propertySizeUnit?: PropertySizeUnit;
+  checkInTimeStart?: string | null;
+  checkInTimeEnd?: string | null;
+  checkOutTime?: string | null;
   status?: ListingStatus;
 }

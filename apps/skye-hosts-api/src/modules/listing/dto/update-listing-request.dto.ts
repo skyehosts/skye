@@ -123,6 +123,21 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   propertySizeUnit?: IUpdateListingRequestDto['propertySizeUnit'];
 
   @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  checkInTimeStart?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  checkInTimeEnd?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  checkOutTime?: string | null;
+
+  @IsOptional()
   @IsIn(LISTING_STATUSES)
   status?: IUpdateListingRequestDto['status'];
 }

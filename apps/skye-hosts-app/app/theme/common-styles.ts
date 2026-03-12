@@ -120,6 +120,32 @@ export const commonStyles = StyleSheet.create({
     color: colors.textPrimary,
   },
 
+  /* ── Edit-section list cards ─────────────────────── */
+
+  itemTitle: {
+    fontSize: typography.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.textPrimary,
+  },
+
+  itemSubtext: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
+
+  editSection: {
+    gap: spacing.sm,
+  },
+
+  editSectionCards: {
+    gap: spacing.md,
+    marginTop: spacing.sm,
+  },
+
+  sectionLoader: {
+    marginTop: spacing.lg,
+  },
+
   /* ── Chips ──────────────────────────────────────── */
 
   chip: {
