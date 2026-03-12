@@ -89,10 +89,29 @@ Logins
 ===============
 Pending prompts
 ===============
-Below Wi-Fi detials on edit listing 'Arrival guide'
-- Add card with title 'House manual'
-- Subtext 'Add details' (If no existing value) Otherwise show existing value truncated to 3 lines
-- When card tapped - Open form-input-modal.tsx with title 'House manual'
-- subtext: 'Give guests tips about your space, like how to access the internet and use the TV.'
-- It should save to API, new property on listing.entity.ts called 'houseManual'
-- max length: 1000chars
+Add another card 'Interaction with guests'
+Subtext: 'Add details' (If no existing value) Otherwise show existing value truncated to 3 lines
+- When card tapped - open from-input-modal.tsx with title 'Interaction with guests'
+- Add paragraph to top of content area: 'Let guests know if you enjoy spending time with them or prefer a hands-off approach'
+- Display a vertical list of radio buttons
+  - "I won't be available in person, but you can reach me via the app"
+  - "I will be available for your urgent needs but otherwise keep to myself"
+  - "I'm happy to socialise and have a chat, and ask any questions you may have"
+  - "I'm not fussed, will adjust to your preferences"
+- Above values can be defined statically in listing-enum.ts following existing patterns.
+- Save button bottom right should save to new property on listing.entity.ts called 'hostInteraction'
+
+===========================
+Notes about copying AirBNB
+==========================
+You cannot copy:
+  Visual layouts that are highly distinctive
+  Icons, illustrations, photos
+  Exact wording
+  Screen designs that are “substantially similar”
+  Function is OK. Expression is protected.
+You can't market as "AirBNB but cheaper"
+TLDR:
+  - Don't use exact wording
+  - Diverge layout/style slightly where possible
+

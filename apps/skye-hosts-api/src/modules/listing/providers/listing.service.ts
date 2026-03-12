@@ -142,6 +142,14 @@ export class ListingService {
       wifiNetwork: listing.wifiNetwork,
       wifiPassword: listing.wifiPassword,
       houseManual: listing.houseManual,
+      checkoutInstructionTowels: listing.checkoutInstructionTowels,
+      checkoutInstructionRubbish: listing.checkoutInstructionRubbish,
+      checkoutInstructionTurnThingsOff:
+        listing.checkoutInstructionTurnThingsOff,
+      checkoutInstructionLockUp: listing.checkoutInstructionLockUp,
+      checkoutInstructionReturnKeys: listing.checkoutInstructionReturnKeys,
+      checkoutInstructionAdditions: listing.checkoutInstructionAdditions,
+      hostInteraction: listing.hostInteraction,
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
@@ -202,6 +210,24 @@ export class ListingService {
       listing.wifiPassword = dto.wifiPassword ?? null;
     if (dto.houseManual !== undefined)
       listing.houseManual = dto.houseManual ?? null;
+    if (dto.checkoutInstructionTowels !== undefined)
+      listing.checkoutInstructionTowels = dto.checkoutInstructionTowels ?? null;
+    if (dto.checkoutInstructionRubbish !== undefined)
+      listing.checkoutInstructionRubbish =
+        dto.checkoutInstructionRubbish ?? null;
+    if (dto.checkoutInstructionTurnThingsOff !== undefined)
+      listing.checkoutInstructionTurnThingsOff =
+        dto.checkoutInstructionTurnThingsOff ?? null;
+    if (dto.checkoutInstructionLockUp !== undefined)
+      listing.checkoutInstructionLockUp = dto.checkoutInstructionLockUp ?? null;
+    if (dto.checkoutInstructionReturnKeys !== undefined)
+      listing.checkoutInstructionReturnKeys =
+        dto.checkoutInstructionReturnKeys ?? null;
+    if (dto.checkoutInstructionAdditions !== undefined)
+      listing.checkoutInstructionAdditions =
+        dto.checkoutInstructionAdditions ?? null;
+    if (dto.hostInteraction !== undefined)
+      listing.hostInteraction = dto.hostInteraction ?? null;
     if (dto.status !== undefined) listing.status = dto.status;
     listing.updatedAt = new Date();
 
@@ -240,6 +266,14 @@ export class ListingService {
       wifiNetwork: updated.wifiNetwork,
       wifiPassword: updated.wifiPassword,
       houseManual: updated.houseManual,
+      checkoutInstructionTowels: updated.checkoutInstructionTowels,
+      checkoutInstructionRubbish: updated.checkoutInstructionRubbish,
+      checkoutInstructionTurnThingsOff:
+        updated.checkoutInstructionTurnThingsOff,
+      checkoutInstructionLockUp: updated.checkoutInstructionLockUp,
+      checkoutInstructionReturnKeys: updated.checkoutInstructionReturnKeys,
+      checkoutInstructionAdditions: updated.checkoutInstructionAdditions,
+      hostInteraction: updated.hostInteraction,
       status: updated.status,
       createdAt: updated.createdAt,
       updatedAt: updated.updatedAt,

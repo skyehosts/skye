@@ -1,5 +1,6 @@
 import type { IUpdateListingRequestDto } from '@repo/skye-hosts-api-client';
 import {
+  HostInteractionId,
   LISTING_SPACE_TYPES,
   LISTING_STATUSES,
   LISTING_TYPE_IDS,
@@ -156,6 +157,40 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsString()
   @MaxLength(1000)
   houseManual?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(750)
+  checkoutInstructionTowels?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(750)
+  checkoutInstructionRubbish?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(750)
+  checkoutInstructionTurnThingsOff?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(750)
+  checkoutInstructionLockUp?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(750)
+  checkoutInstructionReturnKeys?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(750)
+  checkoutInstructionAdditions?: string | null;
+
+  @IsOptional()
+  @IsIn(Object.values(HostInteractionId))
+  hostInteraction?: IUpdateListingRequestDto['hostInteraction'];
 
   @IsOptional()
   @IsIn(LISTING_STATUSES)

@@ -6,6 +6,8 @@ import { fetchApi } from "../services/api";
 import { commonStyles } from "../theme";
 import { CheckInCheckoutCard } from "./arrival-guide/check-in-checkout-card";
 import { DirectionsCard } from "./arrival-guide/directions-card";
+import { CheckoutInstructionsCard } from "./arrival-guide/checkout-instructions-card";
+import { HostInteractionCard } from "./arrival-guide/host-interaction-card";
 import { HouseManualCard } from "./arrival-guide/house-manual-card";
 import { WifiDetailsCard } from "./arrival-guide/wifi-details-card";
 
@@ -78,6 +80,14 @@ export function ArrivalGuideSection({ listingId }: ArrivalGuideSectionProps) {
         <HouseManualCard
           listingId={listingId}
           houseManual={listing?.houseManual}
+          onUpdate={setListing}
+        />
+
+        <CheckoutInstructionsCard listingId={listingId} listing={listing} />
+
+        <HostInteractionCard
+          listingId={listingId}
+          hostInteraction={listing?.hostInteraction}
           onUpdate={setListing}
         />
       </View>

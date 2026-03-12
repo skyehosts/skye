@@ -25,6 +25,7 @@ interface FormInputModalProps {
   subtext?: string;
   value: string;
   onSave: (value: string) => void;
+  onDelete?: () => void;
   maxLength?: number;
   loading?: boolean;
   optional?: boolean;
@@ -41,6 +42,7 @@ export function FormInputModal({
   subtext,
   value,
   onSave,
+  onDelete,
   maxLength = 200,
   loading,
   optional = false,
@@ -80,7 +82,7 @@ export function FormInputModal({
           </Pressable>
         </View>
 
-        {subtext && <Text style={styles.subtext}>{subtext}</Text>}
+        {subtext && <Text style={commonStyles.itemSubtext}>{subtext}</Text>}
 
         <View style={styles.inputContainer}>
           <Controller
@@ -118,9 +120,20 @@ export function FormInputModal({
         <View style={commonStyles.divider} />
 
         <View style={commonStyles.row}>
-          <Button mode="text" onPress={onDismiss} disabled={loading}>
-            Cancel
-          </Button>
+          {onDelete ? (
+            <Button
+              mode="text"
+              onPress={onDelete}
+              disabled={loading}
+              textColor={colors.danger}
+            >
+              Delete
+            </Button>
+          ) : (
+            <Button mode="text" onPress={onDismiss} disabled={loading}>
+              Cancel
+            </Button>
+          )}
           <Button
             mode="contained"
             onPress={handleSubmit(onSubmit)}
@@ -155,9 +168,5 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginTop: spacing.xs,
-  },
-  subtext: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
   },
 });
