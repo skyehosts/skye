@@ -19,14 +19,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
-import {
-  borderRadius,
-  colors,
-  commonStyles,
-  fontWeight,
-  spacing,
-  typography,
-} from "../theme";
+import { colors, commonStyles, spacing } from "../theme";
 
 type DescriptionField =
   | "description"
@@ -153,10 +146,10 @@ export default function EditDescriptionScreen() {
                     onPress={() => setActiveField(field)}
                   >
                     <View style={styles.rowText}>
-                      <Text style={styles.rowTitle}>{field.title}</Text>
+                      <Text style={commonStyles.itemTitle}>{field.title}</Text>
                       <Text
                         style={[
-                          styles.rowSubtext,
+                          commonStyles.itemSubtext,
                           !hasValue && styles.rowSubtextEmpty,
                         ]}
                         numberOfLines={field.truncateLines}
@@ -210,15 +203,6 @@ const styles = StyleSheet.create({
   rowText: {
     flex: 1,
     gap: spacing.xs,
-  },
-  rowTitle: {
-    fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.textPrimary,
-  },
-  rowSubtext: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
   },
   rowSubtextEmpty: {
     fontStyle: "italic",

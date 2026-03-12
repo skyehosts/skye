@@ -135,6 +135,9 @@ export class ListingService {
       highlights: listing.highlights,
       bookingType: listing.bookingType,
       safetyDisclosures: listing.safetyDisclosures,
+      checkInTimeStart: listing.checkInTimeStart,
+      checkInTimeEnd: listing.checkInTimeEnd,
+      checkOutTime: listing.checkOutTime,
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
@@ -181,6 +184,12 @@ export class ListingService {
     if (dto.bookingType !== undefined) listing.bookingType = dto.bookingType;
     if (dto.safetyDisclosures !== undefined)
       listing.safetyDisclosures = dto.safetyDisclosures;
+    if (dto.checkInTimeStart !== undefined)
+      listing.checkInTimeStart = dto.checkInTimeStart ?? null;
+    if (dto.checkInTimeEnd !== undefined)
+      listing.checkInTimeEnd = dto.checkInTimeEnd ?? null;
+    if (dto.checkOutTime !== undefined)
+      listing.checkOutTime = dto.checkOutTime ?? null;
     if (dto.status !== undefined) listing.status = dto.status;
     listing.updatedAt = new Date();
 
@@ -212,6 +221,9 @@ export class ListingService {
       highlights: updated.highlights,
       bookingType: updated.bookingType,
       safetyDisclosures: updated.safetyDisclosures,
+      checkInTimeStart: updated.checkInTimeStart,
+      checkInTimeEnd: updated.checkInTimeEnd,
+      checkOutTime: updated.checkOutTime,
       status: updated.status,
       createdAt: updated.createdAt,
       updatedAt: updated.updatedAt,

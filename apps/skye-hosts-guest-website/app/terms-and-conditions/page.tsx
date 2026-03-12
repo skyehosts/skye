@@ -9,15 +9,6 @@ export default function TermsAndConditionsPage() {
       <HeadingPanel title="Terms of service" />
       <PrincipalColumn>
         <Typography variant="body1" component="div">
-          <p>
-            <i>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</i>
-          </p>
-          <p>Sed eleifend, magna nec accumsan convallis:</p>
-          <ul>
-            <li>Lorem ipsum dolor</li>
-            <li>Consectetur adipiscing elit</li>
-            <li>Praesent fermentum neque</li>
-          </ul>
           <TextSection title="1. Lorem ipsum dolor sit amet">
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent
