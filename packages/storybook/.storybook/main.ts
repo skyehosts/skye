@@ -23,6 +23,7 @@ const config: StorybookConfig = {
         __dirname,
         "../../skye-hosts-api-client/src/index.ts",
       ),
+      "@repo/common": path.resolve(__dirname, "../../common/src/index.ts"),
     };
     return config;
   },

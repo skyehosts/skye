@@ -72,8 +72,8 @@ export function BookNowButton({
           disabled={status === 'loading'}
           style={{
             marginLeft: 8,
-            backgroundColor: '#f59e0b',
-            color: '#000',
+            backgroundColor: '#E9B949',
+            color: '#1F3F4A',
             padding: '4px 12px',
             border: 'none',
             borderRadius: 4,
@@ -85,8 +85,8 @@ export function BookNowButton({
             : 'Test Book (Scheduled Msgs)'}
         </button>
       )}
-      {status === 'success' && <p style={{ color: 'green' }}>{message}</p>}
-      {status === 'error' && <p style={{ color: 'red' }}>{message}</p>}
+      {status === 'success' && <p style={{ color: '#3F9C5A' }}>{message}</p>}
+      {status === 'error' && <p style={{ color: '#FF3B30' }}>{message}</p>}
     </div>
   );
 }

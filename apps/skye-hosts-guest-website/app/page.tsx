@@ -28,19 +28,19 @@ export default async function Home() {
           >
             <div
               style={{
-                border: '1px solid #ddd',
+                border: '1px solid var(--border-color, #ddd)',
                 borderRadius: '8px',
                 overflow: 'hidden',
               }}
             >
               <div
                 style={{
-                  backgroundColor: '#e0e0e0',
+                  backgroundColor: 'var(--placeholder-bg, #e0e0e0)',
                   height: '180px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#999',
+                  color: 'var(--text-muted, #999)',
                   fontSize: '14px',
                 }}
               >

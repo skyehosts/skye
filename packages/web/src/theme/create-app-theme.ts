@@ -22,6 +22,14 @@ declare module "@mui/material/styles" {
       copyright: string;
     };
     mainBackground: string;
+    custom: {
+      heatherPurple: string;
+      warmStone: string;
+      driftwoodSand: string;
+      seaGlassTeal: string;
+      whiskyGold: string;
+      successGreen: string;
+    };
   }
   interface PaletteOptions {
     brand?: {
@@ -42,6 +50,14 @@ declare module "@mui/material/styles" {
       copyright?: string;
     };
     mainBackground?: string;
+    custom?: {
+      heatherPurple?: string;
+      warmStone?: string;
+      driftwoodSand?: string;
+      seaGlassTeal?: string;
+      whiskyGold?: string;
+      successGreen?: string;
+    };
   }
 }
 
@@ -87,6 +103,7 @@ export function createAppTheme({
       brand: { ...defaultPalette.brand, ...palette?.brand },
       header: { ...defaultPalette.header, ...palette?.header },
       footer: { ...defaultPalette.footer, ...palette?.footer },
+      custom: { ...defaultPalette.custom, ...palette?.custom },
     },
     shape: {
       borderRadius: 4,
