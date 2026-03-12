@@ -18,17 +18,17 @@ const { width } = Dimensions.get("window");
 const SLIDES = [
   {
     title: "Welcome to Skye Hosts",
-    imageBg: "#B8D4E8",
+    imageBg: colors.driftwoodSand,
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
   },
   {
     title: "Manage Your Listings",
-    imageBg: "#C8E6C9",
+    imageBg: colors.warmStone,
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque vehicula libero vitae nunc fermentum, nec tincidunt nulla dignissim. Praesent commodo.",
   },
   {
     title: "Grow Your Business",
-    imageBg: "#F8D7A4",
+    imageBg: colors.seaGlassTeal,
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce euismod, nisi vel consectetur interdum, nisl nunc egestas nunc, vitae tincidunt nisl nunc.",
   },
 ];

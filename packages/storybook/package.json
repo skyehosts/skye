@@ -9,6 +9,7 @@
     "lint": "eslint \"{src,.storybook}/**/*.{ts,tsx}\" --fix"
   },
   "dependencies": {
+    "@repo/common": "workspace:^",
     "@repo/web-components": "workspace:*"
   },
   "devDependencies": {
