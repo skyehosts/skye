@@ -127,6 +127,30 @@ export class Listing {
   @Column({ type: 'character varying', nullable: true, default: null })
   hostInteraction: HostInteractionId | null;
 
+  @Column({ type: 'boolean', nullable: true, default: null })
+  houseRulePetsAllowed: boolean | null;
+
+  @Column({ type: 'boolean', nullable: true, default: null })
+  houseRuleEventsAllowed: boolean | null;
+
+  @Column({ type: 'boolean', nullable: true, default: null })
+  houseRuleSmokingAllowed: boolean | null;
+
+  @Column({ type: 'boolean', nullable: true, default: null })
+  houseRuleVapingAllowed: boolean | null;
+
+  @Column({ type: 'boolean', nullable: true, default: null })
+  houseRuleQuietHoursEnabled: boolean | null;
+
+  @Column({ type: 'character varying', nullable: true, default: null })
+  houseRuleQuietHoursStart: string | null;
+
+  @Column({ type: 'character varying', nullable: true, default: null })
+  houseRuleQuietHoursEnd: string | null;
+
+  @Column({ type: 'text', nullable: true, default: null })
+  houseRuleOtherRules: string | null;
+
   @Column({ type: 'character varying', default: 'Europe/London' })
   timezone: string;
 

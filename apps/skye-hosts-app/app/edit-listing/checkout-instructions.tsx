@@ -19,6 +19,7 @@ import {
 } from "react-native";
 import { Appbar, Button, Modal, Portal, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { ActionBar } from "../components/action-bar";
 import { AppSnackbar } from "../components/app-snackbar";
 import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
@@ -318,25 +319,12 @@ export default function CheckoutInstructionsScreen() {
                 {750 - addText.length} characters available
               </Text>
 
-              <View style={commonStyles.divider} />
-
-              <View style={commonStyles.row}>
-                <Button
-                  mode="text"
-                  onPress={() => setAddModalVisible(false)}
-                  disabled={saving}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  mode="contained"
-                  onPress={handleAddSave}
-                  loading={saving}
-                  disabled={saving || !addText.trim()}
-                >
-                  Save
-                </Button>
-              </View>
+              <ActionBar
+                onCancel={() => setAddModalVisible(false)}
+                onSave={handleAddSave}
+                loading={saving}
+                saveDisabled={!addText.trim()}
+              />
             </View>
           )}
         </Modal>

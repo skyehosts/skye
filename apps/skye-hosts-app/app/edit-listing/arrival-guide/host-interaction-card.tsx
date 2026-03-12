@@ -9,8 +9,9 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Button, Modal, Portal, RadioButton } from "react-native-paper";
+import { Modal, Portal, RadioButton } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { ActionBar } from "../../components/action-bar";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { fetchApi } from "../../services/api";
 import { colors, commonStyles, spacing, typography } from "../../theme";
@@ -106,25 +107,12 @@ export function HostInteractionCard({
             ))}
           </RadioButton.Group>
 
-          <View style={commonStyles.divider} />
-
-          <View style={commonStyles.row}>
-            <Button
-              mode="text"
-              onPress={() => setModalVisible(false)}
-              disabled={saving}
-            >
-              Cancel
-            </Button>
-            <Button
-              mode="contained"
-              onPress={handleSave}
-              loading={saving}
-              disabled={saving || !selected}
-            >
-              Save
-            </Button>
-          </View>
+          <ActionBar
+            onCancel={() => setModalVisible(false)}
+            onSave={handleSave}
+            loading={saving}
+            saveDisabled={!selected}
+          />
         </Modal>
       </Portal>
 

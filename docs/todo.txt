@@ -3,6 +3,10 @@ MVP
 ===
 - App: Edit listing
   - (Your space, remaining components)
+    - Instant book
+    - Cancellation policy
+    - Guest safety
+    - House rules
   - (Arrival guide remaining components)
   - Understanding why some data not colecting during creation, only edit... -> Plan
   - Photos
@@ -89,17 +93,17 @@ Logins
 ===============
 Pending prompts
 ===============
-Add another card 'Interaction with guests'
-Subtext: 'Add details' (If no existing value) Otherwise show existing value truncated to 3 lines
-- When card tapped - open from-input-modal.tsx with title 'Interaction with guests'
-- Add paragraph to top of content area: 'Let guests know if you enjoy spending time with them or prefer a hands-off approach'
-- Display a vertical list of radio buttons
-  - "I won't be available in person, but you can reach me via the app"
-  - "I will be available for your urgent needs but otherwise keep to myself"
-  - "I'm happy to socialise and have a chat, and ask any questions you may have"
-  - "I'm not fussed, will adjust to your preferences"
-- Above values can be defined statically in listing-enum.ts following existing patterns.
-- Save button bottom right should save to new property on listing.entity.ts called 'hostInteraction'
+In Host app on edit listing page, below the Amenities card, add a new card.
+
+Rename ModalFooter? It's not always used in a Modal
+
+
+==================
+Re-useable prompts
+==================
+Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and customer experience. If any
+opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
+
 
 ===========================
 Notes about copying AirBNB

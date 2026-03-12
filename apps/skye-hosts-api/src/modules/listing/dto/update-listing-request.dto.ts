@@ -8,6 +8,7 @@ import {
 } from '@repo/skye-hosts-api-client';
 import {
   IsArray,
+  IsBoolean,
   IsIn,
   IsNumber,
   IsOptional,
@@ -191,6 +192,41 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsIn(Object.values(HostInteractionId))
   hostInteraction?: IUpdateListingRequestDto['hostInteraction'];
+
+  @IsOptional()
+  @IsBoolean()
+  houseRulePetsAllowed?: boolean | null;
+
+  @IsOptional()
+  @IsBoolean()
+  houseRuleEventsAllowed?: boolean | null;
+
+  @IsOptional()
+  @IsBoolean()
+  houseRuleSmokingAllowed?: boolean | null;
+
+  @IsOptional()
+  @IsBoolean()
+  houseRuleVapingAllowed?: boolean | null;
+
+  @IsOptional()
+  @IsBoolean()
+  houseRuleQuietHoursEnabled?: boolean | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  houseRuleQuietHoursStart?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5)
+  houseRuleQuietHoursEnd?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  houseRuleOtherRules?: string | null;
 
   @IsOptional()
   @IsIn(LISTING_STATUSES)
