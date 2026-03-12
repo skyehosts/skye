@@ -22,6 +22,7 @@ import { AppSnackbar } from "../components/app-snackbar";
 import { FormInputModal } from "../components/form-input-modal";
 import { GuestsModal } from "./guests-modal";
 import { PropertyTypeModal } from "./property-type-modal";
+import { HouseRulesCard } from "./your-space/house-rules-card";
 import { fetchApi } from "../services/api";
 import { borderRadius, colors, commonStyles, spacing } from "../theme";
 import { handleFormError } from "../utils/form-error-handler";
@@ -216,6 +217,8 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
             </View>
           )}
         </Pressable>
+
+        <HouseRulesCard listingId={listingId} listing={listing} />
 
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}

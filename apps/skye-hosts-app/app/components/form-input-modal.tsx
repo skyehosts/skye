@@ -1,15 +1,9 @@
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, StyleSheet, View } from "react-native";
-import {
-  Button,
-  HelperText,
-  Modal,
-  Portal,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { ActionBar } from "./action-bar";
 import {
   borderRadius,
   colors,
@@ -117,32 +111,12 @@ export function FormInputModal({
           )}
         </View>
 
-        <View style={commonStyles.divider} />
-
-        <View style={commonStyles.row}>
-          {onDelete ? (
-            <Button
-              mode="text"
-              onPress={onDelete}
-              disabled={loading}
-              textColor={colors.danger}
-            >
-              Delete
-            </Button>
-          ) : (
-            <Button mode="text" onPress={onDismiss} disabled={loading}>
-              Cancel
-            </Button>
-          )}
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={loading}
-            disabled={loading}
-          >
-            Save
-          </Button>
-        </View>
+        <ActionBar
+          onCancel={onDismiss}
+          onSave={handleSubmit(onSubmit)}
+          onDelete={onDelete}
+          loading={loading}
+        />
       </Modal>
     </Portal>
   );

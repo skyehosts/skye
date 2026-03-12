@@ -111,49 +111,7 @@ export class ListingService {
       throw new NotFoundException('Listing not found');
     }
 
-    return {
-      id: listing.id,
-      title: listing.title,
-      description: listing.description,
-      descriptionLong: listing.descriptionLong,
-      guestAccess: listing.guestAccess,
-      interactionWithGuests: listing.interactionWithGuests,
-      otherDetailsToNote: listing.otherDetailsToNote,
-      typeId: listing.typeId,
-      spaceType: listing.spaceType,
-      maxGuests: listing.maxGuests,
-      bedrooms: listing.bedrooms,
-      beds: listing.beds,
-      bathrooms: listing.bathrooms,
-      totalFloors: listing.totalFloors,
-      listingFloor: listing.listingFloor,
-      yearBuilt: listing.yearBuilt,
-      propertySize: listing.propertySize,
-      propertySizeUnit: listing.propertySizeUnit,
-      postCode: listing.postCode,
-      amenities: listing.amenities,
-      highlights: listing.highlights,
-      bookingType: listing.bookingType,
-      safetyDisclosures: listing.safetyDisclosures,
-      checkInTimeStart: listing.checkInTimeStart,
-      checkInTimeEnd: listing.checkInTimeEnd,
-      checkOutTime: listing.checkOutTime,
-      directions: listing.directions,
-      wifiNetwork: listing.wifiNetwork,
-      wifiPassword: listing.wifiPassword,
-      houseManual: listing.houseManual,
-      checkoutInstructionTowels: listing.checkoutInstructionTowels,
-      checkoutInstructionRubbish: listing.checkoutInstructionRubbish,
-      checkoutInstructionTurnThingsOff:
-        listing.checkoutInstructionTurnThingsOff,
-      checkoutInstructionLockUp: listing.checkoutInstructionLockUp,
-      checkoutInstructionReturnKeys: listing.checkoutInstructionReturnKeys,
-      checkoutInstructionAdditions: listing.checkoutInstructionAdditions,
-      hostInteraction: listing.hostInteraction,
-      status: listing.status,
-      createdAt: listing.createdAt,
-      updatedAt: listing.updatedAt,
-    };
+    return this.toResponseDto(listing);
   }
 
   async update(
@@ -228,6 +186,23 @@ export class ListingService {
         dto.checkoutInstructionAdditions ?? null;
     if (dto.hostInteraction !== undefined)
       listing.hostInteraction = dto.hostInteraction ?? null;
+    if (dto.houseRulePetsAllowed !== undefined)
+      listing.houseRulePetsAllowed = dto.houseRulePetsAllowed ?? null;
+    if (dto.houseRuleEventsAllowed !== undefined)
+      listing.houseRuleEventsAllowed = dto.houseRuleEventsAllowed ?? null;
+    if (dto.houseRuleSmokingAllowed !== undefined)
+      listing.houseRuleSmokingAllowed = dto.houseRuleSmokingAllowed ?? null;
+    if (dto.houseRuleVapingAllowed !== undefined)
+      listing.houseRuleVapingAllowed = dto.houseRuleVapingAllowed ?? null;
+    if (dto.houseRuleQuietHoursEnabled !== undefined)
+      listing.houseRuleQuietHoursEnabled =
+        dto.houseRuleQuietHoursEnabled ?? null;
+    if (dto.houseRuleQuietHoursStart !== undefined)
+      listing.houseRuleQuietHoursStart = dto.houseRuleQuietHoursStart ?? null;
+    if (dto.houseRuleQuietHoursEnd !== undefined)
+      listing.houseRuleQuietHoursEnd = dto.houseRuleQuietHoursEnd ?? null;
+    if (dto.houseRuleOtherRules !== undefined)
+      listing.houseRuleOtherRules = dto.houseRuleOtherRules ?? null;
     if (dto.status !== undefined) listing.status = dto.status;
     listing.updatedAt = new Date();
 
@@ -235,48 +210,60 @@ export class ListingService {
       .getRepository(Listing)
       .save(listing);
 
+    return this.toResponseDto(updated);
+  }
+
+  private toResponseDto(listing: Listing): GetListingResponseDto {
     return {
-      id: updated.id,
-      title: updated.title,
-      description: updated.description,
-      descriptionLong: updated.descriptionLong,
-      guestAccess: updated.guestAccess,
-      interactionWithGuests: updated.interactionWithGuests,
-      otherDetailsToNote: updated.otherDetailsToNote,
-      typeId: updated.typeId,
-      spaceType: updated.spaceType,
-      maxGuests: updated.maxGuests,
-      bedrooms: updated.bedrooms,
-      beds: updated.beds,
-      bathrooms: updated.bathrooms,
-      totalFloors: updated.totalFloors,
-      listingFloor: updated.listingFloor,
-      yearBuilt: updated.yearBuilt,
-      propertySize: updated.propertySize,
-      propertySizeUnit: updated.propertySizeUnit,
-      postCode: updated.postCode,
-      amenities: updated.amenities,
-      highlights: updated.highlights,
-      bookingType: updated.bookingType,
-      safetyDisclosures: updated.safetyDisclosures,
-      checkInTimeStart: updated.checkInTimeStart,
-      checkInTimeEnd: updated.checkInTimeEnd,
-      checkOutTime: updated.checkOutTime,
-      directions: updated.directions,
-      wifiNetwork: updated.wifiNetwork,
-      wifiPassword: updated.wifiPassword,
-      houseManual: updated.houseManual,
-      checkoutInstructionTowels: updated.checkoutInstructionTowels,
-      checkoutInstructionRubbish: updated.checkoutInstructionRubbish,
+      id: listing.id,
+      title: listing.title,
+      description: listing.description,
+      descriptionLong: listing.descriptionLong,
+      guestAccess: listing.guestAccess,
+      interactionWithGuests: listing.interactionWithGuests,
+      otherDetailsToNote: listing.otherDetailsToNote,
+      typeId: listing.typeId,
+      spaceType: listing.spaceType,
+      maxGuests: listing.maxGuests,
+      bedrooms: listing.bedrooms,
+      beds: listing.beds,
+      bathrooms: listing.bathrooms,
+      totalFloors: listing.totalFloors,
+      listingFloor: listing.listingFloor,
+      yearBuilt: listing.yearBuilt,
+      propertySize: listing.propertySize,
+      propertySizeUnit: listing.propertySizeUnit,
+      postCode: listing.postCode,
+      amenities: listing.amenities,
+      highlights: listing.highlights,
+      bookingType: listing.bookingType,
+      safetyDisclosures: listing.safetyDisclosures,
+      checkInTimeStart: listing.checkInTimeStart,
+      checkInTimeEnd: listing.checkInTimeEnd,
+      checkOutTime: listing.checkOutTime,
+      directions: listing.directions,
+      wifiNetwork: listing.wifiNetwork,
+      wifiPassword: listing.wifiPassword,
+      houseManual: listing.houseManual,
+      checkoutInstructionTowels: listing.checkoutInstructionTowels,
+      checkoutInstructionRubbish: listing.checkoutInstructionRubbish,
       checkoutInstructionTurnThingsOff:
-        updated.checkoutInstructionTurnThingsOff,
-      checkoutInstructionLockUp: updated.checkoutInstructionLockUp,
-      checkoutInstructionReturnKeys: updated.checkoutInstructionReturnKeys,
-      checkoutInstructionAdditions: updated.checkoutInstructionAdditions,
-      hostInteraction: updated.hostInteraction,
-      status: updated.status,
-      createdAt: updated.createdAt,
-      updatedAt: updated.updatedAt,
+        listing.checkoutInstructionTurnThingsOff,
+      checkoutInstructionLockUp: listing.checkoutInstructionLockUp,
+      checkoutInstructionReturnKeys: listing.checkoutInstructionReturnKeys,
+      checkoutInstructionAdditions: listing.checkoutInstructionAdditions,
+      hostInteraction: listing.hostInteraction,
+      houseRulePetsAllowed: listing.houseRulePetsAllowed,
+      houseRuleEventsAllowed: listing.houseRuleEventsAllowed,
+      houseRuleSmokingAllowed: listing.houseRuleSmokingAllowed,
+      houseRuleVapingAllowed: listing.houseRuleVapingAllowed,
+      houseRuleQuietHoursEnabled: listing.houseRuleQuietHoursEnabled,
+      houseRuleQuietHoursStart: listing.houseRuleQuietHoursStart,
+      houseRuleQuietHoursEnd: listing.houseRuleQuietHoursEnd,
+      houseRuleOtherRules: listing.houseRuleOtherRules,
+      status: listing.status,
+      createdAt: listing.createdAt,
+      updatedAt: listing.updatedAt,
     };
   }
 }

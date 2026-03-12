@@ -408,3 +408,68 @@ export const CHECKOUT_INSTRUCTION_OPTIONS: {
     field: 'checkoutInstructionAdditions',
   },
 ];
+
+export type HouseRuleDataType = 'boolean' | 'doubleTime' | 'string';
+
+export interface IHouseRuleConfig {
+  id: string;
+  title: string;
+  description?: string;
+  type: HouseRuleDataType;
+  icon: string;
+  field: string;
+  enabledField?: string;
+  startField?: string;
+  endField?: string;
+}
+
+export const HOUSE_RULES_CONFIG: IHouseRuleConfig[] = [
+  {
+    id: 'pets',
+    title: 'Pets allowed',
+    description:
+      'You can refuse pets, but must reasonably accommodate service animals.',
+    type: 'boolean',
+    icon: 'paw-outline',
+    field: 'houseRulePetsAllowed',
+  },
+  {
+    id: 'events',
+    title: 'Events allowed',
+    type: 'boolean',
+    icon: 'calendar-outline',
+    field: 'houseRuleEventsAllowed',
+  },
+  {
+    id: 'smoking',
+    title: 'Smoking allowed',
+    type: 'boolean',
+    icon: 'ban-outline',
+    field: 'houseRuleSmokingAllowed',
+  },
+  {
+    id: 'vaping',
+    title: 'Vaping / e-cigarettes allowed',
+    type: 'boolean',
+    icon: 'cloud-outline',
+    field: 'houseRuleVapingAllowed',
+  },
+  {
+    id: 'quietHours',
+    title: 'Quiet hours',
+    type: 'doubleTime',
+    icon: 'moon-outline',
+    field: 'houseRuleQuietHoursEnabled',
+    enabledField: 'houseRuleQuietHoursEnabled',
+    startField: 'houseRuleQuietHoursStart',
+    endField: 'houseRuleQuietHoursEnd',
+  },
+  {
+    id: 'otherRules',
+    title: 'Other rules',
+    description: 'Share anything else you expect from guests',
+    type: 'string',
+    icon: 'document-text-outline',
+    field: 'houseRuleOtherRules',
+  },
+];

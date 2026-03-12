@@ -48,6 +48,14 @@ export interface IGetListingResponseDto {
   checkoutInstructionReturnKeys: string | null;
   checkoutInstructionAdditions: string | null;
   hostInteraction: HostInteractionId | null;
+  houseRulePetsAllowed: boolean | null;
+  houseRuleEventsAllowed: boolean | null;
+  houseRuleSmokingAllowed: boolean | null;
+  houseRuleVapingAllowed: boolean | null;
+  houseRuleQuietHoursEnabled: boolean | null;
+  houseRuleQuietHoursStart: string | null;
+  houseRuleQuietHoursEnd: string | null;
+  houseRuleOtherRules: string | null;
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

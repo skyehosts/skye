@@ -5,29 +5,19 @@ import type {
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Button, Modal, Portal } from "react-native-paper";
+import { Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { DropdownField } from "../../components/dropdown-field";
+import { ActionBar } from "../../components/action-bar";
+import {
+  DEFAULT_TIME,
+  TIME_OPTIONS,
+  TimeRangePicker,
+} from "../../components/time-range-picker";
 import { fetchApi } from "../../services/api";
 import { colors, commonStyles, spacing } from "../../theme";
 import { handleFormError } from "../../utils/form-error-handler";
-
-function generateTimeOptions(): { value: string; label: string }[] {
-  const times: { value: string; label: string }[] = [];
-  for (let h = 0; h < 24; h++) {
-    for (const m of [0, 30]) {
-      const hh = String(h).padStart(2, "0");
-      const mm = String(m).padStart(2, "0");
-      const value = `${hh}:${mm}`;
-      times.push({ value, label: value });
-    }
-  }
-  return times;
-}
-
-const TIME_OPTIONS = generateTimeOptions();
-const DEFAULT_TIME = "12:00";
 
 interface CheckInCheckoutCardProps {
   listingId: string;
@@ -126,24 +116,12 @@ export function CheckInCheckoutCard({
           </View>
 
           <Text style={commonStyles.itemTitle}>Check-in window</Text>
-          <View style={styles.dropdownRow}>
-            <View style={styles.dropdownHalf}>
-              <DropdownField
-                label="Start time"
-                value={checkInStart}
-                options={TIME_OPTIONS}
-                onChange={setCheckInStart}
-              />
-            </View>
-            <View style={styles.dropdownHalf}>
-              <DropdownField
-                label="End time"
-                value={checkInEnd}
-                options={TIME_OPTIONS}
-                onChange={setCheckInEnd}
-              />
-            </View>
-          </View>
+          <TimeRangePicker
+            startTime={checkInStart}
+            endTime={checkInEnd}
+            onStartChange={setCheckInStart}
+            onEndChange={setCheckInEnd}
+          />
 
           <Text style={commonStyles.itemTitle}>Checkout time</Text>
           <DropdownField
@@ -153,25 +131,11 @@ export function CheckInCheckoutCard({
             onChange={setCheckOut}
           />
 
-          <View style={commonStyles.divider} />
-
-          <View style={commonStyles.row}>
-            <Button
-              mode="text"
-              onPress={() => setModalVisible(false)}
-              disabled={saving}
-            >
-              Cancel
-            </Button>
-            <Button
-              mode="contained"
-              onPress={handleSave}
-              loading={saving}
-              disabled={saving}
-            >
-              Save
-            </Button>
-          </View>
+          <ActionBar
+            onCancel={() => setModalVisible(false)}
+            onSave={handleSave}
+            loading={saving}
+          />
         </Modal>
       </Portal>
 
@@ -194,12 +158,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
     marginHorizontal: spacing.md,
     marginVertical: spacing.xs,
-  },
-  dropdownRow: {
-    flexDirection: "row",
-    gap: spacing.md,
-  },
-  dropdownHalf: {
-    flex: 1,
   },
 });
