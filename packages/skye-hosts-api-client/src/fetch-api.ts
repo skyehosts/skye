@@ -19,6 +19,16 @@ export class ApiAuthenticationError extends Error {
   }
 }
 
+export class ApiRequestError extends Error {
+  public readonly statusCode: number;
+
+  constructor(statusCode: number, message: string) {
+    super(message);
+    this.name = 'ApiRequestError';
+    this.statusCode = statusCode;
+  }
+}
+
 export interface FetchApiOptions {
   method?: string;
   headers?: Record<string, string>;
@@ -46,17 +56,24 @@ export async function fetchApi<TResponse, TBody = never>(
     if (res.status === 401 || res.status === 498) {
       throw new ApiAuthenticationError(res.status);
     }
-    if (res.status === 400) {
-      try {
-        const errorBody = await res.json();
-        if (isApiValidationErrorResponse(errorBody)) {
-          throw new ApiValidationError(errorBody.message);
-        }
-      } catch (e) {
-        if (e instanceof ApiValidationError) throw e;
+    try {
+      const errorBody = await res.json();
+      if (res.status === 400 && isApiValidationErrorResponse(errorBody)) {
+        throw new ApiValidationError(errorBody.message);
       }
+      const message =
+        typeof errorBody.message === 'string'
+          ? errorBody.message
+          : `API request failed: ${res.status} ${res.statusText}`;
+      throw new ApiRequestError(res.status, message);
+    } catch (e) {
+      if (e instanceof ApiValidationError || e instanceof ApiRequestError)
+        throw e;
+      throw new ApiRequestError(
+        res.status,
+        `API request failed: ${res.status} ${res.statusText}`,
+      );
     }
-    throw new Error(`API request failed: ${res.status} ${res.statusText}`);
   }
   if (res.status === 204 || res.headers.get('content-length') === '0') {
     return undefined as TResponse;

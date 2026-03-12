@@ -5,17 +5,10 @@ import {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-  Alert,
-  Linking,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Linking, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { Button, Checkbox } from "react-native-paper";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
+import { AppSnackbar } from "../components/app-snackbar";
 import { WizardAppBar } from "./wizard-app-bar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
@@ -26,6 +19,7 @@ import {
   spacing,
   typography,
 } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 import { useCreateListing } from "./context";
 
 const APP_NAME = "skyehosts";
@@ -101,13 +95,7 @@ export default function SafetyDetailsScreen() {
       await clearDraft();
       router.replace("/create-new-listing/success");
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      Alert.alert(
-        "Something went wrong",
-        e instanceof Error
-          ? e.message
-          : "Failed to create your listing. Please try again.",
-      );
+      handleFormError(e, setError, setServerError);
     }
   };
 
@@ -138,10 +126,6 @@ export default function SafetyDetailsScreen() {
             </View>
           ))}
         </View>
-
-        {serverError ? (
-          <Text style={styles.errorText}>{serverError}</Text>
-        ) : null}
 
         <View style={commonStyles.divider} />
 
@@ -194,6 +178,7 @@ export default function SafetyDetailsScreen() {
           Create listing
         </Button>
       </View>
+      <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </ScreenContainer>
   );
 }

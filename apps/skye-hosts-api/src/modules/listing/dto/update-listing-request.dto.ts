@@ -138,6 +138,21 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   checkOutTime?: string | null;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  directions?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  wifiNetwork?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  wifiPassword?: string | null;
+
+  @IsOptional()
   @IsIn(LISTING_STATUSES)
   status?: IUpdateListingRequestDto['status'];
 }

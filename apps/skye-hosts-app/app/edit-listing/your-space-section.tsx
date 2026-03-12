@@ -7,7 +7,6 @@ import {
   LISTING_SPACE_TYPE_LABELS,
   LISTING_TYPE_LABELS,
 } from "../../../../packages/skye-hosts-api-client/src";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -19,11 +18,13 @@ import {
   View,
 } from "react-native";
 import { Icon } from "react-native-paper";
+import { AppSnackbar } from "../components/app-snackbar";
 import { FormInputModal } from "../components/form-input-modal";
 import { GuestsModal } from "./guests-modal";
 import { PropertyTypeModal } from "./property-type-modal";
 import { fetchApi } from "../services/api";
 import { borderRadius, colors, commonStyles, spacing } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 interface YourSpaceSectionProps {
   listingId: string;
@@ -37,6 +38,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
   const [propertyTypeModalVisible, setPropertyTypeModalVisible] =
     useState(false);
   const [saving, setSaving] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const { setError } = useForm();
 
@@ -67,8 +69,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
       setListing(updated);
       setTitleModalVisible(false);
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      throw e;
+      handleFormError(e, setError, setServerError);
     } finally {
       setSaving(false);
     }
@@ -247,6 +248,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
         />
       )}
 
+      <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
       {listing && (
         <PropertyTypeModal
           visible={propertyTypeModalVisible}

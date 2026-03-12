@@ -1,14 +1,14 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
 import { verifyOtp } from "../services/auth.service";
 import { colors, commonStyles, spacing, typography } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 interface VerifyCodeFormValues {
   code: string;
@@ -22,6 +22,8 @@ export default function VerifyCodeScreen() {
   }>();
   const { setUser } = useAuth();
   const [serverError, setServerError] = useState("");
+  const [autoSubmitFailed, setAutoSubmitFailed] = useState(false);
+  const hasAutoSubmitted = useRef(false);
 
   const {
     setValue,
@@ -36,25 +38,26 @@ export default function VerifyCodeScreen() {
 
   const code = watch("code");
 
-  const onSubmit = async (data: VerifyCodeFormValues) => {
-    setServerError("");
-    try {
-      const response = await verifyOtp(
-        phoneNumber,
-        data.code,
-        name || undefined,
-      );
-      await setUser(response.user, response.pin);
-      router.replace("/");
-    } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Verification failed. Please try again.",
-      );
-    }
-  };
+  const onSubmit = useCallback(
+    async (data: VerifyCodeFormValues) => {
+      setServerError("");
+      try {
+        const response = await verifyOtp(
+          phoneNumber,
+          data.code,
+          name || undefined,
+        );
+        await setUser(response.user, response.pin);
+        router.replace("/");
+      } catch (e) {
+        setAutoSubmitFailed(true);
+        handleFormError(e, setError, setServerError);
+      }
+    },
+    [phoneNumber, name, setUser, router, setError],
+  );
+
+  const showSubmitButton = autoSubmitFailed;
 
   return (
     <ScreenContainer>
@@ -81,6 +84,14 @@ export default function VerifyCodeScreen() {
               onChangeText={(v) => {
                 setValue("code", v);
                 if (errors.code) clearErrors("code");
+                if (
+                  v.length === 6 &&
+                  !autoSubmitFailed &&
+                  !hasAutoSubmitted.current
+                ) {
+                  hasAutoSubmitted.current = true;
+                  handleSubmit(onSubmit)();
+                }
               }}
               disabled={isSubmitting}
               error={!!errors.code}
@@ -93,14 +104,16 @@ export default function VerifyCodeScreen() {
             )}
           </View>
 
-          <Button
-            mode="contained"
-            onPress={handleSubmit(onSubmit)}
-            loading={isSubmitting}
-            disabled={isSubmitting}
-          >
-            Verify
-          </Button>
+          {showSubmitButton && (
+            <Button
+              mode="contained"
+              onPress={handleSubmit(onSubmit)}
+              loading={isSubmitting}
+              disabled={isSubmitting || code.length < 6}
+            >
+              Verify
+            </Button>
+          )}
         </View>
 
         <AppSnackbar

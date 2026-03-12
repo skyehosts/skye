@@ -1,4 +1,4 @@
-import { Snackbar } from "react-native-paper";
+import { Portal, Snackbar } from "react-native-paper";
 import { colors } from "../theme";
 
 interface AppSnackbarProps {
@@ -15,16 +15,20 @@ export function AppSnackbar({
   type = "error",
 }: AppSnackbarProps) {
   return (
-    <Snackbar
-      visible={!!message}
-      onDismiss={onDismiss}
-      duration={duration}
-      style={
-        type === "success" ? { backgroundColor: colors.success } : undefined
-      }
-      action={{ label: "Dismiss", onPress: onDismiss }}
-    >
-      {message}
-    </Snackbar>
+    <Portal>
+      <Snackbar
+        visible={!!message}
+        onDismiss={onDismiss}
+        duration={duration}
+        style={
+          type === "success"
+            ? { backgroundColor: colors.success }
+            : { backgroundColor: colors.danger }
+        }
+        action={{ label: "Dismiss", onPress: onDismiss }}
+      >
+        {message}
+      </Snackbar>
+    </Portal>
   );
 }

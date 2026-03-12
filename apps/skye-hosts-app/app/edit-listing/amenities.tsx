@@ -4,7 +4,6 @@ import type {
   ListingAmenityId,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { LISTING_AMENITY_MAP } from "../../../../packages/skye-hosts-api-client/src";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -17,6 +16,7 @@ import {
   View,
 } from "react-native";
 import { Appbar, Icon } from "react-native-paper";
+import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import {
@@ -26,6 +26,7 @@ import {
   spacing,
   typography,
 } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 import { AmenitiesAddModal } from "./amenities-add-modal";
 
 export default function EditAmenitiesScreen() {
@@ -35,6 +36,7 @@ export default function EditAmenitiesScreen() {
   const [addModalVisible, setAddModalVisible] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [serverError, setServerError] = useState("");
   const { setError } = useForm();
 
   const fetchListing = useCallback(async () => {
@@ -60,8 +62,7 @@ export default function EditAmenitiesScreen() {
       >(`/listing/${listing.id}`, { amenities }, { method: "PATCH" });
       setListing(updated);
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      throw e;
+      handleFormError(e, setError, setServerError);
     } finally {
       setSaving(false);
     }
@@ -160,6 +161,7 @@ export default function EditAmenitiesScreen() {
         </ScrollView>
       )}
 
+      <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
       {listing && (
         <AmenitiesAddModal
           visible={addModalVisible}

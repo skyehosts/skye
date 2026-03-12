@@ -2,7 +2,6 @@ import type {
   IGetListingResponseDto,
   IUpdateListingRequestDto,
 } from "../../../../packages/skye-hosts-api-client/src";
-import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -16,10 +15,12 @@ import {
 } from "react-native";
 import { Appbar } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { AppSnackbar } from "../components/app-snackbar";
 import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing } from "../theme";
+import { handleFormError } from "../utils/form-error-handler";
 
 type DescriptionField =
   | "description"
@@ -80,6 +81,7 @@ export default function EditDescriptionScreen() {
   const [loading, setLoading] = useState(true);
   const [activeField, setActiveField] = useState<FieldConfig | null>(null);
   const [saving, setSaving] = useState(false);
+  const [serverError, setServerError] = useState("");
   const { setError } = useForm();
 
   const fetchListing = useCallback(async () => {
@@ -110,8 +112,7 @@ export default function EditDescriptionScreen() {
       setListing(updated);
       setActiveField(null);
     } catch (e) {
-      if (applyServerErrors(e, setError)) return;
-      throw e;
+      handleFormError(e, setError, setServerError);
     } finally {
       setSaving(false);
     }
@@ -170,6 +171,7 @@ export default function EditDescriptionScreen() {
         </ScrollView>
       )}
 
+      <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
       {activeField && listing && (
         <FormInputModal
           visible={!!activeField}

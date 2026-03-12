@@ -22,6 +22,7 @@ interface FormInputModalProps {
   visible: boolean;
   onDismiss: () => void;
   title: string;
+  subtext?: string;
   value: string;
   onSave: (value: string) => void;
   maxLength?: number;
@@ -37,6 +38,7 @@ export function FormInputModal({
   visible,
   onDismiss,
   title,
+  subtext,
   value,
   onSave,
   maxLength = 200,
@@ -77,6 +79,8 @@ export function FormInputModal({
             <Ionicons name="close" size={22} color={colors.textSecondary} />
           </Pressable>
         </View>
+
+        {subtext && <Text style={styles.subtext}>{subtext}</Text>}
 
         <View style={styles.inputContainer}>
           <Controller
@@ -151,5 +155,9 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginTop: spacing.xs,
+  },
+  subtext: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
   },
 });
