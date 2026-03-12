@@ -1,5 +1,5 @@
 import { ApiValidationError } from './api-validation-error';
-import { ApiAuthenticationError, fetchApi } from './fetch-api';
+import { ApiAuthenticationError, ApiRequestError, fetchApi } from './fetch-api';
 
 const mockPayload = { id: 1, name: 'Test' };
 
@@ -136,7 +136,7 @@ describe('fetchApi', () => {
     }
   });
 
-  it('should throw generic Error on 400 without structured field errors', async () => {
+  it('should throw ApiRequestError with API message on 400 without structured field errors', async () => {
     jest.spyOn(global, 'fetch').mockResolvedValue({
       ok: false,
       status: 400,
@@ -144,8 +144,12 @@ describe('fetchApi', () => {
       json: async () => ({ message: 'Something went wrong' }),
     } as Response);
 
-    await expect(fetchApi('/test')).rejects.toThrow(
-      'API request failed: 400 Bad Request',
-    );
+    await expect(fetchApi('/test')).rejects.toThrow('Something went wrong');
+    try {
+      await fetchApi('/test');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ApiRequestError);
+      expect((e as ApiRequestError).statusCode).toBe(400);
+    }
   });
 });
