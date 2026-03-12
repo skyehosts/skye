@@ -153,6 +153,11 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   wifiPassword?: string | null;
 
   @IsOptional()
+  @IsString()
+  @MaxLength(1000)
+  houseManual?: string | null;
+
+  @IsOptional()
   @IsIn(LISTING_STATUSES)
   status?: IUpdateListingRequestDto['status'];
 }

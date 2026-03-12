@@ -108,6 +108,7 @@ export default async function DemoPage() {
 
 - If there are any typeorm entities that were create, don't forgot to create migraton by using command:
   pnpm --filter=skye-hosts-api migration:generate src/migrations/name
+- Then run it pnpm --filter=skye-hosts-api migration:run
 
 ---
 

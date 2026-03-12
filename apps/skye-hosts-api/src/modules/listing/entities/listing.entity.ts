@@ -102,6 +102,9 @@ export class Listing {
   @Column({ type: 'character varying', nullable: true, default: null })
   wifiPassword: string | null;
 
+  @Column({ type: 'text', nullable: true, default: null })
+  houseManual: string | null;
+
   @Column({ type: 'character varying', default: 'Europe/London' })
   timezone: string;
 

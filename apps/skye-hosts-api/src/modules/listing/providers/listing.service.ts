@@ -141,6 +141,7 @@ export class ListingService {
       directions: listing.directions,
       wifiNetwork: listing.wifiNetwork,
       wifiPassword: listing.wifiPassword,
+      houseManual: listing.houseManual,
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
@@ -199,6 +200,8 @@ export class ListingService {
       listing.wifiNetwork = dto.wifiNetwork ?? null;
     if (dto.wifiPassword !== undefined)
       listing.wifiPassword = dto.wifiPassword ?? null;
+    if (dto.houseManual !== undefined)
+      listing.houseManual = dto.houseManual ?? null;
     if (dto.status !== undefined) listing.status = dto.status;
     listing.updatedAt = new Date();
 
@@ -236,6 +239,7 @@ export class ListingService {
       directions: updated.directions,
       wifiNetwork: updated.wifiNetwork,
       wifiPassword: updated.wifiPassword,
+      houseManual: updated.houseManual,
       status: updated.status,
       createdAt: updated.createdAt,
       updatedAt: updated.updatedAt,

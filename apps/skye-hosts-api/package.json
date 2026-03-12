@@ -27,7 +27,8 @@
     "typeorm": "env-cmd -f .env.local typeorm-ts-node-commonjs -d src/database/data-source.ts",
     "migration:generate": "pnpm typeorm migration:generate",
     "migration:revert": "pnpm typeorm migration:revert",
-    "migration:show": "pnpm typeorm migration:show"
+    "migration:show": "pnpm typeorm migration:show",
+    "migration:run": "pnpm typeorm migration:run"
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.1000.0",

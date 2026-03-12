@@ -1,18 +1,27 @@
 ===
 MVP
 ===
-- App: Edit listing (Your space)
-- App: Edit listing (Arrival guide)
-- App: Listing photos
-- App: Draft or Publish after creation?
+- App: Edit listing
+  - (Your space, remaining components)
+  - (Arrival guide remaining components)
+  - Understanding why some data not colecting during creation, only edit... -> Plan
+  - Photos
+  - Draft or Publish after creation?
+  - Availability
+  - Pricing
 - App: Calendar
 - App: Co-host
+- Booking events
+  - Requested & confirmed
+  - Instant
+  - Cancellation
+- Scheduled messages: Understanding, if should show in conversation thread
+- Payments
 
 =======
 General
 =======
 - flex-grow on <main not working>
-- Scheduled messages should indicate somehow that it is such. Check how AirBnB does it. maybe not in thread at all?
 - Shift postman to skyehosts email
 - Shift stripe to skyehosts email & update secrets
 - expo build working on real device?
@@ -80,3 +89,10 @@ Logins
 ===============
 Pending prompts
 ===============
+Below Wi-Fi detials on edit listing 'Arrival guide'
+- Add card with title 'House manual'
+- Subtext 'Add details' (If no existing value) Otherwise show existing value truncated to 3 lines
+- When card tapped - Open form-input-modal.tsx with title 'House manual'
+- subtext: 'Give guests tips about your space, like how to access the internet and use the TV.'
+- It should save to API, new property on listing.entity.ts called 'houseManual'
+- max length: 1000chars
