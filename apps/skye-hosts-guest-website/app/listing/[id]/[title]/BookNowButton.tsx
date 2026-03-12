@@ -10,16 +10,16 @@ import { useState } from 'react';
 interface BookNowButtonProps {
   listingId: number;
   guestId: number;
-  checkInAt: string;
-  checkOutAt: string;
+  checkInDate: string;
+  checkOutDate: string;
   totalPrice: number;
 }
 
 export function BookNowButton({
   listingId,
   guestId,
-  checkInAt,
-  checkOutAt,
+  checkInDate,
+  checkOutDate,
   totalPrice,
 }: BookNowButtonProps) {
   const [status, setStatus] = useState<
@@ -30,13 +30,16 @@ export function BookNowButton({
   const handleBook = async (isTestBooking: boolean) => {
     setStatus('loading');
     try {
-      let finalCheckIn = checkInAt;
-      let finalCheckOut = checkOutAt;
+      let finalCheckIn = checkInDate;
+      let finalCheckOut = checkOutDate;
 
       if (isTestBooking) {
-        const now = Date.now();
-        finalCheckIn = new Date(now + 2 * 60 * 1000).toISOString();
-        finalCheckOut = new Date(now + 4 * 60 * 1000).toISOString();
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        finalCheckIn = tomorrow.toISOString().slice(0, 10);
+        const dayAfter = new Date();
+        dayAfter.setDate(dayAfter.getDate() + 2);
+        finalCheckOut = dayAfter.toISOString().slice(0, 10);
       }
 
       const result = await fetchApi<
@@ -45,8 +48,8 @@ export function BookNowButton({
       >('/payment/process-booking-payment', {
         listingId,
         guestId,
-        checkInAt: finalCheckIn,
-        checkOutAt: finalCheckOut,
+        checkInDate: finalCheckIn,
+        checkOutDate: finalCheckOut,
         totalPrice,
         ...(isTestBooking && { isTestBooking: true }),
       });

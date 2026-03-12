@@ -35,8 +35,8 @@ export default async function ListingPage({ params }: ListingPageProps) {
         <BookNowButton
           listingId={listing.id}
           guestId={guestId}
-          checkInAt="2026-04-01"
-          checkOutAt="2026-04-05"
+          checkInDate="2026-04-01"
+          checkOutDate="2026-04-05"
           totalPrice={500}
         />
       ) : (

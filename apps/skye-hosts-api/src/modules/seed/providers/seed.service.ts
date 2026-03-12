@@ -1,4 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  MessageLog,
+  SentMessage,
+} from 'src/modules/scheduled-message/entities';
 import { Account } from '../../account/entities';
 import { Booking } from '../../booking/entities';
 import { DatabaseService } from '../../common/providers';
@@ -19,7 +23,15 @@ export class SeedService {
   }
 
   async truncateData(): Promise<void> {
-    const entities = [Message, Booking, Listing, Account, Demo];
+    const entities = [
+      Message,
+      MessageLog,
+      SentMessage,
+      Booking,
+      Listing,
+      Account,
+      Demo,
+    ];
 
     for (const entity of entities) {
       const repository = this.databaseService.getRepository(entity);

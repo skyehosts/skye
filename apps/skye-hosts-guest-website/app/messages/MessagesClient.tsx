@@ -413,7 +413,7 @@ export default function MessagesClient() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
               {statusBadge(conv.bookingStatus)}
               <Typography variant="caption" color="text.secondary" noWrap>
-                {formatShortDateRange(conv.checkInAt, conv.checkOutAt)} · #
+                {formatShortDateRange(conv.checkInDate, conv.checkOutDate)} · #
                 {conv.bookingId}
               </Typography>
             </Box>
@@ -494,8 +494,8 @@ export default function MessagesClient() {
             {selectedConversation && (
               <Typography variant="caption" color="text.secondary">
                 {formatShortDateRange(
-                  selectedConversation.checkInAt,
-                  selectedConversation.checkOutAt,
+                  selectedConversation.checkInDate,
+                  selectedConversation.checkOutDate,
                 )}
               </Typography>
             )}

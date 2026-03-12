@@ -199,8 +199,8 @@ export class MessageService {
           lastMessageContent: lastMessage.content,
           lastMessageAt: lastMessage.createdAt,
           unreadCount,
-          checkInAt: booking.checkInAt,
-          checkOutAt: booking.checkOutAt,
+          checkInDate: booking.checkInDate,
+          checkOutDate: booking.checkOutDate,
           bookingStatus: booking.status,
         };
       }),

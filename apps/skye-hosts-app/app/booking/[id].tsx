@@ -115,13 +115,13 @@ export default function BookingDetailScreen() {
                 <View style={styles.dateBlock}>
                   <Text style={styles.dateLabel}>Check-in</Text>
                   <Text style={styles.dateValue}>
-                    {formatDate(booking.checkInAt)}
+                    {formatDate(booking.checkInDate)}
                   </Text>
                 </View>
                 <View style={styles.dateBlock}>
                   <Text style={styles.dateLabel}>Check-out</Text>
                   <Text style={styles.dateValue}>
-                    {formatDate(booking.checkOutAt)}
+                    {formatDate(booking.checkOutDate)}
                   </Text>
                 </View>
               </View>
@@ -129,7 +129,7 @@ export default function BookingDetailScreen() {
               <View style={[commonStyles.row, { paddingVertical: spacing.xs }]}>
                 <Text style={styles.label}>Nights</Text>
                 <Text style={styles.value}>
-                  {getNights(booking.checkInAt, booking.checkOutAt)}
+                  {getNights(booking.checkInDate, booking.checkOutDate)}
                 </Text>
               </View>
               <View style={[commonStyles.row, { paddingVertical: spacing.xs }]}>

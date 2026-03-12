@@ -81,33 +81,24 @@ Logins
 Pending prompts
 ===============
 In apps/skye-hosts-app/app/edit-listing/arrival-guide-section.tsx
-Add a vertically stacked card (Uses same design as apps/skye-hosts-app/app/edit-listing/your-space-section.tsx)
-Design & behaviour of card:
-- Centered, vertical separator (With gutter above and below)
-- On left:
-  - Title: Check-in
-  - Underneath:
-    - Shows check-in window (Example format: 16:00 - 21:00) (Accept checkin window is between these two times)
-    - Create new properties on listing.entity.ts called checkInTimeStart and checkInTimeEnd and use that.
-- On right:
-  - Title: Checkout
-  - Underneath:
-    - Shows checkout time (Example format: 16:00 - 21:00)
-    - Create new property on listing.entity.ts called checkOutTime and use that
-- Behaviour when card is tapped anywhere:
-  - Open modal with title 'Check-in & checkout times'
-  - Modal has 'x' close icon top right
-  - Re-use an existing modal component if possible
-  - text:
-    'Check-in window'
-  - Below the text:
-  - Two dropdowns horizontally adjacent
-    - First one: 
-      - Label: Start time
-      - Attached to listing.checkInTime
-      - Should automatically show currently saved value.
-    - Second one: 
-      - Label: End time
-      - Attached to listing.checkOutTime
-      - Should automatically show currently saved value.
-  - text: 'Checkout time'
+Add another card that has:
+- title: Directions
+- subtext: 'Add details' (If no current value) Otherwise, show current value truncated to 3 liens.
+- tap behaviour: Opens FormInputModal with title 'Directions'
+- Subtext: 'Let guests know how to get to your place. Include any tips for parking or public transport.
+
+In apps/skye-hosts-app/app/edit-listing/arrival-guide-section.tsx
+Add another card that has:
+- title: Wi-Fi details
+- subtext: 'Add details' (If no current value) Otherwise, show current value (of netowrk only) 
+- tap behaviour: Opens a modal with two form inputs.
+- Modal should have title on top left 'Wi-Fi details' and 'x' close icon top right
+- Re-use exiting modal if possible.
+- Two fields:
+  - Wifi network name
+  - Wi-fi password
+- These should save to new properties on listig.entity.ts
+- Add a todo comment to creating message template in hosts app that wifi network name / password can be injected as vars in nfuture
+
+
+

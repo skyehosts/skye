@@ -10,8 +10,8 @@ export class ConversationDto implements IConversationDto {
   lastMessageContent: string;
   lastMessageAt: Date;
   unreadCount: number;
-  checkInAt: Date;
-  checkOutAt: Date;
+  checkInDate: string;
+  checkOutDate: string;
   bookingStatus: string;
 }
 

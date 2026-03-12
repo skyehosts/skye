@@ -9,10 +9,10 @@ export class BookingPaymentRequestDto implements IBookingPaymentRequestDto {
   guestId: number;
 
   @IsDateString()
-  checkInAt: string;
+  checkInDate: string;
 
   @IsDateString()
-  checkOutAt: string;
+  checkOutDate: string;
 
   @IsNumber()
   totalPrice: number;
