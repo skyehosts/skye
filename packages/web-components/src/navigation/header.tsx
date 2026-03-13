@@ -25,7 +25,7 @@ export interface HeaderLink {
   href: string;
 }
 
-export interface HeaderProps {
+export interface HeaderProps extends HeaderLogoProps {
   isAuthenticated: boolean;
   isLoading?: boolean;
   onLogout?: () => void;
@@ -37,42 +37,13 @@ export interface HeaderProps {
   };
 }
 
-function LogoSvg() {
-  return (
-    <svg
-      width="135"
-      height="32"
-      viewBox="0 0 135 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect width="32" height="32" rx="6" fill="#1976d2" />
-      <path
-        d="M8 22L16 10L24 22"
-        stroke="white"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M12 22L16 16L20 22"
-        stroke="white"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <text
-        x="40"
-        y="22"
-        fontFamily="sans-serif"
-        fontSize="18"
-        fontWeight="700"
-        fill="#1976d2"
-      >
-        SkyeHosts
-      </text>
-    </svg>
-  );
+export interface HeaderLogoProps {
+  /** Path to the wide logo (shown on md+ screens) */
+  logoWideSrc: string;
+  /** Path to the square logo (shown on xs screens) */
+  logoSquareSrc: string;
+  /** Alt text for the logo */
+  logoAlt?: string;
 }
 
 const navLinkSx = (
@@ -112,6 +83,9 @@ export function Header({
   isLoading = false,
   onLogout,
   logoHref = '/',
+  logoWideSrc,
+  logoSquareSrc,
+  logoAlt = 'Logo',
   links = [],
   authLinks = {
     login: { label: 'Log in', href: '/login' },
@@ -150,7 +124,28 @@ export function Header({
             mr: 3,
           }}
         >
-          <LogoSvg />
+          {/* Wide logo: hidden below 480px */}
+          <Box
+            component="img"
+            src={logoWideSrc}
+            alt={logoAlt}
+            sx={{
+              height: 50,
+              width: 'auto',
+              display: { xs: 'none', sm: 'block' },
+            }}
+          />
+          {/* Square logo: shown below 480px */}
+          <Box
+            component="img"
+            src={logoSquareSrc}
+            alt={logoAlt}
+            sx={{
+              height: 50,
+              width: 50,
+              display: { xs: 'block', sm: 'none' },
+            }}
+          />
         </Link>
 
         {/* Desktop navigation links (left-aligned) */}

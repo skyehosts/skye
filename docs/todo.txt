@@ -93,11 +93,8 @@ Logins
 ===============
 Pending prompts
 ===============
-In Host app on edit listing page, below the Amenities card, add a new card.
-
-Rename ModalFooter? It's not always used in a Modal
-
-
+- Replace the logo displayed on splash screen in hosts app with /temp-logo/logo-tall.png and move the image file to an appropriate place
+- In header on low breakpoint where you display logo-square, it image dimensions are actually  
 ==================
 Re-useable prompts
 ==================
