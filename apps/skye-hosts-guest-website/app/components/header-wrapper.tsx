@@ -19,6 +19,9 @@ export function HeaderWrapper() {
       isLoading={isLoading}
       onLogout={() => signOut({ redirectTo: '/login' })}
       links={isAuthenticated ? authenticatedLinks : publicLinks}
+      logoWideSrc="/logo-wide.png"
+      logoSquareSrc="/logo-square.png"
+      logoAlt="Skye Hosts"
     />
   );
 }

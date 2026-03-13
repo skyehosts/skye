@@ -1,15 +1,18 @@
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
-import { ScreenContainer } from "./components/screen-container";
+import { SplashScreen } from "./components/splash-screen";
 import { useAuth } from "./contexts/auth-context";
 import { sentryTest } from "./services/error-reporting";
 import StorageService, { StorageKeys } from "./services/storage";
+
+const SPLASH_MIN_MS = 2000;
+
 export default function HomeScreen() {
   const { isAuthenticated, isLoading, isUnlocked, needsSecuritySetup } =
     useAuth();
   const [onboardingChecked, setOnboardingChecked] = useState(false);
   const [onboardingSeen, setOnboardingSeen] = useState(false);
+  const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
     sentryTest();
@@ -21,14 +24,13 @@ export default function HomeScreen() {
     );
   }, []);
 
-  if (isLoading || !onboardingChecked) {
-    return (
-      <ScreenContainer
-        style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
-      >
-        <ActivityIndicator size="large" />
-      </ScreenContainer>
-    );
+  useEffect(() => {
+    const timer = setTimeout(() => setSplashDone(true), SPLASH_MIN_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!splashDone || isLoading || !onboardingChecked) {
+    return <SplashScreen />;
   }
 
   if (!onboardingSeen) {
