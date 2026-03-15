@@ -1,4 +1,6 @@
 export * from './change-password-request.dto';
+export * from './email-request-otp-request.dto';
+export * from './email-verify-otp-request.dto';
 export * from './forgot-password-request.dto';
 export * from './login-request.dto';
 export * from './phone-lookup-request.dto';

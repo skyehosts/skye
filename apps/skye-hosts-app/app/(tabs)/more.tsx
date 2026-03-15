@@ -51,6 +51,11 @@ export default function MoreScreen() {
 
       <View style={styles.section}>
         <MenuItem
+          icon="account-outline"
+          label="Personal details"
+          onPress={() => router.push("/settings/personal-details")}
+        />
+        <MenuItem
           icon="bell-outline"
           label="Notifications"
           onPress={() => router.push("/settings/notifications")}

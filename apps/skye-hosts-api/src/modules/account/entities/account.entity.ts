@@ -20,6 +20,13 @@ export class Account {
   })
   email: string | null;
 
+  @Column({
+    nullable: false,
+    type: 'boolean',
+    default: false,
+  })
+  emailVerified: boolean;
+
   @PrimaryGeneratedColumn()
   id: number;
 

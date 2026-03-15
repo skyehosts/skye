@@ -71,6 +71,50 @@ export class TwilioService {
     }
   }
 
+  async sendVerificationToEmail(email: string): Promise<void> {
+    if (this.isBypassMode) {
+      this.logger.debug(
+        `[BYPASS] Email verification skipped for ${email} — use code ${TEST_OTP_CODE}`,
+      );
+      return;
+    }
+
+    await this.client.verify.v2
+      .services(this.verifyServiceSid)
+      .verifications.create({
+        to: email,
+        channel: 'email',
+      });
+
+    this.logger.debug(`Email verification sent to ${email}`);
+  }
+
+  async checkVerificationForEmail(
+    email: string,
+    code: string,
+  ): Promise<boolean> {
+    if (this.isBypassMode) {
+      this.logger.debug(
+        `[BYPASS] Email verification check for ${email} — code=${code}`,
+      );
+      return code === TEST_OTP_CODE;
+    }
+
+    try {
+      const check = await this.client.verify.v2
+        .services(this.verifyServiceSid)
+        .verificationChecks.create({
+          to: email,
+          code,
+        });
+
+      return check.status === 'approved';
+    } catch (err: any) {
+      if (err?.status === 404) return false;
+      throw err;
+    }
+  }
+
   private formatUkNumber(phoneNumber: string): string {
     const digits = phoneNumber.replace(/\s+/g, '');
     if (digits.startsWith('+44')) {
