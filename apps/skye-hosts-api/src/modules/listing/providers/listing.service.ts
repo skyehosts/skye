@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { ListingPermission } from '@repo/skye-hosts-api-client';
+import { In } from 'typeorm';
+import { ListingAccessService } from '../../co-host/providers/listing-access.service';
 import { DatabaseService } from '../../common/providers';
 import {
   CreateListingRequestDto,
@@ -12,7 +19,10 @@ import { Listing } from '../entities';
 
 @Injectable()
 export class ListingService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    private listingAccessService: ListingAccessService,
+  ) {}
 
   async create(
     hostId: number,
@@ -72,28 +82,61 @@ export class ListingService {
         postCode: listing.postCode,
         status: listing.status,
         createdAt: listing.createdAt,
+        role: 'owner' as const,
       })),
     };
   }
 
-  async getByHostId(hostId: number): Promise<GetHostListingsResponseDto> {
-    const listings = await this.databaseService
+  async getByHostId(accountId: number): Promise<GetHostListingsResponseDto> {
+    const ownedListings = await this.databaseService
       .getRepository(Listing)
-      .find({ where: { hostId }, order: { createdAt: 'DESC' } });
+      .find({ where: { hostId: accountId }, order: { createdAt: 'DESC' } });
+
+    const coHostRoles =
+      await this.listingAccessService.getListingRolesForAccount(accountId);
+    const coHostListingIds = coHostRoles.map((r) => r.listingId);
+
+    const coHostedListings =
+      coHostListingIds.length > 0
+        ? await this.databaseService.getRepository(Listing).find({
+            where: { id: In(coHostListingIds) },
+            order: { createdAt: 'DESC' },
+          })
+        : [];
+
+    const coHostRoleMap = new Map(
+      coHostRoles.map((r) => [r.listingId, r.role]),
+    );
 
     return {
-      listings: listings.map((listing) => ({
-        id: listing.id,
-        title: listing.title,
-        typeId: listing.typeId,
-        spaceType: listing.spaceType,
-        maxGuests: listing.maxGuests,
-        bedrooms: listing.bedrooms,
-        bathrooms: listing.bathrooms,
-        postCode: listing.postCode,
-        status: listing.status,
-        createdAt: listing.createdAt,
-      })),
+      listings: [
+        ...ownedListings.map((listing) => ({
+          id: listing.id,
+          title: listing.title,
+          typeId: listing.typeId,
+          spaceType: listing.spaceType,
+          maxGuests: listing.maxGuests,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          postCode: listing.postCode,
+          status: listing.status,
+          createdAt: listing.createdAt,
+          role: 'owner' as const,
+        })),
+        ...coHostedListings.map((listing) => ({
+          id: listing.id,
+          title: listing.title,
+          typeId: listing.typeId,
+          spaceType: listing.spaceType,
+          maxGuests: listing.maxGuests,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          postCode: listing.postCode,
+          status: listing.status,
+          createdAt: listing.createdAt,
+          role: coHostRoleMap.get(listing.id) ?? ('calendar_only' as const),
+        })),
+      ],
     };
   }
 
@@ -116,12 +159,24 @@ export class ListingService {
 
   async update(
     id: number,
-    hostId: number,
+    accountId: number,
     dto: UpdateListingRequestDto,
   ): Promise<GetListingResponseDto> {
+    const hasPermission = await this.listingAccessService.hasPermission(
+      accountId,
+      id,
+      ListingPermission.EDIT_LISTING,
+    );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'You do not have permission to edit this listing',
+      );
+    }
+
     const listing = await this.databaseService
       .getRepository(Listing)
-      .findOne({ where: { id, hostId } });
+      .findOne({ where: { id } });
 
     if (!listing) {
       throw new NotFoundException('Listing not found');

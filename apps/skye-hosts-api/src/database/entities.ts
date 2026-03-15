@@ -1,5 +1,6 @@
 import { Account } from '../modules/account/entities';
 import { Booking } from '../modules/booking/entities';
+import { CoHostInvite, ListingUserRole } from '../modules/co-host/entities';
 import { Demo } from '../modules/demo/entities';
 import { Listing } from '../modules/listing/entities';
 import { Message } from '../modules/message/entities';
@@ -21,10 +22,12 @@ import {
 export const entities = [
   Account,
   Booking,
+  CoHostInvite,
   Demo,
   DeviceToken,
   Listing,
   ListingMessageTemplate,
+  ListingUserRole,
   Message,
   MessageLog,
   NotificationHistory,

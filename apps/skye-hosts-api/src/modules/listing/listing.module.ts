@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CoHostModule } from '../co-host/co-host.module';
 import { CommonModule } from '../common/common.module';
 import { AccommodationTypesController } from './controllers/accommodation-types.controller';
 import { AmenitiesController } from './controllers/amenities.controller';
@@ -16,7 +17,7 @@ import { ListingService } from './providers';
     ListingController,
   ],
   exports: [],
-  imports: [CommonModule, TypeOrmModule.forFeature([Listing])],
+  imports: [CommonModule, CoHostModule, TypeOrmModule.forFeature([Listing])],
   providers: [ListingService],
 })
 export class ListingModule {}

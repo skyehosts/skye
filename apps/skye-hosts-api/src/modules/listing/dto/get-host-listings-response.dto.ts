@@ -1,6 +1,7 @@
 import type {
   IGetHostListingsResponseDto,
   IHostListingDto,
+  ListingRole,
   ListingSpaceType,
   ListingStatus,
   ListingTypeId,
@@ -17,6 +18,7 @@ export class HostListingDto implements IHostListingDto {
   postCode: string;
   status: ListingStatus;
   createdAt: Date;
+  role: ListingRole;
 }
 
 export class GetHostListingsResponseDto implements IGetHostListingsResponseDto {

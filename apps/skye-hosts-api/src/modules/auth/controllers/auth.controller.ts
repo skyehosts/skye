@@ -1,6 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import type {
   IChangePasswordResponseDto,
+  IEmailRequestOtpResponseDto,
+  IEmailVerifyOtpResponseDto,
   IForgotPasswordResponseDto,
   ILoginResponseDto,
   IPhoneLookupResponseDto,
@@ -17,6 +19,8 @@ import {
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
 import {
   ChangePasswordRequestDto,
+  EmailRequestOtpRequestDto,
+  EmailVerifyOtpRequestDto,
   ForgotPasswordRequestDto,
   LoginRequestDto,
   PhoneLookupRequestDto,
@@ -32,6 +36,26 @@ import { AuthService } from '../providers';
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
+
+  @Post('email-request-otp')
+  async onEmailRequestOtp(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+    @Body() dto: EmailRequestOtpRequestDto,
+  ): Promise<IEmailRequestOtpResponseDto> {
+    return this.authService.emailRequestOtp(authenticatedUser.sub, dto.email);
+  }
+
+  @Post('email-verify-otp')
+  async onEmailVerifyOtp(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+    @Body() dto: EmailVerifyOtpRequestDto,
+  ): Promise<IEmailVerifyOtpResponseDto> {
+    return this.authService.emailVerifyOtp(
+      authenticatedUser.sub,
+      dto.email,
+      dto.code,
+    );
+  }
 
   @Post('change-password')
   async onChangePassword(
@@ -88,7 +112,12 @@ export class AuthController {
   async onPhoneVerifyOtp(
     @Body() dto: PhoneVerifyOtpRequestDto,
   ): Promise<IPhoneVerifyOtpResponseDto> {
-    return this.authService.phoneVerifyOtp(dto.phoneNumber, dto.code, dto.name);
+    return this.authService.phoneVerifyOtp(
+      dto.phoneNumber,
+      dto.code,
+      dto.name,
+      dto.email,
+    );
   }
 
   @Post('pin-setup')

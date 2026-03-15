@@ -40,6 +40,7 @@ export async function verifyOtp(
   phoneNumber: string,
   code: string,
   name?: string,
+  email?: string,
 ): Promise<IPhoneVerifyOtpResponseDto> {
   const response = await fetchApi<
     IPhoneVerifyOtpResponseDto,
@@ -48,6 +49,7 @@ export async function verifyOtp(
     phoneNumber,
     code,
     ...(name ? { name } : {}),
+    ...(email ? { email } : {}),
   } as IPhoneVerifyOtpRequestDto);
 
   await setToken(response.accessToken);

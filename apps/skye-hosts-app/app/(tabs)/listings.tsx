@@ -133,6 +133,11 @@ function ListingCard({
           </Text>
         </View>
       </View>
+      {listing.role !== "owner" && (
+        <View style={styles.roleChip}>
+          <Text style={styles.roleChipText}>Co-host</Text>
+        </View>
+      )}
       <View style={styles.cardBody}>
         <Text style={styles.cardTitle} numberOfLines={1}>
           {listing.title}
@@ -190,6 +195,21 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: typography.sm,
     color: colors.textPrimary,
+    fontWeight: fontWeight.medium,
+  },
+  roleChip: {
+    position: "absolute",
+    top: spacing.sm,
+    right: spacing.sm,
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
+    zIndex: 1,
+  },
+  roleChipText: {
+    fontSize: typography.sm,
+    color: colors.background,
     fontWeight: fontWeight.medium,
   },
   cardBody: {

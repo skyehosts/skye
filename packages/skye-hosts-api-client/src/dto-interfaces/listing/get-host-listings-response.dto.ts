@@ -1,3 +1,4 @@
+import type { ListingRole } from '../../enums/co-host-enums';
 import type {
   ListingSpaceType,
   ListingStatus,
@@ -15,6 +16,7 @@ export interface IHostListingDto {
   postCode: string;
   status: ListingStatus;
   createdAt: Date;
+  role: ListingRole;
 }
 
 export interface IGetHostListingsResponseDto {
