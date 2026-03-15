@@ -15,6 +15,7 @@ MVP
   - Pricing
 - App: Calendar
 - App: Co-host
+  - Send Co-hist invite via twilio sms
 - Booking events
   - Requested & confirmed
   - Instant
@@ -49,6 +50,7 @@ Aws infrastructure
 ========
 Host App
 ========
+- docs/user-todos/twilio-email-verify-setup
 - Listing title, vertical height is too long
 - Test
   - Notification
@@ -79,6 +81,15 @@ Long term TODOs
 - Review const protectedPaths = ['/dashboard', '/bookings', '/account']; in each app
 - Solve env vars in apps/f/e better as vercel doesn't support org level env vars
   and dont want repat across projects. but want to keep simple and no anti pattern.
+Next Steps for You (Cohost)
+  - The invite link deep link (skye-hosts://co-host/invite-landing?token=xxx) works with the existing scheme: "skye-hosts" config. For production, you'll want
+  universal links (HTTPS) too so the link works when the app isn't installed.
+  - Email sending is stubbed — the owner shares the invite link manually (Share sheet).
+  - The sign-up-via-invite flow collects phone + OTP + name, but doesn't yet set the invitee's email on their account. You'll need a PATCH /account endpoint or add
+  an email param to phoneVerifyOtp to link the invite email to the new account. Without this, the acceptInvite email check will fail for phone-only signups. Want me
+  to add that?
+
+
 
 ===============
 Pending Prompts
@@ -93,8 +104,23 @@ Logins
 ===============
 Pending prompts
 ===============
-- Replace the logo displayed on splash screen in hosts app with /temp-logo/logo-tall.png and move the image file to an appropriate place
-- In header on low breakpoint where you display logo-square, it image dimensions are actually  
+- Email Notifications
+  - In the send() ,ethod of notification.service.ts. Implement the sending of email notifications if the user's notifications preferences have email enabled.
+  - All email notifications will be sent by a third party called Unosend (Unosend.co) via an API call to trigger the sending of a template.
+  - Create a Unosend service in api that handles the sending of these emails
+  - This service can either live in common module or it could go in a separate / new module, you decide what is best.
+  - Implement service methods to send the email templates.
+  - I will define templates in unosend.co via my web browser, in your output in docs/user-todos folder, describe what templates I need to create & varibales needed
+  - Create a EmailTemplate enum with will house the templates stored in UnoSend.
+  - This service will be used for all outbound emails so keep it generic and re-usable
+- Examine all current calls to send() method and update the callers to be compatible with the new added call to unosend service
+- I'd propose that each caller should 
+- You should ensure that for all existing endpoints / behaviours that an email will now be sent if the user has enabled email notifications in their preferences.
+- Output any actions I need take in the docs/user-todos
+- Review my approach, if it is suboptimal, recommend a better approach
+- Don't implement, first present a plan to me.
+
+
 ==================
 Re-useable prompts
 ==================
@@ -115,4 +141,5 @@ You can't market as "AirBNB but cheaper"
 TLDR:
   - Don't use exact wording
   - Diverge layout/style slightly where possible
+
 

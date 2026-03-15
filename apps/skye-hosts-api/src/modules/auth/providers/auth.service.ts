@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import type {
   IChangePasswordResponseDto,
+  IEmailRequestOtpResponseDto,
+  IEmailVerifyOtpResponseDto,
   IForgotPasswordResponseDto,
   ILoginResponseDto,
   IPhoneRequestOtpResponseDto,
@@ -256,6 +258,7 @@ export class AuthService {
     phoneNumber: string,
     code: string,
     name?: string,
+    email?: string,
   ): Promise<IPhoneVerifyOtpResponseDto> {
     const isValid = await this.twilioService.checkVerification(
       phoneNumber,
@@ -270,7 +273,13 @@ export class AuthService {
       if (!name) {
         throw new BadRequestException('Name is required for new accounts');
       }
-      account = await this.accountService.createFromPhone(phoneNumber, name);
+      account = await this.accountService.createFromPhone(
+        phoneNumber,
+        name,
+        email,
+      );
+    } else if (email && !account.email) {
+      account.email = email;
     }
 
     account.lastLoggedIn = new Date();
@@ -290,6 +299,49 @@ export class AuthService {
         ? { pin: { hash: account.pinHash, salt: account.pinSalt } }
         : {}),
     };
+  }
+
+  async emailRequestOtp(
+    userId: number,
+    email: string,
+  ): Promise<IEmailRequestOtpResponseDto> {
+    const existing = await this.accountService.findByEmail(email);
+    if (existing && existing.id !== userId) {
+      throw new BadRequestException('Email address is already in use');
+    }
+
+    await this.twilioService.sendVerificationToEmail(email);
+    return { message: 'Verification code sent' };
+  }
+
+  async emailVerifyOtp(
+    userId: number,
+    email: string,
+    code: string,
+  ): Promise<IEmailVerifyOtpResponseDto> {
+    const existing = await this.accountService.findByEmail(email);
+    if (existing && existing.id !== userId) {
+      throw new BadRequestException('Email address is already in use');
+    }
+
+    const isValid = await this.twilioService.checkVerificationForEmail(
+      email,
+      code,
+    );
+    if (!isValid) {
+      throw new BadRequestException('Invalid or expired verification code');
+    }
+
+    const account = await this.accountService.findById(userId);
+    if (!account) {
+      throw new UnauthorizedException('Account not found');
+    }
+
+    account.email = email;
+    account.emailVerified = true;
+    await this.accountService.save(account);
+
+    return { emailVerified: true };
   }
 
   async setupPin(

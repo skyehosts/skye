@@ -11,6 +11,7 @@ import { createHash, randomBytes } from 'crypto';
 import { DataSource } from 'typeorm';
 import { Account } from '../../account/entities';
 import { Booking } from '../../booking/entities';
+import { CoHostInvite, ListingUserRole } from '../../co-host/entities';
 import { Demo } from '../../demo/entities';
 import { Listing } from '../../listing/entities';
 import { Message } from '../../message/entities';
@@ -47,6 +48,8 @@ export class E2eSeedService {
       MessageTemplate,
       Message,
       Booking,
+      CoHostInvite,
+      ListingUserRole,
       Listing,
       Account,
       Demo,
@@ -103,6 +106,21 @@ export class E2eSeedService {
       }),
     );
 
+    // Co-host test account — used in co-host e2e tests
+    await accountRepo.save(
+      accountRepo.create({
+        name: 'Test Cohost',
+        email: 'cohost@test.com',
+        phoneNumber: '+447700900003',
+        passwordHash,
+        role: 'host',
+        dateJoined: now,
+        lastLoggedIn: now,
+        cookieUsageEnabled: true,
+        subscribedToNewsViaEmail: false,
+      }),
+    );
+
     const listingRepo = this.dataSource.getRepository(Listing);
 
     const listingResult = await listingRepo.insert({
@@ -140,6 +158,6 @@ export class E2eSeedService {
       createdAt: now,
     });
 
-    this.logger.debug(`Seeded: 2 accounts, 1 listing, 1 booking`);
+    this.logger.debug(`Seeded: 3 accounts, 1 listing, 1 booking`);
   }
 }

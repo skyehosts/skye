@@ -6,6 +6,7 @@ import { getFromContainer } from 'class-validator';
 import { DataSource } from 'typeorm';
 import {
   BookingModule,
+  CoHostModule,
   CommonModule,
   DemoModule,
   ListingModule,
@@ -32,6 +33,7 @@ import { UtilityModule } from '../utility/utility.module';
     AuthModule,
     AvailabilityModule,
     BookingModule,
+    CoHostModule,
     CommonModule,
     DemoModule,
     ListingModule,

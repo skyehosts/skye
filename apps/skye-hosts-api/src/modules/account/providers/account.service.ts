@@ -58,7 +58,11 @@ export class AccountService {
     });
   }
 
-  async createFromPhone(phoneNumber: string, name: string): Promise<Account> {
+  async createFromPhone(
+    phoneNumber: string,
+    name: string,
+    email?: string,
+  ): Promise<Account> {
     const repo = this.databaseService.getRepository(Account);
     const timestamp = new Date();
 
@@ -69,6 +73,7 @@ export class AccountService {
       phoneNumber: phoneNumber,
       role: 'host',
       subscribedToNewsViaEmail: false,
+      ...(email ? { email } : {}),
     } as Account);
   }
 

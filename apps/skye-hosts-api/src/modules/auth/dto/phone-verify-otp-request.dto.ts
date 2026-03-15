@@ -12,4 +12,8 @@ export class PhoneVerifyOtpRequestDto implements IPhoneVerifyOtpRequestDto {
   @IsString()
   @MinLength(2)
   name?: string;
+
+  @IsOptional()
+  @IsString()
+  email?: string;
 }

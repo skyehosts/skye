@@ -6,6 +6,7 @@ export default defineConfig({
   globalSetup: "../../packages/skye-hosts-api-client/src/e2e/global-setup.ts",
   timeout: 30_000,
   retries: 1,
+  workers: 1,
   use: {
     baseURL: "http://localhost:8081",
     headless: true,

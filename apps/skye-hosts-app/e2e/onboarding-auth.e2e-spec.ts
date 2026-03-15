@@ -22,36 +22,36 @@ async function skipOnboarding(page: Page) {
 
 /**
  * Complete the phone entry step on the sign-up screen.
+ * autoComplete="tel" reliably maps to autocomplete="tel" on web via react-native-web.
  */
 async function enterPhone(page: Page, phone: string) {
   await page.getByText("Enter your mobile number to continue").waitFor();
-  const phoneInput = page.locator('input[inputmode="tel"]');
-  await phoneInput.fill(phone);
+  await page.locator('input[autocomplete="tel"]').fill(phone);
   await page.getByRole("button", { name: "Continue" }).click();
 }
 
 /**
  * Complete the OTP verification step.
+ * The input auto-submits when 6 chars are entered — no button click needed.
  */
 async function enterOtp(page: Page) {
   await page.getByText("Enter verification code").waitFor();
-  const codeInput = page.locator('input[inputmode="numeric"]').first();
-  await codeInput.fill(TEST_OTP);
-  await page.getByRole("button", { name: "Verify" }).click();
+  // OTP input: keyboardType="number-pad", not secureTextEntry → plain text input
+  await page.locator('input:not([type="password"])').first().fill(TEST_OTP);
+  // Auto-submits on 6 chars, page navigates automatically
 }
 
 /**
  * Complete the PIN setup step (create + confirm).
+ * secureTextEntry maps to type="password" on web.
  */
 async function createPin(page: Page, pin: string) {
   await page.getByText("Create a PIN").waitFor();
-  const pinInput = page.locator('input[inputmode="numeric"]').first();
-  await pinInput.fill(pin);
+  await page.locator('input[type="password"]').first().fill(pin);
   await page.getByRole("button", { name: "Continue" }).click();
 
   await page.getByText("Confirm your PIN").waitFor();
-  const confirmInput = page.locator('input[inputmode="numeric"]').first();
-  await confirmInput.fill(pin);
+  await page.locator('input[type="password"]').first().fill(pin);
   await page.getByRole("button", { name: "Set PIN" }).click();
 }
 
@@ -112,8 +112,7 @@ test.describe("Onboarding & authentication flows", () => {
     // Step 3: Server returned PIN data → app goes to unlock (not setup)
     // Biometrics not available on web → redirects to pin-unlock
     await page.getByText("Enter your PIN to continue").waitFor();
-    const pinInput = page.locator('input[inputmode="numeric"]').first();
-    await pinInput.fill(HOST_PIN);
+    await page.locator('input[type="password"]').first().fill(HOST_PIN);
     await page.getByRole("button", { name: "Unlock" }).click();
 
     // Step 4: Lands on Today
@@ -138,8 +137,7 @@ test.describe("Onboarding & authentication flows", () => {
 
     // Step 3: Should go to PIN unlock (not PIN setup), because server returned PIN data
     await page.getByText("Enter your PIN to continue").waitFor();
-    const pinInput = page.locator('input[inputmode="numeric"]').first();
-    await pinInput.fill(HOST_PIN);
+    await page.locator('input[type="password"]').first().fill(HOST_PIN);
     await page.getByRole("button", { name: "Unlock" }).click();
 
     await expectTodayScreen(page);
@@ -158,8 +156,7 @@ test.describe("Onboarding & authentication flows", () => {
 
     // Host has PIN from server → PIN unlock
     await page.getByText("Enter your PIN to continue").waitFor();
-    const hostPinInput = page.locator('input[inputmode="numeric"]').first();
-    await hostPinInput.fill(HOST_PIN);
+    await page.locator('input[type="password"]').first().fill(HOST_PIN);
     await page.getByRole("button", { name: "Unlock" }).click();
     await expectTodayScreen(page);
 

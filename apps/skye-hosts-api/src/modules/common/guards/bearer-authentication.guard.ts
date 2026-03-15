@@ -4,6 +4,7 @@ import {
   HttpException,
   Injectable,
   Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { UserRole } from '@repo/skye-hosts-api-client';
@@ -45,7 +46,7 @@ export class BearerAuthenticationGuard implements CanActivate {
     );
 
     if (!accessToken) {
-      return false;
+      throw new UnauthorizedException();
     }
 
     try {

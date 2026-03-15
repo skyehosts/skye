@@ -1,5 +1,6 @@
 export * from './app/app.module';
 export * from './booking/booking.module';
+export * from './co-host/co-host.module';
 export * from './common/common.module';
 export * from './config/config.module';
 export * from './demo/demo.module';
