@@ -1,4 +1,5 @@
 import type {
+  IGetAccountDetailsResponseDto,
   IGetNotificationPreferencesResponseDto,
   INotificationPreferenceDto,
   IUpdateNotificationPreferenceRequestDto,
@@ -70,13 +71,18 @@ export default function NotificationsSettingsScreen() {
     null,
   );
   const [saving, setSaving] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
 
   const loadPreferences = useCallback(async () => {
     try {
-      const data = await fetchApi<IGetNotificationPreferencesResponseDto>(
-        "/notification/preferences",
-      );
-      setPreferences(data.preferences);
+      const [prefsData, accountData] = await Promise.all([
+        fetchApi<IGetNotificationPreferencesResponseDto>(
+          "/notification/preferences",
+        ),
+        fetchApi<IGetAccountDetailsResponseDto>("/account/details"),
+      ]);
+      setPreferences(prefsData.preferences);
+      setEmailVerified(accountData.emailVerified);
     } finally {
       setLoading(false);
     }
@@ -208,15 +214,28 @@ export default function NotificationsSettingsScreen() {
             <View
               style={[commonStyles.switchRow, { paddingVertical: spacing.sm }]}
             >
-              <Text style={commonStyles.switchLabel}>Email notifications</Text>
+              <Text
+                style={[
+                  commonStyles.switchLabel,
+                  !emailVerified && styles.switchLabelDisabled,
+                ]}
+              >
+                Email notifications
+              </Text>
               <Switch
                 value={editingPref.emailEnabled}
                 onValueChange={(v) =>
                   handleToggle(editingEvent.eventType, "emailEnabled", v)
                 }
-                disabled={saving}
+                disabled={saving || !emailVerified}
               />
             </View>
+            {!emailVerified && (
+              <Text style={styles.emailWarning}>
+                Add and verify your email address to enable email notifications.
+                Go to Menu → Personal details.
+              </Text>
+            )}
           </>
         )}
       </AppModal>
@@ -263,6 +282,15 @@ const styles = StyleSheet.create({
     marginLeft: spacing.md,
   },
   modalDescription: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    lineHeight: lineHeight.sm,
+  },
+  switchLabelDisabled: {
+    color: colors.textSecondary,
+    opacity: 0.5,
+  },
+  emailWarning: {
     fontSize: typography.sm,
     color: colors.textSecondary,
     lineHeight: lineHeight.sm,

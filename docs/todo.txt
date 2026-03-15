@@ -1,6 +1,7 @@
 ===
 MVP
 ===
+- Don't bother with e2e tests just unit for now ?
 - App: Edit listing
   - (Your space, remaining components)
     - Instant book
@@ -50,6 +51,7 @@ Aws infrastructure
 ========
 Host App
 ========
+- name not required on signup again?!
 - docs/user-todos/twilio-email-verify-setup
 - Listing title, vertical height is too long
 - Test
