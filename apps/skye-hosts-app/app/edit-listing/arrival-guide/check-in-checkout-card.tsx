@@ -3,7 +3,6 @@ import type {
   IUpdateListingRequestDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,7 +16,7 @@ import {
 } from "../../components/time-range-picker";
 import { fetchApi } from "../../services/api";
 import { colors, commonStyles, spacing } from "../../theme";
-import { handleFormError } from "../../utils/form-error-handler";
+import { handleApiError } from "../../utils/form-error-handler";
 
 interface CheckInCheckoutCardProps {
   listingId: string;
@@ -40,7 +39,6 @@ export function CheckInCheckoutCard({
   const [checkInStart, setCheckInStart] = useState<string>(DEFAULT_TIME);
   const [checkInEnd, setCheckInEnd] = useState<string>(DEFAULT_TIME);
   const [checkOut, setCheckOut] = useState<string>(DEFAULT_TIME);
-  const { setError } = useForm();
 
   useEffect(() => {
     if (modalVisible) {
@@ -68,7 +66,7 @@ export function CheckInCheckoutCard({
       onUpdate(updated);
       setModalVisible(false);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

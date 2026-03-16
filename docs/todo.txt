@@ -1,7 +1,15 @@
+====
+Next
+====
+- Test Unosend stuff
+  - Setup Unosend API keys etc
+- Test Twilio email verification stuff
+  - Setup API keys etc
+- Test cohost
+
 ===
 MVP
 ===
-- Don't bother with e2e tests just unit for now ?
 - App: Edit listing
   - (Your space, remaining components)
     - Instant book
@@ -77,6 +85,8 @@ Guest website
 ===============
 Long term TODOs
 ===============
+- Improve twilio email verification spam folder avoidance
+  e.g configure SPF, DKIM, DMARC
 - email verification (using same twilio sms service)
 - How can I test host app from my device if not dev API, does it matter?
 - Enable tracing for sentry? - Can exceed free tier though...

@@ -1,4 +1,4 @@
-import { ApiRequestError } from "../../../../packages/skye-hosts-api-client/src";
+import { ApiRequestError } from "@repo/skye-hosts-api-client/src";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 
@@ -11,6 +11,21 @@ export function handleFormError<T extends FieldValues>(
   setServerError: (message: string) => void,
 ): void {
   if (applyServerErrors(e, setError)) return;
+  if (e instanceof ApiRequestError && e.statusCode < 500) {
+    setServerError(e.message);
+    return;
+  }
+  setServerError(SERVER_ERROR_MESSAGE);
+}
+
+/**
+ * Simplified error handler for non-form API calls (no field-level errors).
+ * Shows the API message for <500 errors, SERVER_ERROR_MESSAGE for 5xx.
+ */
+export function handleApiError(
+  e: unknown,
+  setServerError: (message: string) => void,
+): void {
   if (e instanceof ApiRequestError && e.statusCode < 500) {
     setServerError(e.message);
     return;

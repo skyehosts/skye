@@ -8,7 +8,6 @@ import {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Pressable,
@@ -25,7 +24,7 @@ import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import { handleApiError } from "../utils/form-error-handler";
 
 type CheckoutField = keyof Pick<
   IGetListingResponseDto,
@@ -43,7 +42,6 @@ export default function CheckoutInstructionsScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const { setError } = useForm();
 
   // Edit modal state
   const [editingOption, setEditingOption] = useState<
@@ -95,7 +93,7 @@ export default function CheckoutInstructionsScreen() {
       setListing(updated);
       setEditingOption(null);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }
@@ -118,7 +116,7 @@ export default function CheckoutInstructionsScreen() {
       setListing(updated);
       setEditingOption(null);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }
@@ -145,7 +143,7 @@ export default function CheckoutInstructionsScreen() {
       setSelectedAddOption(null);
       setAddText("");
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

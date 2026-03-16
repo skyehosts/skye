@@ -15,6 +15,9 @@ config.resolver.nodeModulesPaths = [
   path.resolve(monorepoRoot, "node_modules"),
 ];
 
+// Exclude test files from the bundle
+config.resolver.blockList = [/.*\.(spec|test)\.[jt]sx?$/];
+
 const originalResolveRequest = config.resolver.resolveRequest;
 
 config.resolver.resolveRequest = (context, moduleName, platform) => {

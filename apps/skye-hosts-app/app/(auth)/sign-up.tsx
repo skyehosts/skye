@@ -1,7 +1,7 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
@@ -20,43 +20,34 @@ export default function SignUpScreen() {
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
 
   const {
-    register,
-    setValue,
+    control,
     handleSubmit,
     setError,
-    clearErrors,
     watch,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({
     defaultValues: { name: "", phoneNumber: "" },
-    mode: "onChange",
   });
 
-  register("name", { required: "Please enter your name" });
-
-  const name = watch("name");
   const phoneNumber = watch("phoneNumber");
+  const name = watch("name");
 
-  const onPhoneContinue = async () => {
+  const onPhoneContinue = handleSubmit(async (data) => {
     setServerError("");
-    if (!phoneNumber.trim()) {
-      setError("phoneNumber", { message: "Please enter your mobile number" });
-      return;
-    }
     try {
-      const { exists } = await phoneLookup(phoneNumber);
+      const { exists } = await phoneLookup(data.phoneNumber);
       setIsExistingUser(exists);
       if (exists) {
-        await requestOtp(phoneNumber);
+        await requestOtp(data.phoneNumber);
         router.push({
           pathname: "/(auth)/verify-code",
-          params: { phoneNumber },
+          params: { phoneNumber: data.phoneNumber },
         });
       }
     } catch (e) {
       handleFormError(e, setError, setServerError);
     }
-  };
+  });
 
   const onNewUserSubmit = async (data: SignUpFormValues) => {
     setServerError("");
@@ -90,21 +81,32 @@ export default function SignUpScreen() {
           </Text>
 
           <View>
-            <TextInput
-              mode="outlined"
-              label="Mobile number"
-              placeholder="+44 7700 900000"
-              keyboardType="phone-pad"
-              autoComplete="tel"
-              value={phoneNumber}
-              onChangeText={(v) => {
-                setValue("phoneNumber", v);
-                if (errors.phoneNumber) clearErrors("phoneNumber");
-                if (isExistingUser !== null) setIsExistingUser(null);
+            <Controller
+              control={control}
+              name="phoneNumber"
+              rules={{
+                required: "Please enter your mobile number",
+                validate: (v) =>
+                  v.replace(/\s/g, "").length >= 10 ||
+                  "Please enter a valid mobile number",
               }}
-              disabled={isSubmitting || showNameField}
-              error={!!errors.phoneNumber}
-              style={styles.input}
+              render={({ field }) => (
+                <TextInput
+                  mode="outlined"
+                  label="Mobile number"
+                  placeholder="+44 7700 900000"
+                  keyboardType="phone-pad"
+                  autoComplete="tel"
+                  value={field.value}
+                  onChangeText={(v) => {
+                    field.onChange(v);
+                    if (isExistingUser !== null) setIsExistingUser(null);
+                  }}
+                  disabled={isSubmitting || showNameField}
+                  error={!!errors.phoneNumber}
+                  style={styles.input}
+                />
+              )}
             />
             {errors.phoneNumber && (
               <HelperText type="error">{errors.phoneNumber.message}</HelperText>
@@ -113,21 +115,25 @@ export default function SignUpScreen() {
 
           {showNameField && (
             <View>
-              <TextInput
-                mode="outlined"
-                label="Full name"
-                placeholder="e.g. John Smith"
-                autoComplete="name"
-                autoCapitalize="words"
-                value={name}
-                onChangeText={(v) => {
-                  setValue("name", v);
-                  if (errors.name) clearErrors("name");
-                }}
-                disabled={isSubmitting}
-                error={!!errors.name}
-                style={styles.input}
-                autoFocus
+              <Controller
+                control={control}
+                name="name"
+                rules={{ required: "Please enter your name" }}
+                render={({ field }) => (
+                  <TextInput
+                    mode="outlined"
+                    label="Full name"
+                    placeholder="e.g. John Smith"
+                    autoComplete="name"
+                    autoCapitalize="words"
+                    value={field.value}
+                    onChangeText={field.onChange}
+                    disabled={isSubmitting}
+                    error={!!errors.name}
+                    style={styles.input}
+                    autoFocus
+                  />
+                )}
               />
               {errors.name && (
                 <HelperText type="error">{errors.name.message}</HelperText>
@@ -162,7 +168,6 @@ export default function SignUpScreen() {
               mode="text"
               onPress={() => {
                 setIsExistingUser(null);
-                setValue("name", "");
               }}
               style={styles.backButton}
             >

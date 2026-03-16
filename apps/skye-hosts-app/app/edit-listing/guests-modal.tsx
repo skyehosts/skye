@@ -3,7 +3,6 @@ import type {
   IUpdateListingRequestDto,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Button, IconButton, Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -16,7 +15,7 @@ import {
   spacing,
   typography,
 } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import { handleApiError } from "../utils/form-error-handler";
 
 interface GuestsModalProps {
   visible: boolean;
@@ -31,7 +30,6 @@ export function GuestsModal({
   listing,
   onSaved,
 }: GuestsModalProps) {
-  const { setError } = useForm();
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
   const [maxGuests, setMaxGuests] = useState(listing.maxGuests);
@@ -51,7 +49,7 @@ export function GuestsModal({
       >(`/listing/${listing.id}`, { maxGuests }, { method: "PATCH" });
       onSaved(updated);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

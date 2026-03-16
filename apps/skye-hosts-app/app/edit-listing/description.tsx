@@ -4,7 +4,6 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Pressable,
@@ -20,7 +19,7 @@ import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import { handleApiError } from "../utils/form-error-handler";
 
 type DescriptionField =
   | "description"
@@ -82,7 +81,6 @@ export default function EditDescriptionScreen() {
   const [activeField, setActiveField] = useState<FieldConfig | null>(null);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const { setError } = useForm();
 
   const fetchListing = useCallback(async () => {
     try {
@@ -112,7 +110,7 @@ export default function EditDescriptionScreen() {
       setListing(updated);
       setActiveField(null);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }
