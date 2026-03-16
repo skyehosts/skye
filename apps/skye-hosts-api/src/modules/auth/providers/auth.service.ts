@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
 import type {
@@ -359,23 +358,15 @@ export class AuthService {
   }
 
   async signUp(dto: SignUpRequestDto): Promise<Account> {
-    const queryRunner = await this.databaseService.startTransaction();
-    try {
+    return this.databaseService.runInTransaction(async () => {
       const passwordHash = await bcrypt.hash(dto.password, 10);
-      const account = await this.accountService.create(
+      return this.accountService.create(
         dto.email,
         dto.name,
         passwordHash,
         dto.role,
         dto.subscribedToNewsViaEmail,
       );
-      await queryRunner.commitTransaction();
-      return account;
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(e);
-    } finally {
-      await this.databaseService.releaseTransaction();
-    }
+    });
   }
 }

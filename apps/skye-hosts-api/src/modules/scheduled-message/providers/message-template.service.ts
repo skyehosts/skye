@@ -24,37 +24,31 @@ export class MessageTemplateService {
     hostId: number,
     dto: CreateMessageTemplateRequestDto,
   ): Promise<IMessageTemplateDto> {
-    const queryRunner = await this.databaseService.startTransaction();
-
-    try {
+    return this.databaseService.runInTransaction(async (manager) => {
       const now = new Date();
 
-      const template = await this.databaseService
-        .getRepository(MessageTemplate)
-        .save({
-          hostId,
-          name: dto.name,
-          channel: dto.channel,
-          isActive: true,
-          deletedAt: null,
-          createdAt: now,
-          updatedAt: now,
-        } as MessageTemplate);
+      const template = await manager.getRepository(MessageTemplate).save({
+        hostId,
+        name: dto.name,
+        channel: dto.channel,
+        isActive: true,
+        deletedAt: null,
+        createdAt: now,
+        updatedAt: now,
+      } as MessageTemplate);
 
-      const version = await this.databaseService
-        .getRepository(TemplateVersion)
-        .save({
-          messageTemplateId: template.id,
-          versionNumber: 1,
-          content: dto.content,
-          status: 'active',
-          createdAt: now,
-          isActive: true,
-        } as TemplateVersion);
+      const version = await manager.getRepository(TemplateVersion).save({
+        messageTemplateId: template.id,
+        versionNumber: 1,
+        content: dto.content,
+        status: 'active',
+        createdAt: now,
+        isActive: true,
+      } as TemplateVersion);
 
       const listingLinks = await Promise.all(
         dto.listingIds.map((listingId) =>
-          this.databaseService.getRepository(ListingMessageTemplate).save({
+          manager.getRepository(ListingMessageTemplate).save({
             listingId,
             messageTemplateId: template.id,
             attachedAt: now,
@@ -64,7 +58,7 @@ export class MessageTemplateService {
 
       const triggers = await Promise.all(
         dto.triggers.map((t) =>
-          this.databaseService.getRepository(TemplateTrigger).save({
+          manager.getRepository(TemplateTrigger).save({
             messageTemplateId: template.id,
             triggerType: t.triggerType,
             offsetValue: t.offsetValue,
@@ -76,15 +70,8 @@ export class MessageTemplateService {
         ),
       );
 
-      await queryRunner.commitTransaction();
-
       return this.toDto(template, version, listingLinks, triggers);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await this.databaseService.releaseTransaction();
-    }
+    });
   }
 
   async update(
@@ -92,10 +79,8 @@ export class MessageTemplateService {
     hostId: number,
     dto: UpdateMessageTemplateRequestDto,
   ): Promise<IMessageTemplateDto> {
-    const queryRunner = await this.databaseService.startTransaction();
-
-    try {
-      const template = await this.databaseService
+    return this.databaseService.runInTransaction(async (manager) => {
+      const template = await manager
         .getRepository(MessageTemplate)
         .findOne({ where: { id, hostId, deletedAt: IsNull() } });
 
@@ -109,10 +94,10 @@ export class MessageTemplateService {
       template.channel = dto.channel;
       template.updatedAt = now;
 
-      await this.databaseService.getRepository(MessageTemplate).save(template);
+      await manager.getRepository(MessageTemplate).save(template);
 
       // Find current active version — create a new one if content changed
-      const activeVersion = await this.databaseService
+      const activeVersion = await manager
         .getRepository(TemplateVersion)
         .findOne({
           where: { messageTemplateId: id, status: 'active' },
@@ -124,37 +109,33 @@ export class MessageTemplateService {
       if (!activeVersion || activeVersion.content !== dto.content) {
         if (activeVersion) {
           activeVersion.status = 'archived';
-          await this.databaseService
-            .getRepository(TemplateVersion)
-            .save(activeVersion);
+          await manager.getRepository(TemplateVersion).save(activeVersion);
         }
 
         const nextVersionNumber = activeVersion
           ? activeVersion.versionNumber + 1
           : 1;
 
-        currentVersion = await this.databaseService
-          .getRepository(TemplateVersion)
-          .save({
-            messageTemplateId: id,
-            versionNumber: nextVersionNumber,
-            content: dto.content,
-            status: 'active',
-            createdAt: now,
-            isActive: true,
-          } as TemplateVersion);
+        currentVersion = await manager.getRepository(TemplateVersion).save({
+          messageTemplateId: id,
+          versionNumber: nextVersionNumber,
+          content: dto.content,
+          status: 'active',
+          createdAt: now,
+          isActive: true,
+        } as TemplateVersion);
       } else {
         currentVersion = activeVersion;
       }
 
       // Replace listings
-      await this.databaseService
+      await manager
         .getRepository(ListingMessageTemplate)
         .delete({ messageTemplateId: id });
 
       const listingLinks = await Promise.all(
         dto.listingIds.map((listingId) =>
-          this.databaseService.getRepository(ListingMessageTemplate).save({
+          manager.getRepository(ListingMessageTemplate).save({
             listingId,
             messageTemplateId: id,
             attachedAt: now,
@@ -163,13 +144,13 @@ export class MessageTemplateService {
       );
 
       // Replace triggers
-      await this.databaseService
+      await manager
         .getRepository(TemplateTrigger)
         .delete({ messageTemplateId: id });
 
       const triggers = await Promise.all(
         dto.triggers.map((t) =>
-          this.databaseService.getRepository(TemplateTrigger).save({
+          manager.getRepository(TemplateTrigger).save({
             messageTemplateId: id,
             triggerType: t.triggerType,
             offsetValue: t.offsetValue,
@@ -181,15 +162,8 @@ export class MessageTemplateService {
         ),
       );
 
-      await queryRunner.commitTransaction();
-
       return this.toDto(template, currentVersion, listingLinks, triggers);
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await this.databaseService.releaseTransaction();
-    }
+    });
   }
 
   async delete(id: number, hostId: number): Promise<void> {

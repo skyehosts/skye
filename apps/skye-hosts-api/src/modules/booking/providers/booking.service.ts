@@ -22,43 +22,36 @@ export class BookingService {
   ) {}
 
   async createBooking(params: CreateBookingParams): Promise<Booking> {
-    const queryRunner = await this.databaseService.startTransaction();
+    const booking = await this.databaseService.runInTransaction(
+      async (manager) => {
+        const saved = await manager.getRepository(Booking).save({
+          listingId: params.listingId,
+          guestId: params.guestId,
+          checkInDate: params.checkInDate,
+          checkOutDate: params.checkOutDate,
+          totalPrice: params.totalPrice,
+          status: 'confirmed',
+          createdAt: new Date(),
+        } as Booking);
 
-    try {
-      const booking = await this.databaseService.getRepository(Booking).save({
-        listingId: params.listingId,
-        guestId: params.guestId,
-        checkInDate: params.checkInDate,
-        checkOutDate: params.checkOutDate,
-        totalPrice: params.totalPrice,
-        status: 'confirmed',
-        createdAt: new Date(),
-      } as Booking);
-
-      const listingWithHost = await this.databaseService
-        .getRepository(Booking)
-        .findOne({
-          where: { id: booking.id },
+        const listingWithHost = await manager.getRepository(Booking).findOne({
+          where: { id: saved.id },
           relations: ['listing'],
         });
 
-      await this.scheduledMessageCreationService.createForBooking(
-        booking,
-        listingWithHost.listing,
-        params.isTestBooking,
-      );
+        await this.scheduledMessageCreationService.createForBooking(
+          saved,
+          listingWithHost.listing,
+          params.isTestBooking,
+        );
 
-      await queryRunner.commitTransaction();
+        return saved;
+      },
+    );
 
-      this.logger.debug(`Booking #${booking.id} created`);
+    this.logger.debug(`Booking #${booking.id} created`);
 
-      return booking;
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await this.databaseService.releaseTransaction();
-    }
+    return booking;
   }
 
   async findById(id: number): Promise<Booking | null> {

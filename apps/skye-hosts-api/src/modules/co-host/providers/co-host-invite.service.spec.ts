@@ -8,6 +8,7 @@ import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { createHash, randomBytes } from 'crypto';
 import { AccountService } from '../../account/providers';
 import { DatabaseService, LoggerService } from '../../common/providers';
+import { ResendService } from '../../email/providers/resend.service';
 import { CoHostInvite, ListingUserRole } from '../entities';
 import { CoHostInviteService } from './co-host-invite.service';
 import { ListingAccessService } from './listing-access.service';
@@ -75,12 +76,18 @@ describe('CoHostInviteService', () => {
 
     const Listing = (await import('../../listing/entities')).Listing;
 
+    const getRepository = jest.fn((entity) => {
+      if (entity === CoHostInvite) return coHostInviteRepo;
+      if (entity === ListingUserRole) return listingUserRoleRepo;
+      if (entity === Listing) return listingRepo;
+      return null;
+    });
+
     const databaseService = {
-      getRepository: jest.fn((entity) => {
-        if (entity === CoHostInvite) return coHostInviteRepo;
-        if (entity === ListingUserRole) return listingUserRoleRepo;
-        if (entity === Listing) return listingRepo;
-        return null;
+      getRepository,
+      runInTransaction: jest.fn((work) => {
+        const manager = { getRepository };
+        return work(manager);
       }),
     };
 
@@ -99,6 +106,10 @@ describe('CoHostInviteService', () => {
         { provide: DatabaseService, useValue: databaseService },
         { provide: AccountService, useValue: accountService },
         { provide: ListingAccessService, useValue: listingAccessService },
+        {
+          provide: ResendService,
+          useValue: { sendTemplate: jest.fn().mockResolvedValue(undefined) },
+        },
         {
           provide: LoggerService,
           useValue: { debug: jest.fn(), error: jest.fn() },

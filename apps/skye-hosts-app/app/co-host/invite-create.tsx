@@ -5,13 +5,11 @@ import type {
   IHostListingDto,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Platform,
   Pressable,
   ScrollView,
-  Share,
   StyleSheet,
   View,
 } from "react-native";
@@ -117,13 +115,6 @@ export default function InviteCreateScreen() {
     }
   };
 
-  const onShareLink = useCallback(async () => {
-    if (!inviteLink) return;
-    await Share.share({
-      message: `You've been invited to co-host ${listing?.title ?? "a listing"} on Skye Hosts! Open this link to accept: ${inviteLink}`,
-    });
-  }, [inviteLink, listing]);
-
   if (inviteLink) {
     return (
       <ScreenContainer>
@@ -132,20 +123,14 @@ export default function InviteCreateScreen() {
           <Appbar.Content title="Invite Sent" />
         </Appbar.Header>
         <View style={styles.successContent}>
-          <Text style={styles.successTitle}>Invite created!</Text>
+          <Text style={styles.successTitle}>Invite sent!</Text>
           <Text style={commonStyles.bodyText}>
-            Share this link with your co-host. The invite expires in 7 days.
+            We've emailed your co-host an invite to join
+            {listing ? ` ${listing.title}` : " your listing"}. The invite
+            expires in 7 days.
           </Text>
-          <View style={styles.linkBox}>
-            <Text style={styles.linkText} numberOfLines={2}>
-              {inviteLink}
-            </Text>
-          </View>
-          <Button mode="contained" onPress={onShareLink} icon="share">
-            Share invite link
-          </Button>
-          <Button mode="outlined" onPress={() => router.back()}>
-            Done
+          <Button mode="contained" onPress={() => router.back()}>
+            Back to Co-hosts
           </Button>
         </View>
       </ScreenContainer>
@@ -315,17 +300,5 @@ const styles = StyleSheet.create({
     fontSize: typography.xl,
     fontWeight: fontWeight.bold,
     color: colors.success,
-  },
-  linkBox: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    backgroundColor: colors.inputBackground,
-  },
-  linkText: {
-    fontSize: typography.sm,
-    color: colors.textPrimary,
-    fontFamily: Platform.OS === "ios" ? "Menlo" : "monospace",
   },
 });
