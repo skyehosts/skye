@@ -13,6 +13,7 @@ import {
 import { createHash, randomBytes } from 'crypto';
 import { AccountService } from '../../account/providers';
 import { DatabaseService, LoggerService } from '../../common/providers';
+import { ConfigService } from '../../config/providers/config.service';
 import { EmailTemplate } from '../../email/enums/email-template.enum';
 import { ResendService } from '../../email/providers/resend.service';
 import { Listing } from '../../listing/entities';
@@ -27,7 +28,6 @@ import { CoHostInvite, ListingUserRole } from '../entities';
 import { ListingAccessService } from './listing-access.service';
 
 const INVITE_EXPIRY_DAYS = 7;
-const DEEP_LINK_SCHEME = 'skye-hosts';
 
 @Injectable()
 export class CoHostInviteService {
@@ -36,6 +36,7 @@ export class CoHostInviteService {
     private accountService: AccountService,
     private listingAccessService: ListingAccessService,
     private resendService: ResendService,
+    private configService: ConfigService,
     private logger: LoggerService,
   ) {}
 
@@ -109,7 +110,8 @@ export class CoHostInviteService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + INVITE_EXPIRY_DAYS);
 
-    const inviteLink = `${DEEP_LINK_SCHEME}://co-host/invite-landing?token=${rawToken}`;
+    const appLinkBaseUrl = this.configService.getAll().appLinkBaseUrl;
+    const inviteLink = `${appLinkBaseUrl}/invite?token=${rawToken}`;
 
     const invite = await this.databaseService.runInTransaction(
       async (manager) => {

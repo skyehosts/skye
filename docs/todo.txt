@@ -1,8 +1,12 @@
 ====
 Next
 ====
-- Resend
-  - invite link not rendering in gmail for cohost
+- Resend: Deep link solve.
+  - Publish app to google play (Beta)
+  - docs/user-todos/universal-links-setup.md
+    - ## Android (App Links)
+    - ## App Store URLs
+    - ## Native Rebuild Required
 - Test Twilio email verification stuff
   - Setup API keys etc
 - Test cohost
@@ -85,6 +89,8 @@ Guest website
 ===============
 Long term TODOs
 ===============
+- docs/user-todos/universal-links-setup.md
+  - ## Apple (iOS Universal Links)
 - Improve twilio email verification spam folder avoidance
   e.g configure SPF, DKIM, DMARC
 - email verification (using same twilio sms service)
