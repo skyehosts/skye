@@ -15,7 +15,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import {
   Appbar,
   Button,
@@ -73,17 +73,16 @@ export default function InviteCreateScreen() {
   const [isLoadingListing, setIsLoadingListing] = useState(!!listingId);
 
   const {
+    control,
     setValue,
     handleSubmit,
     setError,
-    clearErrors,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<InviteFormValues>({
     defaultValues: { email: "", role: "full_access" },
   });
 
-  const email = watch("email");
   const selectedRole = watch("role");
 
   useEffect(() => {
@@ -177,20 +176,30 @@ export default function InviteCreateScreen() {
           )}
 
           <View style={styles.field}>
-            <TextInput
-              mode="outlined"
-              label="Invitee email"
-              placeholder="co-host@example.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-              value={email}
-              onChangeText={(v) => {
-                setValue("email", v);
-                if (errors.email) clearErrors("email");
+            <Controller
+              control={control}
+              name="email"
+              rules={{
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Enter a valid email address",
+                },
               }}
-              disabled={isSubmitting}
-              error={!!errors.email}
+              render={({ field }) => (
+                <TextInput
+                  mode="outlined"
+                  label="Invitee email"
+                  placeholder="co-host@example.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  disabled={isSubmitting}
+                  error={!!errors.email}
+                />
+              )}
             />
             {errors.email && (
               <HelperText type="error">{errors.email.message}</HelperText>
@@ -229,7 +238,7 @@ export default function InviteCreateScreen() {
             mode="contained"
             onPress={handleSubmit(onSubmit)}
             loading={isSubmitting}
-            disabled={isSubmitting || !email.trim()}
+            disabled={isSubmitting}
           >
             Send Invite
           </Button>

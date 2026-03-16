@@ -5,7 +5,6 @@ import type {
 import { HOUSE_RULES_CONFIG } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useLocalSearchParams } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Pressable,
@@ -23,7 +22,7 @@ import { ScreenContainer } from "../components/screen-container";
 import { DEFAULT_TIME, TimeRangePicker } from "../components/time-range-picker";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import { handleApiError } from "../utils/form-error-handler";
 
 interface RulesState {
   houseRulePetsAllowed: boolean | null;
@@ -60,7 +59,6 @@ export default function HouseRulesScreen() {
   const [serverError, setServerError] = useState("");
   const [rules, setRules] = useState<RulesState | null>(null);
   const [otherRulesModalVisible, setOtherRulesModalVisible] = useState(false);
-  const { setError } = useForm();
 
   const fetchListing = useCallback(async () => {
     try {
@@ -108,7 +106,7 @@ export default function HouseRulesScreen() {
       );
       router.back();
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

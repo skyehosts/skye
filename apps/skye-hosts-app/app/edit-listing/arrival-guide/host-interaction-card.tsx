@@ -7,7 +7,6 @@ import {
   type HostInteractionId,
 } from "../../../../../packages/skye-hosts-api-client/src";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Modal, Portal, RadioButton } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,7 +14,7 @@ import { ActionBar } from "../../components/action-bar";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { fetchApi } from "../../services/api";
 import { colors, commonStyles, spacing, typography } from "../../theme";
-import { handleFormError } from "../../utils/form-error-handler";
+import { handleApiError } from "../../utils/form-error-handler";
 
 interface HostInteractionCardProps {
   listingId: string;
@@ -32,7 +31,6 @@ export function HostInteractionCard({
   const [selected, setSelected] = useState<string>(hostInteraction ?? "");
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const { setError } = useForm();
 
   const openModal = () => {
     setSelected(hostInteraction ?? "");
@@ -54,7 +52,7 @@ export function HostInteractionCard({
       onUpdate(updated);
       setModalVisible(false);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

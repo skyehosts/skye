@@ -171,11 +171,24 @@ export default async function DemoPage() {
 
 ### 1. Forms
 
-- Use react-hook-form approach
 - Should send HTTP requests to apps/skye-hosts-api (Not Nextjs API routes)
 - Always use `applyServerErrors` from `@repo/ui/forms/apply-server-errors` in the catch block to map API validation errors onto fields. See canonical examples:
   - Web: `packages/ui/src/auth/sign-up-form.tsx`
   - Native (host app): `apps/skye-hosts-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
+
+#### React Native form pattern (skye-hosts-app)
+
+Canonical reference: `apps/skye-hosts-app/app/demo.tsx`. Every form with text inputs MUST follow this pattern:
+
+1. **`useForm` + `Controller`** — wrap every text input in `<Controller control={control} name="fieldName" rules={{...}} render={...} />`. Never use `setValue`/`watch`/`register` for text fields — always use `Controller`.
+2. **`rules` on Controller** — add frontend validation (required, pattern, minLength, etc.) directly on the `Controller` `rules` prop. Use `pattern` with regex for emails: `{ value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Enter a valid email address" }`.
+3. **`HelperText type="error"`** — render field-level errors from `formState.errors` using react-native-paper's `<HelperText>` directly below each field.
+4. **`handleFormError(e, setError, setServerError)`** — use in every form catch block. Maps API validation errors to fields via `applyServerErrors`, shows `SERVER_ERROR_MESSAGE` for 5xx, and `e.message` for <500.
+5. **`AppSnackbar`** — display server-level errors (non-field errors, 5xx) via `<AppSnackbar message={serverError} onDismiss={() => setServerError("")} />`.
+6. **`isSubmitting` from `formState`** — use for loading/disabled state instead of manual `useState(loading)`.
+7. **`handleSubmit(onSubmit)`** — wire to button's `onPress`.
+
+For non-form API calls (toggles, selections, actions with no text fields), use `handleApiError(e, setServerError)` from `utils/form-error-handler.ts` instead — no `useForm` needed.
 
 ### 1. Search Intent Optimization
 

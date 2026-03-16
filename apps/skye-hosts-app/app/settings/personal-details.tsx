@@ -18,6 +18,7 @@ interface PersonalDetailsItemProps {
   icon: string;
   label: string;
   value: string | null;
+  verified?: boolean;
   onPress: () => void;
 }
 
@@ -25,13 +26,21 @@ function PersonalDetailsItem({
   icon,
   label,
   value,
+  verified,
   onPress,
 }: PersonalDetailsItemProps) {
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
       <Icon source={icon} size={22} color={colors.textSecondary} />
       <View style={styles.itemText}>
-        <Text style={commonStyles.itemTitle}>{label}</Text>
+        <View style={styles.labelRow}>
+          <Text style={commonStyles.itemTitle}>{label}</Text>
+          {verified && (
+            <View style={styles.verifiedBadge}>
+              <Text style={styles.verifiedBadgeText}>Verified</Text>
+            </View>
+          )}
+        </View>
         {value && <Text style={commonStyles.itemSubtext}>{value}</Text>}
       </View>
       <Icon source="chevron-right" size={22} color={colors.textSecondary} />
@@ -62,11 +71,7 @@ export default function PersonalDetailsScreen() {
     );
   }
 
-  const emailValue = details?.email
-    ? details.emailVerified
-      ? details.email
-      : `${details.email} (unverified)`
-    : null;
+  const emailValue = details?.email ?? null;
 
   return (
     <ScreenContainer>
@@ -83,6 +88,7 @@ export default function PersonalDetailsScreen() {
             icon="email-outline"
             label="Email"
             value={emailValue}
+            verified={details?.emailVerified}
             onPress={() => setEmailModalVisible(true)}
           />
         </View>
@@ -119,5 +125,21 @@ const styles = StyleSheet.create({
   itemText: {
     flex: 1,
     gap: spacing.xs,
+  },
+  labelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  verifiedBadge: {
+    backgroundColor: colors.successBackground,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  verifiedBadgeText: {
+    fontSize: 12,
+    color: colors.success,
+    fontWeight: "600",
   },
 });

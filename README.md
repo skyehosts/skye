@@ -49,6 +49,18 @@ Copy apps/skye-hosts-api/.local.env.example -> .local.env
 Copy apps/skye-hosts-api/.e2e.env.example -> .e2e.env
 `npx env-cmd -f .env.e2e pnpm typeorm migration:run` (Seeds e2e db)
 
+### Twilio Email Verification (SendGrid)
+
+Twilio Verify sends OTP emails via SendGrid. After setting up the Twilio Verify service:
+
+1. In [SendGrid](https://app.sendgrid.com) → **Settings → Sender Authentication**, verify the sender identity for your from address (single sender or domain authentication)
+2. In [Twilio Console](https://console.twilio.com) → **Verify → Services → [your service] → Email tab**:
+   - Toggle Email on
+   - Click **Set up email integration** and connect your SendGrid API key
+   - Set **From Email** to exactly match your verified SendGrid sender identity
+   - Set **From Name** (e.g. `Skye Hosts`)
+   - Ensure your SendGrid dynamic template contains the `{{otp}}` placeholder
+
 When native modules in host app change:
 npx expo run:android
 
@@ -75,7 +87,7 @@ pnpm --filter=skye-hosts-app dev # Supports native modules
 
 If changed native modules, the flow is:
 1. eas build --profile development --platform android --local --output ./builds/app.apk
-2. adb install <path-to-apk> — install it on the emulator
+2. adb install builds/app.apk — install it on the emulator
 3. pnpm dev → press a — starts the JS bundler and opens the app
 
 # Check for lint errors & auto fix, fixable lint errors:

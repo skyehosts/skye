@@ -12,7 +12,6 @@ import {
   PROPERTY_SIZE_UNITS,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Button, Modal, Portal, TextInput } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -27,7 +26,7 @@ import {
   spacing,
   typography,
 } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import { handleApiError } from "../utils/form-error-handler";
 
 interface PropertyTypeModalProps {
   visible: boolean;
@@ -67,7 +66,6 @@ export function PropertyTypeModal({
   listing,
   onSaved,
 }: PropertyTypeModalProps) {
-  const { setError } = useForm();
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
   const [form, setForm] = useState<FormState>({
@@ -122,7 +120,7 @@ export function PropertyTypeModal({
       );
       onSaved(updated);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

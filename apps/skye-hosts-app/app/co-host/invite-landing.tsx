@@ -7,6 +7,7 @@ import type {
   IPhoneVerifyOtpRequestDto,
   IPhoneVerifyOtpResponseDto,
 } from "../../../../packages/skye-hosts-api-client/src";
+import { ApiRequestError } from "@repo/skye-hosts-api-client/src";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -17,7 +18,7 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
@@ -32,7 +33,10 @@ import {
   spacing,
   typography,
 } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import {
+  handleFormError,
+  SERVER_ERROR_MESSAGE,
+} from "../utils/form-error-handler";
 
 const CO_HOST_ROLE_LABELS: Record<string, string> = {
   full_access: "Full Access",
@@ -69,10 +73,10 @@ export default function InviteLandingScreen() {
   const hasAutoSubmitted = useRef(false);
 
   const {
+    control,
     setValue,
     handleSubmit,
     setError,
-    clearErrors,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({
@@ -120,9 +124,13 @@ export default function InviteLandingScreen() {
       setAcceptedListingId(result.listingId);
       setStep("accepted");
     } catch (e: unknown) {
-      const message =
-        e instanceof Error ? e.message : "Failed to accept invite";
-      setServerError(message);
+      if (e instanceof ApiRequestError && e.statusCode >= 500) {
+        setServerError(SERVER_ERROR_MESSAGE);
+      } else {
+        setServerError(
+          e instanceof Error ? e.message : "Failed to accept invite",
+        );
+      }
     }
   }, [token]);
 
@@ -136,27 +144,22 @@ export default function InviteLandingScreen() {
 
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
 
-  const onPhoneContinue = async () => {
+  const onPhoneContinue = handleSubmit(async (data) => {
     setServerError("");
-    if (!phoneNumber.trim()) {
-      setError("phoneNumber", { message: "Please enter your mobile number" });
-      return;
-    }
     try {
-      const { exists } = await phoneLookup(phoneNumber);
+      const { exists } = await phoneLookup(data.phoneNumber);
       setIsExistingUser(exists);
 
       if (!exists) {
-        // New user — need name too, but let them fill it in first
         return;
       }
 
-      await requestOtp(phoneNumber);
+      await requestOtp(data.phoneNumber);
       setStep("signup-otp");
     } catch (e) {
       handleFormError(e, setError, setServerError);
     }
-  };
+  });
 
   const onNewUserSendCode = async (data: SignUpFormValues) => {
     setServerError("");
@@ -293,50 +296,67 @@ export default function InviteLandingScreen() {
                 Enter your mobile number to continue
               </Text>
 
-              <TextInput
-                mode="outlined"
-                label="Mobile number"
-                placeholder="+44 7700 900000"
-                keyboardType="phone-pad"
-                autoComplete="tel"
-                value={phoneNumber}
-                onChangeText={(v) => {
-                  setValue("phoneNumber", v);
-                  if (errors.phoneNumber) clearErrors("phoneNumber");
-                  if (isExistingUser !== null) setIsExistingUser(null);
-                }}
-                disabled={isSubmitting || isExistingUser === false}
-                error={!!errors.phoneNumber}
-                style={styles.input}
-              />
-              {errors.phoneNumber && (
-                <HelperText type="error">
-                  {errors.phoneNumber.message}
-                </HelperText>
-              )}
+              <View>
+                <Controller
+                  control={control}
+                  name="phoneNumber"
+                  rules={{
+                    required: "Please enter your mobile number",
+                    validate: (v) =>
+                      v.replace(/\s/g, "").length >= 10 ||
+                      "Please enter a valid mobile number",
+                  }}
+                  render={({ field }) => (
+                    <TextInput
+                      mode="outlined"
+                      label="Mobile number"
+                      placeholder="+44 7700 900000"
+                      keyboardType="phone-pad"
+                      autoComplete="tel"
+                      value={field.value}
+                      onChangeText={(v) => {
+                        field.onChange(v);
+                        if (isExistingUser !== null) setIsExistingUser(null);
+                      }}
+                      disabled={isSubmitting || isExistingUser === false}
+                      error={!!errors.phoneNumber}
+                      style={styles.input}
+                    />
+                  )}
+                />
+                {errors.phoneNumber && (
+                  <HelperText type="error">
+                    {errors.phoneNumber.message}
+                  </HelperText>
+                )}
+              </View>
 
               {isExistingUser === false && (
-                <>
-                  <TextInput
-                    mode="outlined"
-                    label="Full name"
-                    placeholder="e.g. John Smith"
-                    autoComplete="name"
-                    autoCapitalize="words"
-                    value={name}
-                    onChangeText={(v) => {
-                      setValue("name", v);
-                      if (errors.name) clearErrors("name");
-                    }}
-                    disabled={isSubmitting}
-                    error={!!errors.name}
-                    style={styles.input}
-                    autoFocus
+                <View>
+                  <Controller
+                    control={control}
+                    name="name"
+                    rules={{ required: "Please enter your name" }}
+                    render={({ field }) => (
+                      <TextInput
+                        mode="outlined"
+                        label="Full name"
+                        placeholder="e.g. John Smith"
+                        autoComplete="name"
+                        autoCapitalize="words"
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        disabled={isSubmitting}
+                        error={!!errors.name}
+                        style={styles.input}
+                        autoFocus
+                      />
+                    )}
                   />
                   {errors.name && (
                     <HelperText type="error">{errors.name.message}</HelperText>
                   )}
-                </>
+                </View>
               )}
 
               {isExistingUser === false ? (
@@ -382,30 +402,44 @@ export default function InviteLandingScreen() {
                 We sent a code to {phoneNumber}
               </Text>
 
-              <TextInput
-                mode="outlined"
-                label="Verification code"
-                placeholder="000000"
-                keyboardType="number-pad"
-                maxLength={6}
-                value={code}
-                onChangeText={(v) => {
-                  setValue("code", v);
-                  if (errors.code) clearErrors("code");
-                  if (v.length === 6 && !hasAutoSubmitted.current) {
-                    hasAutoSubmitted.current = true;
-                    handleSubmit(onVerifyCode)();
-                  }
-                }}
-                disabled={isSubmitting}
-                error={!!errors.code}
-                autoFocus
-                style={styles.input}
-                contentStyle={styles.codeInput}
-              />
-              {errors.code && (
-                <HelperText type="error">{errors.code.message}</HelperText>
-              )}
+              <View>
+                <Controller
+                  control={control}
+                  name="code"
+                  rules={{
+                    required: "Code is required",
+                    minLength: {
+                      value: 6,
+                      message: "Code must be 6 digits",
+                    },
+                  }}
+                  render={({ field }) => (
+                    <TextInput
+                      mode="outlined"
+                      label="Verification code"
+                      placeholder="000000"
+                      keyboardType="number-pad"
+                      maxLength={6}
+                      value={field.value}
+                      onChangeText={(v) => {
+                        field.onChange(v);
+                        if (v.length === 6 && !hasAutoSubmitted.current) {
+                          hasAutoSubmitted.current = true;
+                          handleSubmit(onVerifyCode)();
+                        }
+                      }}
+                      disabled={isSubmitting}
+                      error={!!errors.code}
+                      autoFocus
+                      style={styles.input}
+                      contentStyle={styles.codeInput}
+                    />
+                  )}
+                />
+                {errors.code && (
+                  <HelperText type="error">{errors.code.message}</HelperText>
+                )}
+              </View>
 
               <Button
                 mode="contained"

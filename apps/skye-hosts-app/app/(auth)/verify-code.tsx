@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
@@ -26,10 +26,9 @@ export default function VerifyCodeScreen() {
   const hasAutoSubmitted = useRef(false);
 
   const {
-    setValue,
+    control,
     handleSubmit,
     setError,
-    clearErrors,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<VerifyCodeFormValues>({
@@ -74,30 +73,42 @@ export default function VerifyCodeScreen() {
           </Text>
 
           <View>
-            <TextInput
-              mode="outlined"
-              label="Verification code"
-              placeholder="000000"
-              keyboardType="number-pad"
-              maxLength={6}
-              value={code}
-              onChangeText={(v) => {
-                setValue("code", v);
-                if (errors.code) clearErrors("code");
-                if (
-                  v.length === 6 &&
-                  !autoSubmitFailed &&
-                  !hasAutoSubmitted.current
-                ) {
-                  hasAutoSubmitted.current = true;
-                  handleSubmit(onSubmit)();
-                }
+            <Controller
+              control={control}
+              name="code"
+              rules={{
+                required: "Code is required",
+                minLength: {
+                  value: 6,
+                  message: "Code must be 6 digits",
+                },
               }}
-              disabled={isSubmitting}
-              error={!!errors.code}
-              autoFocus
-              style={styles.input}
-              contentStyle={styles.inputContent}
+              render={({ field }) => (
+                <TextInput
+                  mode="outlined"
+                  label="Verification code"
+                  placeholder="000000"
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  value={field.value}
+                  onChangeText={(v) => {
+                    field.onChange(v);
+                    if (
+                      v.length === 6 &&
+                      !autoSubmitFailed &&
+                      !hasAutoSubmitted.current
+                    ) {
+                      hasAutoSubmitted.current = true;
+                      handleSubmit(onSubmit)();
+                    }
+                  }}
+                  disabled={isSubmitting}
+                  error={!!errors.code}
+                  autoFocus
+                  style={styles.input}
+                  contentStyle={styles.inputContent}
+                />
+              )}
             />
             {errors.code && (
               <HelperText type="error">{errors.code.message}</HelperText>

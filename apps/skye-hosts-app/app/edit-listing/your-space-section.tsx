@@ -9,7 +9,6 @@ import {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Pressable,
@@ -25,7 +24,7 @@ import { PropertyTypeModal } from "./property-type-modal";
 import { HouseRulesCard } from "./your-space/house-rules-card";
 import { fetchApi } from "../services/api";
 import { borderRadius, colors, commonStyles, spacing } from "../theme";
-import { handleFormError } from "../utils/form-error-handler";
+import { handleApiError } from "../utils/form-error-handler";
 
 interface YourSpaceSectionProps {
   listingId: string;
@@ -40,8 +39,6 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
     useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-
-  const { setError } = useForm();
 
   const fetchListing = useCallback(async () => {
     try {
@@ -70,7 +67,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
       setListing(updated);
       setTitleModalVisible(false);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

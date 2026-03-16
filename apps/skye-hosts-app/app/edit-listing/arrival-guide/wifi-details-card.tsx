@@ -3,13 +3,12 @@ import type {
   IUpdateListingRequestDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Pressable, Text } from "react-native";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { WifiDetailsModal } from "../../components/wifi-details-modal";
 import { fetchApi } from "../../services/api";
 import { commonStyles } from "../../theme";
-import { handleFormError } from "../../utils/form-error-handler";
+import { handleApiError } from "../../utils/form-error-handler";
 
 interface WifiDetailsCardProps {
   listingId: string;
@@ -27,7 +26,6 @@ export function WifiDetailsCard({
   const [modalVisible, setModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const { setError } = useForm();
 
   const handleSave = async (network: string, password: string) => {
     setSaving(true);
@@ -43,7 +41,7 @@ export function WifiDetailsCard({
       onUpdate(updated);
       setModalVisible(false);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }

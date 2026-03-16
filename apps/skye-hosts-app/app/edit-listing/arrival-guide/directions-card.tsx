@@ -3,13 +3,12 @@ import type {
   IUpdateListingRequestDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Pressable, Text } from "react-native";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { FormInputModal } from "../../components/form-input-modal";
 import { fetchApi } from "../../services/api";
 import { commonStyles } from "../../theme";
-import { handleFormError } from "../../utils/form-error-handler";
+import { handleApiError } from "../../utils/form-error-handler";
 
 interface DirectionsCardProps {
   listingId: string;
@@ -25,7 +24,6 @@ export function DirectionsCard({
   const [modalVisible, setModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const { setError } = useForm();
 
   const handleSave = async (value: string) => {
     setSaving(true);
@@ -41,7 +39,7 @@ export function DirectionsCard({
       onUpdate(updated);
       setModalVisible(false);
     } catch (e) {
-      handleFormError(e, setError, setServerError);
+      handleApiError(e, setServerError);
     } finally {
       setSaving(false);
     }
