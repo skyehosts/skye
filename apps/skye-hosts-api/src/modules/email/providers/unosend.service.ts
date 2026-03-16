@@ -10,7 +10,9 @@ export class UnoSendService {
   private readonly isBypassMode: boolean;
 
   constructor() {
-    this.isBypassMode = process.env.UNOSEND_DISABLED === 'true';
+    this.isBypassMode =
+      process.env.UNOSEND_DISABLED === 'true' ||
+      process.env.SKYE_ENVIRONMENT === 'local';
     this.apiKey = process.env.UNOSEND_API_KEY ?? '';
 
     if (this.isBypassMode) {

@@ -99,10 +99,10 @@ Replace each enum value with the real template ID from UnoSend:
 
 ```ts
 export enum EmailTemplate {
-  BookingRequested = 'tmpl_<real_id>',
-  BookingConfirmed = 'tmpl_<real_id>',
-  BookingCancelled = 'tmpl_<real_id>',
-  MessageReceived = 'tmpl_<real_id>',
+  BookingRequested = "tmpl_<real_id>",
+  BookingConfirmed = "tmpl_<real_id>",
+  BookingCancelled = "tmpl_<real_id>",
+  MessageReceived = "tmpl_<real_id>",
 }
 ```
 
