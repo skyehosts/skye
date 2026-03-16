@@ -62,45 +62,37 @@ export class ScheduledMessageDeliveryService {
     const now = new Date();
     const content = scheduledMessage.templateVersion.content;
 
-    const queryRunner = await this.databaseService.startTransaction();
-    let savedMessage: Message;
+    const savedMessage = await this.databaseService.runInTransaction(
+      async (manager) => {
+        const message = await manager.getRepository(Message).save({
+          bookingId: scheduledMessage.bookingId,
+          senderId: listing.hostId,
+          content,
+          readAt: null,
+          createdAt: now,
+        } as Message);
 
-    try {
-      const manager = queryRunner.manager;
+        await manager.getRepository(SentMessage).save({
+          scheduledMessageId,
+          renderedContent: content,
+          deliveryMetadata: null,
+          sentAt: now,
+        } as SentMessage);
 
-      savedMessage = await manager.getRepository(Message).save({
-        bookingId: scheduledMessage.bookingId,
-        senderId: listing.hostId,
-        content,
-        readAt: null,
-        createdAt: now,
-      } as Message);
+        scheduledMessage.status = 'sent';
+        scheduledMessage.updatedAt = now;
+        await manager.getRepository(ScheduledMessage).save(scheduledMessage);
 
-      await manager.getRepository(SentMessage).save({
-        scheduledMessageId,
-        renderedContent: content,
-        deliveryMetadata: null,
-        sentAt: now,
-      } as SentMessage);
+        await manager.getRepository(MessageLog).save({
+          scheduledMessageId,
+          action: 'sent',
+          details: null,
+          createdAt: now,
+        } as MessageLog);
 
-      scheduledMessage.status = 'sent';
-      scheduledMessage.updatedAt = now;
-      await manager.getRepository(ScheduledMessage).save(scheduledMessage);
-
-      await manager.getRepository(MessageLog).save({
-        scheduledMessageId,
-        action: 'sent',
-        details: null,
-        createdAt: now,
-      } as MessageLog);
-
-      await queryRunner.commitTransaction();
-    } catch (error) {
-      await queryRunner.rollbackTransaction();
-      throw error;
-    } finally {
-      await queryRunner.release();
-    }
+        return message;
+      },
+    );
 
     this.logger.debug(
       `Scheduled message #${scheduledMessageId} delivered to booking #${scheduledMessage.bookingId}`,

@@ -26,8 +26,7 @@ describe('AuthService', () => {
     };
 
     const databaseService = {
-      startTransaction: jest.fn(),
-      releaseTransaction: jest.fn(),
+      runInTransaction: jest.fn((work) => work()),
     };
 
     const module: TestingModule = await Test.createTestingModule({

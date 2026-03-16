@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../../common/providers';
 import {
@@ -31,19 +31,10 @@ export class DemoService {
   }
 
   async saveWithTransactions(dto: CreateSomethingDto): Promise<Demo> {
-    const queryRunner = await this.databaseService.startTransaction();
-    let savedDemo: Demo;
-    try {
-      savedDemo = await this.databaseService.getRepository(Demo).save({
+    return this.databaseService.runInTransaction(async (manager) => {
+      return manager.getRepository(Demo).save({
         foo: dto.foo,
       } as Demo);
-      await queryRunner.commitTransaction();
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(e);
-    } finally {
-      await this.databaseService.releaseTransaction();
-    }
-    return savedDemo;
+    });
   }
 }

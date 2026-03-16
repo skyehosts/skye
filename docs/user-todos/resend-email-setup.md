@@ -57,9 +57,9 @@ remove those lines.
 These are the 4 email templates sent by the notification system. Make sure content covers
 all the variables they receive:
 
-| Template | Trigger | Variables |
-|---|---|---|
-| `BookingRequested` | Host gets a new booking request | `recipientName`, `title`, `body`, `bookingId`, `url` |
-| `BookingConfirmed` | Booking is confirmed | `recipientName`, `title`, `body`, `bookingId`, `url` |
-| `BookingCancelled` | Booking is cancelled | `recipientName`, `title`, `body`, `bookingId`, `url` |
-| `MessageReceived` | User receives a new message | `recipientName`, `title`, `body`, `bookingId`, `conversationUrl` |
+| Template           | Trigger                         | Variables                                                        |
+| ------------------ | ------------------------------- | ---------------------------------------------------------------- |
+| `BookingRequested` | Host gets a new booking request | `recipientName`, `title`, `body`, `bookingId`, `url`             |
+| `BookingConfirmed` | Booking is confirmed            | `recipientName`, `title`, `body`, `bookingId`, `url`             |
+| `BookingCancelled` | Booking is cancelled            | `recipientName`, `title`, `body`, `bookingId`, `url`             |
+| `MessageReceived`  | User receives a new message     | `recipientName`, `title`, `body`, `bookingId`, `conversationUrl` |

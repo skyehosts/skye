@@ -2,10 +2,7 @@
 Next
 ====
 - Resend
-  - no-reply configured
-  - Emails being sent
-  - Templates defined
-  - docs/user-todos finished
+  - invite link not rendering in gmail for cohost
 - Test Twilio email verification stuff
   - Setup API keys etc
 - Test cohost

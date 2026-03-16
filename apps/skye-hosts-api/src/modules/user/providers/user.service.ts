@@ -1,7 +1,6 @@
 import {
   BadRequestException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import {
@@ -24,17 +23,10 @@ export class UserService {
     private databaseService: DatabaseService,
   ) {}
 
-  async delete(id: number): Promise<any> {
-    const queryRunner = await this.databaseService.startTransaction();
-    try {
+  async delete(id: number): Promise<void> {
+    await this.databaseService.runInTransaction(async () => {
       await this.accountService.delete(id);
-      await queryRunner.commitTransaction();
-    } catch (e) {
-      await queryRunner.rollbackTransaction();
-      throw new InternalServerErrorException(e);
-    } finally {
-      await this.databaseService.releaseTransaction();
-    }
+    });
   }
 
   async editDetails(

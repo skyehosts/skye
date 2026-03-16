@@ -13,6 +13,8 @@ import {
 import { createHash, randomBytes } from 'crypto';
 import { AccountService } from '../../account/providers';
 import { DatabaseService, LoggerService } from '../../common/providers';
+import { EmailTemplate } from '../../email/enums/email-template.enum';
+import { ResendService } from '../../email/providers/resend.service';
 import { Listing } from '../../listing/entities';
 import {
   AcceptCoHostInviteResponseDto,
@@ -33,6 +35,7 @@ export class CoHostInviteService {
     private databaseService: DatabaseService,
     private accountService: AccountService,
     private listingAccessService: ListingAccessService,
+    private resendService: ResendService,
     private logger: LoggerService,
   ) {}
 
@@ -106,16 +109,40 @@ export class CoHostInviteService {
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + INVITE_EXPIRY_DAYS);
 
-    const invite = await this.databaseService.getRepository(CoHostInvite).save({
-      listingId,
-      inviterAccountId,
-      inviteeEmail,
-      role,
-      status: 'pending',
-      tokenHash,
-      expiresAt,
-      createdAt: new Date(),
-    } as CoHostInvite);
+    const inviteLink = `${DEEP_LINK_SCHEME}://co-host/invite-landing?token=${rawToken}`;
+
+    const invite = await this.databaseService.runInTransaction(
+      async (manager) => {
+        const saved = await manager.getRepository(CoHostInvite).save({
+          listingId,
+          inviterAccountId,
+          inviteeEmail,
+          role,
+          status: 'pending',
+          tokenHash,
+          expiresAt,
+          createdAt: new Date(),
+        } as CoHostInvite);
+
+        const listing = await manager
+          .getRepository(Listing)
+          .findOne({ where: { id: listingId } });
+
+        const inviter = await this.accountService.findById(inviterAccountId);
+
+        await this.resendService.sendTemplate(
+          inviteeEmail,
+          EmailTemplate.CoHostInvite,
+          {
+            inviteLink,
+            listingTitle: listing?.title ?? 'a listing',
+            inviterName: inviter?.name ?? 'A host',
+          },
+        );
+
+        return saved;
+      },
+    );
 
     this.logger.debug(
       `Co-host invite created: ${invite.id} for listing ${listingId}`,
@@ -123,7 +150,7 @@ export class CoHostInviteService {
 
     return {
       inviteId: invite.id,
-      inviteLink: `${DEEP_LINK_SCHEME}://co-host/invite-landing?token=${rawToken}`,
+      inviteLink,
     };
   }
 
