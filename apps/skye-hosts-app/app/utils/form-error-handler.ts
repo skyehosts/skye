@@ -1,4 +1,4 @@
-import { ApiRequestError } from "@repo/skye-hosts-api-client/src";
+import { ApiRequestError } from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 
