@@ -10,6 +10,8 @@ export interface IEnvironmentVariables {
   httpSecret: string;
   jwtSecret: string;
   releaseVersion: string;
+  resendApiKey: string;
+  resendFromEmail: string;
   stripeSecret: string;
 }
 
@@ -27,6 +29,8 @@ export class ConfigService extends NestConfigService {
       httpSecret: this.get<string>('HTTP_SECRET'),
       jwtSecret: this.get<string>('JWT_SECRET'),
       releaseVersion: this.get<string>('RELEASE_VERSION'),
+      resendApiKey: this.get<string>('RESEND_API_KEY'),
+      resendFromEmail: this.get<string>('RESEND_FROM_EMAIL'),
       stripeSecret: this.get<string>('STRIPE_SECRET'),
     };
   }

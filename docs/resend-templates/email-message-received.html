@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Message</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f4f0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f4f0;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#1a1a1a;border-radius:8px 8px 0 0;padding:32px 40px;text-align:center;">
+              <p style="margin:0;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Skye Hosts</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background-color:#ffffff;padding:40px;border-radius:0 0 8px 8px;">
+
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#888888;text-transform:uppercase;letter-spacing:0.8px;">New Message</p>
+              <h1 style="margin:0 0 24px;font-size:26px;font-weight:700;color:#1a1a1a;line-height:1.2;">You have a new message</h1>
+
+              <p style="margin:0 0 24px;font-size:16px;color:#444444;line-height:1.6;">
+                Hi {{recipientName}},
+              </p>
+
+              <p style="margin:0 0 24px;font-size:16px;color:#444444;line-height:1.6;">
+                Someone sent you a message regarding booking <strong>#{{bookingId}}</strong>.
+              </p>
+
+              <!-- Message preview box -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr>
+                  <td style="background-color:#f5f4f0;border-left:3px solid #1a1a1a;border-radius:0 6px 6px 0;padding:20px 24px;">
+                    <p style="margin:0;font-size:15px;color:#444444;line-height:1.6;font-style:italic;">{{body}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- CTA -->
+              <table cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr>
+                  <td style="background-color:#1a1a1a;border-radius:6px;">
+                    <a href="{{conversationUrl}}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">Reply to Message</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0;font-size:14px;color:#888888;line-height:1.6;">
+                Keeping the conversation going helps build trust with your guests and hosts.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 40px;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#aaaaaa;line-height:1.6;">
+                You're receiving this because you have an account on Skye Hosts.<br />
+                &copy; Skye Hosts. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
