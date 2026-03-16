@@ -143,6 +143,13 @@ export default async function DemoPage() {
 - E2e global setup lives in each app's `e2e/global-setup.ts`.
 - The API e2e env config is at `apps/skye-hosts-api/.env.e2e` (gitignored).
 
+## Guide for: NestJS module entity ownership
+
+- **Each entity belongs to exactly one module** — only that module should register it in `TypeOrmModule.forFeature([...])`.
+- **Never re-register a foreign entity** in your module's `forFeature`. If you need a repository for an entity owned by another module, import that module instead (provided it exports `TypeOrmModule`).
+- **Modules that own entities and need to share their repositories** should include `TypeOrmModule` in their `exports` array (see `AccountModule` and `MessageModule` as examples).
+- **Circular dependency exception**: if importing the owning module would create a circular dependency, registering the entity locally in `forFeature` is acceptable as a pragmatic workaround — document it with a comment explaining why.
+
 ## Guide for: Adding components
 
 - Any bespoke, non-trivial components created should be added to packages/ui and and then referenced in storybook

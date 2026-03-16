@@ -53,6 +53,7 @@ Host App
 ========
 - name not required on signup again?!
 - docs/user-todos/twilio-email-verify-setup
+- docs/user-todos/unosend-email-setup.md
 - Listing title, vertical height is too long
 - Test
   - Notification

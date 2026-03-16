@@ -11,12 +11,12 @@ export class TwilioService {
   private readonly isBypassMode: boolean;
 
   constructor() {
-    this.isBypassMode = process.env.SKYE_ENVIRONMENT === 'local';
+    this.isBypassMode = process.env.TWILIO_VERIFY_BYPASS_ENABLED === 'true';
 
     if (this.isBypassMode) {
       this.client = null;
       this.verifyServiceSid = '';
-      this.logger.debug('Twilio bypass mode enabled (local environment)');
+      this.logger.debug('Twilio bypass mode enabled');
     } else {
       const accountSid = process.env.TWILIO_ACCOUNT_SID;
       const authToken = process.env.TWILIO_AUTH_TOKEN;

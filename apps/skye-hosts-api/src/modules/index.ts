@@ -4,6 +4,7 @@ export * from './co-host/co-host.module';
 export * from './common/common.module';
 export * from './config/config.module';
 export * from './demo/demo.module';
+export * from './email/email.module';
 export * from './listing/listing.module';
 export * from './message/message.module';
 export * from './scheduled-message/scheduled-message.module';
