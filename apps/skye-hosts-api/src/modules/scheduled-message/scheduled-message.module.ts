@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from '../common/common.module';
-import { Message } from '../message/entities';
 import { MessageModule } from '../message/message.module';
 import { NotificationModule } from '../notification/notification.module';
 import { QueueModule } from '../queue/queue.module';
@@ -31,7 +30,6 @@ import { ScheduledMessageSchedulerService } from './providers/scheduled-message-
     QueueModule,
     TypeOrmModule.forFeature([
       ListingMessageTemplate,
-      Message,
       MessageLog,
       MessageTemplate,
       ScheduledMessage,

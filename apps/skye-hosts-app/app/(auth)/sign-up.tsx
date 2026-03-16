@@ -20,15 +20,19 @@ export default function SignUpScreen() {
   const [isExistingUser, setIsExistingUser] = useState<boolean | null>(null);
 
   const {
+    register,
     setValue,
     handleSubmit,
     setError,
     clearErrors,
     watch,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<SignUpFormValues>({
     defaultValues: { name: "", phoneNumber: "" },
+    mode: "onChange",
   });
+
+  register("name", { required: "Please enter your name" });
 
   const name = watch("name");
   const phoneNumber = watch("phoneNumber");
@@ -136,7 +140,7 @@ export default function SignUpScreen() {
               mode="contained"
               onPress={handleSubmit(onNewUserSubmit)}
               loading={isSubmitting}
-              disabled={isSubmitting}
+              disabled={isSubmitting || !name.trim()}
             >
               Send verification code
             </Button>

@@ -2,6 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { NotificationEventType } from '@repo/skye-hosts-api-client';
 import { Repository } from 'typeorm';
+import { Account } from '../../account/entities/account.entity';
+import { EmailTemplate } from '../../email/enums/email-template.enum';
+import { UnoSendService } from '../../email/providers/unosend.service';
 import { NotificationPreference } from '../entities';
 
 interface SendEmailParams {
@@ -9,7 +12,15 @@ interface SendEmailParams {
   eventType: NotificationEventType;
   title: string;
   body: string;
+  data?: Record<string, unknown>;
 }
+
+const EVENT_TYPE_TO_TEMPLATE: Record<NotificationEventType, EmailTemplate> = {
+  booking_requested: EmailTemplate.BookingRequested,
+  booking_confirmed: EmailTemplate.BookingConfirmed,
+  booking_cancelled: EmailTemplate.BookingCancelled,
+  message_received: EmailTemplate.MessageReceived,
+};
 
 @Injectable()
 export class EmailNotificationService {
@@ -18,6 +29,9 @@ export class EmailNotificationService {
   constructor(
     @InjectRepository(NotificationPreference)
     private readonly preferenceRepo: Repository<NotificationPreference>,
+    @InjectRepository(Account)
+    private readonly accountRepo: Repository<Account>,
+    private readonly unoSendService: UnoSendService,
   ) {}
 
   async send(params: SendEmailParams): Promise<void> {
@@ -34,9 +48,24 @@ export class EmailNotificationService {
         return;
       }
 
-      // TODO: implement email sending (SMTP / SES / etc.)
-      this.logger.debug(
-        `Email would be sent to account ${params.recipientAccountId}: "${params.title}"`,
+      const account = await this.accountRepo.findOne({
+        where: { id: params.recipientAccountId },
+      });
+
+      if (!account?.email) {
+        this.logger.debug(
+          `No email address for account ${params.recipientAccountId}, skipping`,
+        );
+        return;
+      }
+
+      const template = EVENT_TYPE_TO_TEMPLATE[params.eventType];
+      const variables = this.buildVariables(account.name, params);
+
+      await this.unoSendService.sendTemplate(
+        account.email,
+        template,
+        variables,
       );
     } catch (error) {
       this.logger.error(
@@ -44,6 +73,27 @@ export class EmailNotificationService {
         error instanceof Error ? error.stack : error,
       );
     }
+  }
+
+  private buildVariables(
+    recipientName: string,
+    params: SendEmailParams,
+  ): Record<string, string> {
+    const variables: Record<string, string> = {
+      recipientName,
+      title: params.title,
+      body: params.body,
+    };
+
+    if (params.data) {
+      for (const [key, value] of Object.entries(params.data)) {
+        if (value != null) {
+          variables[key] = String(value);
+        }
+      }
+    }
+
+    return variables;
   }
 
   private async isEmailEnabled(
