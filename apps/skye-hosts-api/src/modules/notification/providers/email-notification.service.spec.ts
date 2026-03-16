@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Account } from '../../account/entities/account.entity';
 import { EmailTemplate } from '../../email/enums/email-template.enum';
-import { UnoSendService } from '../../email/providers/unosend.service';
+import { ResendService } from '../../email/providers/resend.service';
 import { NotificationPreference } from '../entities';
 import { EmailNotificationService } from './email-notification.service';
 
@@ -10,12 +10,12 @@ describe('EmailNotificationService', () => {
   let service: EmailNotificationService;
   let preferenceRepo: { findOne: jest.Mock };
   let accountRepo: { findOne: jest.Mock };
-  let unoSendService: { sendTemplate: jest.Mock };
+  let resendService: { sendTemplate: jest.Mock };
 
   beforeEach(async () => {
     preferenceRepo = { findOne: jest.fn() };
     accountRepo = { findOne: jest.fn() };
-    unoSendService = { sendTemplate: jest.fn().mockResolvedValue(undefined) };
+    resendService = { sendTemplate: jest.fn().mockResolvedValue(undefined) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -25,7 +25,7 @@ describe('EmailNotificationService', () => {
           useValue: preferenceRepo,
         },
         { provide: getRepositoryToken(Account), useValue: accountRepo },
-        { provide: UnoSendService, useValue: unoSendService },
+        { provide: ResendService, useValue: resendService },
       ],
     }).compile();
 
@@ -42,7 +42,7 @@ describe('EmailNotificationService', () => {
       body: 'Your booking is confirmed',
     });
 
-    expect(unoSendService.sendTemplate).not.toHaveBeenCalled();
+    expect(resendService.sendTemplate).not.toHaveBeenCalled();
   });
 
   it('skips send when account has no email address', async () => {
@@ -56,7 +56,7 @@ describe('EmailNotificationService', () => {
       body: 'Your booking is confirmed',
     });
 
-    expect(unoSendService.sendTemplate).not.toHaveBeenCalled();
+    expect(resendService.sendTemplate).not.toHaveBeenCalled();
   });
 
   it('sends the correct template and variables for booking_confirmed', async () => {
@@ -75,7 +75,7 @@ describe('EmailNotificationService', () => {
       data: { bookingId: 42, url: 'https://example.com/bookings/42' },
     });
 
-    expect(unoSendService.sendTemplate).toHaveBeenCalledWith(
+    expect(resendService.sendTemplate).toHaveBeenCalledWith(
       'jane@example.com',
       EmailTemplate.BookingConfirmed,
       {
@@ -104,7 +104,7 @@ describe('EmailNotificationService', () => {
       data: { bookingId: 7, conversationUrl: 'https://example.com/messages/7' },
     });
 
-    expect(unoSendService.sendTemplate).toHaveBeenCalledWith(
+    expect(resendService.sendTemplate).toHaveBeenCalledWith(
       'bob@example.com',
       EmailTemplate.MessageReceived,
       expect.objectContaining({
@@ -115,14 +115,14 @@ describe('EmailNotificationService', () => {
     );
   });
 
-  it('does not throw when unoSendService rejects — error is swallowed', async () => {
+  it('does not throw when resendService rejects — error is swallowed', async () => {
     preferenceRepo.findOne.mockResolvedValue(null);
     accountRepo.findOne.mockResolvedValue({
       id: 1,
       name: 'Jane',
       email: 'jane@example.com',
     });
-    unoSendService.sendTemplate.mockRejectedValue(new Error('API error'));
+    resendService.sendTemplate.mockRejectedValue(new Error('API error'));
 
     await expect(
       service.send({

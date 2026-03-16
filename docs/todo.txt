@@ -1,8 +1,11 @@
 ====
 Next
 ====
-- Test Unosend stuff
-  - Setup Unosend API keys etc
+- Resend
+  - no-reply configured
+  - Emails being sent
+  - Templates defined
+  - docs/user-todos finished
 - Test Twilio email verification stuff
   - Setup API keys etc
 - Test cohost
@@ -112,7 +115,7 @@ Pending Prompts
 Logins
 ======
 - [Skye Hosts] Aws --> A...[pin]$$$
-- [williamsandonz] Donk...[pin]$
+- [williamsandonz] Donk...[pin]$ (Top most authenticator entry)
 
 ===============
 Pending prompts

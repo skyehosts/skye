@@ -4,7 +4,7 @@ import type { NotificationEventType } from '@repo/skye-hosts-api-client';
 import { Repository } from 'typeorm';
 import { Account } from '../../account/entities/account.entity';
 import { EmailTemplate } from '../../email/enums/email-template.enum';
-import { UnoSendService } from '../../email/providers/unosend.service';
+import { ResendService } from '../../email/providers/resend.service';
 import { NotificationPreference } from '../entities';
 
 interface SendEmailParams {
@@ -31,7 +31,7 @@ export class EmailNotificationService {
     private readonly preferenceRepo: Repository<NotificationPreference>,
     @InjectRepository(Account)
     private readonly accountRepo: Repository<Account>,
-    private readonly unoSendService: UnoSendService,
+    private readonly resendService: ResendService,
   ) {}
 
   async send(params: SendEmailParams): Promise<void> {
@@ -62,11 +62,7 @@ export class EmailNotificationService {
       const template = EVENT_TYPE_TO_TEMPLATE[params.eventType];
       const variables = this.buildVariables(account.name, params);
 
-      await this.unoSendService.sendTemplate(
-        account.email,
-        template,
-        variables,
-      );
+      await this.resendService.sendTemplate(account.email, template, variables);
     } catch (error) {
       this.logger.error(
         `Failed to send email for ${params.eventType} to account ${params.recipientAccountId}`,

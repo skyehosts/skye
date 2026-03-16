@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Cancelled</title>
+</head>
+<body style="margin:0;padding:0;background-color:#f5f4f0;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f4f0;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#1a1a1a;border-radius:8px 8px 0 0;padding:32px 40px;text-align:center;">
+              <p style="margin:0;font-size:22px;font-weight:700;color:#ffffff;letter-spacing:-0.3px;">Skye Hosts</p>
+            </td>
+          </tr>
+
+          <!-- Body -->
+          <tr>
+            <td style="background-color:#ffffff;padding:40px;border-radius:0 0 8px 8px;">
+
+              <p style="margin:0 0 8px;font-size:13px;font-weight:600;color:#888888;text-transform:uppercase;letter-spacing:0.8px;">Booking update</p>
+              <h1 style="margin:0 0 24px;font-size:26px;font-weight:700;color:#1a1a1a;line-height:1.2;">Your booking has been cancelled</h1>
+
+              <p style="margin:0 0 24px;font-size:16px;color:#444444;line-height:1.6;">
+                Hi {{recipientName}},
+              </p>
+
+              <p style="margin:0 0 24px;font-size:16px;color:#444444;line-height:1.6;">
+                We're sorry to let you know that the following booking has been cancelled.
+              </p>
+
+              <!-- Booking reference box -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f4f0;border-radius:8px;margin-bottom:32px;">
+                <tr>
+                  <td style="padding:20px 24px;">
+                    <p style="margin:0 0 4px;font-size:12px;font-weight:600;color:#888888;text-transform:uppercase;letter-spacing:0.8px;">Booking reference</p>
+                    <p style="margin:0;font-size:16px;font-weight:600;color:#1a1a1a;">#{{bookingId}}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0 0 24px;font-size:16px;color:#444444;line-height:1.6;">
+                {{body}}
+              </p>
+
+              <!-- CTA -->
+              <table cellpadding="0" cellspacing="0" style="margin-bottom:32px;">
+                <tr>
+                  <td style="background-color:#1a1a1a;border-radius:6px;">
+                    <a href="{{url}}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;">View Details</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:0;font-size:14px;color:#888888;line-height:1.6;">
+                If you have any questions or believe this was a mistake, please get in touch through your dashboard.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:24px 40px;text-align:center;">
+              <p style="margin:0;font-size:12px;color:#aaaaaa;line-height:1.6;">
+                You're receiving this because you have an account on Skye Hosts.<br />
+                &copy; Skye Hosts. All rights reserved.
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
