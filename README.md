@@ -124,12 +124,12 @@ Trigger builds via GitHub Actions:
 
 ### Build profiles
 
-| Profile | Distribution | Use case |
-|---|---|---|
-| `development` | EAS internal | Local dev with dev-client |
-| `preview` | EAS internal | Quick internal testing (no deep links) |
-| `beta` | Store (TestFlight / Play internal) | Deep link / universal link testing without public release |
-| `production` | Store | Public App Store / Play Store release |
+| Profile       | Distribution                       | Use case                                                  |
+| ------------- | ---------------------------------- | --------------------------------------------------------- |
+| `development` | EAS internal                       | Local dev with dev-client                                 |
+| `preview`     | EAS internal                       | Quick internal testing (no deep links)                    |
+| `beta`        | Store (TestFlight / Play internal) | Deep link / universal link testing without public release |
+| `production`  | Store                              | Public App Store / Play Store release                     |
 
 ### Deploying a beta build for deep link testing
 

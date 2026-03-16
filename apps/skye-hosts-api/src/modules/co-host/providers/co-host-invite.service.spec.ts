@@ -8,6 +8,7 @@ import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { createHash, randomBytes } from 'crypto';
 import { AccountService } from '../../account/providers';
 import { DatabaseService, LoggerService } from '../../common/providers';
+import { ConfigService } from '../../config/providers/config.service';
 import { ResendService } from '../../email/providers/resend.service';
 import { CoHostInvite, ListingUserRole } from '../entities';
 import { CoHostInviteService } from './co-host-invite.service';
@@ -111,6 +112,14 @@ describe('CoHostInviteService', () => {
           useValue: { sendTemplate: jest.fn().mockResolvedValue(undefined) },
         },
         {
+          provide: ConfigService,
+          useValue: {
+            getAll: jest.fn().mockReturnValue({
+              appLinkBaseUrl: 'https://skyehosts.co.uk',
+            }),
+          },
+        },
+        {
           provide: LoggerService,
           useValue: { debug: jest.fn(), error: jest.fn() },
         },
@@ -137,7 +146,7 @@ describe('CoHostInviteService', () => {
 
       expect(result.inviteId).toBe(1);
       expect(result.inviteLink).toMatch(
-        /^skye-hosts:\/\/co-host\/invite-landing\?token=[a-f0-9]{64}$/,
+        /^https:\/\/skyehosts\.co\.uk\/invite\?token=[a-f0-9]{64}$/,
       );
       expect(coHostInviteRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
