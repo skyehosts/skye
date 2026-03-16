@@ -15,6 +15,7 @@ Create a new email template in the Resend dashboard with ID `co_host_invite`.
 Subject: "You've been invited to co-host {listingTitle}"
 
 Body should include:
+
 - Who invited them (`inviterName`)
 - Which listing (`listingTitle`)
 - A CTA button/link pointing to `inviteLink`

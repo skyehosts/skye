@@ -120,4 +120,24 @@ Trigger builds via GitHub Actions:
 
 1. Go to Actions > "EAS Build" workflow
 2. Click "Run workflow"
-3. Select platform (android/ios/all) and profile (development/preview/production)
+3. Select platform (android/ios/all) and profile (development/preview/beta/production)
+
+### Build profiles
+
+| Profile | Distribution | Use case |
+|---|---|---|
+| `development` | EAS internal | Local dev with dev-client |
+| `preview` | EAS internal | Quick internal testing (no deep links) |
+| `beta` | Store (TestFlight / Play internal) | Deep link / universal link testing without public release |
+| `production` | Store | Public App Store / Play Store release |
+
+### Deploying a beta build for deep link testing
+
+Use the `beta` profile to produce a store-signed binary that supports universal links/app links, distributed only to yourself via TestFlight (iOS) or Play Console internal testing track (Android) — no public release required.
+
+1. Trigger the "EAS Build" workflow with **profile: beta** and desired platform
+2. **iOS**: Download the `.ipa` from the EAS build page and upload to App Store Connect → TestFlight → Internal Testing. Add yourself as a tester.
+3. **Android**: Download the `.aab` from the EAS build page and upload to Play Console → Internal Testing. Add your Google account as a tester.
+4. Install via TestFlight app (iOS) or the Play Store internal testing link (Android)
+
+> Universal links only work on store-distributed builds. The `preview` profile uses EAS internal distribution which does **not** trigger iOS/Android deep link verification.

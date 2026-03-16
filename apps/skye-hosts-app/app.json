@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "uk.co.skyehosts"
+      "bundleIdentifier": "uk.co.skyehosts",
+      "associatedDomains": ["applinks:skyehosts.co.uk"]
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +25,21 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "package": "uk.co.skyehosts",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "skyehosts.co.uk",
+              "pathPrefix": "/invite"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",

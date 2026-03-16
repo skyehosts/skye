@@ -17,6 +17,14 @@
         "SKYE_ENVIRONMENT": "production"
       }
     },
+    "beta": {
+      "distribution": "store",
+      "channel": "production",
+      "autoIncrement": true,
+      "env": {
+        "SKYE_ENVIRONMENT": "production"
+      }
+    },
     "production": {
       "channel": "production",
       "autoIncrement": true,

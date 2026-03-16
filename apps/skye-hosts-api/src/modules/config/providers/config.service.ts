@@ -13,6 +13,7 @@ export interface IEnvironmentVariables {
   resendApiKey: string;
   resendFromEmail: string;
   stripeSecret: string;
+  appLinkBaseUrl: string;
 }
 
 @Injectable()
@@ -32,6 +33,7 @@ export class ConfigService extends NestConfigService {
       resendApiKey: this.get<string>('RESEND_API_KEY'),
       resendFromEmail: this.get<string>('RESEND_FROM_EMAIL'),
       stripeSecret: this.get<string>('STRIPE_SECRET'),
+      appLinkBaseUrl: this.get<string>('APP_LINK_BASE_URL'),
     };
   }
 }
