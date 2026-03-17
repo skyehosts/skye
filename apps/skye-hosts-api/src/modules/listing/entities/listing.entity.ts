@@ -1,5 +1,6 @@
 import type {
   HostInteractionId,
+  ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
   ListingHighlightId,
@@ -150,6 +151,15 @@ export class Listing {
 
   @Column({ type: 'text', nullable: true, default: null })
   houseRuleOtherRules: string | null;
+
+  @Column({ type: 'simple-array', default: '' })
+  accessibilityFeatures: ListingAccessibilityFeatureId[];
+
+  @Column({ type: 'simple-array', default: '' })
+  safetyConsiderations: string[];
+
+  @Column({ type: 'simple-array', default: '' })
+  safetyDevices: string[];
 
   @Column({ type: 'character varying', default: 'Europe/London' })
   timezone: string;

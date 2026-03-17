@@ -1,6 +1,7 @@
 import type {
   HostInteractionId,
   IGetListingResponseDto,
+  ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
   ListingHighlightId,
@@ -57,6 +58,9 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   houseRuleQuietHoursStart: string | null;
   houseRuleQuietHoursEnd: string | null;
   houseRuleOtherRules: string | null;
+  accessibilityFeatures: ListingAccessibilityFeatureId[];
+  safetyConsiderations: string[];
+  safetyDevices: string[];
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

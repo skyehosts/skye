@@ -409,6 +409,136 @@ export const CHECKOUT_INSTRUCTION_OPTIONS: {
   },
 ];
 
+export enum ListingAccessibilityFeatureId {
+  DisabledParkingSpot = 'disabled_parking_spot',
+  LitPath = 'lit_path',
+  StepFreeAccess = 'step_free_access',
+  WideEntrance = 'wide_entrance',
+}
+
+export interface IAccessibilityFeatureConfig {
+  id: ListingAccessibilityFeatureId;
+  title: string;
+  description: string;
+}
+
+export enum ListingSafetyConsiderationId {
+  NotForChildren2To12 = 'not_for_children_2_12',
+  NotForInfantsUnder2 = 'not_for_infants_under_2',
+  PoolNoGate = 'pool_no_gate',
+  NearbyWater = 'nearby_water',
+  ClimbingStructure = 'climbing_structure',
+  HeightsWithoutRails = 'heights_without_rails',
+}
+
+export type TriStateValue = 'na' | 'no' | 'yes';
+
+export interface ITriStateItemConfig<T extends string = string> {
+  id: T;
+  title: string;
+  description: string;
+}
+
+export enum ListingSafetyDeviceId {
+  ExteriorSecurityCamera = 'exterior_security_camera',
+  CarbonMonoxideAlarm = 'carbon_monoxide_alarm',
+  SmokeAlarm = 'smoke_alarm',
+  NoiseDecibelMonitor = 'noise_decibel_monitor',
+}
+
+export const SAFETY_DEVICES_CONFIG: ITriStateItemConfig<ListingSafetyDeviceId>[] =
+  [
+    {
+      id: ListingSafetyDeviceId.ExteriorSecurityCamera,
+      title: 'Exterior security camera present',
+      description:
+        "This property has one or more exterior cameras that record or transmit video, images or audio. You must disclose them if they're turned off. Note: Security cameras that monitor indoor spaces or outdoor areas where greater privacy is expected, such as a shower, are not allowed.",
+    },
+    {
+      id: ListingSafetyDeviceId.CarbonMonoxideAlarm,
+      title: 'Carbon monoxide alarm',
+      description:
+        'A device that alerts if it detects unsafe levels of carbon monoxide (Check your local laws, which may require a working carbon monoxide detector in your listing)',
+    },
+    {
+      id: ListingSafetyDeviceId.SmokeAlarm,
+      title: 'Smoke alarm',
+      description:
+        'A device that alerts when it detects smoke (Check your local laws, which may require a working smoke detector in your listing)',
+    },
+    {
+      id: ListingSafetyDeviceId.NoiseDecibelMonitor,
+      title: 'Noise decibel monitor present',
+      description:
+        'This property has one or more devices that can monitor noise levels.',
+    },
+  ];
+
+export const SAFETY_CONSIDERATIONS_CONFIG: ITriStateItemConfig<ListingSafetyConsiderationId>[] =
+  [
+    {
+      id: ListingSafetyConsiderationId.NotForChildren2To12,
+      title: 'Not a good fit for children 2–12',
+      description: 'This property has features that may not be safe for kids.',
+    },
+    {
+      id: ListingSafetyConsiderationId.NotForInfantsUnder2,
+      title: 'Not a good fit for infants under 2',
+      description:
+        'This property has features that may not be safe for babies or toddlers this age.',
+    },
+    {
+      id: ListingSafetyConsiderationId.PoolNoGate,
+      title: "Pool or hot tub doesn't have a gate or lock",
+      description:
+        'Guests have access to an unsecured swimming pool or hot tub. Check your local laws for specific requirements.',
+    },
+    {
+      id: ListingSafetyConsiderationId.NearbyWater,
+      title: 'Nearby water, like a lake or river',
+      description:
+        'Guests have unrestricted access to a body of water, like an ocean, pond, creek or wetlands, directly on or next to the property.',
+    },
+    {
+      id: ListingSafetyConsiderationId.ClimbingStructure,
+      title: 'Climbing or play structure(s) on the property',
+      description:
+        'Guests will have access to structures like a playset, slide, swings or climbing ropes.',
+    },
+    {
+      id: ListingSafetyConsiderationId.HeightsWithoutRails,
+      title: 'There are heights without rails or protection',
+      description:
+        'Guests have access to an area higher than 30 inches without protective barriers.',
+    },
+  ];
+
+export const ACCESSIBILITY_FEATURES_CONFIG: IAccessibilityFeatureConfig[] = [
+  {
+    id: ListingAccessibilityFeatureId.DisabledParkingSpot,
+    title: 'Disabled parking spot',
+    description:
+      "There's a private parking place at least 11 feet (3.35 metres) wide. Or, there is a public parking place designated for a person with disabilities that has clear signage or markings.",
+  },
+  {
+    id: ListingAccessibilityFeatureId.LitPath,
+    title: 'Lit path to the guest entrance',
+    description:
+      'The pavement or path that leads to the guest entrance is well lit at night.',
+  },
+  {
+    id: ListingAccessibilityFeatureId.StepFreeAccess,
+    title: 'Step-free access',
+    description:
+      "There are no steps, stairs or curbs on the entire path from a guest's arrival to the listing entrance. Any door thresholds or pathway obstacles must be less than 2 inches (5cm) high.",
+  },
+  {
+    id: ListingAccessibilityFeatureId.WideEntrance,
+    title: 'Guest entrance wider than 32 inches (81cm)',
+    description: 'The guest entrance is at least 32 inches (81 cm) wide.',
+  },
+];
+
 export type HouseRuleDataType = 'boolean' | 'doubleTime' | 'string';
 
 export interface IHouseRuleConfig {

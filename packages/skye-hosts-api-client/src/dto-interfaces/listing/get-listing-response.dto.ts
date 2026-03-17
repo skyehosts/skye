@@ -1,5 +1,6 @@
 import type {
   HostInteractionId,
+  ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
   ListingHighlightId,
@@ -56,6 +57,9 @@ export interface IGetListingResponseDto {
   houseRuleQuietHoursStart: string | null;
   houseRuleQuietHoursEnd: string | null;
   houseRuleOtherRules: string | null;
+  accessibilityFeatures: ListingAccessibilityFeatureId[];
+  safetyConsiderations: string[];
+  safetyDevices: string[];
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

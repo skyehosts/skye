@@ -44,7 +44,7 @@ export default function PinUnlockScreen() {
       const tokenValid = await ensureValidToken();
       if (tokenValid) {
         unlock();
-        router.replace("/(tabs)/today");
+        router.replace("/(tabs)/listings");
       } else {
         await signOut();
       }

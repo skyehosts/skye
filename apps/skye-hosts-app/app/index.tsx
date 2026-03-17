@@ -49,5 +49,5 @@ export default function HomeScreen() {
     return <Redirect href="/(security)/unlock" />;
   }
 
-  return <Redirect href="/(tabs)/today" />;
+  return <Redirect href="/(tabs)/listings" />;
 }

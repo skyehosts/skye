@@ -258,6 +258,12 @@ export class ListingService {
       listing.houseRuleQuietHoursEnd = dto.houseRuleQuietHoursEnd ?? null;
     if (dto.houseRuleOtherRules !== undefined)
       listing.houseRuleOtherRules = dto.houseRuleOtherRules ?? null;
+    if (dto.accessibilityFeatures !== undefined)
+      listing.accessibilityFeatures = dto.accessibilityFeatures;
+    if (dto.safetyConsiderations !== undefined)
+      listing.safetyConsiderations = dto.safetyConsiderations;
+    if (dto.safetyDevices !== undefined)
+      listing.safetyDevices = dto.safetyDevices;
     if (dto.status !== undefined) listing.status = dto.status;
     listing.updatedAt = new Date();
 
@@ -316,6 +322,9 @@ export class ListingService {
       houseRuleQuietHoursStart: listing.houseRuleQuietHoursStart,
       houseRuleQuietHoursEnd: listing.houseRuleQuietHoursEnd,
       houseRuleOtherRules: listing.houseRuleOtherRules,
+      accessibilityFeatures: listing.accessibilityFeatures,
+      safetyConsiderations: listing.safetyConsiderations,
+      safetyDevices: listing.safetyDevices,
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,

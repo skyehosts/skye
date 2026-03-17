@@ -229,6 +229,21 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   houseRuleOtherRules?: string | null;
 
   @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  accessibilityFeatures?: IUpdateListingRequestDto['accessibilityFeatures'];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  safetyConsiderations?: IUpdateListingRequestDto['safetyConsiderations'];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  safetyDevices?: IUpdateListingRequestDto['safetyDevices'];
+
+  @IsOptional()
   @IsIn(LISTING_STATUSES)
   status?: IUpdateListingRequestDto['status'];
 }

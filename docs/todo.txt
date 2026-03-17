@@ -18,8 +18,6 @@ MVP
   - (Your space, remaining components)
     - Instant book
     - Cancellation policy
-    - Guest safety
-    - House rules
   - (Arrival guide remaining components)
   - Understanding why some data not colecting during creation, only edit... -> Plan
   - Photos
@@ -114,31 +112,56 @@ Next Steps for You (Cohost)
 Pending Prompts
 ===============
 
+- In hosts app, on the 'Listing editor' page, undernearth the card for 'Safety considerations'
+- Create a new card, with title 'Safety devices'
+- "Add details" displays if no value already saved, otherwise display the title of 1 saved 'safety device'. If any more, below, put '+ x more' (Same as Amenities card)
+- When card is tapped, open a modal with title 'Safety devices', (re-use existing component)
+- In model, put list items with:
+  - Title (Left aligned)
+  - Description (Under title)  (Left aligned)
+  - Form control (Left aligned) Under description
+    - Whereby form control is a 3 button SegmentedButton (react native paper) component
+    - It has options 'N/A, No, Yes'.
+    - Ideally No has 'x' icon and yes has 'tick' icon and n/a has a relevant icon also (you choose)
+- The selectable list options can be defined statically in listing-enum.ts using same style/pattern as other examples in that files
+- The values are:
+    [
+    {
+      "title": "Exterior security camera present",
+      "description": "This property has one or more exterior cameras that record or transmit video, images or audio. You must disclose them if they’re turned off. Note: Security cameras that monitor indoor spaces or outdoor areas where greater privacy is expected, such as a shower, are not allowed."
+    },
+    {
+      "title": "Carbon monoxide alarm",
+      "description": "A device that alerts if it detects unsafe levels of carbon monoxide (Check your local laws, which may require a working carbon monoxide detector in your listing)"
+    },
+    {
+      "title": "Smoke alarm",
+      "description": "A device that alerts when it detects smoke (Check your local laws, which may require a working smoke detector in your listing)"
+    },
+    {
+      "title": "Noise decibel monitor present",
+      "description": "This property has one or more devices that can monitor noise levels."
+    }
+  ]
+- When toggling SegmentedButton's in each list item, it shouldn't save. When save button clicked at bottom, it saves all at once to API.
+- When returning to the listing editor page, the safety devices card should display the persisted values from DB.
+- Save them as array using CSV on listing.entity same as oyu have for accessibility features
+- Ensure you re-use existing components where possible.
+- Ensure adhere to DRY principles
+- Ensure any page specific styles are keep to a minimum, re-use existing styles where possible
+- Any major decisions, ask me
+
+- Check safety considerations, last item wasn't skipped
+
+Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and customer experience. If any
+opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
+
+
 =======
 Logins
 ======
 - [Skye Hosts] Aws --> A...[pin]$$$
 - [williamsandonz] Donk...[pin]$ (Top most authenticator entry)
-
-===============
-Pending prompts
-===============
-- Email Notifications
-  - In the send() ,ethod of notification.service.ts. Implement the sending of email notifications if the user's notifications preferences have email enabled.
-  - All email notifications will be sent by a third party called Unosend (Unosend.co) via an API call to trigger the sending of a template.
-  - Create a Unosend service in api that handles the sending of these emails
-  - This service can either live in common module or it could go in a separate / new module, you decide what is best.
-  - Implement service methods to send the email templates.
-  - I will define templates in unosend.co via my web browser, in your output in docs/user-todos folder, describe what templates I need to create & varibales needed
-  - Create a EmailTemplate enum with will house the templates stored in UnoSend.
-  - This service will be used for all outbound emails so keep it generic and re-usable
-- Examine all current calls to send() method and update the callers to be compatible with the new added call to unosend service
-- I'd propose that each caller should 
-- You should ensure that for all existing endpoints / behaviours that an email will now be sent if the user has enabled email notifications in their preferences.
-- Output any actions I need take in the docs/user-todos
-- Review my approach, if it is suboptimal, recommend a better approach
-- Don't implement, first present a plan to me.
-
 
 ==================
 Re-useable prompts

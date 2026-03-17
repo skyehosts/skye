@@ -3,9 +3,13 @@ import type {
   IUpdateListingRequestDto,
 } from "../../../../packages/skye-hosts-api-client/src";
 import {
+  ACCESSIBILITY_FEATURES_CONFIG,
+  type ITriStateItemConfig,
   LISTING_AMENITY_MAP,
   LISTING_SPACE_TYPE_LABELS,
   LISTING_TYPE_LABELS,
+  SAFETY_CONSIDERATIONS_CONFIG,
+  SAFETY_DEVICES_CONFIG,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -22,9 +26,36 @@ import { FormInputModal } from "../components/form-input-modal";
 import { GuestsModal } from "./guests-modal";
 import { PropertyTypeModal } from "./property-type-modal";
 import { HouseRulesCard } from "./your-space/house-rules-card";
+import { SafetyConsiderationsModal } from "./safety-considerations-modal";
+import { SafetyDevicesModal } from "./safety-devices-modal";
 import { fetchApi } from "../services/api";
 import { borderRadius, colors, commonStyles, spacing } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
+
+function TriStateCardPreview({
+  entries,
+  config,
+}: {
+  entries: string[];
+  config: readonly ITriStateItemConfig[];
+}) {
+  const saved = entries.filter((e) => e.includes(":"));
+  if (saved.length === 0) {
+    return <Text style={commonStyles.itemSubtext}>Add details</Text>;
+  }
+  const firstId = saved[0].split(":")[0];
+  const firstConfig = config.find((c) => c.id === firstId);
+  return (
+    <View style={styles.amenityPreview}>
+      {firstConfig && (
+        <Text style={commonStyles.itemSubtext}>{firstConfig.title}</Text>
+      )}
+      {saved.length > 1 && (
+        <Text style={commonStyles.itemSubtext}>+ {saved.length - 1} more</Text>
+      )}
+    </View>
+  );
+}
 
 interface YourSpaceSectionProps {
   listingId: string;
@@ -36,6 +67,12 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
   const [titleModalVisible, setTitleModalVisible] = useState(false);
   const [guestsModalVisible, setGuestsModalVisible] = useState(false);
   const [propertyTypeModalVisible, setPropertyTypeModalVisible] =
+    useState(false);
+  const [
+    safetyConsiderationsModalVisible,
+    setSafetyConsiderationsModalVisible,
+  ] = useState(false);
+  const [safetyDevicesModalVisible, setSafetyDevicesModalVisible] =
     useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
@@ -219,10 +256,63 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
 
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}
-          onPress={() => router.push("/edit-listing/accessibility")}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/accessibility",
+              params: { id: listingId },
+            })
+          }
         >
           <Text style={commonStyles.itemTitle}>Accessibility features</Text>
-          <Text style={commonStyles.itemSubtext}>Add details</Text>
+          {listing &&
+            (listing.accessibilityFeatures?.length > 0 ? (
+              <View style={styles.amenityPreview}>
+                {listing.accessibilityFeatures.slice(0, 2).map((id) => {
+                  const feature = ACCESSIBILITY_FEATURES_CONFIG.find(
+                    (f) => f.id === id,
+                  );
+                  if (!feature) return null;
+                  return (
+                    <Text key={id} style={commonStyles.itemSubtext}>
+                      {feature.title}
+                    </Text>
+                  );
+                })}
+                {listing.accessibilityFeatures.length > 2 && (
+                  <Text style={commonStyles.itemSubtext}>
+                    + {listing.accessibilityFeatures.length - 2} more
+                  </Text>
+                )}
+              </View>
+            ) : (
+              <Text style={commonStyles.itemSubtext}>Add details</Text>
+            ))}
+        </Pressable>
+
+        <Pressable
+          style={[commonStyles.card, { gap: spacing.sm }]}
+          onPress={() => setSafetyConsiderationsModalVisible(true)}
+        >
+          <Text style={commonStyles.itemTitle}>Safety considerations</Text>
+          {listing && (
+            <TriStateCardPreview
+              entries={listing.safetyConsiderations ?? []}
+              config={SAFETY_CONSIDERATIONS_CONFIG}
+            />
+          )}
+        </Pressable>
+
+        <Pressable
+          style={[commonStyles.card, { gap: spacing.sm }]}
+          onPress={() => setSafetyDevicesModalVisible(true)}
+        >
+          <Text style={commonStyles.itemTitle}>Safety devices</Text>
+          {listing && (
+            <TriStateCardPreview
+              entries={listing.safetyDevices ?? []}
+              config={SAFETY_DEVICES_CONFIG}
+            />
+          )}
         </Pressable>
       </View>
 
@@ -257,6 +347,28 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           onSaved={(updated) => {
             setListing(updated);
             setPropertyTypeModalVisible(false);
+          }}
+        />
+      )}
+      {listing && (
+        <SafetyConsiderationsModal
+          visible={safetyConsiderationsModalVisible}
+          onDismiss={() => setSafetyConsiderationsModalVisible(false)}
+          listing={listing}
+          onSaved={(updated) => {
+            setListing(updated);
+            setSafetyConsiderationsModalVisible(false);
+          }}
+        />
+      )}
+      {listing && (
+        <SafetyDevicesModal
+          visible={safetyDevicesModalVisible}
+          onDismiss={() => setSafetyDevicesModalVisible(false)}
+          listing={listing}
+          onSaved={(updated) => {
+            setListing(updated);
+            setSafetyDevicesModalVisible(false);
           }}
         />
       )}

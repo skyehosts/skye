@@ -23,7 +23,7 @@ export default function UnlockScreen() {
       const valid = await ensureValidToken();
       if (valid) {
         unlock();
-        router.replace("/(tabs)/today");
+        router.replace("/(tabs)/listings");
         return true;
       }
     }
