@@ -1,19 +1,19 @@
 ====
 Next
 ====
-- Resend: Deep link solve.
-  - Publish app to google play (Beta)
-  - docs/user-todos/universal-links-setup.md
-    - ## Android (App Links)
-    - ## App Store URLs
-    - ## Native Rebuild Required
-- Test Twilio email verification stuff
-  - Setup API keys etc
-- Test cohost
+- Co - host test invite and listing access
+  - Resend: Deep link solve.
+    - Publish app to google play (Beta)
+    - docs/user-todos/universal-links-setup.md
+      - ## Android (App Links)
+      - ## App Store URLs
+      - ## Native Rebuild Required
+  - Get Expo pipeline (GH) deployed to real device
 
 ===
 MVP
 ===
+- Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)
     - Instant book

@@ -45,16 +45,6 @@ export default function TabsLayout() {
       screenOptions={{ headerShown: false }}
     >
       <Tabs.Screen
-        name="today"
-        options={{
-          title: "Today",
-          tabBarLabel: "Today",
-          tabBarIcon: ({ color, size }) => (
-            <Icon source="calendar-today" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="calendar"
         options={{
           title: "Calendar",
@@ -81,6 +71,16 @@ export default function TabsLayout() {
           tabBarLabel: "Messages",
           tabBarIcon: ({ color, size }) => (
             <Icon source="message-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="share"
+        options={{
+          title: "Share",
+          tabBarLabel: "Share",
+          tabBarIcon: ({ color, size }) => (
+            <Icon source="share-variant" size={size} color={color} />
           ),
         }}
       />
