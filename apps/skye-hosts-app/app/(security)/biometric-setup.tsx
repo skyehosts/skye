@@ -23,7 +23,7 @@ export default function BiometricSetupScreen() {
       const isAvailable = await isBiometricAvailable();
       if (!isAvailable) {
         unlock();
-        router.replace("/(tabs)/today");
+        router.replace("/(tabs)/listings");
         return;
       }
       setAvailable(true);
@@ -39,12 +39,12 @@ export default function BiometricSetupScreen() {
       await enableBiometrics();
     }
     unlock();
-    router.replace("/(tabs)/today");
+    router.replace("/(tabs)/listings");
   };
 
   const handleSkip = () => {
     unlock();
-    router.replace("/(tabs)/today");
+    router.replace("/(tabs)/listings");
   };
 
   if (loading) {
