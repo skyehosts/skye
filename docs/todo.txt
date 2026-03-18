@@ -1,7 +1,7 @@
 ====
 Next
 ====
-- Co - host test invite and listing access
+- Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
     - Publish app to google play (Beta)
     - docs/user-todos/universal-links-setup.md
@@ -32,6 +32,7 @@ MVP
   - Cancellation
 - Scheduled messages: Understanding, if should show in conversation thread
 - Payments
+- SKYE_ENVIRONMENT doesn't make much sense in context of app. as it has local, preview, production etc expo dists...
 
 =======
 General
@@ -60,9 +61,7 @@ Aws infrastructure
 ========
 Host App
 ========
-- Update photo tour card to show first image
-- Logger service with controllable verbosity
-- If you delete all rows from Account, you appear to still be ble to login into app
+- If you delete all rows from Account, you appear to still be ble to login into app xD
 - name not required on signup again?!
 - docs/user-todos/twilio-email-verify-setup
 - docs/user-todos/unosend-email-setup.md
