@@ -23,6 +23,7 @@ const GRID_GAP = spacing.sm;
 interface ImageGridProps {
   remoteImages: IListingImageDto[];
   localImages: LocalImage[];
+  processingImageIds: Set<string>;
   canAddMore: boolean;
   onAddMore: () => void;
   onRemoveLocal: (index: number) => void;
@@ -88,6 +89,7 @@ function StatusOverlay({ status }: { status: ImageUploadStatus }) {
 export function ImageGrid({
   remoteImages,
   localImages,
+  processingImageIds,
   canAddMore,
   onAddMore,
   onRemoveLocal,
@@ -136,18 +138,21 @@ export function ImageGrid({
       }
 
       // Remote image — draggable for reorder
-      const thumbnailUrl =
-        item.image.urls.find((u) => u.width === 640)?.url ??
-        item.image.urls[0]?.url;
+      const isProcessing = processingImageIds.has(item.image.id);
+      const thumbnailUrl = isProcessing
+        ? item.image.originalUrl
+        : (item.image.urls.find((u) => u.width === 640)?.url ??
+          item.image.urls[0]?.url);
 
       return (
         <Pressable style={tileStyle} onLongPress={drag} disabled={isActive}>
           <Image source={{ uri: thumbnailUrl }} style={styles.image} />
+          {isProcessing && <StatusOverlay status="confirming" />}
           <RemoveButton onPress={() => onRemoveRemote(item.image.id)} />
         </Pressable>
       );
     },
-    [tileSize, onAddMore, onRemoveLocal, onRemoveRemote],
+    [tileSize, onAddMore, onRemoveLocal, onRemoveRemote, processingImageIds],
   );
 
   const handleDragEnd = useCallback(

@@ -19,6 +19,7 @@ export class HostListingDto implements IHostListingDto {
   status: ListingStatus;
   createdAt: Date;
   role: ListingRole;
+  coverImageUrl: string | null;
 }
 
 export class GetHostListingsResponseDto implements IGetHostListingsResponseDto {

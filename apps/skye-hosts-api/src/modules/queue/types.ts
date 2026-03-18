@@ -1,6 +1,6 @@
 export enum AwsQueueNames {
   BOOKINGS = 'bookings',
-  LISTING_IMAGE_PROCESSING = 'listing-image-processing',
+  LISTING_IMAGE_PROCESSING = 'image-processing',
   SCHEDULED_MESSAGES = 'scheduled-messages',
 }
 

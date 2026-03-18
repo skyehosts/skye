@@ -114,6 +114,17 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
   - CI: (TBD)
   - Production: Set via Browser in Expo dashboard
 
+## If app encountering network failuers when run inside Emulator
+
+- Cold boot the emulator (wipe cache) — Android Studio > Device Manager > Cold Boot
+  - Suspect this needs done anytime you change wifi networks
+- Open Chrome on emulator, go to google.com, see if it loads
+
+## How to add photos to Android emulator
+
+adb push 1.jpg /sdcard/DCIM/Camera
+adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/DCIM/Camera/1.jpg
+
 ## How to deploy host app to EAS / Expo
 
 Trigger builds via GitHub Actions:

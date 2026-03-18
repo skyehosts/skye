@@ -2,6 +2,7 @@ export interface IListingImageDto {
   id: string;
   listingId: string;
   position: number;
+  originalUrl: string;
   urls: IListingImageUrlDto[];
 }
 

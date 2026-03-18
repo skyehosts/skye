@@ -15,6 +15,7 @@ import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -147,7 +148,15 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
               {listing.bathrooms} bath
             </Text>
           )}
-          <View style={styles.photoPlaceholder} />
+          <View style={styles.photoPlaceholder}>
+            {listing?.coverImageUrl && (
+              <Image
+                source={{ uri: listing.coverImageUrl }}
+                style={StyleSheet.absoluteFill}
+                resizeMode="cover"
+              />
+            )}
+          </View>
         </Pressable>
 
         <Pressable
@@ -394,5 +403,6 @@ const styles = StyleSheet.create({
     height: 160,
     backgroundColor: colors.placeholder,
     borderRadius: borderRadius.sm,
+    overflow: "hidden",
   },
 });

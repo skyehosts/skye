@@ -1,3 +1,4 @@
+import { File as ExpoFile } from "expo-file-system";
 import * as ImageManipulator from "expo-image-manipulator";
 import type {
   IConfirmListingImageUploadsRequestDto,
@@ -8,6 +9,15 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { fetchApi } from "./api";
 import { getErrorMessage } from "../utils/form-error-handler";
+
+/**
+ * Read a local file URI into an ArrayBuffer using expo-file-system.
+ * Isolated so that expo-file-system API changes only require updating this function.
+ */
+async function readFileAsArrayBuffer(fileUri: string): Promise<ArrayBuffer> {
+  const file = new ExpoFile(fileUri);
+  return file.arrayBuffer();
+}
 
 const MAX_UPLOAD_WIDTH = 2560;
 const COMPRESS_QUALITY = 0.8;
@@ -36,6 +46,7 @@ export interface LocalImage {
  * Returns a new URI pointing to the processed file.
  */
 async function compressImage(uri: string, width: number): Promise<string> {
+  console.debug(`[imageUpload] compressing image width=${width} uri=${uri}`);
   const actions: ImageManipulator.Action[] = [];
 
   if (width > MAX_UPLOAD_WIDTH) {
@@ -47,6 +58,7 @@ async function compressImage(uri: string, width: number): Promise<string> {
     format: ImageManipulator.SaveFormat.JPEG,
   });
 
+  console.debug(`[imageUpload] compressed to ${result.uri}`);
   return result.uri;
 }
 
@@ -57,22 +69,76 @@ async function uploadToS3(
   presignedUrl: string,
   fileUri: string,
 ): Promise<void> {
-  const response = await fetch(fileUri);
-  const blob = await response.blob();
+  const s3Host = new URL(presignedUrl).host;
+  const s3Path = new URL(presignedUrl).pathname;
+  console.debug(
+    `[imageUpload] uploadToS3 start host=${s3Host} path=${s3Path} fileUri=${fileUri}`,
+  );
 
-  const uploadResponse = await fetch(presignedUrl, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "image/*",
-    },
-    body: blob,
-  });
-
-  if (!uploadResponse.ok) {
-    throw new Error(
-      `S3 upload failed: ${uploadResponse.status} ${uploadResponse.statusText}`,
+  // Step 1: Read file into ArrayBuffer
+  let body: ArrayBuffer;
+  try {
+    body = await readFileAsArrayBuffer(fileUri);
+    console.debug(
+      `[imageUpload] readFileAsArrayBuffer ok size=${body.byteLength}`,
     );
+  } catch (e) {
+    console.error("[imageUpload] readFileAsArrayBuffer failed:", e);
+    throw e;
   }
+
+  // Step 2: Verify S3 host is reachable (lightweight HEAD to the bucket root)
+  try {
+    console.debug(`[imageUpload] connectivity check: HEAD https://${s3Host}/`);
+    const probe = await fetch(`https://${s3Host}/`, {
+      method: "HEAD",
+    }).catch((e: unknown) => {
+      console.error("[imageUpload] connectivity probe fetch threw:", e);
+      return null;
+    });
+    if (probe) {
+      console.debug(
+        `[imageUpload] connectivity probe status=${probe.status} (expected 403 or similar)`,
+      );
+    } else {
+      console.error(
+        "[imageUpload] connectivity probe returned null — S3 host unreachable",
+      );
+    }
+  } catch (e) {
+    console.error("[imageUpload] connectivity probe error:", e);
+  }
+
+  // Step 3: Attempt the actual PUT upload
+  console.debug(
+    `[imageUpload] starting PUT fetch presignedUrl length=${presignedUrl.length}`,
+  );
+  let response: Response;
+  try {
+    response = await fetch(presignedUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "image/jpeg" },
+      body,
+    });
+  } catch (e) {
+    console.error(
+      "[imageUpload] PUT fetch threw (not an HTTP error, a network/transport failure):",
+      e instanceof Error
+        ? `name=${e.name} message=${e.message} stack=${e.stack}`
+        : e,
+    );
+    throw e;
+  }
+
+  console.debug(`[imageUpload] PUT response status=${response.status}`);
+  if (!response.ok) {
+    const body = await response.text().catch(() => "(no body)");
+    console.error(
+      `[imageUpload] S3 upload failed: ${response.status} body=${body}`,
+    );
+    throw new Error(`S3 upload failed: ${response.status}`);
+  }
+  console.debug("[imageUpload] S3 upload succeeded");
 }
 
 /**
@@ -143,14 +209,36 @@ export async function uploadImages(
       await uploadToS3(item.uploadUrl, compressedUri);
 
       successfulImageIds.push(item.imageId);
-    } catch (e) {
-      callbacks.onStatusChange(
-        item.index,
-        "error",
-        getErrorMessage(e, "Upload failed"),
+      console.debug(
+        `[imageUpload] item ${item.index} (${item.imageId}) completed`,
       );
+    } catch (e) {
+      const msg = getErrorMessage(e, "Upload failed");
+      console.error(
+        `[imageUpload] item ${item.index} (${item.imageId}) failed: ${msg}`,
+        e,
+      );
+      callbacks.onStatusChange(item.index, "error", msg);
     }
   });
+
+  // Clean up DB records for failed uploads
+  const failedImageIds = uploadItems
+    .filter((item) => !successfulImageIds.includes(item.imageId))
+    .map((item) => item.imageId);
+
+  if (failedImageIds.length > 0) {
+    console.debug(
+      `[imageUpload] cleaning up ${failedImageIds.length} failed image record(s)`,
+    );
+    await Promise.all(
+      failedImageIds.map((id) =>
+        deleteListingImage(id).catch((e) =>
+          console.error(`[imageUpload] failed to clean up image ${id}:`, e),
+        ),
+      ),
+    );
+  }
 
   if (successfulImageIds.length === 0) {
     throw new Error("All uploads failed");

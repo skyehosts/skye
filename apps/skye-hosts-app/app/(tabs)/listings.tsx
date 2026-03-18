@@ -3,10 +3,11 @@ import type {
   IHostListingDto,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { LISTING_TYPE_LABELS } from "../../../../packages/skye-hosts-api-client/src";
-import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -44,9 +45,11 @@ export default function ListingsScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    loadListings();
-  }, [loadListings]);
+  useFocusEffect(
+    useCallback(() => {
+      loadListings();
+    }, [loadListings]),
+  );
 
   return (
     <ScreenContainer>
@@ -120,7 +123,15 @@ function ListingCard({
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.photoContainer}>
-        <View style={styles.photoPlaceholder} />
+        <View style={styles.photoPlaceholder}>
+          {listing.coverImageUrl && (
+            <Image
+              source={{ uri: listing.coverImageUrl }}
+              style={StyleSheet.absoluteFill}
+              resizeMode="cover"
+            />
+          )}
+        </View>
         <View style={styles.statusChip}>
           <View
             style={[
@@ -169,6 +180,7 @@ const styles = StyleSheet.create({
   photoPlaceholder: {
     height: 200,
     backgroundColor: colors.placeholder,
+    overflow: "hidden",
   },
   statusChip: {
     position: "absolute",

@@ -10,10 +10,10 @@ Next
       - ## Native Rebuild Required
   - Get Expo pipeline (GH) deployed to real device
 - Image upload
-  - Do docs/user-todos/image-pipeline-env-vars.md
   - docs/user-todos/image-upload-frontend-setup.md
   - docs/user-todos/image-pipeline-env-vars.md
-  
+  - Lambda error in image processor not shown in sentry
+
 ===
 MVP
 ===
@@ -65,6 +65,9 @@ Aws infrastructure
 ========
 Host App
 ========
+- Update photo tour card to show first image
+- Logger service with controllable verbosity
+- If you delete all rows from Account, you appear to still be ble to login into app
 - name not required on signup again?!
 - docs/user-todos/twilio-email-verify-setup
 - docs/user-todos/unosend-email-setup.md
@@ -124,12 +127,6 @@ Pending Prompts
 Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and customer experience. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
 
-
-=======
-Logins
-======
-- [Skye Hosts] Aws --> A...[pin]$$$
-- [williamsandonz] Donk...[pin]$ (Top most authenticator entry)
 
 ==================
 Re-useable prompts

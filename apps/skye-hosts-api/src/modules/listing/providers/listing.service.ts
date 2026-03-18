@@ -3,10 +3,12 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { In } from 'typeorm';
 import { ListingAccessService } from '../../co-host/providers/listing-access.service';
 import { DatabaseService } from '../../common/providers';
+import { ListingImage } from '../../listing-image/entities';
 import {
   CreateListingRequestDto,
   CreateListingResponseDto,
@@ -19,10 +21,31 @@ import { Listing } from '../entities';
 
 @Injectable()
 export class ListingService {
+  private readonly cdnDomain: string;
+
   constructor(
     private databaseService: DatabaseService,
     private listingAccessService: ListingAccessService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.cdnDomain = this.configService.get<string>(
+      'AWS_CLOUDFRONT_LISTING_IMAGES_DOMAIN',
+    );
+  }
+
+  private buildCoverImageUrl(listingId: number, imageId: string): string {
+    return `https://${this.cdnDomain}/listings/${listingId}/derived/640w/${imageId}.webp`;
+  }
+
+  private async getCoverImageMap(
+    listingIds: number[],
+  ): Promise<Map<number, string>> {
+    if (listingIds.length === 0) return new Map();
+    const covers = await this.databaseService
+      .getRepository(ListingImage)
+      .find({ where: { listingId: In(listingIds), position: 0 } });
+    return new Map(covers.map((c) => [c.listingId, c.id]));
+  }
 
   async create(
     hostId: number,
@@ -70,20 +93,28 @@ export class ListingService {
       order: { createdAt: 'DESC' },
     });
 
+    const coverMap = await this.getCoverImageMap(listings.map((l) => l.id));
+
     return {
-      listings: listings.map((listing) => ({
-        id: listing.id,
-        title: listing.title,
-        typeId: listing.typeId,
-        spaceType: listing.spaceType,
-        maxGuests: listing.maxGuests,
-        bedrooms: listing.bedrooms,
-        bathrooms: listing.bathrooms,
-        postCode: listing.postCode,
-        status: listing.status,
-        createdAt: listing.createdAt,
-        role: 'owner' as const,
-      })),
+      listings: listings.map((listing) => {
+        const coverId = coverMap.get(listing.id);
+        return {
+          id: listing.id,
+          title: listing.title,
+          typeId: listing.typeId,
+          spaceType: listing.spaceType,
+          maxGuests: listing.maxGuests,
+          bedrooms: listing.bedrooms,
+          bathrooms: listing.bathrooms,
+          postCode: listing.postCode,
+          status: listing.status,
+          createdAt: listing.createdAt,
+          role: 'owner' as const,
+          coverImageUrl: coverId
+            ? this.buildCoverImageUrl(listing.id, coverId)
+            : null,
+        };
+      }),
     };
   }
 
@@ -108,34 +139,49 @@ export class ListingService {
       coHostRoles.map((r) => [r.listingId, r.role]),
     );
 
+    const allListings = [...ownedListings, ...coHostedListings];
+    const coverMap = await this.getCoverImageMap(allListings.map((l) => l.id));
+
     return {
       listings: [
-        ...ownedListings.map((listing) => ({
-          id: listing.id,
-          title: listing.title,
-          typeId: listing.typeId,
-          spaceType: listing.spaceType,
-          maxGuests: listing.maxGuests,
-          bedrooms: listing.bedrooms,
-          bathrooms: listing.bathrooms,
-          postCode: listing.postCode,
-          status: listing.status,
-          createdAt: listing.createdAt,
-          role: 'owner' as const,
-        })),
-        ...coHostedListings.map((listing) => ({
-          id: listing.id,
-          title: listing.title,
-          typeId: listing.typeId,
-          spaceType: listing.spaceType,
-          maxGuests: listing.maxGuests,
-          bedrooms: listing.bedrooms,
-          bathrooms: listing.bathrooms,
-          postCode: listing.postCode,
-          status: listing.status,
-          createdAt: listing.createdAt,
-          role: coHostRoleMap.get(listing.id) ?? ('calendar_only' as const),
-        })),
+        ...ownedListings.map((listing) => {
+          const coverId = coverMap.get(listing.id);
+          return {
+            id: listing.id,
+            title: listing.title,
+            typeId: listing.typeId,
+            spaceType: listing.spaceType,
+            maxGuests: listing.maxGuests,
+            bedrooms: listing.bedrooms,
+            bathrooms: listing.bathrooms,
+            postCode: listing.postCode,
+            status: listing.status,
+            createdAt: listing.createdAt,
+            role: 'owner' as const,
+            coverImageUrl: coverId
+              ? this.buildCoverImageUrl(listing.id, coverId)
+              : null,
+          };
+        }),
+        ...coHostedListings.map((listing) => {
+          const coverId = coverMap.get(listing.id);
+          return {
+            id: listing.id,
+            title: listing.title,
+            typeId: listing.typeId,
+            spaceType: listing.spaceType,
+            maxGuests: listing.maxGuests,
+            bedrooms: listing.bedrooms,
+            bathrooms: listing.bathrooms,
+            postCode: listing.postCode,
+            status: listing.status,
+            createdAt: listing.createdAt,
+            role: coHostRoleMap.get(listing.id) ?? ('calendar_only' as const),
+            coverImageUrl: coverId
+              ? this.buildCoverImageUrl(listing.id, coverId)
+              : null,
+          };
+        }),
       ],
     };
   }
@@ -274,7 +320,13 @@ export class ListingService {
     return this.toResponseDto(updated);
   }
 
-  private toResponseDto(listing: Listing): GetListingResponseDto {
+  private async toResponseDto(
+    listing: Listing,
+  ): Promise<GetListingResponseDto> {
+    const coverImage = await this.databaseService
+      .getRepository(ListingImage)
+      .findOne({ where: { listingId: listing.id, position: 0 } });
+
     return {
       id: listing.id,
       title: listing.title,
@@ -325,6 +377,9 @@ export class ListingService {
       accessibilityFeatures: listing.accessibilityFeatures,
       safetyConsiderations: listing.safetyConsiderations,
       safetyDevices: listing.safetyDevices,
+      coverImageUrl: coverImage
+        ? this.buildCoverImageUrl(listing.id, coverImage.id)
+        : null,
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,

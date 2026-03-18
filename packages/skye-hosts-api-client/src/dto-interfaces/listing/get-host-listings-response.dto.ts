@@ -17,6 +17,7 @@ export interface IHostListingDto {
   status: ListingStatus;
   createdAt: Date;
   role: ListingRole;
+  coverImageUrl: string | null;
 }
 
 export interface IGetHostListingsResponseDto {
