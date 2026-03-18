@@ -29,6 +29,7 @@ interface ImageGridProps {
   onRemoveLocal: (index: number) => void;
   onRemoveRemote: (imageId: string) => void;
   onReorder: (imageIds: string[]) => void;
+  onPreview?: (image: IListingImageDto) => void;
 }
 
 type GridItem =
@@ -95,6 +96,7 @@ export function ImageGrid({
   onRemoveLocal,
   onRemoveRemote,
   onReorder,
+  onPreview,
 }: ImageGridProps) {
   const { width: screenWidth } = useWindowDimensions();
   const tileSize =
@@ -145,14 +147,26 @@ export function ImageGrid({
           item.image.urls[0]?.url);
 
       return (
-        <Pressable style={tileStyle} onLongPress={drag} disabled={isActive}>
+        <Pressable
+          style={tileStyle}
+          onLongPress={drag}
+          onPress={() => onPreview?.(item.image)}
+          disabled={isActive}
+        >
           <Image source={{ uri: thumbnailUrl }} style={styles.image} />
           {isProcessing && <StatusOverlay status="confirming" />}
           <RemoveButton onPress={() => onRemoveRemote(item.image.id)} />
         </Pressable>
       );
     },
-    [tileSize, onAddMore, onRemoveLocal, onRemoveRemote, processingImageIds],
+    [
+      tileSize,
+      onAddMore,
+      onRemoveLocal,
+      onRemoveRemote,
+      onPreview,
+      processingImageIds,
+    ],
   );
 
   const handleDragEnd = useCallback(

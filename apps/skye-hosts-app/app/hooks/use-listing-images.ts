@@ -1,5 +1,6 @@
 import type { IListingImageDto } from "../../../../packages/skye-hosts-api-client/src";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Alert } from "react-native";
 import { pickImagesFromGallery } from "../services/image-picker";
 import {
   deleteListingImage,
@@ -10,6 +11,7 @@ import {
   type LocalImage,
 } from "../services/image-upload";
 import { handleApiError } from "../utils/form-error-handler";
+import { validateImageAspectRatios } from "../utils/image-validation";
 
 const MAX_IMAGES_PER_LISTING = 20;
 
@@ -133,7 +135,25 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
     const picked = await pickImagesFromGallery(maxRemaining);
     if (picked.length === 0) return;
 
-    const newLocals: LocalImage[] = picked.map((img) => ({
+    const invalidIndices = new Set(validateImageAspectRatios(picked));
+    const valid = picked.filter((_, i) => !invalidIndices.has(i));
+    const invalidCount = invalidIndices.size;
+
+    if (invalidCount > 0) {
+      if (valid.length === 0) {
+        Alert.alert(
+          "Photos couldn't be added",
+          "The selected photos have aspect ratios outside the supported range (3:4 to 16:9).",
+        );
+        return;
+      }
+      Alert.alert(
+        "Some photos couldn't be added",
+        `${invalidCount} photo${invalidCount !== 1 ? "s" : ""} removed — images must be between 3:4 portrait and 16:9 landscape aspect ratio.\n\n${valid.length} photo${valid.length !== 1 ? "s were" : " was"} successfully added and can be uploaded by tapping 'Upload photos' below.`,
+      );
+    }
+
+    const newLocals: LocalImage[] = valid.map((img) => ({
       localUri: img.uri,
       width: img.width,
       height: img.height,
