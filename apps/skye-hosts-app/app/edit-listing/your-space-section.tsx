@@ -132,7 +132,12 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
       <View style={commonStyles.editSectionCards}>
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}
-          onPress={() => router.push("/edit-listing/edit-photos")}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/edit-photos",
+              params: { id: listingId },
+            })
+          }
         >
           <Text style={commonStyles.itemTitle}>Photo tour</Text>
           {listing && (

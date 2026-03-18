@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
@@ -12,14 +12,29 @@ import {
 
 export default function SuccessScreen() {
   const router = useRouter();
+  const { listingId } = useLocalSearchParams<{ listingId: string }>();
 
   return (
     <ScreenContainer style={styles.container}>
       <View style={commonStyles.centered}>
         <Text style={styles.heading}>Congratulations!</Text>
         <Text style={styles.body}>Your listing was successfully created.</Text>
+        {listingId && (
+          <Button
+            mode="contained"
+            style={styles.button}
+            onPress={() =>
+              router.push({
+                pathname: "/edit-listing/edit-photos",
+                params: { id: listingId },
+              })
+            }
+          >
+            Add photos
+          </Button>
+        )}
         <Button
-          mode="contained"
+          mode={listingId ? "text" : "contained"}
           style={styles.button}
           onPress={() => router.replace("/(tabs)/listings")}
         >

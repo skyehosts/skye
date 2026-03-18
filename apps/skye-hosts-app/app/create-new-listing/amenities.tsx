@@ -109,7 +109,7 @@ export default function AmenitiesScreen() {
           mode="contained"
           onPress={() => {
             setDraftField("amenities", selectedIds as ListingAmenityId[]);
-            router.push("/create-new-listing/photos");
+            router.push("/create-new-listing/title");
           }}
         >
           Next

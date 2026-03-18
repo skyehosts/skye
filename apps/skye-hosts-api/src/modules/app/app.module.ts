@@ -20,6 +20,7 @@ import { AccountModule } from '../account/account.module';
 import { AuthModule } from '../auth/auth.module';
 import { AvailabilityModule } from '../availability/availability.module';
 import { UniqueByPropertyValidator } from '../common/validators';
+import { ListingImageModule } from '../listing-image/listing-image.module';
 import { NotificationModule } from '../notification/notification.module';
 import { PaymentModule } from '../payment/payment.module';
 import { SeedModule } from '../seed/seed.module';
@@ -38,6 +39,7 @@ import { UtilityModule } from '../utility/utility.module';
     CommonModule,
     DemoModule,
     EmailModule,
+    ListingImageModule,
     ListingModule,
     MessageModule,
     NotificationModule,

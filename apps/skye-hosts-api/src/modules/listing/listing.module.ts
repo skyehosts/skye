@@ -16,7 +16,7 @@ import { ListingService } from './providers';
     SpaceTypesController,
     ListingController,
   ],
-  exports: [],
+  exports: [TypeOrmModule],
   imports: [CommonModule, CoHostModule, TypeOrmModule.forFeature([Listing])],
   providers: [ListingService],
 })

@@ -1,14 +1,154 @@
-import { router } from "expo-router";
-import { Appbar } from "react-native-paper";
+import { router, useLocalSearchParams } from "expo-router";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { Appbar, Button } from "react-native-paper";
+import { AppSnackbar } from "../components/app-snackbar";
+import { ImageGrid } from "../components/image-grid";
 import { ScreenContainer } from "../components/screen-container";
+import { useListingImages } from "../hooks/use-listing-images";
+import { colors, commonStyles, spacing, typography } from "../theme";
+
+const MIN_PHOTOS = 5;
+const MAX_PHOTOS = 20;
 
 export default function EditPhotosScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const [successMessage, setSuccessMessage] = useState("");
+
+  const {
+    remoteImages,
+    localImages,
+    loading,
+    uploading,
+    error,
+    totalCount,
+    canAddMore,
+    pickImages,
+    removeLocal,
+    removeRemote,
+    uploadAll,
+    reorder,
+    clearError,
+  } = useListingImages(id);
+
+  const pendingCount = localImages.filter(
+    (img) => img.status === "pending",
+  ).length;
+
+  const handleRemoveRemote = (imageId: string) => {
+    Alert.alert("Delete photo", "Are you sure you want to delete this photo?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Delete",
+        style: "destructive",
+        onPress: () => removeRemote(imageId),
+      },
+    ]);
+  };
+
+  const handleUpload = async () => {
+    await uploadAll();
+    const hasErrors = localImages.some((img) => img.status === "error");
+    if (!hasErrors) {
+      setSuccessMessage("Photos uploaded successfully");
+    }
+  };
+
   return (
     <ScreenContainer>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content title="Edit photos" />
       </Appbar.Header>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        <Text style={commonStyles.subheading}>
+          You need at least {MIN_PHOTOS} photos. You can add up to {MAX_PHOTOS}.
+        </Text>
+
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color={colors.primary}
+            style={styles.loader}
+          />
+        ) : (
+          <>
+            <ImageGrid
+              remoteImages={remoteImages}
+              localImages={localImages}
+              canAddMore={canAddMore}
+              onAddMore={pickImages}
+              onRemoveLocal={removeLocal}
+              onRemoveRemote={handleRemoveRemote}
+              onReorder={reorder}
+            />
+
+            {totalCount > 0 && (
+              <Text style={styles.countText}>
+                {totalCount} / {MAX_PHOTOS} photos
+              </Text>
+            )}
+
+            <Text style={styles.hint}>
+              Long press and drag to reorder photos. The first photo will be
+              your cover image.
+            </Text>
+          </>
+        )}
+      </ScrollView>
+
+      {pendingCount > 0 && (
+        <View style={commonStyles.footer}>
+          <Button
+            mode="contained"
+            onPress={handleUpload}
+            loading={uploading}
+            disabled={uploading}
+          >
+            Upload {pendingCount} photo{pendingCount !== 1 ? "s" : ""}
+          </Button>
+        </View>
+      )}
+
+      <AppSnackbar message={error} onDismiss={clearError} />
+      <AppSnackbar
+        message={successMessage}
+        onDismiss={() => setSuccessMessage("")}
+        type="success"
+      />
     </ScreenContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    padding: spacing.md,
+    gap: spacing.md,
+    paddingBottom: spacing.xl,
+  },
+  loader: {
+    marginTop: spacing.xl,
+  },
+  countText: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    textAlign: "center",
+  },
+  hint: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    textAlign: "center",
+    fontStyle: "italic",
+  },
+});
