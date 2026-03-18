@@ -76,7 +76,7 @@ export default function SafetyDetailsScreen() {
     }
 
     try {
-      await fetchApi<ICreateListingResponseDto>("/listing", {
+      const result = await fetchApi<ICreateListingResponseDto>("/listing", {
         typeId: draft.typeId,
         spaceType: draft.spaceType,
         postCode: draft.postCode,
@@ -93,7 +93,10 @@ export default function SafetyDetailsScreen() {
       });
 
       await clearDraft();
-      router.replace("/create-new-listing/success");
+      router.replace({
+        pathname: "/create-new-listing/success",
+        params: { listingId: String(result.id) },
+      });
     } catch (e) {
       handleFormError(e, setError, setServerError);
     }

@@ -10,7 +10,8 @@ import type {
   ListingTypeId,
   PropertySizeUnit,
 } from '@repo/skye-hosts-api-client';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { ListingImage } from '../../listing-image/entities';
 
 @Entity()
 export class Listing {
@@ -166,6 +167,9 @@ export class Listing {
 
   @Column({ type: 'character varying', default: 'draft' })
   status: ListingStatus;
+
+  @OneToMany(() => ListingImage, (image) => image.listing)
+  images: ListingImage[];
 
   @Column({ type: 'timestamp without time zone' })
   createdAt: Date;

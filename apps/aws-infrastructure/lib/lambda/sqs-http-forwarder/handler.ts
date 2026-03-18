@@ -3,10 +3,9 @@ import type { ISqsBookingMessageDto } from "@repo/skye-hosts-api-client";
 
 // @sentry/aws-serverless is provided via the Lambda layer and marked as
 // external in the esbuild config, so it resolves from /opt/nodejs at runtime.
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
 const Sentry = process.env["SENTRY_DSN"]
-  ? // eslint-disable-next-line @typescript-eslint/no-require-imports
-    (() => {
+  ? (() => {
       const s = require("@sentry/aws-serverless");
       s.init({
         dsn: process.env["SENTRY_DSN"],

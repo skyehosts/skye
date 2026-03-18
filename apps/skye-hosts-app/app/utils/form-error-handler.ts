@@ -19,6 +19,20 @@ export function handleFormError<T extends FieldValues>(
 }
 
 /**
+ * Extract a user-facing message from an unknown error.
+ * Returns the API message for <500 errors, the fallback for 5xx/non-Error values.
+ */
+export function getErrorMessage(e: unknown, fallback: string): string {
+  if (e instanceof ApiRequestError && e.statusCode < 500) {
+    return e.message;
+  }
+  if (e instanceof Error) {
+    return e.message;
+  }
+  return fallback;
+}
+
+/**
  * Simplified error handler for non-form API calls (no field-level errors).
  * Shows the API message for <500 errors, SERVER_ERROR_MESSAGE for 5xx.
  */

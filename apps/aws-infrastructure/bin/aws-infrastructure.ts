@@ -42,6 +42,7 @@ import {
   PROJECT_NAME,
 } from "../lib/config/environments";
 import { BookingsStack } from "../lib/stacks/bookings-stack";
+import { ListingImagePipelineStack } from "../lib/stacks/image-pipeline-stack";
 import { ScheduledMessagesStack } from "../lib/stacks/scheduled-messages-stack";
 
 const app = new cdk.App();
@@ -72,6 +73,17 @@ new BookingsStack(app, `${PROJECT_NAME}-queue-${config.envName}`, {
   terminationProtection: config.isProduction,
   config,
 });
+
+new ListingImagePipelineStack(
+  app,
+  `${PROJECT_NAME}-image-pipeline-${config.envName}`,
+  {
+    env: toCdkEnv(config),
+    description: `${PROJECT_NAME} image processing pipeline — ${config.envName}`,
+    terminationProtection: config.isProduction,
+    config,
+  },
+);
 
 new ScheduledMessagesStack(
   app,
