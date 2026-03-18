@@ -19,6 +19,8 @@ on:
         required: true
       CDK_DEPLOY_ACCOUNT:
         required: true
+      IMAGE_PROCESSOR_SENTRY_DSN:
+        required: true
       SQS_FORWARDER_HEADER_NAME:
         required: true
       SQS_FORWARDER_HTTP_SECRET:
@@ -29,6 +31,7 @@ on:
         required: true
       SQS_FORWARDER_SENTRY_DSN_LAYER_ARN:
         required: true
+        
 
 jobs:
   deploy:
