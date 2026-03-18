@@ -3,6 +3,9 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { fetchApi } from "../services/api";
+import { createLogger } from "../services/logger";
+
+const log = createLogger("PushPerms");
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -22,10 +25,10 @@ export async function requestPushPermission(): Promise<boolean> {
   if (Platform.OS === "web") return false;
 
   const existing = await Notifications.getPermissionsAsync();
-  console.debug("[PushPerms] current status:", existing.status);
+  log.debug("current status:", existing.status);
 
   const { status } = await Notifications.requestPermissionsAsync();
-  console.debug("[PushPerms] after request:", status);
+  log.debug("after request:", status);
 
   return status === "granted";
 }
@@ -77,6 +80,6 @@ async function registerForPushNotifications(): Promise<void> {
       });
     }
   } catch (err) {
-    console.debug("[PushPerms] registration failed:", err);
+    log.warn("registration failed:", err);
   }
 }

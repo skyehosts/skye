@@ -1,5 +1,8 @@
 import type { IListingImageDto } from "../../../../packages/skye-hosts-api-client/src";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createLogger } from "../services/logger";
+
+const log = createLogger("useListingImages");
 import { Alert } from "react-native";
 import { pickImagesFromGallery } from "../services/image-picker";
 import {
@@ -52,19 +55,12 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
   const refresh = useCallback(async () => {
     try {
       setLoading(true);
-      console.debug(
-        "[useListingImages] fetching images for listing:",
-        listingId,
-      );
+      log.debug("fetching images for listing:", listingId);
       const response = await getListingImages(listingId);
-      console.debug(
-        "[useListingImages] fetched",
-        response.images.length,
-        "images",
-      );
+      log.debug("fetched", response.images.length, "images");
       setRemoteImages(response.images);
     } catch (e) {
-      console.error("[useListingImages] refresh failed:", e);
+      log.error("refresh failed:", e);
       handleApiError(e, setError);
     } finally {
       setLoading(false);

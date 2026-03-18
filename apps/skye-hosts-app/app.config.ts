@@ -11,6 +11,7 @@ const config: ExpoConfig = {
     SKYE_ENVIRONMENT: process.env.SKYE_ENVIRONMENT,
     SENTRY_DSN: process.env.SENTRY_DSN,
     API_URL: process.env.API_URL,
+    LOG_LEVEL: process.env.LOG_LEVEL,
   },
   runtimeVersion: {
     policy: "appVersion",

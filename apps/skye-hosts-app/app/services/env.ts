@@ -21,4 +21,7 @@ export const env = {
   get skyeEnvironment() {
     return requireEnv("SKYE_ENVIRONMENT");
   },
+  get logLevel() {
+    return extra["LOG_LEVEL"] as string | undefined;
+  },
 };

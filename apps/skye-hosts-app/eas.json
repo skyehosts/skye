@@ -14,7 +14,8 @@
       "distribution": "internal",
       "channel": "preview",
       "env": {
-        "SKYE_ENVIRONMENT": "production"
+        "SKYE_ENVIRONMENT": "production",
+        "LOG_LEVEL": "debug"
       }
     },
     "beta": {

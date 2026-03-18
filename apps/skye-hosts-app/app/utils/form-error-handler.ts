@@ -4,6 +4,9 @@ import {
 } from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
+import { createLogger } from "../services/logger";
+
+const log = createLogger("handleApiError");
 
 export const SERVER_ERROR_MESSAGE =
   "Something has gone wrong. Our dev team is looking into it, please try again later.";
@@ -44,23 +47,19 @@ export function handleApiError(
   setServerError: (message: string) => void,
 ): void {
   if (e instanceof ApiAuthenticationError) {
-    console.error(
-      `[handleApiError] ApiAuthenticationError: status=${e.statusCode} message="${e.message}"`,
+    log.warn(
+      `ApiAuthenticationError: status=${e.statusCode} message="${e.message}"`,
     );
   } else if (e instanceof ApiRequestError) {
-    console.error(
-      `[handleApiError] ApiRequestError: status=${e.statusCode} message="${e.message}"`,
-    );
+    log.error(`ApiRequestError: status=${e.statusCode} message="${e.message}"`);
     if (e.statusCode < 500) {
       setServerError(e.message);
       return;
     }
   } else if (e instanceof Error) {
-    console.error(
-      `[handleApiError] Error: name="${e.name}" message="${e.message}"`,
-    );
+    log.error(`Error: name="${e.name}" message="${e.message}"`);
   } else {
-    console.error("[handleApiError] Unknown error:", e);
+    log.error("Unknown error:", e);
   }
   setServerError(SERVER_ERROR_MESSAGE);
 }

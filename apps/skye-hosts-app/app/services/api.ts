@@ -2,10 +2,13 @@ import {
   fetchApi as baseFetchApi,
   type FetchApiOptions,
 } from "../../../../packages/skye-hosts-api-client/src";
+import { createLogger } from "./logger";
 import { ensureValidToken } from "./session.service";
 import { getApiBaseUrl } from "./platform-url";
 import { getToken } from "./token.service";
 import { isTokenExpired } from "./token-utils.service";
+
+const log = createLogger("fetchApi");
 
 export async function fetchApi<TResponse, TBody = never>(
   path: string,
@@ -17,16 +20,14 @@ export async function fetchApi<TResponse, TBody = never>(
   if (!isAuthEndpoint) {
     const currentToken = await getToken();
     if (currentToken && isTokenExpired(currentToken)) {
-      console.debug("[fetchApi] token expired, refreshing before", path);
+      log.debug("token expired, refreshing before", path);
       await ensureValidToken();
     }
   }
 
   const token = await getToken();
   const hasToken = !!token;
-  console.debug(
-    `[fetchApi] ${options?.method ?? "POST"} ${path} hasToken=${hasToken}`,
-  );
+  log.debug(`${options?.method ?? "POST"} ${path} hasToken=${hasToken}`);
 
   const headers: Record<string, string> = {
     ...options?.headers,
@@ -39,10 +40,10 @@ export async function fetchApi<TResponse, TBody = never>(
       headers,
       baseUrl: getApiBaseUrl(),
     });
-    console.debug(`[fetchApi] ${path} succeeded`);
+    log.debug(`${path} succeeded`);
     return result;
   } catch (e) {
-    console.error(`[fetchApi] ${path} failed:`, e);
+    log.error(`${path} failed:`, e);
     throw e;
   }
 }
