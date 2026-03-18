@@ -4,8 +4,8 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, View } from "react-native";
-import { Appbar, SegmentedButtons, Text } from "react-native-paper";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Appbar, SegmentedButtons } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import {
@@ -76,7 +76,7 @@ export default function EditListingScreen() {
                 })
               }
             >
-              <Text style={styles.coHostCardTitle}>Co-Hosts</Text>
+              <Text style={commonStyles.itemTitle}>Co-Hosts</Text>
               <Text style={styles.coHostCardSubtext}>
                 Manage who has access to this listing
               </Text>
@@ -104,11 +104,6 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     padding: spacing.md,
     backgroundColor: colors.background,
-  },
-  coHostCardTitle: {
-    fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.textPrimary,
   },
   coHostCardSubtext: {
     fontSize: typography.sm,
