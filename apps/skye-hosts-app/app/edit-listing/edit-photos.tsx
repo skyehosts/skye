@@ -36,6 +36,7 @@ export default function EditPhotosScreen() {
     uploadAll,
     reorder,
     clearError,
+    processingImageIds,
   } = useListingImages(id);
 
   const pendingCount = localImages.filter(
@@ -87,6 +88,7 @@ export default function EditPhotosScreen() {
             <ImageGrid
               remoteImages={remoteImages}
               localImages={localImages}
+              processingImageIds={processingImageIds}
               canAddMore={canAddMore}
               onAddMore={pickImages}
               onRemoveLocal={removeLocal}

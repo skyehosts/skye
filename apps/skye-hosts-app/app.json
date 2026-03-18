@@ -54,6 +54,12 @@
         {
           "sounds": []
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "We need access to your photos so you can add images to your listing."
+        }
       ]
     ],
     "experiments": {

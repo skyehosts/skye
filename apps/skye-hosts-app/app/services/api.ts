@@ -17,19 +17,32 @@ export async function fetchApi<TResponse, TBody = never>(
   if (!isAuthEndpoint) {
     const currentToken = await getToken();
     if (currentToken && isTokenExpired(currentToken)) {
+      console.debug("[fetchApi] token expired, refreshing before", path);
       await ensureValidToken();
     }
   }
 
   const token = await getToken();
+  const hasToken = !!token;
+  console.debug(
+    `[fetchApi] ${options?.method ?? "POST"} ${path} hasToken=${hasToken}`,
+  );
+
   const headers: Record<string, string> = {
     ...options?.headers,
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
-  return baseFetchApi<TResponse, TBody>(path, body, {
-    ...options,
-    headers,
-    baseUrl: getApiBaseUrl(),
-  });
+  try {
+    const result = await baseFetchApi<TResponse, TBody>(path, body, {
+      ...options,
+      headers,
+      baseUrl: getApiBaseUrl(),
+    });
+    console.debug(`[fetchApi] ${path} succeeded`);
+    return result;
+  } catch (e) {
+    console.error(`[fetchApi] ${path} failed:`, e);
+    throw e;
+  }
 }

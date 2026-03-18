@@ -61,6 +61,7 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   accessibilityFeatures: ListingAccessibilityFeatureId[];
   safetyConsiderations: string[];
   safetyDevices: string[];
+  coverImageUrl: string | null;
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

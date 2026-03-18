@@ -44,7 +44,11 @@ export class ListingImageService {
     private readonly configService: ConfigService,
     private readonly queueMessageService: AwsQueueSendMessageService,
   ) {
-    this.s3Client = new S3Client({ region: 'eu-west-1' });
+    this.s3Client = new S3Client({
+      region: 'eu-west-1',
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
+    });
     this.bucketName = this.configService.get<string>(
       'AWS_S3_LISTING_IMAGES_BUCKET',
     );
@@ -61,9 +65,12 @@ export class ListingImageService {
 
     const imageId = await this.databaseService.runInTransaction(
       async (manager) => {
-        const existingCount = await manager
-          .getRepository(ListingImage)
-          .count({ where: { listingId }, lock: { mode: 'pessimistic_write' } });
+        const existing = await manager.getRepository(ListingImage).find({
+          where: { listingId },
+          select: ['id'],
+          lock: { mode: 'pessimistic_write' },
+        });
+        const existingCount = existing.length;
 
         if (existingCount >= MAX_IMAGES_PER_LISTING) {
           throw new BadRequestException(
@@ -102,9 +109,12 @@ export class ListingImageService {
 
     const imageIds = await this.databaseService.runInTransaction(
       async (manager) => {
-        const existingCount = await manager
-          .getRepository(ListingImage)
-          .count({ where: { listingId }, lock: { mode: 'pessimistic_write' } });
+        const existing = await manager.getRepository(ListingImage).find({
+          where: { listingId },
+          select: ['id'],
+          lock: { mode: 'pessimistic_write' },
+        });
+        const existingCount = existing.length;
 
         if (existingCount + count > MAX_IMAGES_PER_LISTING) {
           throw new BadRequestException(
@@ -303,7 +313,7 @@ export class ListingImageService {
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: `listings/${listingId}/original/${imageId}`,
-      ContentType: 'image/*',
+      ContentType: 'image/jpeg',
     });
     return getSignedUrl(this.s3Client, command, { expiresIn: 300 });
   }
@@ -318,6 +328,7 @@ export class ListingImageService {
       id: image.id,
       listingId: String(image.listingId),
       position: image.position,
+      originalUrl: `https://${this.cdnDomain}/${image.originalKey}`,
       urls,
     };
   }

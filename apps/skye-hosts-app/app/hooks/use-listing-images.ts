@@ -1,5 +1,5 @@
 import type { IListingImageDto } from "../../../../packages/skye-hosts-api-client/src";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { pickImagesFromGallery } from "../services/image-picker";
 import {
   deleteListingImage,
@@ -13,6 +13,8 @@ import { handleApiError } from "../utils/form-error-handler";
 
 const MAX_IMAGES_PER_LISTING = 20;
 
+const POLL_INTERVAL_MS = 3000;
+
 interface UseListingImagesReturn {
   remoteImages: IListingImageDto[];
   localImages: LocalImage[];
@@ -21,6 +23,7 @@ interface UseListingImagesReturn {
   error: string;
   totalCount: number;
   canAddMore: boolean;
+  processingImageIds: Set<string>;
   pickImages: () => Promise<void>;
   removeLocal: (index: number) => void;
   removeRemote: (imageId: string) => Promise<void>;
@@ -36,6 +39,10 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [processingImageIds, setProcessingImageIds] = useState<Set<string>>(
+    new Set(),
+  );
+  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const totalCount = remoteImages.length + localImages.length;
   const canAddMore = totalCount < MAX_IMAGES_PER_LISTING;
@@ -43,9 +50,19 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
   const refresh = useCallback(async () => {
     try {
       setLoading(true);
+      console.debug(
+        "[useListingImages] fetching images for listing:",
+        listingId,
+      );
       const response = await getListingImages(listingId);
+      console.debug(
+        "[useListingImages] fetched",
+        response.images.length,
+        "images",
+      );
       setRemoteImages(response.images);
     } catch (e) {
+      console.error("[useListingImages] refresh failed:", e);
       handleApiError(e, setError);
     } finally {
       setLoading(false);
@@ -55,6 +72,56 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  // Poll derived URLs for processing images
+  useEffect(() => {
+    if (processingImageIds.size === 0) {
+      if (pollTimerRef.current) {
+        clearInterval(pollTimerRef.current);
+        pollTimerRef.current = null;
+      }
+      return;
+    }
+
+    const checkDerivedUrls = async () => {
+      const resolved: string[] = [];
+
+      await Promise.all(
+        Array.from(processingImageIds).map(async (imageId) => {
+          const image = remoteImages.find((img) => img.id === imageId);
+          if (!image) return;
+          const url640 = image.urls.find((u) => u.width === 640)?.url;
+          if (!url640) return;
+
+          try {
+            const resp = await fetch(url640, { method: "HEAD" });
+            if (resp.ok) {
+              resolved.push(imageId);
+            }
+          } catch {
+            // Derived image not ready yet
+          }
+        }),
+      );
+
+      if (resolved.length > 0) {
+        setProcessingImageIds((prev) => {
+          const next = new Set(prev);
+          for (const id of resolved) next.delete(id);
+          return next;
+        });
+      }
+    };
+
+    pollTimerRef.current = setInterval(checkDerivedUrls, POLL_INTERVAL_MS);
+
+    return () => {
+      if (pollTimerRef.current) {
+        clearInterval(pollTimerRef.current);
+        pollTimerRef.current = null;
+      }
+    };
+  }, [processingImageIds, remoteImages]);
 
   const pickImages = useCallback(async () => {
     const maxRemaining = MAX_IMAGES_PER_LISTING - totalCount;
@@ -97,7 +164,7 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
     setError("");
 
     try {
-      await uploadImages(listingId, pending, {
+      const uploadedIds = await uploadImages(listingId, pending, {
         onStatusChange: (index, status, err) => {
           setLocalImages((prev) =>
             prev.map((img, i) =>
@@ -110,6 +177,15 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
       // Remove successfully uploaded locals and refresh remote list
       setLocalImages((prev) => prev.filter((img) => img.status !== "done"));
       await refresh();
+
+      // Mark newly uploaded images as processing so we show originals + poll
+      if (uploadedIds.length > 0) {
+        setProcessingImageIds((prev) => {
+          const next = new Set(prev);
+          for (const id of uploadedIds) next.add(id);
+          return next;
+        });
+      }
     } catch (e) {
       handleApiError(e, setError);
     } finally {
@@ -145,6 +221,7 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
     error,
     totalCount,
     canAddMore,
+    processingImageIds,
     pickImages,
     removeLocal,
     removeRemote,

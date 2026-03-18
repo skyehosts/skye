@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoHostModule } from '../co-host/co-host.module';
 import { CommonModule } from '../common/common.module';
+import { ListingImage } from '../listing-image/entities';
 import { AccommodationTypesController } from './controllers/accommodation-types.controller';
 import { AmenitiesController } from './controllers/amenities.controller';
 import { ListingController } from './controllers/listing.controller';
@@ -17,7 +18,12 @@ import { ListingService } from './providers';
     ListingController,
   ],
   exports: [TypeOrmModule],
-  imports: [CommonModule, CoHostModule, TypeOrmModule.forFeature([Listing])],
+  // ListingImage registered here to avoid circular dep (ListingImageModule imports ListingModule)
+  imports: [
+    CommonModule,
+    CoHostModule,
+    TypeOrmModule.forFeature([Listing, ListingImage]),
+  ],
   providers: [ListingService],
 })
 export class ListingModule {}

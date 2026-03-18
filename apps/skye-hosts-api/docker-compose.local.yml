@@ -1,11 +1,12 @@
 services:
   db:
     container_name: skye-hosts-db
-    image: postgres:17
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
     environment:
       POSTGRES_DB: '${DATABASE_NAME}'
       POSTGRES_USER: '${DATABASE_USERNAME}'

@@ -1,4 +1,7 @@
-import { ApiRequestError } from "@repo/skye-hosts-api-client";
+import {
+  ApiAuthenticationError,
+  ApiRequestError,
+} from "@repo/skye-hosts-api-client";
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 
@@ -40,9 +43,24 @@ export function handleApiError(
   e: unknown,
   setServerError: (message: string) => void,
 ): void {
-  if (e instanceof ApiRequestError && e.statusCode < 500) {
-    setServerError(e.message);
-    return;
+  if (e instanceof ApiAuthenticationError) {
+    console.error(
+      `[handleApiError] ApiAuthenticationError: status=${e.statusCode} message="${e.message}"`,
+    );
+  } else if (e instanceof ApiRequestError) {
+    console.error(
+      `[handleApiError] ApiRequestError: status=${e.statusCode} message="${e.message}"`,
+    );
+    if (e.statusCode < 500) {
+      setServerError(e.message);
+      return;
+    }
+  } else if (e instanceof Error) {
+    console.error(
+      `[handleApiError] Error: name="${e.name}" message="${e.message}"`,
+    );
+  } else {
+    console.error("[handleApiError] Unknown error:", e);
   }
   setServerError(SERVER_ERROR_MESSAGE);
 }
