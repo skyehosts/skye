@@ -9,10 +9,6 @@ Next
       - ## App Store URLs
       - ## Native Rebuild Required
   - Get Expo pipeline (GH) deployed to real device
-- Image upload
-  - docs/user-todos/image-upload-frontend-setup.md
-  - docs/user-todos/image-pipeline-env-vars.md
-  - Lambda error in image processor not shown in sentry
 
 ===
 MVP
@@ -24,7 +20,6 @@ MVP
     - Cancellation policy
   - (Arrival guide remaining components)
   - Understanding why some data not colecting during creation, only edit... -> Plan
-  - Photos
   - Draft or Publish after creation?
   - Availability
   - Pricing
@@ -94,6 +89,7 @@ Guest website
 ===============
 Long term TODOs
 ===============
+- Do need to put validation on images with regards to weird ratios or, put a cropper in 
 - database.service.ts is anti pattern I think not necessary
   - This is because of getRepositorty() being almost pointless and in modules it's meant to export TypeOrm.ForFeature()
   - Also double check but I think perhaps the transaction approach in thi service has fragility issues

@@ -1,8 +1,13 @@
+import type { IListingImageDto } from "../../../../packages/skye-hosts-api-client/src";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Image,
+  Modal,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -21,6 +26,9 @@ const MAX_PHOTOS = 20;
 export default function EditPhotosScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [successMessage, setSuccessMessage] = useState("");
+  const [previewImage, setPreviewImage] = useState<IListingImageDto | null>(
+    null,
+  );
 
   const {
     remoteImages,
@@ -94,6 +102,7 @@ export default function EditPhotosScreen() {
               onRemoveLocal={removeLocal}
               onRemoveRemote={handleRemoveRemote}
               onReorder={reorder}
+              onPreview={setPreviewImage}
             />
 
             {totalCount > 0 && (
@@ -103,8 +112,8 @@ export default function EditPhotosScreen() {
             )}
 
             <Text style={styles.hint}>
-              Long press and drag to reorder photos. The first photo will be
-              your cover image.
+              Long press and drag to reorder. The first photo is your cover
+              image, and the first 5 are featured on your listing page.
             </Text>
           </>
         )}
@@ -122,6 +131,36 @@ export default function EditPhotosScreen() {
           </Button>
         </View>
       )}
+
+      <Modal
+        visible={previewImage !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setPreviewImage(null)}
+      >
+        <Pressable
+          style={styles.previewBackdrop}
+          onPress={() => setPreviewImage(null)}
+        >
+          {previewImage && (
+            <Image
+              source={{
+                uri:
+                  previewImage.urls.find((u) => u.width === 1280)?.url ??
+                  previewImage.urls.find((u) => u.width === 1920)?.url ??
+                  previewImage.originalUrl,
+              }}
+              style={styles.previewImage}
+            />
+          )}
+          <Pressable
+            style={styles.previewClose}
+            onPress={() => setPreviewImage(null)}
+          >
+            <Ionicons name="close-circle" size={32} color={colors.background} />
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <AppSnackbar message={error} onDismiss={clearError} />
       <AppSnackbar
@@ -152,5 +191,21 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: "center",
     fontStyle: "italic",
+  },
+  previewBackdrop: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.9)",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  previewImage: {
+    width: "90%",
+    height: "80%",
+    resizeMode: "contain",
+  },
+  previewClose: {
+    position: "absolute",
+    top: spacing.xl,
+    right: spacing.md,
   },
 });
