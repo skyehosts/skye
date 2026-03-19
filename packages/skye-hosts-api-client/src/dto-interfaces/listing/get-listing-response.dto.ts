@@ -10,6 +10,7 @@ import type {
   ListingTypeId,
   PropertySizeUnit,
 } from '../../enums/listing-enums';
+import type { IListingImageDto } from '../listing-image/listing-image.dto';
 
 export interface IGetListingResponseDto {
   id: number;
@@ -61,6 +62,7 @@ export interface IGetListingResponseDto {
   safetyConsiderations: string[];
   safetyDevices: string[];
   coverImageUrl: string | null;
+  images: IListingImageDto[];
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

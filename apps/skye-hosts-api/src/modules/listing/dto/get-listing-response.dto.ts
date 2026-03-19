@@ -1,6 +1,7 @@
 import type {
   HostInteractionId,
   IGetListingResponseDto,
+  IListingImageDto,
   ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
@@ -62,6 +63,7 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   safetyConsiderations: string[];
   safetyDevices: string[];
   coverImageUrl: string | null;
+  images: IListingImageDto[];
   status: ListingStatus;
   createdAt: Date;
   updatedAt: Date;

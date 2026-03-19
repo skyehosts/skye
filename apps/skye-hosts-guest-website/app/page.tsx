@@ -1,58 +1,29 @@
-import Link from 'next/link';
+import Box from '@mui/material/Box';
 import {
-  fetchApi,
-  IGetAllListingsResponseDto,
+  type IGetHomepageListingsResponseDto,
   slugify,
-} from '../../../packages/skye-hosts-api-client/src';
+} from '@repo/skye-hosts-api-client';
+import { HomepageListingsGrid } from '@repo/web-components/listings/homepage-listings-grid';
+import Link from 'next/link';
+
+import { fetchApi } from '../../../packages/skye-hosts-api-client/src';
 
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  const data = await fetchApi<IGetAllListingsResponseDto>('/listing/all');
+  const data =
+    await fetchApi<IGetHomepageListingsResponseDto>('/listing/homepage');
 
   return (
-    <main>
-      <h1>Listings</h1>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-          gap: '16px',
-        }}
-      >
-        {data.listings.map((listing) => (
-          <Link
-            key={listing.id}
-            href={`/listing/${listing.id}/${slugify(listing.title)}`}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <div
-              style={{
-                border: '1px solid var(--border-color, #ddd)',
-                borderRadius: '8px',
-                overflow: 'hidden',
-              }}
-            >
-              <div
-                style={{
-                  backgroundColor: 'var(--placeholder-bg, #e0e0e0)',
-                  height: '180px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'var(--text-muted, #999)',
-                  fontSize: '14px',
-                }}
-              >
-                No image
-              </div>
-              <div style={{ padding: '12px' }}>
-                <h2 style={{ margin: 0, fontSize: '16px' }}>{listing.title}</h2>
-              </div>
-            </div>
+    <Box component="main" sx={{ py: 4 }}>
+      <HomepageListingsGrid
+        listings={data.listings}
+        linkWrapper={(listing, children) => (
+          <Link href={`/listing/${listing.id}/${slugify(listing.title)}`}>
+            {children}
           </Link>
-        ))}
-      </div>
-    </main>
+        )}
+      />
+    </Box>
   );
 }

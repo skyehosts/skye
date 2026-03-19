@@ -8,11 +8,16 @@ import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { In } from 'typeorm';
 import { ListingAccessService } from '../../co-host/providers/listing-access.service';
 import { DatabaseService } from '../../common/providers';
+import {
+  buildDerivedImageUrl,
+  toListingImageDto,
+} from '../../common/utils/listing-image-url.util';
 import { ListingImage } from '../../listing-image/entities';
 import {
   CreateListingRequestDto,
   CreateListingResponseDto,
   GetAllListingsResponseDto,
+  GetHomepageListingsResponseDto,
   GetHostListingsResponseDto,
   GetListingResponseDto,
   UpdateListingRequestDto,
@@ -33,8 +38,12 @@ export class ListingService {
     );
   }
 
-  private buildCoverImageUrl(listingId: number, imageId: string): string {
-    return `https://${this.cdnDomain}/listings/${listingId}/derived/640w/${imageId}.webp`;
+  private buildCoverImageUrl(
+    listingId: number,
+    imageId: string,
+    width = 640,
+  ): string {
+    return buildDerivedImageUrl(this.cdnDomain, listingId, imageId, width);
   }
 
   private async getCoverImageMap(
@@ -112,6 +121,30 @@ export class ListingService {
           role: 'owner' as const,
           coverImageUrl: coverId
             ? this.buildCoverImageUrl(listing.id, coverId)
+            : null,
+        };
+      }),
+    };
+  }
+
+  async getHomepage(): Promise<GetHomepageListingsResponseDto> {
+    const listings = await this.databaseService.getRepository(Listing).find({
+      where: { status: 'active' },
+      order: { createdAt: 'DESC' },
+    });
+
+    const coverMap = await this.getCoverImageMap(listings.map((l) => l.id));
+
+    return {
+      listings: listings.map((listing) => {
+        const coverId = coverMap.get(listing.id);
+        return {
+          id: listing.id,
+          title: listing.title,
+          typeId: listing.typeId,
+          highlights: listing.highlights,
+          coverImageUrl: coverId
+            ? this.buildCoverImageUrl(listing.id, coverId, 320)
             : null,
         };
       }),
@@ -320,12 +353,18 @@ export class ListingService {
     return this.toResponseDto(updated);
   }
 
+  private toImageDto(image: ListingImage) {
+    return toListingImageDto(this.cdnDomain, image);
+  }
+
   private async toResponseDto(
     listing: Listing,
   ): Promise<GetListingResponseDto> {
-    const coverImage = await this.databaseService
+    const allImages = await this.databaseService
       .getRepository(ListingImage)
-      .findOne({ where: { listingId: listing.id, position: 0 } });
+      .find({ where: { listingId: listing.id }, order: { position: 'ASC' } });
+
+    const coverImage = allImages.find((img) => img.position === 0);
 
     return {
       id: listing.id,
@@ -380,6 +419,7 @@ export class ListingService {
       coverImageUrl: coverImage
         ? this.buildCoverImageUrl(listing.id, coverImage.id)
         : null,
+      images: allImages.map((img) => this.toImageDto(img)),
       status: listing.status,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,

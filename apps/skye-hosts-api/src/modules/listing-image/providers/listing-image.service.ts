@@ -11,12 +11,12 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import type {
-  IListingImageDto,
-  IListingImageUrlDto,
-} from '@repo/skye-hosts-api-client';
 import { randomUUID } from 'crypto';
 import { DatabaseService } from '../../common/providers';
+import {
+  IMAGE_WIDTHS,
+  toListingImageDto,
+} from '../../common/utils/listing-image-url.util';
 import { ConfigService } from '../../config/providers/config.service';
 import { Listing } from '../../listing/entities';
 import { AwsQueueSendMessageService } from '../../queue/providers';
@@ -29,7 +29,6 @@ import {
 } from '../dto';
 import { ListingImage } from '../entities';
 
-const IMAGE_WIDTHS = [320, 640, 960, 1280, 1920];
 const MAX_IMAGES_PER_LISTING = 20;
 
 @Injectable()
@@ -318,19 +317,8 @@ export class ListingImageService {
     return getSignedUrl(this.s3Client, command, { expiresIn: 300 });
   }
 
-  private toImageDto(image: ListingImage): IListingImageDto {
-    const urls: IListingImageUrlDto[] = IMAGE_WIDTHS.map((width) => ({
-      width,
-      url: `https://${this.cdnDomain}/listings/${image.listingId}/derived/${width}w/${image.id}.webp`,
-    }));
-
-    return {
-      id: image.id,
-      listingId: String(image.listingId),
-      position: image.position,
-      originalUrl: `https://${this.cdnDomain}/${image.originalKey}`,
-      urls,
-    };
+  private toImageDto(image: ListingImage) {
+    return toListingImageDto(this.cdnDomain, image);
   }
 
   private async verifyListingOwnership(
