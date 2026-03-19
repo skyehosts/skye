@@ -41,6 +41,11 @@ heroku logs --num 200 --app skye-hosts-{env} #Most recent lines
 heroku config --app skye-hosts-{env} #Env vars
 heroku run sh --app skye-hosts-{env} #Bash inside docker container
 
+### Add environment vars
+- Manually add 'Config vars' in Heroku via browser
+- Manually add EAS secrets to Expo (Either in browser or via CLI) E.G: eas secret:create --name SENTRY_DSN --value <your-sentry-dsn> --scope project
+- Manually add environment vars to Vercel via browser (Some are org level and others project level)
+
 ## Installation
 
 `nvm use 24` #Compatible with: Node 24.13.1
@@ -86,9 +91,9 @@ pnpm --filter=skye-glamping-website dev
 pnpm --filter=skye-hosts-app dev # Supports native modules
 
 If changed native modules, the flow is:
-1. eas build --profile development --platform android --local --output ./builds/app.apk
-2. adb install builds/app.apk — install it on the emulator
-3. pnpm dev → press a — starts the JS bundler and opens the app
+1. pnpm --filter=skye-hosts-app eas-build-local
+2. pnpm --filter=skye-hosts-app install-local
+3. pnpm --filter=skye-hosts-app dev → press a — starts the JS bundler and opens the app
 
 # Check for lint errors & auto fix, fixable lint errors:
 pnpm --filter=skye-hosts-api lint
@@ -111,8 +116,9 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
   - Production: Set via Browser in Vercel dashboard (Team & project level)
 - skye-hosts-app
   - Locally: Uses .env.local
-  - CI: (TBD)
-  - Production: Set via Browser in Expo dashboard
+  - Production:
+    - insensitive: eas.json
+    - sensitive: secrets stored in Expo cloud
 
 ## If app encountering network failuers when run inside Emulator
 
@@ -124,6 +130,26 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
 
 adb push 1.jpg /sdcard/DCIM/Camera
 adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/DCIM/Camera/1.jpg
+
+## How to deploy host app to real device locally from Expo
+
+- Only needed very first time
+  - npx expo install expo-dev-client
+- Then:
+  - pnpm --filter=skye-hosts-app eas-build-local
+  - pnpm --filter=skye-hosts-app install-local
+  - pnpm --filter=skye-hosts-app dev
+
+## How to get logs from real apk on real device via USB when it crashes on startup
+
+- adb logcat -c && adb logcat > crash.log #clears everything
+- open app
+- hit ctrl + c
+- grep -i "fatal\|AndroidRuntime\|CRASH\|skyehosts" crash.log
+
+## How to stream logs from real apk on real device via USB
+
+- adb logcat --pid=$(adb shell pidof -s uk.co.skyehosts)
 
 ## How to deploy host app to EAS / Expo
 

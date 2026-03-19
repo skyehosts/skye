@@ -20,7 +20,9 @@
     "lint": "eslint \"app/**/*.{ts,tsx}\" --fix",
     "test": "jest --passWithNoTests",
     "test:e2e": "playwright test",
-    "eas-build-post-install": "cd ../.. && pnpm --filter @repo/common build && pnpm --filter @repo/skye-hosts-api-client build"
+    "eas-build-post-install": "cd ../.. && pnpm --filter @repo/common build && pnpm --filter @repo/skye-hosts-api-client build",
+    "eas-build-local": "eas build --profile development --platform android --local --output ./builds/app.apk",
+    "install-local": "adb install apps/skye-hosts-app/builds/app.apk"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.6",

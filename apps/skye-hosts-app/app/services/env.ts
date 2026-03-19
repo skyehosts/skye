@@ -16,7 +16,7 @@ export const env = {
     return requireEnv("API_URL");
   },
   get sentryDsn() {
-    return requireEnv("SENTRY_DSN");
+    return extra["SENTRY_DSN"] as string | undefined;
   },
   get skyeEnvironment() {
     return requireEnv("SKYE_ENVIRONMENT");
