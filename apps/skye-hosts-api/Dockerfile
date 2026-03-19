@@ -2,7 +2,7 @@
 # BUILD BASE IMAGE
 ##################
 
-FROM node:20-alpine AS base
+FROM node:24-alpine AS base
 
 # Install pnpm
 RUN npm install -g pnpm@10.11.0
@@ -51,7 +51,7 @@ RUN pnpm --filter skye-hosts-api --prod deploy --legacy /app/pruned
 # BUILD FOR PRODUCTION
 ######################
 
-FROM node:20-alpine AS production
+FROM node:24-alpine AS production
 WORKDIR /app
 
 RUN chown -R node:node /app
