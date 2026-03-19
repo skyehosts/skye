@@ -38,7 +38,6 @@ MVP
 General
 =======
 - flex-grow on <main not working>
-- Shift postman to skyehosts email
 - Shift stripe to skyehosts email & update secrets
 - expo build working on real device?
 - env plan: Pipeline green, deployed agian
@@ -61,10 +60,10 @@ Aws infrastructure
 ========
 Host App
 ========
+- App APK should point to Production so I can edit listings in Prod DB etc.
+- Basic auth or prod protection.
 - If you delete all rows from Account, you appear to still be ble to login into app xD
 - name not required on signup again?!
-- docs/user-todos/twilio-email-verify-setup
-- docs/user-todos/unosend-email-setup.md
 - Listing title, vertical height is too long
 - Test
   - Notification
@@ -117,51 +116,6 @@ Next Steps for You (Cohost)
 ===============
 Pending Prompts
 ===============
-- On guests websites on /listing/1/bluebell-croft-8 route.
-- Put the entire page content inside an 1120 centered container (mui)
-- Using attached images reference, copy the style for: Listing title, images & key info e.g 4 guests1 bedroom3 beds1 shared bath (ignore everything else)
-- There are two layouts:
-- First layout < md breakpoint
-  - Use /example-below-md.jpg as reference.
-  - Back button overlayed at top left corner of image
-  - Heart icon overlayed at top right corner of image
-  - Bottom right has {currentImage / totalImages} count
-  - Swiping left or right cycles through images
-  - Tapping: No current behaviour (Implemented later)
-  - Unearth image:
-    - Centered listing title:
-    - Centered: descreiption, e.g 'Hut in Highland Perthshire, United Kingdom,'
-    - Centered: 2nd descripotionL: '2 guests - 2 beds - 0 bathrooms' (Use bullet as sepearator)
-- Second layout >= md breakpoint
-  - 5 images 
-  - use /example-md-and-above.png as reference
-  - Contains 1 large image on left, with 4 on a grid to the right
-  - Swiping: no behaviour ever to imlemented. In future a click will open aanother page.
-  - Tapping: No current behaviour (Implemented later)
-  - Below image, same content displayed as. < md breakpoint but its left aligned
-- Parse docs/plans/listing-image-ratio-display-strategy.md to understand and apply css dynamic centering., Ensuring oyu use images large enough to avoid detrimental blur
-- Any major decisions, ask, particularily on how to implement swipe if it requires external libraries
-
-- Retain that 5 image layout above or equal to md breakpoint (But don't use exact value, use nearest breakpoint)
-- Below that breakpoint it should only show 1 image (the cover image). (example-below-md.jpg)
-- At this size, you can swipe left or right to cycle through the images
-- At any breakpoint when a photo is tapped
-- Endpoint should only show 'Listed' listings,  
-- Update the display of listings, each item has following:
-  - Parse docs/plans/listing-image-ratio-display-strategy.md to understand image display strategy using css centering
-  - Pick which derived size is best used, avoid blur caused by css centering
-  - 215 wide x 205 high (approx) image with 4px border radius (Make 4px sitewide standard where appropriate)
-  - Use the listing cover photo for this image
-  - Underneath:
-    - {ListingTypeId} in 'suburb' (Put suburb as static placeholder for now)
-    - £123/night (Static placeholder for now)
-    - {LISTING_HIGHLIGHT_LABELS} value right aligned on same line as £123/night
-  - Each row can have a max of 7 items
-  - Each column should have smaller gutter (Use standard gutters we have or 1/2 it if you think optimal)
-  - Each row should have 40-50 pixels gap 
-- Any major decisions ask me
-
-215 x 205 (approx)
 
 Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and customer experience. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
