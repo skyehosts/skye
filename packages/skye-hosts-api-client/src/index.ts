@@ -54,6 +54,7 @@ export * from './dto-interfaces/listing/create-listing-response.dto';
 export * from './dto-interfaces/listing/get-accommodation-types-response.dto';
 export * from './dto-interfaces/listing/get-all-listings-response.dto';
 export * from './dto-interfaces/listing/get-amenities-response.dto';
+export * from './dto-interfaces/listing/get-homepage-listings-response.dto';
 export * from './dto-interfaces/listing/get-host-listings-response.dto';
 export * from './dto-interfaces/listing/get-listing-response.dto';
 export * from './dto-interfaces/listing/get-space-types-response.dto';

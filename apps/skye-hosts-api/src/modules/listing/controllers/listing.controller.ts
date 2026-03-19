@@ -8,6 +8,7 @@ import {
   CreateListingRequestDto,
   CreateListingResponseDto,
   GetAllListingsResponseDto,
+  GetHomepageListingsResponseDto,
   GetHostListingsResponseDto,
   GetListingResponseDto,
   UpdateListingRequestDto,
@@ -37,6 +38,12 @@ export class ListingController {
   @IgnoreBearerAuthentication()
   async onGetAllListings(): Promise<GetAllListingsResponseDto> {
     return this.listingService.getAll();
+  }
+
+  @Get('homepage')
+  @IgnoreBearerAuthentication()
+  async onGetHomepageListings(): Promise<GetHomepageListingsResponseDto> {
+    return this.listingService.getHomepage();
   }
 
   @Get(':id')

@@ -2,9 +2,6 @@ import Container from '@mui/material/Container';
 import { fetchApi, IGetListingResponseDto } from '@repo/skye-hosts-api-client';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { auth } from '../../../auth';
-import { BookNowButton } from './BookNowButton';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
@@ -23,10 +20,8 @@ export async function generateMetadata({
 }
 
 export default async function ListingPage({ params }: ListingPageProps) {
-  const { id, title } = await params;
+  const { id } = await params;
   const listing = await fetchApi<IGetListingResponseDto>(`/listing/${id}`);
-  const session = await auth();
-  const guestId = session?.user?.id ? Number(session.user.id) : null;
 
   return (
     <Container maxWidth={false} sx={{ maxWidth: 1120, px: { xs: 0, md: 3 } }}>
@@ -41,20 +36,6 @@ export default async function ListingPage({ params }: ListingPageProps) {
         postCode={listing.postCode}
         images={listing.images}
       />
-      {/* TODO: Replace hardcoded values with actual booking form data */}
-      {guestId ? (
-        <BookNowButton
-          listingId={listing.id}
-          guestId={guestId}
-          checkInDate="2026-04-01"
-          checkOutDate="2026-04-05"
-          totalPrice={500}
-        />
-      ) : (
-        <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
-          Log in to book
-        </Link>
-      )}
     </Container>
   );
 }

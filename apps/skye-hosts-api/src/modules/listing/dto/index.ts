@@ -3,6 +3,7 @@ export * from './create-listing-response.dto';
 export * from './get-accommodation-types-response.dto';
 export * from './get-all-listings-response.dto';
 export * from './get-amenities-response.dto';
+export * from './get-homepage-listings-response.dto';
 export * from './get-host-listings-response.dto';
 export * from './get-listing-response.dto';
 export * from './get-space-types-response.dto';
