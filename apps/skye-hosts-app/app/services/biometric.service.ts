@@ -1,4 +1,5 @@
 import * as LocalAuthentication from "expo-local-authentication";
+import { Platform } from "react-native";
 import { getBiometricsEnabled, setBiometricsEnabled } from "./token.service";
 
 export async function isBiometricAvailable(): Promise<boolean> {
@@ -36,13 +37,24 @@ export async function disableBiometrics(): Promise<void> {
 export async function getBiometricType(): Promise<string> {
   const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
-  if (
-    types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)
-  ) {
-    return "Face ID";
-  }
-  if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-    return "Fingerprint";
+  if (Platform.OS === "ios") {
+    if (
+      types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)
+    ) {
+      return "Face ID";
+    }
+    if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+      return "Touch ID";
+    }
+  } else {
+    if (types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
+      return "Fingerprint";
+    }
+    if (
+      types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION)
+    ) {
+      return "Face Recognition";
+    }
   }
   return "Biometrics";
 }
