@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { PaperProvider } from "react-native-paper";
 import { AuthProvider, useAuth } from "./contexts/auth-context";
 import { SocketProvider } from "./contexts/socket-context";
+import { UnreadMessagesProvider } from "./contexts/unread-messages-context";
 import { usePushNotifications } from "./hooks/use-push-notifications";
 import { theme } from "./theme";
 
@@ -27,7 +28,9 @@ function RootLayout() {
     <PaperProvider theme={theme}>
       <AuthProvider>
         <SocketProvider>
-          <AppContent />
+          <UnreadMessagesProvider>
+            <AppContent />
+          </UnreadMessagesProvider>
         </SocketProvider>
       </AuthProvider>
     </PaperProvider>

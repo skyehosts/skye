@@ -281,4 +281,18 @@ export const commonStyles = StyleSheet.create({
     color: colors.textSecondary,
     marginBottom: spacing.xl,
   },
+
+  /* ── Indicator dot ───────────────────────────────── */
+
+  indicatorDot: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.danger,
+    borderWidth: 1.5,
+    borderColor: colors.background,
+  },
 });
