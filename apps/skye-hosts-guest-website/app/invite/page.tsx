@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
+import { APP_DISPLAY_NAME } from '@repo/common';
 import {
   fetchApi,
   type IGetCoHostInviteDetailsResponseDto,
@@ -85,7 +86,7 @@ export default async function InvitePage({
         )}
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          To accept this invite, open it in the Skye Hosts app.
+          To accept this invite, open it in the {APP_DISPLAY_NAME} app.
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>

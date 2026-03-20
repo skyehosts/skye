@@ -42,6 +42,7 @@ heroku config --app skye-hosts-{env} #Env vars
 heroku run sh --app skye-hosts-{env} #Bash inside docker container
 
 ### Add environment vars
+
 - Manually add 'Config vars' in Heroku via browser
 - Manually add EAS secrets to Expo (Either in browser or via CLI) E.G: eas secret:create --name SENTRY_DSN --value <your-sentry-dsn> --scope project
 - Manually add environment vars to Vercel via browser (Some are org level and others project level)

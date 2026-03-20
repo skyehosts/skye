@@ -33,6 +33,7 @@ MVP
 - Scheduled messages: Understanding, if should show in conversation thread
 - Payments
 - SKYE_ENVIRONMENT doesn't make much sense in context of app. as it has local, preview, production etc expo dists...
+  - It's used by sentry, its passed it in as sentry env... also look at eas.json.
 
 =======
 General
@@ -111,15 +112,12 @@ Next Steps for You (Cohost)
   to add that?
 - Favourites (listings)
 
-
-
 ===============
 Pending Prompts
 ===============
-
-Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and customer experience. If any
-opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
-
+Some bugs have been discovered testing hosts app on Pixel 8 Pro:
+- On 'Manage your listings' onboarding slide pag. The imag at top seemed too high. (The Camera hole was over it). It was flush with android status bar. It needs more padding above.
+- getBiometricType() returned Face ID (User saw "Face ID" but it promptd for fingerprint. What are options here
 
 ==================
 Re-useable prompts

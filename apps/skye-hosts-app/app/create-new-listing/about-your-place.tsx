@@ -2,7 +2,13 @@ import type { IGetAccommodationTypesResponseDto } from "../../../../packages/sky
 import { ListingTypeId } from "../../../../packages/skye-hosts-api-client/src";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Button } from "react-native-paper";
 import { WizardAppBar } from "./wizard-app-bar";
 import type { SelectionCardItem } from "../components/selection-card-grid";
@@ -73,7 +79,7 @@ export default function AboutYourPlaceScreen() {
     <ScreenContainer>
       <WizardAppBar title="Tell us about your place" />
 
-      <View style={commonStyles.content}>
+      <ScrollView contentContainerStyle={commonStyles.contentScroll}>
         <Text style={[commonStyles.heading, { marginBottom: spacing.lg }]}>
           Which of these best describes your place?
         </Text>
@@ -89,7 +95,7 @@ export default function AboutYourPlaceScreen() {
             onToggle={handleToggle}
           />
         )}
-      </View>
+      </ScrollView>
 
       <View style={commonStyles.footer}>
         <Button mode="text" onPress={() => router.back()}>

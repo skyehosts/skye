@@ -1,4 +1,6 @@
+import { APP_DISPLAY_NAME } from '@repo/common';
+
 export const constants = {
-  appName: 'Skye Glamping',
+  appName: APP_DISPLAY_NAME,
   envPath: '.env.local',
 };

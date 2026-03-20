@@ -21,8 +21,9 @@ import {
 } from "../theme";
 import { handleFormError } from "../utils/form-error-handler";
 import { useCreateListing } from "./context";
+import { APP_DISPLAY_NAME } from "@repo/common";
 
-const APP_NAME = "skyehosts";
+const APP_NAME = APP_DISPLAY_NAME;
 
 const DISCLOSURES = Object.values(ListingSafetyDisclosureId).map((id) => ({
   id,

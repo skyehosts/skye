@@ -1,5 +1,6 @@
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import { APP_DISPLAY_NAME } from '@repo/common';
 import { MuiProvider } from '@repo/web-components/providers/mui-provider';
 import { StorageProvider } from '@repo/web-components/storage/storage-provider';
 import { CookieDisclaimerWrapper } from '@repo/web/cookie-disclaimer-wrapper';
@@ -23,7 +24,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: 'Skye Hosts',
+  title: APP_DISPLAY_NAME,
   description: 'Same BnBs - Lower fees = Cheaper prices',
 };
 

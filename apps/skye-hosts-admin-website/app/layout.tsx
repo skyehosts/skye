@@ -2,6 +2,7 @@ import { AuthSessionProvider } from "@repo/web/session-provider";
 import { MuiProvider } from "@repo/web-components/providers/mui-provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { APP_DISPLAY_NAME } from "@repo/common";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -14,8 +15,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Skye Hosts - Admin",
-  description: "Skye Hosts administration portal",
+  title: `${APP_DISPLAY_NAME} - Admin`,
+  description: `${APP_DISPLAY_NAME} administration portal`,
 };
 
 export default function RootLayout({
