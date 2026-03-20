@@ -45,18 +45,16 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v5
-        with:
-          node-version: ${{ inputs.node-version }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
           run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install
