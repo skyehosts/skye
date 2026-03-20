@@ -246,4 +246,8 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsIn(LISTING_STATUSES)
   status?: IUpdateListingRequestDto['status'];
+
+  @IsOptional()
+  @IsBoolean()
+  shortTermLetLicenseConfirmed?: boolean;
 }

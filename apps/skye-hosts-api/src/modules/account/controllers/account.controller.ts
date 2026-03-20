@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UnauthorizedException } from '@nestjs/common';
 import type { IGetAccountDetailsResponseDto } from '@repo/skye-hosts-api-client';
 import { AuthenticatedUser } from '../../common/decorators';
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
@@ -14,10 +14,13 @@ export class AccountController {
     @AuthenticatedUser() authenticatedUser: IJwtClaims,
   ): Promise<IGetAccountDetailsResponseDto> {
     const account = await this.accountService.findById(authenticatedUser.sub);
+    if (!account) {
+      throw new UnauthorizedException('Account not found');
+    }
     const dto = new GetAccountDetailsResponseDto();
-    dto.email = account?.email ?? null;
-    dto.emailVerified = account?.emailVerified ?? false;
-    dto.name = account?.name ?? '';
+    dto.email = account.email;
+    dto.emailVerified = account.emailVerified;
+    dto.name = account.name;
     return dto;
   }
 }

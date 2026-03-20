@@ -168,6 +168,9 @@ export class Listing {
   @Column({ type: 'character varying', default: 'draft' })
   status: ListingStatus;
 
+  @Column({ type: 'boolean', default: false })
+  shortTermLetLicenseConfirmed: boolean;
+
   @OneToMany(() => ListingImage, (image) => image.listing)
   images: ListingImage[];
 

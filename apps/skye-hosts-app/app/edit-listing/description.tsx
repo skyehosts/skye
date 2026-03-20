@@ -141,10 +141,10 @@ export default function EditDescriptionScreen() {
                     <View style={commonStyles.borderedRowDivider} />
                   )}
                   <Pressable
-                    style={styles.row}
+                    style={commonStyles.borderedRowContent}
                     onPress={() => setActiveField(field)}
                   >
-                    <View style={styles.rowText}>
+                    <View style={commonStyles.borderedRowText}>
                       <Text style={commonStyles.itemTitle}>{field.title}</Text>
                       <Text
                         style={[
@@ -192,17 +192,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: spacing.lg,
-  },
-  row: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.md,
-    gap: spacing.sm,
-  },
-  rowText: {
-    flex: 1,
-    gap: spacing.xs,
   },
   rowSubtextEmpty: {
     fontStyle: "italic",

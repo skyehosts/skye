@@ -60,4 +60,5 @@ export interface IUpdateListingRequestDto {
   safetyConsiderations?: string[];
   safetyDevices?: string[];
   status?: ListingStatus;
+  shortTermLetLicenseConfirmed?: boolean;
 }

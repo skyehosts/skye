@@ -20,6 +20,7 @@ import {
   hasPinSetup,
   restorePinFromServer,
 } from "../services/pin.service";
+import { fetchApi } from "../services/api";
 import { hasSession } from "../services/session.service";
 import StorageService, { StorageKeys } from "../services/storage";
 import { clearAllSecureData } from "../services/token.service";
@@ -79,10 +80,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         let storedUser = null;
         if (token) {
           storedUser = await getUser();
-          setUser(storedUser);
         }
 
         if (storedUser) {
+          try {
+            await fetchApi("/account/details", undefined, { method: "GET" });
+          } catch {
+            await authSignOut();
+            await StorageService.clearAll();
+            await StorageService.setItem(StorageKeys.APP_INSTALLED, true);
+            await StorageService.setItem(StorageKeys.ONBOARDING_SEEN, true);
+            setIsLoading(false);
+            return;
+          }
+          setUser(storedUser);
+
           const pinBelongsToUser = await hasPinForUser(storedUser.id);
           if (!pinBelongsToUser) {
             const pinExists = await hasPinSetup();
