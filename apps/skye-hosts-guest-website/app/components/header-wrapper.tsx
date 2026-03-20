@@ -1,5 +1,6 @@
 'use client';
 
+import { APP_DISPLAY_NAME } from '@repo/common';
 import { Header } from '@repo/web-components/navigation/header';
 import { useAuth } from '@repo/web/use-auth';
 
@@ -21,7 +22,7 @@ export function HeaderWrapper() {
       links={isAuthenticated ? authenticatedLinks : publicLinks}
       logoWideSrc="/logo-wide.png"
       logoSquareSrc="/logo-square.png"
-      logoAlt="Skye Hosts"
+      logoAlt={APP_DISPLAY_NAME}
     />
   );
 }

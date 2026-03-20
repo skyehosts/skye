@@ -6,6 +6,7 @@ import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { phoneLookup, requestOtp } from "../services/auth.service";
+import { APP_DISPLAY_NAME } from "@repo/common";
 import { colors, commonStyles, spacing } from "../theme";
 import { handleFormError } from "../utils/form-error-handler";
 
@@ -72,7 +73,7 @@ export default function SignUpScreen() {
       >
         <View style={styles.content}>
           <Text variant="headlineMedium" style={styles.title}>
-            Skye Hosts Host
+            {APP_DISPLAY_NAME}
           </Text>
           <Text variant="bodyLarge" style={styles.subtitle}>
             {showNameField

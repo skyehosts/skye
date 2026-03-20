@@ -2,6 +2,7 @@ import { router } from "expo-router";
 import { useRef, useState } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ScreenContainer } from "./components/screen-container";
 import StorageService, { StorageKeys } from "./services/storage";
 import { SlidePager, SlidePagerHandle } from "./components/slide-pager";
@@ -13,11 +14,12 @@ import {
   spacing,
   typography,
 } from "./theme";
+import { APP_DISPLAY_NAME } from "@repo/common";
 const { width } = Dimensions.get("window");
 
 const SLIDES = [
   {
-    title: "Welcome to Skye Hosts",
+    title: `Welcome to ${APP_DISPLAY_NAME}`,
     imageBg: colors.driftwoodSand,
     body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.",
   },
@@ -35,6 +37,7 @@ const SLIDES = [
 
 export default function OnboardingScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const pagerRef = useRef<SlidePagerHandle>(null);
   const [activePage, setActivePage] = useState(0);
   const isLast = activePage === SLIDES.length - 1;
@@ -52,7 +55,10 @@ export default function OnboardingScreen() {
     <ScreenContainer style={styles.container}>
       <SlidePager ref={pagerRef} onPageChanged={setActivePage}>
         {SLIDES.map((slide, index) => (
-          <View key={index} style={styles.slide}>
+          <View
+            key={index}
+            style={[styles.slide, { paddingTop: insets.top + spacing.xl }]}
+          >
             <View
               style={[
                 styles.imagePlaceholder,
@@ -109,7 +115,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingHorizontal: spacing.lg,
-    paddingTop: spacing.xl,
+    paddingTop: spacing.xl, // overridden dynamically with insets.top
   },
   imagePlaceholder: {
     width: width - spacing.lg * 2,

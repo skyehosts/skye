@@ -11,6 +11,7 @@ require('./instrument');
 
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Environments } from '@repo/common';
 import { constants } from './constants';
 import { mainConfig } from './main.config';
@@ -19,10 +20,11 @@ import { ErrorFormatFilter } from './modules/common/filters';
 
 async function bootstrap() {
   const isLocal = process.env.SKYE_ENVIRONMENT === Environments.LOCAL;
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalFilters(new ErrorFormatFilter());
   const logger = new Logger(bootstrap.name);
   if (!isLocal) {
+    app.set('trust proxy', 1); // Trust first proxy (Heroku load balancer)
     logger.debug('main', 'env vars', process.env);
   }
   mainConfig(app);

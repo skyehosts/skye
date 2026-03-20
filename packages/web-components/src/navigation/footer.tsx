@@ -1,6 +1,7 @@
 'use client';
 
 import { Box, Link, Stack, Typography } from '@mui/material';
+import { APP_DISPLAY_NAME_SHORT } from '@repo/common';
 
 export interface FooterLink {
   label: string;
@@ -19,7 +20,7 @@ export function Footer({
     { label: 'Privacy policy', href: '/privacy-policy' },
     { label: 'Contact', href: '/contact' },
   ],
-  copyrightText = `© SkyeHosts ${new Date().getFullYear()}`,
+  copyrightText = `© ${APP_DISPLAY_NAME_SHORT} ${new Date().getFullYear()}`,
 }: FooterProps) {
   return (
     <Box

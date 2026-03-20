@@ -11,6 +11,7 @@ import {
   spacing,
   typography,
 } from "../theme";
+import { APP_DISPLAY_NAME } from "@repo/common";
 
 const STEPS = [
   {
@@ -45,7 +46,7 @@ export default function CreateListingIntroScreen() {
 
       <View style={commonStyles.content}>
         <Text style={styles.heading}>
-          It&apos;s easy to get started on skyehosts
+          It&apos;s easy to get started on {APP_DISPLAY_NAME}
         </Text>
 
         <View style={styles.steps}>
