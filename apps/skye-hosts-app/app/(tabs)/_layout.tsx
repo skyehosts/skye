@@ -1,9 +1,13 @@
 import { CommonActions } from "@react-navigation/native";
 import { Tabs } from "expo-router";
+import { View } from "react-native";
 import { BottomNavigation, Icon } from "react-native-paper";
-import { colors } from "../theme";
+import { useUnreadMessages } from "../contexts/unread-messages-context";
+import { colors, commonStyles } from "../theme";
 
 export default function TabsLayout() {
+  const { hasUnread } = useUnreadMessages();
+
   return (
     <Tabs
       tabBar={({ navigation, state, descriptors, insets }) => (
@@ -70,7 +74,10 @@ export default function TabsLayout() {
           title: "Messages",
           tabBarLabel: "Messages",
           tabBarIcon: ({ color, size }) => (
-            <Icon source="message-outline" size={size} color={color} />
+            <View>
+              <Icon source="message-outline" size={size} color={color} />
+              {hasUnread && <View style={commonStyles.indicatorDot} />}
+            </View>
           ),
         }}
       />

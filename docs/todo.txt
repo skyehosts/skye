@@ -63,8 +63,6 @@ Host App
 ========
 - App APK should point to Production so I can edit listings in Prod DB etc.
 - Basic auth or prod protection.
-- If you delete all rows from Account, you appear to still be ble to login into app xD
-- name not required on signup again?!
 - Listing title, vertical height is too long
 - Test
   - Notification
@@ -79,6 +77,8 @@ Host App
   - Change password
   - Change email
 - If you already signed up and reinstalled app, could you gain access
+- Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
+  - Decide address upload or stripe verification (account vs name match)
 
 =============
 Guest website
@@ -88,6 +88,7 @@ Guest website
 ===============
 Long term TODOs
 ===============
+- Test face auth (IOS) biometrics, as it uses face not fingerprint apparently.
 - Do need to put validation on images with regards to weird ratios or, put a cropper in 
 - database.service.ts is anti pattern I think not necessary
   - This is because of getRepositorty() being almost pointless and in modules it's meant to export TypeOrm.ForFeature()
@@ -111,18 +112,16 @@ Next Steps for You (Cohost)
   an email param to phoneVerifyOtp to link the invite email to the new account. Without this, the acceptInvite email check will fail for phone-only signups. Want me
   to add that?
 - Favourites (listings)
-- Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
 
 ===============
 Pending Prompts
 ===============
 - getBiometricType() returned Face ID (User saw "Face ID" but it promptd for fingerprint. What are options here, 
 
-- In hosts app on the 'Listing editor' page, in the AppBar. Add an icon to top right with gear/settings icon that when clicked opens a new page with title 'Edit Listing preferences' and a back button on left
-(Re-use existing APpbar ideally)
+- In hosts app on edit listing preferences pag, 
 - Add list item:
-  - Title: Highland council short-term let laws
-  - Description: It is required to confirm you have a short-term let license.
+  - Title: Verify address
+  - Description: [You decide best]
   - Tap behaviour:
     - When tapped, open a modal
     - Review whether it is optimal to re-use form-input-modal.tsx or create a new one
@@ -141,7 +140,6 @@ Pending Prompts
   - Save button at bottom left to submit form and cancel button on right
   - This should save to a new property on listing.entity.ts called 'shortTermLetLicenseConfirmed
   -Also update the edit listing status page validation function that has a todo in it, to only allow host to set listing as 'listed' if this short term let has been confirmed.
-
 
 
 ==================
