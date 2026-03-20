@@ -233,6 +233,19 @@ export const commonStyles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
 
+  borderedRowContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    gap: spacing.sm,
+  },
+
+  borderedRowText: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+
   borderedRowDivider: {
     height: 1,
     backgroundColor: colors.border,

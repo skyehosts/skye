@@ -65,6 +65,7 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   coverImageUrl: string | null;
   images: IListingImageDto[];
   status: ListingStatus;
+  shortTermLetLicenseConfirmed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

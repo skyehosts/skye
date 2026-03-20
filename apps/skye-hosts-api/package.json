@@ -8,7 +8,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "db": "docker-compose -f docker-compose.local.yml --env-file .env.local up -d",
-    "db-down": "docker-compose -f docker-compose.local.yml --env-file .env.local down -v",
+    "db-down": "docker-compose -f docker-compose.local.yml --env-file .env.local down",
     "dev": "nest start --watch --port 3003",
     "dev:e2e": "./scripts/start-e2e.sh",
     "kill-dev": "lsof -ti:3003 | xargs kill -9 || echo 'No process running on port 3003'",

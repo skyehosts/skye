@@ -46,6 +46,15 @@ export default function EditListingScreen() {
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content title="Listing editor" />
+        <Appbar.Action
+          icon="cog"
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/preferences",
+              params: { id },
+            })
+          }
+        />
       </Appbar.Header>
 
       <ScrollView

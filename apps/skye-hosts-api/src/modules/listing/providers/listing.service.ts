@@ -344,6 +344,8 @@ export class ListingService {
     if (dto.safetyDevices !== undefined)
       listing.safetyDevices = dto.safetyDevices;
     if (dto.status !== undefined) listing.status = dto.status;
+    if (dto.shortTermLetLicenseConfirmed !== undefined)
+      listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
     listing.updatedAt = new Date();
 
     const updated = await this.databaseService
@@ -421,6 +423,7 @@ export class ListingService {
         : null,
       images: allImages.map((img) => this.toImageDto(img)),
       status: listing.status,
+      shortTermLetLicenseConfirmed: listing.shortTermLetLicenseConfirmed,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
     };
