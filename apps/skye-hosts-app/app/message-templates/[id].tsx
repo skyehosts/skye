@@ -1,22 +1,22 @@
-// TODO: In future, support injecting {{wifiNetwork}} and {{wifiPassword}} as template variables
-// so hosts can reference the listing's Wi-Fi credentials in automated messages.
 import type {
   ICreateMessageTemplateRequestDto,
   IGetHostListingsResponseDto,
   IHostListingDto,
   IMessageTemplateDto,
+  ITemplateToken,
   IUpdateMessageTemplateRequestDto,
   TriggerType,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { TRIGGER_TYPE_LABELS } from "../../../../packages/skye-hosts-api-client/src";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
+  type TextInput as RNTextInput,
   View,
 } from "react-native";
 import {
@@ -30,6 +30,7 @@ import {
 } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
+import { TemplateTokenPicker } from "../components/template-token-picker";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import { handleFormError } from "../utils/form-error-handler";
@@ -68,12 +69,17 @@ export default function MessageTemplateFormScreen() {
   const [listings, setListings] = useState<IHostListingDto[]>([]);
   const [selectedListingIds, setSelectedListingIds] = useState<number[]>([]);
   const [serverError, setServerError] = useState("");
+  const [tokenPickerVisible, setTokenPickerVisible] = useState(false);
+  const cursorPositionRef = useRef(0);
+  const contentInputRef = useRef<RNTextInput>(null);
 
   const {
     control,
     handleSubmit,
     setError,
     reset,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     defaultValues: { name: "", content: "", triggerPreset: null },
@@ -114,6 +120,21 @@ export default function MessageTemplateFormScreen() {
         : [...prev, listingId],
     );
   };
+
+  const insertToken = useCallback(
+    (token: ITemplateToken) => {
+      const current = getValues("content") ?? "";
+      const pos = cursorPositionRef.current;
+      const tag = `{{${token.key}}}`;
+      const updated = current.slice(0, pos) + tag + current.slice(pos);
+      setValue("content", updated, { shouldDirty: true });
+      cursorPositionRef.current = pos + tag.length;
+      setTimeout(() => {
+        contentInputRef.current?.focus();
+      }, 100);
+    },
+    [getValues, setValue],
+  );
 
   const onSubmit = async (data: FormValues) => {
     setServerError("");
@@ -219,21 +240,38 @@ export default function MessageTemplateFormScreen() {
             rules={{ required: "Message content is required" }}
             render={({ field }) => (
               <TextInput
+                ref={contentInputRef}
                 mode="outlined"
                 label="Message"
                 multiline
-                numberOfLines={5}
+                numberOfLines={10}
                 value={field.value}
                 onChangeText={field.onChange}
+                onSelectionChange={(e) => {
+                  cursorPositionRef.current = e.nativeEvent.selection.end;
+                }}
                 error={!!errors.content}
                 disabled={isBusy}
-                contentStyle={commonStyles.multilineInput}
+                contentStyle={[
+                  commonStyles.multilineInput,
+                  styles.messageInput,
+                ]}
               />
             )}
           />
           {errors.content && (
             <HelperText type="error">{errors.content.message}</HelperText>
           )}
+          <Button
+            mode="outlined"
+            icon="plus"
+            onPress={() => setTokenPickerVisible(true)}
+            disabled={isBusy}
+            style={styles.addDetailsButton}
+            compact
+          >
+            Add details
+          </Button>
         </View>
 
         <Divider style={styles.divider} />
@@ -339,6 +377,12 @@ export default function MessageTemplateFormScreen() {
       </ScrollView>
 
       <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
+
+      <TemplateTokenPicker
+        visible={tokenPickerVisible}
+        onDismiss={() => setTokenPickerVisible(false)}
+        onSelect={insertToken}
+      />
     </ScreenContainer>
   );
 }
@@ -364,6 +408,13 @@ const styles = StyleSheet.create({
   },
   checkboxItem: {
     paddingHorizontal: 0,
+  },
+  messageInput: {
+    minHeight: 200,
+  },
+  addDetailsButton: {
+    alignSelf: "flex-start",
+    marginTop: spacing.xs,
   },
   saveButton: {
     marginTop: spacing.sm,

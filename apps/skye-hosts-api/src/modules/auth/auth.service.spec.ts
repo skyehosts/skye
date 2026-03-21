@@ -2,7 +2,6 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as bcrypt from 'bcrypt';
 import { AccountService } from '../account/providers';
-import { DatabaseService } from '../common/providers';
 import { ConfigService } from '../config/providers/config.service';
 import { AuthService } from './providers/auth.service';
 import { TwilioService } from './providers/twilio.service';
@@ -25,16 +24,11 @@ describe('AuthService', () => {
       }),
     };
 
-    const databaseService = {
-      runInTransaction: jest.fn((work) => work()),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
         { provide: AccountService, useValue: accountService },
         { provide: ConfigService, useValue: configService },
-        { provide: DatabaseService, useValue: databaseService },
         { provide: TwilioService, useValue: {} },
       ],
     }).compile();

@@ -19,7 +19,6 @@ import { randomBytes } from 'crypto';
 import * as jwt from 'jsonwebtoken';
 import { Account } from '../../account/entities';
 import { AccountService } from '../../account/providers';
-import { DatabaseService } from '../../common/providers';
 import { ConfigService } from '../../config/providers/config.service';
 import { SignUpRequestDto } from '../dto';
 import { TwilioService } from './twilio.service';
@@ -37,7 +36,6 @@ export class AuthService {
   constructor(
     private accountService: AccountService,
     private configService: ConfigService,
-    private databaseService: DatabaseService,
     private twilioService: TwilioService,
   ) {}
 
@@ -358,15 +356,13 @@ export class AuthService {
   }
 
   async signUp(dto: SignUpRequestDto): Promise<Account> {
-    return this.databaseService.runInTransaction(async () => {
-      const passwordHash = await bcrypt.hash(dto.password, 10);
-      return this.accountService.create(
-        dto.email,
-        dto.name,
-        passwordHash,
-        dto.role,
-        dto.subscribedToNewsViaEmail,
-      );
-    });
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    return this.accountService.create(
+      dto.email,
+      dto.name,
+      passwordHash,
+      dto.role,
+      dto.subscribedToNewsViaEmail,
+    );
   }
 }

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import type { UserRole } from '@repo/skye-hosts-api-client';
-import { DeleteResult } from 'typeorm';
-import { DatabaseService } from '../../common/providers';
+import { DeleteResult, Repository } from 'typeorm';
 import { StripeService } from '../../stripe/providers';
 import { Account } from '../entities';
 
 @Injectable()
 export class AccountService {
   constructor(
-    private databaseService: DatabaseService,
+    @InjectRepository(Account)
+    private readonly accountRepo: Repository<Account>,
     private stripeService: StripeService,
   ) {}
 
@@ -19,14 +20,12 @@ export class AccountService {
     role: UserRole,
     subscribedToNewsViaEmail: boolean,
   ): Promise<Account> {
-    const repo = this.databaseService.getRepository(Account);
-
     // Deliberately creating customer before saving account so that worst case
     // we have an unassociated customer rather than an account without a customer.
     const stripeCustomer = await this.stripeService.createCustomer();
     const timestamp = new Date();
 
-    return repo.save({
+    return this.accountRepo.save({
       dateJoined: timestamp,
       email: email,
       lastLoggedIn: timestamp,
@@ -39,11 +38,11 @@ export class AccountService {
   }
 
   async delete(id: number): Promise<DeleteResult> {
-    return this.databaseService.getRepository(Account).delete(id);
+    return this.accountRepo.delete(id);
   }
 
   async findById(id: number) {
-    return this.databaseService.getRepository(Account).findOne({
+    return this.accountRepo.findOne({
       where: {
         id,
       },
@@ -51,7 +50,7 @@ export class AccountService {
   }
 
   async findByEmail(email: string) {
-    return this.databaseService.getRepository(Account).findOne({
+    return this.accountRepo.findOne({
       where: {
         email,
       },
@@ -63,10 +62,9 @@ export class AccountService {
     name: string,
     email?: string,
   ): Promise<Account> {
-    const repo = this.databaseService.getRepository(Account);
     const timestamp = new Date();
 
-    return repo.save({
+    return this.accountRepo.save({
       dateJoined: timestamp,
       lastLoggedIn: timestamp,
       name: name,
@@ -78,7 +76,7 @@ export class AccountService {
   }
 
   async findByPhoneNumber(phoneNumber: string) {
-    return this.databaseService.getRepository(Account).findOne({
+    return this.accountRepo.findOne({
       where: {
         phoneNumber,
       },
@@ -86,7 +84,7 @@ export class AccountService {
   }
 
   async findByResetToken(token: string) {
-    return this.databaseService.getRepository(Account).findOne({
+    return this.accountRepo.findOne({
       where: {
         passwordResetToken: token,
       },
@@ -94,6 +92,6 @@ export class AccountService {
   }
 
   async save(account: Account) {
-    return this.databaseService.getRepository(Account).save(account);
+    return this.accountRepo.save(account);
   }
 }

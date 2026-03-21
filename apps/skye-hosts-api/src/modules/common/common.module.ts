@@ -9,12 +9,11 @@ import {
   ResponseInterceptor,
 } from './interceptors';
 import { ValidationResponseFormatterPipe } from './pipes';
-import { DatabaseService, LoggerService, UtilityService } from './providers';
+import { LoggerService, UtilityService } from './providers';
 
 @Global()
 @Module({
   providers: [
-    DatabaseService,
     LoggerService,
     UtilityService,
     {
@@ -47,6 +46,6 @@ import { DatabaseService, LoggerService, UtilityService } from './providers';
     },
   ],
   imports: [ConfigModule],
-  exports: [DatabaseService, LoggerService, UtilityService],
+  exports: [LoggerService, UtilityService],
 })
 export class CommonModule {}

@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import type { OffsetUnit, TriggerType } from '@repo/skye-hosts-api-client';
 import { createHash } from 'crypto';
+import { EntityManager, EntityTarget, Repository } from 'typeorm';
 import { Booking } from '../../booking/entities';
-import { DatabaseService } from '../../common/providers';
 import { Listing } from '../../listing/entities';
 import {
   ListingMessageTemplate,
@@ -24,31 +25,46 @@ const TEST_TRIGGER_OFFSETS: Record<TriggerType, number> = {
 export class ScheduledMessageCreationService {
   private readonly logger = new Logger(ScheduledMessageCreationService.name);
 
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    @InjectRepository(ListingMessageTemplate)
+    private readonly listingMessageTemplateRepo: Repository<ListingMessageTemplate>,
+    @InjectRepository(TemplateVersion)
+    private readonly templateVersionRepo: Repository<TemplateVersion>,
+    @InjectRepository(TemplateTrigger)
+    private readonly templateTriggerRepo: Repository<TemplateTrigger>,
+    @InjectRepository(ScheduledMessage)
+    private readonly scheduledMessageRepo: Repository<ScheduledMessage>,
+    @InjectRepository(MessageLog)
+    private readonly messageLogRepo: Repository<MessageLog>,
+  ) {}
 
   async createForBooking(
     booking: Booking,
     listing: Listing,
     isTestBooking?: boolean,
+    manager?: EntityManager,
   ): Promise<void> {
-    const attachments = await this.databaseService
-      .getRepository(ListingMessageTemplate)
-      .find({ where: { listingId: listing.id } });
+    const repo = <T>(entity: EntityTarget<T>) =>
+      manager ? manager.getRepository(entity) : this.getDefaultRepo(entity);
+
+    const attachments = await repo(ListingMessageTemplate).find({
+      where: { listingId: listing.id },
+    });
 
     if (attachments.length === 0) return;
 
     for (const attachment of attachments) {
       const [activeVersion, triggers] = await Promise.all([
-        this.databaseService.getRepository(TemplateVersion).findOne({
+        repo(TemplateVersion).findOne({
           where: {
             messageTemplateId: attachment.messageTemplateId,
             status: 'active',
           },
           order: { versionNumber: 'DESC' },
         }),
-        this.databaseService
-          .getRepository(TemplateTrigger)
-          .find({ where: { messageTemplateId: attachment.messageTemplateId } }),
+        repo(TemplateTrigger).find({
+          where: { messageTemplateId: attachment.messageTemplateId },
+        }),
       ]);
 
       if (!activeVersion || triggers.length === 0) continue;
@@ -59,9 +75,24 @@ export class ScheduledMessageCreationService {
           trigger,
           activeVersion,
           isTestBooking,
+          manager,
         );
       }
     }
+  }
+
+  private getDefaultRepo<T>(entity: EntityTarget<T>): Repository<T> {
+    if (entity === ListingMessageTemplate)
+      return this.listingMessageTemplateRepo as unknown as Repository<T>;
+    if (entity === TemplateVersion)
+      return this.templateVersionRepo as unknown as Repository<T>;
+    if (entity === TemplateTrigger)
+      return this.templateTriggerRepo as unknown as Repository<T>;
+    if (entity === ScheduledMessage)
+      return this.scheduledMessageRepo as unknown as Repository<T>;
+    if (entity === MessageLog)
+      return this.messageLogRepo as unknown as Repository<T>;
+    throw new Error(`No default repository for entity: ${String(entity)}`);
   }
 
   private async createScheduledMessageForTrigger(
@@ -69,13 +100,15 @@ export class ScheduledMessageCreationService {
     trigger: TemplateTrigger,
     activeVersion: TemplateVersion,
     isTestBooking?: boolean,
+    manager?: EntityManager,
   ): Promise<void> {
+    const repo = <T>(entity: EntityTarget<T>) =>
+      manager ? manager.getRepository(entity) : this.getDefaultRepo(entity);
+
     if (!trigger.allowMultiplePerBooking) {
-      const existing = await this.databaseService
-        .getRepository(ScheduledMessage)
-        .findOne({
-          where: { bookingId: booking.id, templateTriggerId: trigger.id },
-        });
+      const existing = await repo(ScheduledMessage).findOne({
+        where: { bookingId: booking.id, templateTriggerId: trigger.id },
+      });
       if (existing) {
         this.logger.debug(
           `Skipping trigger #${trigger.id} for booking #${booking.id}: allowMultiplePerBooking = false`,
@@ -99,9 +132,9 @@ export class ScheduledMessageCreationService {
       .update(`${booking.id}:${trigger.id}:${activeVersion.id}`)
       .digest('hex');
 
-    const duplicate = await this.databaseService
-      .getRepository(ScheduledMessage)
-      .findOne({ where: { idempotencyKey } });
+    const duplicate = await repo(ScheduledMessage).findOne({
+      where: { idempotencyKey },
+    });
 
     if (duplicate) {
       this.logger.debug(
@@ -112,24 +145,22 @@ export class ScheduledMessageCreationService {
 
     const now = new Date();
 
-    const scheduledMessage = await this.databaseService
-      .getRepository(ScheduledMessage)
-      .save({
-        bookingId: booking.id,
-        listingId: booking.listingId,
-        templateVersionId: activeVersion.id,
-        templateTriggerId: trigger.id,
-        sendAt,
-        status: 'pending',
-        idempotencyKey,
-        retryCount: 0,
-        lockedAt: null,
-        lockedBy: null,
-        createdAt: now,
-        updatedAt: now,
-      } as ScheduledMessage);
+    const scheduledMessage = await repo(ScheduledMessage).save({
+      bookingId: booking.id,
+      listingId: booking.listingId,
+      templateVersionId: activeVersion.id,
+      templateTriggerId: trigger.id,
+      sendAt,
+      status: 'pending',
+      idempotencyKey,
+      retryCount: 0,
+      lockedAt: null,
+      lockedBy: null,
+      createdAt: now,
+      updatedAt: now,
+    } as ScheduledMessage);
 
-    await this.databaseService.getRepository(MessageLog).save({
+    await repo(MessageLog).save({
       scheduledMessageId: scheduledMessage.id,
       action: 'created',
       details: null,

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
-import { DatabaseService } from '../../common/providers';
 import { Listing } from '../../listing/entities';
 import { ListingUserRole } from '../entities';
 import { ListingAccessService } from './listing-access.service';
@@ -14,18 +14,14 @@ describe('ListingAccessService', () => {
     listingRepo = { findOne: jest.fn() };
     listingUserRoleRepo = { findOne: jest.fn(), find: jest.fn() };
 
-    const databaseService = {
-      getRepository: jest.fn((entity) => {
-        if (entity === Listing) return listingRepo;
-        if (entity === ListingUserRole) return listingUserRoleRepo;
-        return null;
-      }),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ListingAccessService,
-        { provide: DatabaseService, useValue: databaseService },
+        { provide: getRepositoryToken(Listing), useValue: listingRepo },
+        {
+          provide: getRepositoryToken(ListingUserRole),
+          useValue: listingUserRoleRepo,
+        },
       ],
     }).compile();
 
