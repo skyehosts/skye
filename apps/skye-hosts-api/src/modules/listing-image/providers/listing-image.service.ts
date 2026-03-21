@@ -11,8 +11,9 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
-import { DatabaseService } from '../../common/providers';
+import { DataSource, Repository } from 'typeorm';
 import {
   IMAGE_WIDTHS,
   toListingImageDto,
@@ -39,7 +40,12 @@ export class ListingImageService {
   private readonly cdnDomain: string;
 
   constructor(
-    private readonly databaseService: DatabaseService,
+    @InjectRepository(ListingImage)
+    private readonly listingImageRepo: Repository<ListingImage>,
+    @InjectRepository(Listing)
+    private readonly listingRepo: Repository<Listing>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     private readonly configService: ConfigService,
     private readonly queueMessageService: AwsQueueSendMessageService,
   ) {
@@ -62,33 +68,31 @@ export class ListingImageService {
   ): Promise<RequestListingImageUploadResponseDto> {
     await this.verifyListingOwnership(listingId, hostId);
 
-    const imageId = await this.databaseService.runInTransaction(
-      async (manager) => {
-        const existing = await manager.getRepository(ListingImage).find({
-          where: { listingId },
-          select: ['id'],
-          lock: { mode: 'pessimistic_write' },
-        });
-        const existingCount = existing.length;
+    const imageId = await this.dataSource.transaction(async (manager) => {
+      const existing = await manager.getRepository(ListingImage).find({
+        where: { listingId },
+        select: ['id'],
+        lock: { mode: 'pessimistic_write' },
+      });
+      const existingCount = existing.length;
 
-        if (existingCount >= MAX_IMAGES_PER_LISTING) {
-          throw new BadRequestException(
-            `A listing cannot have more than ${MAX_IMAGES_PER_LISTING} images`,
-          );
-        }
+      if (existingCount >= MAX_IMAGES_PER_LISTING) {
+        throw new BadRequestException(
+          `A listing cannot have more than ${MAX_IMAGES_PER_LISTING} images`,
+        );
+      }
 
-        const id = randomUUID();
+      const id = randomUUID();
 
-        await manager.getRepository(ListingImage).save({
-          id,
-          listingId,
-          position: existingCount,
-          originalKey: `listings/${listingId}/original/${id}`,
-        } as ListingImage);
+      await manager.getRepository(ListingImage).save({
+        id,
+        listingId,
+        position: existingCount,
+        originalKey: `listings/${listingId}/original/${id}`,
+      } as ListingImage);
 
-        return id;
-      },
-    );
+      return id;
+    });
 
     const uploadUrl = await this.generatePresignedUrl(imageId, listingId);
 
@@ -106,39 +110,37 @@ export class ListingImageService {
   ): Promise<RequestListingImageUploadsResponseDto> {
     await this.verifyListingOwnership(listingId, hostId);
 
-    const imageIds = await this.databaseService.runInTransaction(
-      async (manager) => {
-        const existing = await manager.getRepository(ListingImage).find({
-          where: { listingId },
-          select: ['id'],
-          lock: { mode: 'pessimistic_write' },
-        });
-        const existingCount = existing.length;
+    const imageIds = await this.dataSource.transaction(async (manager) => {
+      const existing = await manager.getRepository(ListingImage).find({
+        where: { listingId },
+        select: ['id'],
+        lock: { mode: 'pessimistic_write' },
+      });
+      const existingCount = existing.length;
 
-        if (existingCount + count > MAX_IMAGES_PER_LISTING) {
-          throw new BadRequestException(
-            `This would exceed the ${MAX_IMAGES_PER_LISTING} image limit. Listing currently has ${existingCount} image(s).`,
-          );
-        }
+      if (existingCount + count > MAX_IMAGES_PER_LISTING) {
+        throw new BadRequestException(
+          `This would exceed the ${MAX_IMAGES_PER_LISTING} image limit. Listing currently has ${existingCount} image(s).`,
+        );
+      }
 
-        const records: ListingImage[] = [];
-        for (let i = 0; i < count; i++) {
-          const id = randomUUID();
-          records.push(
-            manager.getRepository(ListingImage).create({
-              id,
-              listingId,
-              position: existingCount + i,
-              originalKey: `listings/${listingId}/original/${id}`,
-            }),
-          );
-        }
+      const records: ListingImage[] = [];
+      for (let i = 0; i < count; i++) {
+        const id = randomUUID();
+        records.push(
+          manager.getRepository(ListingImage).create({
+            id,
+            listingId,
+            position: existingCount + i,
+            originalKey: `listings/${listingId}/original/${id}`,
+          }),
+        );
+      }
 
-        await manager.getRepository(ListingImage).save(records);
+      await manager.getRepository(ListingImage).save(records);
 
-        return records.map((r) => r.id);
-      },
-    );
+      return records.map((r) => r.id);
+    });
 
     const uploads: RequestListingImageUploadItemDto[] = await Promise.all(
       imageIds.map(async (imageId) => ({
@@ -155,9 +157,9 @@ export class ListingImageService {
   }
 
   async confirmUpload(imageId: string, hostId: number): Promise<void> {
-    const image = await this.databaseService
-      .getRepository(ListingImage)
-      .findOne({ where: { id: imageId } });
+    const image = await this.listingImageRepo.findOne({
+      where: { id: imageId },
+    });
 
     if (!image) {
       throw new NotFoundException('Image not found');
@@ -178,9 +180,7 @@ export class ListingImageService {
   }
 
   async confirmUploads(imageIds: string[], hostId: number): Promise<void> {
-    const images = await this.databaseService
-      .getRepository(ListingImage)
-      .findByIds(imageIds);
+    const images = await this.listingImageRepo.findByIds(imageIds);
 
     if (images.length !== imageIds.length) {
       throw new NotFoundException('One or more images not found');
@@ -214,7 +214,7 @@ export class ListingImageService {
   async getListingImages(
     listingId: number,
   ): Promise<GetListingImagesResponseDto> {
-    const images = await this.databaseService.getRepository(ListingImage).find({
+    const images = await this.listingImageRepo.find({
       where: { listingId },
       order: { position: 'ASC' },
     });
@@ -225,9 +225,9 @@ export class ListingImageService {
   }
 
   async deleteImage(imageId: string, hostId: number): Promise<void> {
-    const image = await this.databaseService
-      .getRepository(ListingImage)
-      .findOne({ where: { id: imageId } });
+    const image = await this.listingImageRepo.findOne({
+      where: { id: imageId },
+    });
 
     if (!image) {
       throw new NotFoundException('Image not found');
@@ -244,31 +244,24 @@ export class ListingImageService {
       await this.deleteS3Object(derivedKey);
     }
 
-    const deletedPosition = image.position;
     const { listingId } = image;
 
-    await this.databaseService.getRepository(ListingImage).remove(image);
+    await this.listingImageRepo.remove(image);
 
     // Reorder remaining images to close the gap
-    const remainingImages = await this.databaseService
-      .getRepository(ListingImage)
-      .find({
-        where: { listingId },
-        order: { position: 'ASC' },
-      });
+    const remainingImages = await this.listingImageRepo.find({
+      where: { listingId },
+      order: { position: 'ASC' },
+    });
 
     for (let i = 0; i < remainingImages.length; i++) {
       if (remainingImages[i].position !== i) {
         remainingImages[i].position = i;
-        await this.databaseService
-          .getRepository(ListingImage)
-          .save(remainingImages[i]);
+        await this.listingImageRepo.save(remainingImages[i]);
       }
     }
 
-    this.logger.debug(
-      `Deleted image ${imageId} at position ${deletedPosition} from listing ${listingId}`,
-    );
+    this.logger.debug(`Deleted image ${imageId} from listing ${listingId}`);
   }
 
   async reorderImages(
@@ -278,9 +271,9 @@ export class ListingImageService {
   ): Promise<void> {
     await this.verifyListingOwnership(listingId, hostId);
 
-    const images = await this.databaseService
-      .getRepository(ListingImage)
-      .find({ where: { listingId } });
+    const images = await this.listingImageRepo.find({
+      where: { listingId },
+    });
 
     const imageMap = new Map(images.map((img) => [img.id, img]));
 
@@ -296,7 +289,7 @@ export class ListingImageService {
       const image = imageMap.get(imageIds[i]);
       if (image.position !== i) {
         image.position = i;
-        await this.databaseService.getRepository(ListingImage).save(image);
+        await this.listingImageRepo.save(image);
       }
     }
 
@@ -325,9 +318,9 @@ export class ListingImageService {
     listingId: number,
     hostId: number,
   ): Promise<Listing> {
-    const listing = await this.databaseService
-      .getRepository(Listing)
-      .findOne({ where: { id: listingId } });
+    const listing = await this.listingRepo.findOne({
+      where: { id: listingId },
+    });
 
     if (!listing) {
       throw new NotFoundException('Listing not found');

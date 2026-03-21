@@ -1,10 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import type {
   IGetMessageTemplatesResponseDto,
   IMessageTemplateDto,
 } from '@repo/skye-hosts-api-client';
-import { IsNull } from 'typeorm';
-import { DatabaseService } from '../../common/providers';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import {
   CreateMessageTemplateRequestDto,
   UpdateMessageTemplateRequestDto,
@@ -15,16 +19,30 @@ import {
   TemplateTrigger,
   TemplateVersion,
 } from '../entities';
+import { TemplateInterpolationService } from './template-interpolation.service';
 
 @Injectable()
 export class MessageTemplateService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(
+    @InjectRepository(MessageTemplate)
+    private readonly messageTemplateRepo: Repository<MessageTemplate>,
+    @InjectRepository(TemplateVersion)
+    private readonly templateVersionRepo: Repository<TemplateVersion>,
+    @InjectRepository(ListingMessageTemplate)
+    private readonly listingMessageTemplateRepo: Repository<ListingMessageTemplate>,
+    @InjectRepository(TemplateTrigger)
+    private readonly templateTriggerRepo: Repository<TemplateTrigger>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+    private readonly templateInterpolationService: TemplateInterpolationService,
+  ) {}
 
   async create(
     hostId: number,
     dto: CreateMessageTemplateRequestDto,
   ): Promise<IMessageTemplateDto> {
-    return this.databaseService.runInTransaction(async (manager) => {
+    this.validateContent(dto.content);
+    return this.dataSource.transaction(async (manager) => {
       const now = new Date();
 
       const template = await manager.getRepository(MessageTemplate).save({
@@ -79,7 +97,8 @@ export class MessageTemplateService {
     hostId: number,
     dto: UpdateMessageTemplateRequestDto,
   ): Promise<IMessageTemplateDto> {
-    return this.databaseService.runInTransaction(async (manager) => {
+    this.validateContent(dto.content);
+    return this.dataSource.transaction(async (manager) => {
       const template = await manager
         .getRepository(MessageTemplate)
         .findOne({ where: { id, hostId, deletedAt: IsNull() } });
@@ -167,25 +186,23 @@ export class MessageTemplateService {
   }
 
   async delete(id: number, hostId: number): Promise<void> {
-    const template = await this.databaseService
-      .getRepository(MessageTemplate)
-      .findOne({ where: { id, hostId, deletedAt: IsNull() } });
+    const template = await this.messageTemplateRepo.findOne({
+      where: { id, hostId, deletedAt: IsNull() },
+    });
 
     if (!template) {
       throw new NotFoundException('Message template not found');
     }
 
     template.deletedAt = new Date();
-    await this.databaseService.getRepository(MessageTemplate).save(template);
+    await this.messageTemplateRepo.save(template);
   }
 
   async getAll(hostId: number): Promise<IGetMessageTemplatesResponseDto> {
-    const templates = await this.databaseService
-      .getRepository(MessageTemplate)
-      .find({
-        where: { hostId, deletedAt: IsNull() },
-        order: { createdAt: 'DESC' },
-      });
+    const templates = await this.messageTemplateRepo.find({
+      where: { hostId, deletedAt: IsNull() },
+      order: { createdAt: 'DESC' },
+    });
 
     const dtos = await Promise.all(
       templates.map((t) => this.loadAndBuildDto(t)),
@@ -195,9 +212,9 @@ export class MessageTemplateService {
   }
 
   async getById(id: number, hostId: number): Promise<IMessageTemplateDto> {
-    const template = await this.databaseService
-      .getRepository(MessageTemplate)
-      .findOne({ where: { id, hostId, deletedAt: IsNull() } });
+    const template = await this.messageTemplateRepo.findOne({
+      where: { id, hostId, deletedAt: IsNull() },
+    });
 
     if (!template) {
       throw new NotFoundException('Message template not found');
@@ -210,19 +227,29 @@ export class MessageTemplateService {
     template: MessageTemplate,
   ): Promise<IMessageTemplateDto> {
     const [activeVersion, listingLinks, triggers] = await Promise.all([
-      this.databaseService.getRepository(TemplateVersion).findOne({
+      this.templateVersionRepo.findOne({
         where: { messageTemplateId: template.id, status: 'active' },
         order: { versionNumber: 'DESC' },
       }),
-      this.databaseService
-        .getRepository(ListingMessageTemplate)
-        .find({ where: { messageTemplateId: template.id } }),
-      this.databaseService
-        .getRepository(TemplateTrigger)
-        .find({ where: { messageTemplateId: template.id } }),
+      this.listingMessageTemplateRepo.find({
+        where: { messageTemplateId: template.id },
+      }),
+      this.templateTriggerRepo.find({
+        where: { messageTemplateId: template.id },
+      }),
     ]);
 
     return this.toDto(template, activeVersion ?? null, listingLinks, triggers);
+  }
+
+  private validateContent(content: string): void {
+    const invalidTokens =
+      this.templateInterpolationService.validateTokens(content);
+    if (invalidTokens.length > 0) {
+      throw new BadRequestException(
+        `Unknown template tokens: ${invalidTokens.join(', ')}. Check spelling or remove unrecognised {{...}} tags.`,
+      );
+    }
   }
 
   private toDto(

@@ -3,10 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { IsNull, Not } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 import { Account } from '../../account/entities';
 import { Booking } from '../../booking/entities';
-import { DatabaseService } from '../../common/providers';
 import type {
   GetConversationsResponseDto,
   GetMessagesResponseDto,
@@ -23,15 +23,24 @@ interface BookingAccessResult {
 
 @Injectable()
 export class MessageService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    @InjectRepository(Message)
+    private readonly messageRepo: Repository<Message>,
+    // Booking registered locally — circular dep: MessageModule → BookingModule → ScheduledMessageModule → MessageModule
+    @InjectRepository(Booking)
+    private readonly bookingRepo: Repository<Booking>,
+    @InjectRepository(Account)
+    private readonly accountRepo: Repository<Account>,
+  ) {}
 
   async validateBookingAccess(
     bookingId: number,
     userId: number,
   ): Promise<BookingAccessResult> {
-    const booking = await this.databaseService
-      .getRepository(Booking)
-      .findOne({ where: { id: bookingId }, relations: ['listing'] });
+    const booking = await this.bookingRepo.findOne({
+      where: { id: bookingId },
+      relations: ['listing'],
+    });
 
     if (!booking) {
       throw new NotFoundException('Booking not found');
@@ -57,7 +66,7 @@ export class MessageService {
     await this.validateBookingAccess(bookingId, senderId);
 
     const now = new Date();
-    const message = await this.databaseService.getRepository(Message).save({
+    const message = await this.messageRepo.save({
       bookingId,
       senderId,
       content,
@@ -82,15 +91,13 @@ export class MessageService {
   ): Promise<GetMessagesResponseDto> {
     await this.validateBookingAccess(bookingId, userId);
 
-    const [messages, total] = await this.databaseService
-      .getRepository(Message)
-      .findAndCount({
-        where: { bookingId },
-        relations: ['sender'],
-        order: { createdAt: 'DESC' },
-        skip: (page - 1) * limit,
-        take: limit,
-      });
+    const [messages, total] = await this.messageRepo.findAndCount({
+      where: { bookingId },
+      relations: ['sender'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * limit,
+      take: limit,
+    });
 
     return {
       messages: messages.map((msg) => ({
@@ -114,12 +121,10 @@ export class MessageService {
   ): Promise<MarkMessagesReadResponseDto> {
     await this.validateBookingAccess(bookingId, userId);
 
-    const result = await this.databaseService
-      .getRepository(Message)
-      .update(
-        { bookingId, senderId: Not(userId), readAt: IsNull() },
-        { readAt: new Date() },
-      );
+    const result = await this.messageRepo.update(
+      { bookingId, senderId: Not(userId), readAt: IsNull() },
+      { readAt: new Date() },
+    );
 
     return {
       updatedCount: result.affected || 0,
@@ -127,23 +132,20 @@ export class MessageService {
   }
 
   async getConversations(userId: number): Promise<GetConversationsResponseDto> {
-    const account = await this.databaseService
-      .getRepository(Account)
-      .findOne({ where: { id: userId } });
+    const account = await this.accountRepo.findOne({
+      where: { id: userId },
+    });
 
     if (!account) {
       throw new NotFoundException('Account not found');
     }
 
-    const bookingsAsGuest = await this.databaseService
-      .getRepository(Booking)
-      .find({
-        where: { guestId: userId },
-        relations: ['listing'],
-      });
+    const bookingsAsGuest = await this.bookingRepo.find({
+      where: { guestId: userId },
+      relations: ['listing'],
+    });
 
-    const bookingsAsHost = await this.databaseService
-      .getRepository(Booking)
+    const bookingsAsHost = await this.bookingRepo
       .createQueryBuilder('booking')
       .innerJoinAndSelect('booking.listing', 'listing')
       .where('listing.hostId = :userId', { userId })
@@ -156,39 +158,35 @@ export class MessageService {
 
     const conversations = await Promise.all(
       uniqueBookings.map(async (booking) => {
-        const lastMessage = await this.databaseService
-          .getRepository(Message)
-          .findOne({
-            where: { bookingId: booking.id },
-            order: { createdAt: 'DESC' },
-          });
+        const lastMessage = await this.messageRepo.findOne({
+          where: { bookingId: booking.id },
+          order: { createdAt: 'DESC' },
+        });
 
         if (!lastMessage) {
           return null;
         }
 
-        const unreadCount = await this.databaseService
-          .getRepository(Message)
-          .count({
-            where: {
-              bookingId: booking.id,
-              senderId: Not(userId),
-              readAt: IsNull(),
-            },
-          });
+        const unreadCount = await this.messageRepo.count({
+          where: {
+            bookingId: booking.id,
+            senderId: Not(userId),
+            readAt: IsNull(),
+          },
+        });
 
         const isGuest = booking.guestId === userId;
         let otherPartyName: string;
 
         if (isGuest) {
-          const host = await this.databaseService
-            .getRepository(Account)
-            .findOne({ where: { id: booking.listing.hostId } });
+          const host = await this.accountRepo.findOne({
+            where: { id: booking.listing.hostId },
+          });
           otherPartyName = host?.name || 'Unknown';
         } else {
-          const guest = await this.databaseService
-            .getRepository(Account)
-            .findOne({ where: { id: booking.guestId } });
+          const guest = await this.accountRepo.findOne({
+            where: { id: booking.guestId },
+          });
           otherPartyName = guest?.name || 'Unknown';
         }
 
@@ -221,9 +219,10 @@ export class MessageService {
     bookingId: number,
     senderId: number,
   ): Promise<number | null> {
-    const booking = await this.databaseService
-      .getRepository(Booking)
-      .findOne({ where: { id: bookingId }, relations: ['listing'] });
+    const booking = await this.bookingRepo.findOne({
+      where: { id: bookingId },
+      relations: ['listing'],
+    });
 
     if (!booking) return null;
 
@@ -234,9 +233,9 @@ export class MessageService {
   }
 
   async getSenderName(senderId: number): Promise<string> {
-    const account = await this.databaseService
-      .getRepository(Account)
-      .findOne({ where: { id: senderId } });
+    const account = await this.accountRepo.findOne({
+      where: { id: senderId },
+    });
     return account?.name || 'Unknown';
   }
 }

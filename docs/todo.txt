@@ -13,6 +13,7 @@ Next
 ===
 MVP
 ===
+- Line breaks in messages aren't honored
 - Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)
@@ -116,30 +117,6 @@ Next Steps for You (Cohost)
 ===============
 Pending Prompts
 ===============
-- getBiometricType() returned Face ID (User saw "Face ID" but it promptd for fingerprint. What are options here, 
-
-- In hosts app on edit listing preferences pag, 
-- Add list item:
-  - Title: Verify address
-  - Description: [You decide best]
-  - Tap behaviour:
-    - When tapped, open a modal
-    - Review whether it is optimal to re-use form-input-modal.tsx or create a new one
-    - Content in modal:
-      "Local Laws in Scotland
-
-      In Scotland, it is a legal requirement as a new Host that you obtain a short-term lets licence before accepting any bookings.
-
-      If your listing has been operating before 1 October 2022 (on or off Airbnb), you have until 30 September 2023 to apply for a licence and may continue to accept bookings while you await your local authority’s decision.
-
-      Exclusions, requirements and more information related to planning and licensing can be found on the Scottish Government website.
-
-      More details, including how to apply for a licence, can be found here (mygov.scot/short-term-let-licences)
-
-      ☐ I understand that by accepting our Terms of Service and listing my space, I certify that I will follow applicable laws and regulations."
-  - Save button at bottom left to submit form and cancel button on right
-  - This should save to a new property on listing.entity.ts called 'shortTermLetLicenseConfirmed
-  -Also update the edit listing status page validation function that has a todo in it, to only allow host to set listing as 'listed' if this short term let has been confirmed.
 
 
 ==================
@@ -162,4 +139,6 @@ TLDR:
   - Don't use exact wording
   - Diverge layout/style slightly where possible
 
-
+On both thes pages in host app:
+  - Create message template
+  - Edit message template.

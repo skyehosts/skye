@@ -7,8 +7,10 @@ import { DemoService } from './providers';
 describe('DemoController', () => {
   let controller: DemoController;
 
-  const mockDatabaseService = {
-    getRepository: jest.fn().mockResolvedValue(undefined),
+  const mockDemoService = {
+    getDemoData: jest.fn().mockResolvedValue(undefined),
+    submitForm: jest.fn().mockResolvedValue(undefined),
+    saveWithTransactions: jest.fn().mockResolvedValue(undefined),
   };
 
   beforeEach(async () => {
@@ -18,7 +20,7 @@ describe('DemoController', () => {
       providers: [DemoService, ConfigService],
     })
       .overrideProvider(DemoService)
-      .useValue(mockDatabaseService)
+      .useValue(mockDemoService)
       .compile();
 
     controller = app.get<DemoController>(DemoController);

@@ -1,24 +1,30 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import {
   type ListingPermission,
   type ListingRole,
   LISTING_ROLE_PERMISSIONS,
 } from '@repo/skye-hosts-api-client';
-import { DatabaseService } from '../../common/providers';
+import { Repository } from 'typeorm';
 import { Listing } from '../../listing/entities';
 import { ListingUserRole } from '../entities';
 
 @Injectable()
 export class ListingAccessService {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    @InjectRepository(Listing)
+    private readonly listingRepo: Repository<Listing>,
+    @InjectRepository(ListingUserRole)
+    private readonly listingUserRoleRepo: Repository<ListingUserRole>,
+  ) {}
 
   async getListingRole(
     accountId: number,
     listingId: number,
   ): Promise<ListingRole | null> {
-    const listing = await this.databaseService
-      .getRepository(Listing)
-      .findOne({ where: { id: listingId } });
+    const listing = await this.listingRepo.findOne({
+      where: { id: listingId },
+    });
 
     if (!listing) {
       return null;
@@ -28,9 +34,9 @@ export class ListingAccessService {
       return 'owner';
     }
 
-    const userRole = await this.databaseService
-      .getRepository(ListingUserRole)
-      .findOne({ where: { accountId, listingId } });
+    const userRole = await this.listingUserRoleRepo.findOne({
+      where: { accountId, listingId },
+    });
 
     return userRole?.role ?? null;
   }
@@ -50,8 +56,6 @@ export class ListingAccessService {
   async getListingRolesForAccount(
     accountId: number,
   ): Promise<ListingUserRole[]> {
-    return this.databaseService
-      .getRepository(ListingUserRole)
-      .find({ where: { accountId } });
+    return this.listingUserRoleRepo.find({ where: { accountId } });
   }
 }

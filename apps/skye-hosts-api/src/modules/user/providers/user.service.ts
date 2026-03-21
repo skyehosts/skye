@@ -8,9 +8,7 @@ import {
   IUserEditDetailsRequestDto,
   IUserSummaryVm,
 } from '@repo/skye-hosts-api-client';
-import { Account } from '../../account/entities';
 import { AccountService } from '../../account/providers';
-import { DatabaseService } from '../../common/providers';
 import {
   GetEmailSubscriptionsResponseDto,
   SaveEmailSubscriptionsRequestDto,
@@ -18,15 +16,10 @@ import {
 
 @Injectable()
 export class UserService {
-  constructor(
-    private accountService: AccountService,
-    private databaseService: DatabaseService,
-  ) {}
+  constructor(private accountService: AccountService) {}
 
   async delete(id: number): Promise<void> {
-    await this.databaseService.runInTransaction(async () => {
-      await this.accountService.delete(id);
-    });
+    await this.accountService.delete(id);
   }
 
   async editDetails(
@@ -48,7 +41,7 @@ export class UserService {
   }
 
   async hasSignedUp(id: number, email?: string): Promise<boolean> {
-    let account: Account = null;
+    let account = null;
     if (id) {
       account = await this.accountService.findById(id);
     } else {
@@ -80,7 +73,7 @@ export class UserService {
   async toggleCookieUsage(id: number, enable: boolean): Promise<void> {
     const account = await this.accountService.findById(id);
     account.cookieUsageEnabled = enable;
-    await this.databaseService.getRepository(Account).save(account);
+    await this.accountService.save(account);
   }
 
   async getEmailSubscriptions(

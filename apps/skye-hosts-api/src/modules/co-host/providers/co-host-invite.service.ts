@@ -4,6 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import {
   type CoHostRole,
   FULL_ACCESS_INVITABLE_ROLES,
@@ -11,8 +12,9 @@ import {
   ListingPermission,
 } from '@repo/skye-hosts-api-client';
 import { createHash, randomBytes } from 'crypto';
+import { DataSource, Repository } from 'typeorm';
 import { AccountService } from '../../account/providers';
-import { DatabaseService, LoggerService } from '../../common/providers';
+import { LoggerService } from '../../common/providers';
 import { ConfigService } from '../../config/providers/config.service';
 import { EmailTemplate } from '../../email/enums/email-template.enum';
 import { ResendService } from '../../email/providers/resend.service';
@@ -32,7 +34,14 @@ const INVITE_EXPIRY_DAYS = 7;
 @Injectable()
 export class CoHostInviteService {
   constructor(
-    private databaseService: DatabaseService,
+    @InjectRepository(CoHostInvite)
+    private readonly coHostInviteRepo: Repository<CoHostInvite>,
+    @InjectRepository(ListingUserRole)
+    private readonly listingUserRoleRepo: Repository<ListingUserRole>,
+    @InjectRepository(Listing)
+    private readonly listingRepo: Repository<Listing>,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     private accountService: AccountService,
     private listingAccessService: ListingAccessService,
     private resendService: ResendService,
@@ -74,15 +83,13 @@ export class CoHostInviteService {
       );
     }
 
-    const existingInvite = await this.databaseService
-      .getRepository(CoHostInvite)
-      .findOne({
-        where: {
-          listingId,
-          inviteeEmail,
-          status: 'pending',
-        },
-      });
+    const existingInvite = await this.coHostInviteRepo.findOne({
+      where: {
+        listingId,
+        inviteeEmail,
+        status: 'pending',
+      },
+    });
 
     if (existingInvite) {
       throw new BadRequestException(
@@ -90,8 +97,7 @@ export class CoHostInviteService {
       );
     }
 
-    const existingRole = await this.databaseService
-      .getRepository(ListingUserRole)
+    const existingRole = await this.listingUserRoleRepo
       .createQueryBuilder('lur')
       .innerJoin('account', 'a', 'a.id = lur."accountId"')
       .where('lur."listingId" = :listingId', { listingId })
@@ -113,38 +119,36 @@ export class CoHostInviteService {
     const appLinkBaseUrl = this.configService.getAll().appLinkBaseUrl;
     const inviteLink = `${appLinkBaseUrl}/invite?token=${rawToken}`;
 
-    const invite = await this.databaseService.runInTransaction(
-      async (manager) => {
-        const saved = await manager.getRepository(CoHostInvite).save({
-          listingId,
-          inviterAccountId,
-          inviteeEmail,
-          role,
-          status: 'pending',
-          tokenHash,
-          expiresAt,
-          createdAt: new Date(),
-        } as CoHostInvite);
+    const invite = await this.dataSource.transaction(async (manager) => {
+      const saved = await manager.getRepository(CoHostInvite).save({
+        listingId,
+        inviterAccountId,
+        inviteeEmail,
+        role,
+        status: 'pending',
+        tokenHash,
+        expiresAt,
+        createdAt: new Date(),
+      } as CoHostInvite);
 
-        const listing = await manager
-          .getRepository(Listing)
-          .findOne({ where: { id: listingId } });
+      const listing = await manager
+        .getRepository(Listing)
+        .findOne({ where: { id: listingId } });
 
-        const inviter = await this.accountService.findById(inviterAccountId);
+      const inviter = await this.accountService.findById(inviterAccountId);
 
-        await this.resendService.sendTemplate(
-          inviteeEmail,
-          EmailTemplate.CoHostInvite,
-          {
-            inviteLink,
-            listingTitle: listing?.title ?? 'a listing',
-            inviterName: inviter?.name ?? 'A host',
-          },
-        );
+      await this.resendService.sendTemplate(
+        inviteeEmail,
+        EmailTemplate.CoHostInvite,
+        {
+          inviteLink,
+          listingTitle: listing?.title ?? 'a listing',
+          inviterName: inviter?.name ?? 'A host',
+        },
+      );
 
-        return saved;
-      },
-    );
+      return saved;
+    });
 
     this.logger.debug(
       `Co-host invite created: ${invite.id} for listing ${listingId}`,
@@ -161,17 +165,17 @@ export class CoHostInviteService {
   ): Promise<GetCoHostInviteDetailsResponseDto> {
     const tokenHash = createHash('sha256').update(rawToken).digest('hex');
 
-    const invite = await this.databaseService
-      .getRepository(CoHostInvite)
-      .findOne({ where: { tokenHash } });
+    const invite = await this.coHostInviteRepo.findOne({
+      where: { tokenHash },
+    });
 
     if (!invite) {
       throw new NotFoundException('Invite not found');
     }
 
-    const listing = await this.databaseService
-      .getRepository(Listing)
-      .findOne({ where: { id: invite.listingId } });
+    const listing = await this.listingRepo.findOne({
+      where: { id: invite.listingId },
+    });
 
     if (!listing) {
       throw new NotFoundException('Listing not found');
@@ -198,9 +202,9 @@ export class CoHostInviteService {
   ): Promise<AcceptCoHostInviteResponseDto> {
     const tokenHash = createHash('sha256').update(rawToken).digest('hex');
 
-    const invite = await this.databaseService
-      .getRepository(CoHostInvite)
-      .findOne({ where: { tokenHash } });
+    const invite = await this.coHostInviteRepo.findOne({
+      where: { tokenHash },
+    });
 
     if (!invite) {
       throw new NotFoundException('Invite not found');
@@ -212,7 +216,7 @@ export class CoHostInviteService {
 
     if (invite.expiresAt < new Date()) {
       invite.status = 'expired';
-      await this.databaseService.getRepository(CoHostInvite).save(invite);
+      await this.coHostInviteRepo.save(invite);
       throw new BadRequestException('Invite has expired');
     }
 
@@ -227,17 +231,15 @@ export class CoHostInviteService {
       );
     }
 
-    const existingRole = await this.databaseService
-      .getRepository(ListingUserRole)
-      .findOne({
-        where: { accountId: acceptingAccountId, listingId: invite.listingId },
-      });
+    const existingRole = await this.listingUserRoleRepo.findOne({
+      where: { accountId: acceptingAccountId, listingId: invite.listingId },
+    });
 
     if (existingRole) {
       throw new BadRequestException('You already have a role on this listing');
     }
 
-    await this.databaseService.getRepository(ListingUserRole).save({
+    await this.listingUserRoleRepo.save({
       accountId: acceptingAccountId,
       listingId: invite.listingId,
       role: invite.role,
@@ -245,7 +247,7 @@ export class CoHostInviteService {
     } as ListingUserRole);
 
     invite.status = 'accepted';
-    await this.databaseService.getRepository(CoHostInvite).save(invite);
+    await this.coHostInviteRepo.save(invite);
 
     this.logger.debug(
       `Co-host invite ${invite.id} accepted by account ${acceptingAccountId}`,
@@ -273,12 +275,10 @@ export class CoHostInviteService {
       );
     }
 
-    const invites = await this.databaseService
-      .getRepository(CoHostInvite)
-      .find({
-        where: { listingId },
-        order: { createdAt: 'DESC' },
-      });
+    const invites = await this.coHostInviteRepo.find({
+      where: { listingId },
+      order: { createdAt: 'DESC' },
+    });
 
     return {
       invites: invites.map((invite) => ({
@@ -296,9 +296,9 @@ export class CoHostInviteService {
   }
 
   async revokeInvite(accountId: number, inviteId: number): Promise<void> {
-    const invite = await this.databaseService
-      .getRepository(CoHostInvite)
-      .findOne({ where: { id: inviteId } });
+    const invite = await this.coHostInviteRepo.findOne({
+      where: { id: inviteId },
+    });
 
     if (!invite) {
       throw new NotFoundException('Invite not found');
@@ -323,7 +323,7 @@ export class CoHostInviteService {
     }
 
     invite.status = 'revoked';
-    await this.databaseService.getRepository(CoHostInvite).save(invite);
+    await this.coHostInviteRepo.save(invite);
 
     this.logger.debug(
       `Co-host invite ${invite.id} revoked by account ${accountId}`,
@@ -346,9 +346,9 @@ export class CoHostInviteService {
       );
     }
 
-    const roles = await this.databaseService
-      .getRepository(ListingUserRole)
-      .find({ where: { listingId } });
+    const roles = await this.listingUserRoleRepo.find({
+      where: { listingId },
+    });
 
     const coHosts = await Promise.all(
       roles.map(async (role) => {
@@ -371,9 +371,9 @@ export class CoHostInviteService {
     accountId: number,
     listingUserRoleId: number,
   ): Promise<void> {
-    const roleToRemove = await this.databaseService
-      .getRepository(ListingUserRole)
-      .findOne({ where: { id: listingUserRoleId } });
+    const roleToRemove = await this.listingUserRoleRepo.findOne({
+      where: { id: listingUserRoleId },
+    });
 
     if (!roleToRemove) {
       throw new NotFoundException('Co-host role not found');
@@ -391,9 +391,7 @@ export class CoHostInviteService {
       );
     }
 
-    await this.databaseService
-      .getRepository(ListingUserRole)
-      .delete(listingUserRoleId);
+    await this.listingUserRoleRepo.delete(listingUserRoleId);
 
     this.logger.debug(
       `Co-host role ${listingUserRoleId} removed by account ${accountId}`,

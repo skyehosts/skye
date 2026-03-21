@@ -4,10 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
-import { In } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { ListingAccessService } from '../../co-host/providers/listing-access.service';
-import { DatabaseService } from '../../common/providers';
 import {
   buildDerivedImageUrl,
   toListingImageDto,
@@ -29,7 +29,10 @@ export class ListingService {
   private readonly cdnDomain: string;
 
   constructor(
-    private databaseService: DatabaseService,
+    @InjectRepository(Listing)
+    private readonly listingRepo: Repository<Listing>,
+    @InjectRepository(ListingImage)
+    private readonly listingImageRepo: Repository<ListingImage>,
     private listingAccessService: ListingAccessService,
     private configService: ConfigService,
   ) {
@@ -50,9 +53,9 @@ export class ListingService {
     listingIds: number[],
   ): Promise<Map<number, string>> {
     if (listingIds.length === 0) return new Map();
-    const covers = await this.databaseService
-      .getRepository(ListingImage)
-      .find({ where: { listingId: In(listingIds), position: 0 } });
+    const covers = await this.listingImageRepo.find({
+      where: { listingId: In(listingIds), position: 0 },
+    });
     return new Map(covers.map((c) => [c.listingId, c.id]));
   }
 
@@ -61,7 +64,7 @@ export class ListingService {
     dto: CreateListingRequestDto,
   ): Promise<CreateListingResponseDto> {
     const now = new Date();
-    const listing = await this.databaseService.getRepository(Listing).save({
+    const listing = await this.listingRepo.save({
       hostId,
       title: dto.title,
       description: dto.description,
@@ -97,7 +100,7 @@ export class ListingService {
   }
 
   async getAll(): Promise<GetAllListingsResponseDto> {
-    const listings = await this.databaseService.getRepository(Listing).find({
+    const listings = await this.listingRepo.find({
       where: { status: 'active' },
       order: { createdAt: 'DESC' },
     });
@@ -128,7 +131,7 @@ export class ListingService {
   }
 
   async getHomepage(): Promise<GetHomepageListingsResponseDto> {
-    const listings = await this.databaseService.getRepository(Listing).find({
+    const listings = await this.listingRepo.find({
       where: { status: 'active' },
       order: { createdAt: 'DESC' },
     });
@@ -152,9 +155,10 @@ export class ListingService {
   }
 
   async getByHostId(accountId: number): Promise<GetHostListingsResponseDto> {
-    const ownedListings = await this.databaseService
-      .getRepository(Listing)
-      .find({ where: { hostId: accountId }, order: { createdAt: 'DESC' } });
+    const ownedListings = await this.listingRepo.find({
+      where: { hostId: accountId },
+      order: { createdAt: 'DESC' },
+    });
 
     const coHostRoles =
       await this.listingAccessService.getListingRolesForAccount(accountId);
@@ -162,7 +166,7 @@ export class ListingService {
 
     const coHostedListings =
       coHostListingIds.length > 0
-        ? await this.databaseService.getRepository(Listing).find({
+        ? await this.listingRepo.find({
             where: { id: In(coHostListingIds) },
             order: { createdAt: 'DESC' },
           })
@@ -225,9 +229,7 @@ export class ListingService {
       where.hostId = hostId;
     }
 
-    const listing = await this.databaseService
-      .getRepository(Listing)
-      .findOne({ where });
+    const listing = await this.listingRepo.findOne({ where });
 
     if (!listing) {
       throw new NotFoundException('Listing not found');
@@ -253,9 +255,7 @@ export class ListingService {
       );
     }
 
-    const listing = await this.databaseService
-      .getRepository(Listing)
-      .findOne({ where: { id } });
+    const listing = await this.listingRepo.findOne({ where: { id } });
 
     if (!listing) {
       throw new NotFoundException('Listing not found');
@@ -348,9 +348,7 @@ export class ListingService {
       listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
     listing.updatedAt = new Date();
 
-    const updated = await this.databaseService
-      .getRepository(Listing)
-      .save(listing);
+    const updated = await this.listingRepo.save(listing);
 
     return this.toResponseDto(updated);
   }
@@ -362,9 +360,10 @@ export class ListingService {
   private async toResponseDto(
     listing: Listing,
   ): Promise<GetListingResponseDto> {
-    const allImages = await this.databaseService
-      .getRepository(ListingImage)
-      .find({ where: { listingId: listing.id }, order: { position: 'ASC' } });
+    const allImages = await this.listingImageRepo.find({
+      where: { listingId: listing.id },
+      order: { position: 'ASC' },
+    });
 
     const coverImage = allImages.find((img) => img.position === 0);
 

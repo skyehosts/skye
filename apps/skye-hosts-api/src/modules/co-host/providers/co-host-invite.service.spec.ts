@@ -4,12 +4,15 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { createHash, randomBytes } from 'crypto';
+import { DataSource } from 'typeorm';
 import { AccountService } from '../../account/providers';
-import { DatabaseService, LoggerService } from '../../common/providers';
+import { LoggerService } from '../../common/providers';
 import { ConfigService } from '../../config/providers/config.service';
 import { ResendService } from '../../email/providers/resend.service';
+import { Listing } from '../../listing/entities';
 import { CoHostInvite, ListingUserRole } from '../entities';
 import { CoHostInviteService } from './co-host-invite.service';
 import { ListingAccessService } from './listing-access.service';
@@ -75,21 +78,17 @@ describe('CoHostInviteService', () => {
 
     listingRepo = { findOne: jest.fn() };
 
-    const Listing = (await import('../../listing/entities')).Listing;
-
-    const getRepository = jest.fn((entity) => {
-      if (entity === CoHostInvite) return coHostInviteRepo;
-      if (entity === ListingUserRole) return listingUserRoleRepo;
-      if (entity === Listing) return listingRepo;
-      return null;
-    });
-
-    const databaseService = {
-      getRepository,
-      runInTransaction: jest.fn((work) => {
-        const manager = { getRepository };
-        return work(manager);
+    const mockManager = {
+      getRepository: jest.fn((entity) => {
+        if (entity === CoHostInvite) return coHostInviteRepo;
+        if (entity === ListingUserRole) return listingUserRoleRepo;
+        if (entity === Listing) return listingRepo;
+        return null;
       }),
+    };
+
+    const mockDataSource = {
+      transaction: jest.fn((work) => work(mockManager)),
     };
 
     accountService = {
@@ -104,7 +103,16 @@ describe('CoHostInviteService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CoHostInviteService,
-        { provide: DatabaseService, useValue: databaseService },
+        {
+          provide: getRepositoryToken(CoHostInvite),
+          useValue: coHostInviteRepo,
+        },
+        {
+          provide: getRepositoryToken(ListingUserRole),
+          useValue: listingUserRoleRepo,
+        },
+        { provide: getRepositoryToken(Listing), useValue: listingRepo },
+        { provide: DataSource, useValue: mockDataSource },
         { provide: AccountService, useValue: accountService },
         { provide: ListingAccessService, useValue: listingAccessService },
         {
@@ -304,13 +312,12 @@ describe('CoHostInviteService', () => {
 
   describe('acceptInvite', () => {
     const rawToken = randomBytes(32).toString('hex');
-    const tokenHash = hashToken(rawToken);
     const futureDate = new Date(Date.now() + 86400000);
 
     function pendingInvite(overrides = {}) {
       return {
         id: 1,
-        tokenHash,
+        tokenHash: hashToken(rawToken),
         listingId: 10,
         inviteeEmail: 'cohost@example.com',
         role: 'full_access',
