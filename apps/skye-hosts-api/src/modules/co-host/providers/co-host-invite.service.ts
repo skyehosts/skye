@@ -113,8 +113,9 @@ export class CoHostInviteService {
     const rawToken = randomBytes(32).toString('hex');
     const tokenHash = createHash('sha256').update(rawToken).digest('hex');
 
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + INVITE_EXPIRY_DAYS);
+    const expiresAt = new Date(
+      Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+    );
 
     const appLinkBaseUrl = this.configService.getAll().appLinkBaseUrl;
     const inviteLink = `${appLinkBaseUrl}/invite?token=${rawToken}`;
