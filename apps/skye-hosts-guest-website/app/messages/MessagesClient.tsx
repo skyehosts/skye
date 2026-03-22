@@ -531,7 +531,9 @@ export default function MessagesClient() {
                     borderRadius: 2,
                   }}
                 >
-                  <Typography variant="body2">{msg.content}</Typography>
+                  <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                    {msg.content}
+                  </Typography>
                   <Typography
                     variant="caption"
                     sx={{
