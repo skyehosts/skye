@@ -13,7 +13,6 @@ Next
 ===
 MVP
 ===
-- Line breaks in messages aren't honored
 - Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)
@@ -62,7 +61,6 @@ Aws infrastructure
 ========
 Host App
 ========
-- App APK should point to Production so I can edit listings in Prod DB etc.
 - Basic auth or prod protection.
 - Listing title, vertical height is too long
 - Test
