@@ -74,7 +74,7 @@ Host App
 - Calendar page
 - Menu page
   - Change password
-  - Change email
+  - Change pin
 - If you already signed up and reinstalled app, could you gain access
 - Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
   - Decide address upload or stripe verification (account vs name match)
@@ -109,6 +109,15 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
+- In hosts app On, Login & Security' page
+- Add a list of list items (Re-use same style from 'menu' page)
+- First list item add 'Change pin'
+- Include icon on list item and you decide best one
+- When clicked, enables user to change their pin
+- Ensure encapsulate in a component so it can moved easily in future if needed
+- Ensure the customer journey is secure / protected from malicious users
+- Keep flow simple as possible
+- Any major decisions, ask me
 
 ==================
 Re-useable prompts

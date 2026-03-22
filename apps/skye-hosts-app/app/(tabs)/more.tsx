@@ -1,8 +1,9 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Appbar, Button, Icon } from "react-native-paper";
+import { StyleSheet, Text, View } from "react-native";
+import { Appbar, Button } from "react-native-paper";
 import { AppModal } from "../components/app-modal";
+import { MenuItem } from "../components/menu-item";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
 import {
@@ -12,31 +13,6 @@ import {
   spacing,
   typography,
 } from "../theme";
-
-interface MenuItemProps {
-  icon: string;
-  label: string;
-  onPress: () => void;
-  danger?: boolean;
-}
-
-function MenuItem({ icon, label, onPress, danger }: MenuItemProps) {
-  return (
-    <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-      <Icon
-        source={icon}
-        size={22}
-        color={danger ? colors.danger : colors.textSecondary}
-      />
-      <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]}>
-        {label}
-      </Text>
-      {!danger && (
-        <Icon source="chevron-right" size={22} color={colors.textSecondary} />
-      )}
-    </TouchableOpacity>
-  );
-}
 
 export default function MoreScreen() {
   const { signOut } = useAuth();
@@ -49,7 +25,7 @@ export default function MoreScreen() {
         <Appbar.Content title="Menu" />
       </Appbar.Header>
 
-      <View style={styles.section}>
+      <View style={commonStyles.menuSection}>
         <MenuItem
           icon="account-outline"
           label="Personal details"
@@ -77,7 +53,7 @@ export default function MoreScreen() {
         />
       </View>
 
-      <View style={styles.section}>
+      <View style={commonStyles.menuSection}>
         <MenuItem
           icon="logout"
           label="Sign out"
@@ -117,31 +93,6 @@ export default function MoreScreen() {
 }
 
 const styles = StyleSheet.create({
-  section: {
-    marginTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  menuItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-    backgroundColor: colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  menuItemText: {
-    flex: 1,
-    fontSize: typography.md,
-    color: colors.textPrimary,
-  },
-  menuItemTextDanger: {
-    color: colors.danger,
-  },
   modalMessage: {
     fontSize: typography.md,
     color: colors.textSecondary,

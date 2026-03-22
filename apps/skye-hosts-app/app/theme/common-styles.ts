@@ -169,6 +169,16 @@ export const commonStyles = StyleSheet.create({
     color: colors.background,
   },
 
+  /* ── Menu sections ─────────────────────────────── */
+
+  menuSection: {
+    marginTop: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+
   /* ── Dividers ───────────────────────────────────── */
 
   divider: {
