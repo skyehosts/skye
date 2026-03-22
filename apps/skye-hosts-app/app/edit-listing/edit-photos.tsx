@@ -1,7 +1,7 @@
 import type { IListingImageDto } from "../../../../packages/skye-hosts-api-client/src";
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -29,6 +29,7 @@ export default function EditPhotosScreen() {
   const [previewImage, setPreviewImage] = useState<IListingImageDto | null>(
     null,
   );
+  const waitingForProcessing = useRef(false);
 
   const {
     remoteImages,
@@ -62,11 +63,17 @@ export default function EditPhotosScreen() {
     ]);
   };
 
-  const handleUpload = async () => {
-    await uploadAll();
-    const hasErrors = localImages.some((img) => img.status === "error");
-    if (!hasErrors) {
+  useEffect(() => {
+    if (waitingForProcessing.current && processingImageIds.size === 0) {
+      waitingForProcessing.current = false;
       setSuccessMessage("Photos uploaded successfully");
+    }
+  }, [processingImageIds]);
+
+  const handleUpload = async () => {
+    const allSucceeded = await uploadAll();
+    if (allSucceeded) {
+      waitingForProcessing.current = true;
     }
   };
 

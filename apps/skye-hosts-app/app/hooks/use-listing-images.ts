@@ -32,7 +32,7 @@ interface UseListingImagesReturn {
   pickImages: () => Promise<void>;
   removeLocal: (index: number) => void;
   removeRemote: (imageId: string) => Promise<void>;
-  uploadAll: () => Promise<void>;
+  uploadAll: () => Promise<boolean>;
   reorder: (imageIds: string[]) => Promise<void>;
   refresh: () => Promise<void>;
   clearError: () => void;
@@ -172,9 +172,9 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
     }
   }, []);
 
-  const uploadAll = useCallback(async () => {
+  const uploadAll = useCallback(async (): Promise<boolean> => {
     const pending = localImages.filter((img) => img.status === "pending");
-    if (pending.length === 0) return;
+    if (pending.length === 0) return true;
 
     setUploading(true);
     setError("");
@@ -190,6 +190,8 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
         },
       });
 
+      const allSucceeded = uploadedIds.length === pending.length;
+
       // Remove successfully uploaded locals and refresh remote list
       setLocalImages((prev) => prev.filter((img) => img.status !== "done"));
       await refresh();
@@ -202,8 +204,11 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
           return next;
         });
       }
+
+      return allSucceeded;
     } catch (e) {
       handleApiError(e, setError);
+      return false;
     } finally {
       setUploading(false);
     }
