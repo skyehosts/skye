@@ -115,7 +115,10 @@ Next Steps for You (Cohost)
 ===============
 Pending Prompts
 ===============
+Given I don't want to upgrade to vercel paid tier but want temporarily to hide guest and glamping website from public until ready for releas.
+Can you implement basic auth via Next.js Middleware (Most Common Free Solution). Should only apply to production env (SkyeEnvironment)
 
+This is the typical “temporary lock” people use on Hobby.
 
 ==================
 Re-useable prompts
