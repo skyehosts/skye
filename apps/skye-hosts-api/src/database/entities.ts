@@ -2,6 +2,7 @@ import { Account } from '../modules/account/entities';
 import { Booking } from '../modules/booking/entities';
 import { CoHostInvite, ListingUserRole } from '../modules/co-host/entities';
 import { Demo } from '../modules/demo/entities';
+import { Favourite } from '../modules/favourite/entities';
 import { ListingImage } from '../modules/listing-image/entities';
 import { Listing } from '../modules/listing/entities';
 import { Message } from '../modules/message/entities';
@@ -25,6 +26,7 @@ export const entities = [
   Booking,
   CoHostInvite,
   Demo,
+  Favourite,
   DeviceToken,
   Listing,
   ListingImage,

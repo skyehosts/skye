@@ -1,10 +1,15 @@
 import Container from '@mui/material/Container';
-import { fetchApi, IGetListingResponseDto } from '@repo/skye-hosts-api-client';
+import {
+  fetchApi,
+  type IGetListingResponseDto,
+  type IToggleFavouriteResponseDto,
+} from '@repo/skye-hosts-api-client';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
+import { FavouriteButton } from './FavouriteButton';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
@@ -28,6 +33,20 @@ export default async function ListingPage({ params }: ListingPageProps) {
   const session = await auth();
   const guestId = session?.user?.id ? Number(session.user.id) : null;
 
+  let isFavourited = false;
+  if (session?.apiToken) {
+    try {
+      const favCheck = await fetchApi<IToggleFavouriteResponseDto>(
+        `/favourite/check/${listing.id}`,
+        undefined,
+        { headers: { Authorization: `Bearer ${session.apiToken}` } },
+      );
+      isFavourited = favCheck.isFavourited;
+    } catch {
+      // Fail silently — favourite state will default to false
+    }
+  }
+
   return (
     <Container maxWidth={false} sx={{ maxWidth: 1120, px: { xs: 0, md: 3 } }}>
       <ListingHeroSection
@@ -43,13 +62,19 @@ export default async function ListingPage({ params }: ListingPageProps) {
       />
       {/* TODO: Replace hardcoded values with actual booking form data */}
       {guestId ? (
-        <BookNowButton
-          listingId={listing.id}
-          guestId={guestId}
-          checkInDate="2026-04-01"
-          checkOutDate="2026-04-05"
-          totalPrice={500}
-        />
+        <>
+          <FavouriteButton
+            listingId={listing.id}
+            initialFavourited={isFavourited}
+          />
+          <BookNowButton
+            listingId={listing.id}
+            guestId={guestId}
+            checkInDate="2026-04-01"
+            checkOutDate="2026-04-05"
+            totalPrice={500}
+          />
+        </>
       ) : (
         <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
           Log in to book

@@ -88,37 +88,27 @@ Guest website
 Long term TODOs
 ===============
 - Test face auth (IOS) biometrics, as it uses face not fingerprint apparently.
-- Do need to put validation on images with regards to weird ratios or, put a cropper in 
-- database.service.ts is anti pattern I think not necessary
-  - This is because of getRepositorty() being almost pointless and in modules it's meant to export TypeOrm.ForFeature()
-  - Also double check but I think perhaps the transaction approach in thi service has fragility issues
 - docs/user-todos/universal-links-setup.md
   - ## Apple (iOS Universal Links)
 - Improve twilio email verification spam folder avoidance
   e.g configure SPF, DKIM, DMARC
-- email verification (using same twilio sms service)
 - How can I test host app from my device if not dev API, does it matter?
 - Enable tracing for sentry? - Can exceed free tier though...
 - Stripe secret and publishable key on prod are using sandbox creds, need replaced
 - Review const protectedPaths = ['/dashboard', '/bookings', '/account']; in each app
 - Solve env vars in apps/f/e better as vercel doesn't support org level env vars
   and dont want repat across projects. but want to keep simple and no anti pattern.
-Next Steps for You (Cohost)
+- Next Steps for You (Cohost)
   - The invite link deep link (skye-hosts://co-host/invite-landing?token=xxx) works with the existing scheme: "skye-hosts" config. For production, you'll want
   universal links (HTTPS) too so the link works when the app isn't installed.
   - Email sending is stubbed — the owner shares the invite link manually (Share sheet).
   - The sign-up-via-invite flow collects phone + OTP + name, but doesn't yet set the invitee's email on their account. You'll need a PATCH /account endpoint or add
   an email param to phoneVerifyOtp to link the invite email to the new account. Without this, the acceptInvite email check will fail for phone-only signups. Want me
   to add that?
-- Favourites (listings)
 
 ===============
 Pending Prompts
 ===============
-Given I don't want to upgrade to vercel paid tier but want temporarily to hide guest and glamping website from public until ready for releas.
-Can you implement basic auth via Next.js Middleware (Most Common Free Solution). Should only apply to production env (SkyeEnvironment)
-
-This is the typical “temporary lock” people use on Hobby.
 
 ==================
 Re-useable prompts

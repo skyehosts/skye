@@ -41,6 +41,8 @@ export * from './dto-interfaces/co-host/remove-co-host-request.dto';
 export * from './dto-interfaces/co-host/revoke-co-host-invite-request.dto';
 export * from './dto-interfaces/demo/demo-form.dto';
 export * from './dto-interfaces/demo/demo.dto';
+export * from './dto-interfaces/favourite/get-favourites-response.dto';
+export * from './dto-interfaces/favourite/toggle-favourite.dto';
 export * from './dto-interfaces/listing-image/confirm-image-upload-request.dto';
 export * from './dto-interfaces/listing-image/confirm-listing-image-uploads-request.dto';
 export * from './dto-interfaces/listing-image/get-listing-images-response.dto';

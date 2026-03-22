@@ -17,6 +17,7 @@
     "./listings/create-listing-form": "./src/listings/create-listing-form.tsx",
     "./listings/glamping-info-card": "./src/listings/glamping-info-card.tsx",
     "./listings/homepage-listing-card": "./src/listings/homepage-listing-card.tsx",
+    "./listings/listing-thumbnail": "./src/listings/listing-thumbnail.tsx",
     "./listings/listing-hero-section": "./src/listings/listing-hero-section.tsx",
     "./listings/homepage-listings-grid": "./src/listings/homepage-listings-grid.tsx",
     "./listings/edit-listing-form": "./src/listings/edit-listing-form.tsx",

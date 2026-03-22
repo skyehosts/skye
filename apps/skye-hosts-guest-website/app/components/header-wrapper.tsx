@@ -8,6 +8,7 @@ const publicLinks = [{ label: 'Listings', href: '/' }];
 
 const authenticatedLinks = [
   ...publicLinks,
+  { label: 'Favourites', href: '/favourites' },
   { label: 'Messages', href: '/messages' },
 ];
 
