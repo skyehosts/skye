@@ -292,6 +292,58 @@ export const commonStyles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
 
+  /* ── Location / postcode ────────────────────────── */
+
+  postcodeRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+
+  postcodeInput: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+
+  locateButton: {
+    marginTop: spacing.xs,
+  },
+
+  locationLoadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+
+  locationLoadingText: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
+
+  locationErrorText: {
+    color: colors.danger,
+    fontSize: typography.sm,
+    marginTop: spacing.sm,
+  },
+
+  mapSection: {
+    marginTop: spacing.lg,
+  },
+
+  mapLabel: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
+  },
+
+  coordsText: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+    marginTop: spacing.sm,
+    textAlign: "center",
+  },
+
   /* ── Indicator dot ───────────────────────────────── */
 
   indicatorDot: {

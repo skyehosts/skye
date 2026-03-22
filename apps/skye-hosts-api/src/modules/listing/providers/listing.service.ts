@@ -24,6 +24,21 @@ import {
 } from '../dto';
 import { Listing } from '../entities';
 
+function generateApproximateCoordinates(
+  lat: number,
+  lng: number,
+  radiusMeters = 500,
+): { approximateLatitude: number; approximateLongitude: number } {
+  const radiusInDegrees = radiusMeters / 111_320;
+  const angle = Math.random() * 2 * Math.PI;
+  const distance = Math.random() * radiusInDegrees;
+  return {
+    approximateLatitude: lat + distance * Math.cos(angle),
+    approximateLongitude:
+      lng + (distance * Math.sin(angle)) / Math.cos((lat * Math.PI) / 180),
+  };
+}
+
 @Injectable()
 export class ListingService {
   private readonly cdnDomain: string;
@@ -64,6 +79,16 @@ export class ListingService {
     dto: CreateListingRequestDto,
   ): Promise<CreateListingResponseDto> {
     const now = new Date();
+
+    const coords =
+      dto.latitude !== undefined && dto.longitude !== undefined
+        ? {
+            latitude: dto.latitude,
+            longitude: dto.longitude,
+            ...generateApproximateCoordinates(dto.latitude, dto.longitude),
+          }
+        : {};
+
     const listing = await this.listingRepo.save({
       hostId,
       title: dto.title,
@@ -79,6 +104,7 @@ export class ListingService {
       beds: dto.beds,
       bathrooms: dto.bathrooms,
       postCode: dto.postCode,
+      ...coords,
       amenities: dto.amenities,
       highlights: dto.highlights,
       bookingType: dto.bookingType,
@@ -223,19 +249,37 @@ export class ListingService {
     };
   }
 
-  async getById(id: number, hostId?: number): Promise<GetListingResponseDto> {
-    const where: { id: number; hostId?: number } = { id };
-    if (hostId !== undefined) {
-      where.hostId = hostId;
-    }
-
-    const listing = await this.listingRepo.findOne({ where });
-
+  private async findOneOrFail(id: number): Promise<Listing> {
+    const listing = await this.listingRepo.findOne({ where: { id } });
     if (!listing) {
       throw new NotFoundException('Listing not found');
     }
+    return listing;
+  }
 
+  async getById(id: number): Promise<GetListingResponseDto> {
+    const listing = await this.findOneOrFail(id);
     return this.toResponseDto(listing);
+  }
+
+  async getByIdForHost(
+    id: number,
+    accountId: number,
+  ): Promise<GetListingResponseDto> {
+    const hasPermission = await this.listingAccessService.hasPermission(
+      accountId,
+      id,
+      ListingPermission.EDIT_LISTING,
+    );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'You do not have permission to view this listing',
+      );
+    }
+
+    const listing = await this.findOneOrFail(id);
+    return this.toResponseDto(listing, true);
   }
 
   async update(
@@ -255,11 +299,7 @@ export class ListingService {
       );
     }
 
-    const listing = await this.listingRepo.findOne({ where: { id } });
-
-    if (!listing) {
-      throw new NotFoundException('Listing not found');
-    }
+    const listing = await this.findOneOrFail(id);
 
     if (dto.title !== undefined) listing.title = dto.title;
     if (dto.description !== undefined) listing.description = dto.description;
@@ -346,11 +386,21 @@ export class ListingService {
     if (dto.status !== undefined) listing.status = dto.status;
     if (dto.shortTermLetLicenseConfirmed !== undefined)
       listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
+    if (dto.latitude !== undefined && dto.longitude !== undefined) {
+      listing.latitude = dto.latitude;
+      listing.longitude = dto.longitude;
+      const approx = generateApproximateCoordinates(
+        dto.latitude,
+        dto.longitude,
+      );
+      listing.approximateLatitude = approx.approximateLatitude;
+      listing.approximateLongitude = approx.approximateLongitude;
+    }
     listing.updatedAt = new Date();
 
     const updated = await this.listingRepo.save(listing);
 
-    return this.toResponseDto(updated);
+    return this.toResponseDto(updated, true);
   }
 
   private toImageDto(image: ListingImage) {
@@ -359,6 +409,7 @@ export class ListingService {
 
   private async toResponseDto(
     listing: Listing,
+    includeExactCoords = false,
   ): Promise<GetListingResponseDto> {
     const allImages = await this.listingImageRepo.find({
       where: { listingId: listing.id },
@@ -417,6 +468,10 @@ export class ListingService {
       accessibilityFeatures: listing.accessibilityFeatures,
       safetyConsiderations: listing.safetyConsiderations,
       safetyDevices: listing.safetyDevices,
+      latitude: includeExactCoords ? listing.latitude : null,
+      longitude: includeExactCoords ? listing.longitude : null,
+      approximateLatitude: listing.approximateLatitude,
+      approximateLongitude: listing.approximateLongitude,
       coverImageUrl: coverImage
         ? this.buildCoverImageUrl(listing.id, coverImage.id)
         : null,

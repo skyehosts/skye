@@ -142,3 +142,207 @@ TLDR:
 On both thes pages in host app:
   - Create message template
   - Edit message template.
+
+
+# 1. Overview
+
+We will implement a hybrid location system for a BnB platform:
+
+- Update Host app during create listing journey, on existing enter postcode page, use geocoding to use Google Maps for pin placement 
+- Backend stores only latitude/longitude as source of truth
+- Guest website shows a static Google Maps snapshot
+- Clicking snapshot opens a Mapbox interactive map modal
+
+Goals:
+- Minimise cost on guest map views
+- Maximise accuracy during host setup
+- Keep system flexible and provider-agnostic
+
+---
+
+# 2. Core Architecture Decision
+
+## Source of truth
+Store ONLY:
+- latitude
+- longitude
+
+Do NOT store:
+- map provider state
+- tiles
+- rendered images as primary truth
+
+Coordinates are the only canonical location data.
+
+---
+
+# 3. System Flow Overview
+
+## Host flow (React Native)
+1. Host enters postcode
+2. Google Map loads centered on approximate location
+3. Host drops or drags pin
+4. Host confirms location
+5. Backend stores lat/lng
+
+## Guest flow (Website)
+1. Listing page loads (i.e /listing/:id/:slug)
+2. Static Google Maps image is displayed
+3. User clicks image
+4. Modal opens with Mapbox interactive map
+5. Map centers on stored lat/lng
+
+---
+
+# 5. Backend Storage
+
+## Listing schema
+Store only canonical location data on existing listing.entity.ts
+
+```json
+{
+  "latitude": 57.12345,
+  "longitude": -6.12345
+}
+
+# 6. Guest Website (Listing Page)
+
+## Default UI state
+- Display static Google Maps image as the primary location preview (1120 or max width of container x 470high)
+- Render image inside a clean, responsive card/container
+
+## Behaviour
+- The static map image is clickable
+- Clicking triggers opening of a modal
+- No interactive map libraries are loaded on initial page render (performance optimisation) (save API cost of mapbox)
+
+## UX intent
+- Provide immediate location context at low cost
+- Encourage user interaction only when needed
+- Keep listing page fast and lightweight
+
+---
+
+# 7. Interactive Map Modal (Mapbox)
+
+## Purpose
+Provide an interactive exploration of the property location when requested by the user.
+
+## Map provider
+Use Mapbox GL JS (or equivalent Mapbox React integration).
+
+## Modal behaviour
+
+When opened:
+- Initialize Mapbox map instance
+- Center map on stored latitude/longitude
+- Set zoom level to property-level view (approx. 14–16)
+- Render a single marker at the property location
+
+## Interaction rules
+- Marker is view-only (not draggable)
+- Users can pan and zoom freely
+- Smooth transition/animation when modal opens
+
+## Exit behaviour
+- Closing modal returns user to listing page state
+- Map instance should be properly destroyed/unmounted to avoid memory leaks
+
+---
+
+# 8. Navigation Experience (Optional but recommended)
+
+## Goal
+Allow users to seamlessly open the location in native mapping apps.
+
+## Implementation
+
+Inside modal (or listing page):
+- Add button: “Open in Maps”
+
+### Google Maps deep link
+
+## UX benefit
+- Enables turn-by-turn navigation
+- Works across all devices without additional SDK complexity
+
+---
+
+# 9. Performance Strategy
+
+## Static map layer (listing page)
+- Use Google Static Maps API image
+- Fully cacheable per listing
+- No interactive map libraries loaded initially
+
+## Interactive map layer (modal)
+- Lazy-load Mapbox only when modal is opened
+- Prevents unnecessary JS bundle growth on initial page load
+- Ensures fast listing page performance
+
+## Overall impact
+- Reduced API cost per user session
+- Faster perceived performance
+- Controlled Mapbox usage only on demand
+
+---
+
+# 10. Edge Cases
+
+## Missing coordinates
+- Hide map section entirely OR show fallback UI:
+  - “Location not available”
+
+## Invalid coordinates
+- Validate latitude and longitude server-side before saving
+- Reject or correct malformed values
+
+## Rural precision considerations (important for Skye)
+- Accept that initial geocoding may be imprecise
+- Final accuracy depends on host manually placing pin correctly
+- System is resilient because coordinates are authoritative
+
+## Map loading failure
+- Fallback to static image only
+- Optionally provide “Open in Maps” link as backup
+
+---
+
+# 11. Privacy Considerations
+
+## Public listing mode
+- Display slightly generalized location (approximate area))
+- Prevent exact pinpoint exposure before booking
+- Pinpoint will never be reveleaed on guest website under any circumstance. Instead in future, it will be messaged to guest directly.
+
+## Post-booking mode
+- Reveal exact coordinates for navigation purposes
+
+## Rationale
+- Important for rural or isolated properties
+- Balances privacy with usability
+
+---
+
+# 12. Future Enhancements
+
+## Provider unification
+- Replace Google Static Maps with Mapbox Static Images API
+  - Reduces multi-provider dependency
+
+## Enhanced rural precision
+- Add What3Words integration for exact property entrances
+
+## UX improvements
+- Add “copy coordinates” button for manual navigation
+- Add “open in default maps app” detection per device
+
+---
+
+# 13. Key Principles
+
+- Google Maps is used only for **host-side location selection**
+- Mapbox is used only for **guest-side interactive viewing**
+- Latitude/longitude is the **single source of truth**
+- Static maps are for **fast rendering, not accuracy**
+- Interactive maps are **lazy-loaded and optional**

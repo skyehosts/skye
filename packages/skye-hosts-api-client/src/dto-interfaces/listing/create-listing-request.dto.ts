@@ -21,4 +21,6 @@ export interface ICreateListingRequestDto {
   highlights: ListingHighlightId[];
   bookingType: ListingBookingType;
   safetyDisclosures: ListingSafetyDisclosureId[];
+  latitude?: number;
+  longitude?: number;
 }

@@ -91,6 +91,9 @@ export default function SafetyDetailsScreen() {
         description: draft.description,
         bookingType: draft.bookingType,
         safetyDisclosures: checked,
+        ...(draft.latitude !== undefined && draft.longitude !== undefined
+          ? { latitude: draft.latitude, longitude: draft.longitude }
+          : {}),
       });
 
       await clearDraft();

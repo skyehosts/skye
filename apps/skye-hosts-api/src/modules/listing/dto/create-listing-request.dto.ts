@@ -8,8 +8,10 @@ import {
   IsIn,
   IsNumber,
   IsString,
+  Max,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class CreateListingRequestDto implements ICreateListingRequestDto {
@@ -61,4 +63,16 @@ export class CreateListingRequestDto implements ICreateListingRequestDto {
   @IsArray()
   @IsString({ each: true })
   safetyDisclosures: ICreateListingRequestDto['safetyDisclosures'];
+
+  @ValidateIf((o) => o.latitude !== undefined || o.longitude !== undefined)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  latitude?: number;
+
+  @ValidateIf((o) => o.latitude !== undefined || o.longitude !== undefined)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  longitude?: number;
 }

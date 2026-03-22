@@ -12,6 +12,7 @@ const config: ExpoConfig = {
     SENTRY_DSN: process.env.SENTRY_DSN,
     API_URL: process.env.API_URL,
     LOG_LEVEL: process.env.LOG_LEVEL,
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
   },
   runtimeVersion: {
     policy: "appVersion",

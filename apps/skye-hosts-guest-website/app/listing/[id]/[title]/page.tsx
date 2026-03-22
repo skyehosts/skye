@@ -5,6 +5,7 @@ import {
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
+import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
@@ -59,6 +60,14 @@ export default async function ListingPage({ params }: ListingPageProps) {
         bathrooms={listing.bathrooms}
         postCode={listing.postCode}
         images={listing.images}
+      />
+      <ListingLocationSection
+        approximateLatitude={listing.approximateLatitude}
+        approximateLongitude={listing.approximateLongitude}
+        googleMapsStaticApiKey={
+          process.env.NEXT_PUBLIC_GOOGLE_MAPS_STATIC_KEY ?? ''
+        }
+        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''}
       />
       {/* TODO: Replace hardcoded values with actual booking form data */}
       {guestId ? (

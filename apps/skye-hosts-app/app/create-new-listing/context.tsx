@@ -49,6 +49,8 @@ export interface CreateListingDraft {
   description?: string;
   bookingType?: ListingBookingType;
   safetyDisclosures?: ListingSafetyDisclosureId[];
+  latitude?: number;
+  longitude?: number;
 }
 
 interface CreateListingContextValue {

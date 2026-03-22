@@ -46,6 +46,17 @@ export class ListingController {
     return this.listingService.getHomepage();
   }
 
+  @Get(':id/edit')
+  async onGetListingForHost(
+    @Param('id') id: string,
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+  ): Promise<GetListingResponseDto> {
+    return this.listingService.getByIdForHost(
+      Number(id),
+      authenticatedUser.sub,
+    );
+  }
+
   @Get(':id')
   @IgnoreBearerAuthentication()
   async onGetListing(@Param('id') id: string): Promise<GetListingResponseDto> {

@@ -75,6 +75,18 @@ export class Listing {
   @Column({ type: 'character varying' })
   postCode: string;
 
+  @Column({ type: 'double precision', nullable: true, default: null })
+  latitude: number | null;
+
+  @Column({ type: 'double precision', nullable: true, default: null })
+  longitude: number | null;
+
+  @Column({ type: 'double precision', nullable: true, default: null })
+  approximateLatitude: number | null;
+
+  @Column({ type: 'double precision', nullable: true, default: null })
+  approximateLongitude: number | null;
+
   @Column({ type: 'simple-array' })
   amenities: ListingAmenityId[];
 

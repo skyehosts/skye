@@ -81,7 +81,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
   const fetchListing = useCallback(async () => {
     try {
       const data = await fetchApi<IGetListingResponseDto>(
-        `/listing/${listingId}`,
+        `/listing/${listingId}/edit`,
       );
       setListing(data);
     } finally {
@@ -215,6 +215,26 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           {listing && (
             <Text style={commonStyles.itemSubtext} numberOfLines={4}>
               {listing.description}
+            </Text>
+          )}
+        </Pressable>
+
+        <Pressable
+          style={[commonStyles.card, { gap: spacing.sm }]}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/edit-location",
+              params: { id: listingId },
+            })
+          }
+        >
+          <Text style={commonStyles.itemTitle}>Location</Text>
+          {listing && (
+            <Text style={commonStyles.itemSubtext}>
+              {listing.postCode}
+              {listing.latitude != null
+                ? " \u2022 Pin placed"
+                : " \u2022 No pin set"}
             </Text>
           )}
         </Pressable>

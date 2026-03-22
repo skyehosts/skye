@@ -1,14 +1,23 @@
 import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
-import { Button, HelperText, TextInput } from "react-native-paper";
+import {
+  ActivityIndicator,
+  Button,
+  HelperText,
+  TextInput,
+} from "react-native-paper";
 import { WizardAppBar } from "./wizard-app-bar";
 import { ScreenContainer } from "../components/screen-container";
-import { colors, commonStyles } from "../theme";
+import { LocationPinPicker } from "../components/location-pin-picker";
+import { commonStyles } from "../theme";
+import {
+  geocodePostcode,
+  SKYE_POSTCODE_REGEX,
+  type GeocodedLocation,
+} from "../utils/geocode-postcode";
 import { useCreateListing } from "./context";
-
-const POSTCODE_REGEX = /^IV(4[1-9]|5[1-6])\s?[0-9][A-Z]{2}$/;
 
 interface LocationFormValues {
   postCode: string;
@@ -31,13 +40,70 @@ export default function LocationScreen() {
 
   const postCode = watch("postCode");
 
+  const [geocodedLocation, setGeocodedLocation] =
+    useState<GeocodedLocation | null>(null);
+  const [pinLocation, setPinLocation] = useState<GeocodedLocation | null>(null);
+  const [isGeocoding, setIsGeocoding] = useState(false);
+  const [geocodeError, setGeocodeError] = useState("");
+
   useEffect(() => {
     if (draft.postCode) setValue("postCode", draft.postCode);
-  }, [draft.postCode, setValue]);
+    if (draft.latitude && draft.longitude) {
+      const loc = { latitude: draft.latitude, longitude: draft.longitude };
+      setGeocodedLocation(loc);
+      setPinLocation(loc);
+    }
+  }, [draft.postCode, draft.latitude, draft.longitude, setValue]);
+
+  const handleGeocode = useCallback(
+    async (pc: string) => {
+      setIsGeocoding(true);
+      setGeocodeError("");
+
+      try {
+        const loc = await geocodePostcode(pc);
+        setGeocodedLocation(loc);
+        setPinLocation(loc);
+        setDraftField("latitude", loc.latitude);
+        setDraftField("longitude", loc.longitude);
+      } catch (e) {
+        setGeocodeError(
+          e instanceof Error
+            ? e.message
+            : "Failed to look up postcode. You can still continue without a pin.",
+        );
+      } finally {
+        setIsGeocoding(false);
+      }
+    },
+    [setDraftField],
+  );
+
+  const handleLocationChange = useCallback(
+    (latitude: number, longitude: number) => {
+      setPinLocation({ latitude, longitude });
+      setDraftField("latitude", latitude);
+      setDraftField("longitude", longitude);
+    },
+    [setDraftField],
+  );
+
+  const handleConfirmPostcode = () => {
+    const trimmed = postCode.trim().toUpperCase();
+    if (!SKYE_POSTCODE_REGEX.test(trimmed)) {
+      setError("postCode", {
+        message: "Please enter a valid Isle of Skye postcode (e.g. IV41 8PH)",
+      });
+      return;
+    }
+    clearErrors("postCode");
+    setDraftField("postCode", trimmed);
+    handleGeocode(trimmed);
+  };
 
   const onSubmit = (data: LocationFormValues) => {
     const trimmed = data.postCode.trim().toUpperCase();
-    if (!POSTCODE_REGEX.test(trimmed)) {
+    if (!SKYE_POSTCODE_REGEX.test(trimmed)) {
       setError("postCode", {
         message: "Please enter a valid Isle of Skye postcode (e.g. IV41 8PH)",
       });
@@ -51,7 +117,7 @@ export default function LocationScreen() {
     <ScreenContainer>
       <WizardAppBar title="Tell us about your place" />
 
-      <View style={commonStyles.content}>
+      <ScrollView contentContainerStyle={commonStyles.contentScroll}>
         <Text style={commonStyles.heading}>
           Where&apos;s your place located?
         </Text>
@@ -61,23 +127,65 @@ export default function LocationScreen() {
         </Text>
 
         <View>
-          <TextInput
-            label="Postcode"
-            value={postCode}
-            onChangeText={(text) => {
-              setValue("postCode", text.toUpperCase());
-              if (errors.postCode) clearErrors("postCode");
-            }}
-            mode="outlined"
-            autoCapitalize="characters"
-            style={styles.input}
-            error={!!errors.postCode}
-          />
+          <View style={commonStyles.postcodeRow}>
+            <TextInput
+              label="Postcode"
+              value={postCode}
+              onChangeText={(text) => {
+                setValue("postCode", text.toUpperCase());
+                if (errors.postCode) clearErrors("postCode");
+              }}
+              mode="outlined"
+              autoCapitalize="characters"
+              style={commonStyles.postcodeInput}
+              error={!!errors.postCode}
+            />
+            <Button
+              mode="outlined"
+              onPress={handleConfirmPostcode}
+              disabled={!postCode.trim() || isGeocoding}
+              style={commonStyles.locateButton}
+            >
+              Locate
+            </Button>
+          </View>
           {errors.postCode && (
             <HelperText type="error">{errors.postCode.message}</HelperText>
           )}
         </View>
-      </View>
+
+        {isGeocoding && (
+          <View style={commonStyles.locationLoadingContainer}>
+            <ActivityIndicator size="small" />
+            <Text style={commonStyles.locationLoadingText}>
+              Finding location...
+            </Text>
+          </View>
+        )}
+
+        {geocodeError !== "" && (
+          <Text style={commonStyles.locationErrorText}>{geocodeError}</Text>
+        )}
+
+        {geocodedLocation && !isGeocoding && (
+          <View style={commonStyles.mapSection}>
+            <Text style={commonStyles.mapLabel}>
+              Drag the pin to your exact property location
+            </Text>
+            <LocationPinPicker
+              initialLatitude={geocodedLocation.latitude}
+              initialLongitude={geocodedLocation.longitude}
+              onLocationChange={handleLocationChange}
+            />
+            {pinLocation && (
+              <Text style={commonStyles.coordsText}>
+                Pin placed at {pinLocation.latitude.toFixed(5)},{" "}
+                {pinLocation.longitude.toFixed(5)}
+              </Text>
+            )}
+          </View>
+        )}
+      </ScrollView>
 
       <View style={commonStyles.footer}>
         <Button mode="text" onPress={() => router.back()}>
@@ -94,9 +202,3 @@ export default function LocationScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  input: {
-    backgroundColor: colors.background,
-  },
-});

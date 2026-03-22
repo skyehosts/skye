@@ -61,4 +61,6 @@ export interface IUpdateListingRequestDto {
   safetyDevices?: string[];
   status?: ListingStatus;
   shortTermLetLicenseConfirmed?: boolean;
+  latitude?: number;
+  longitude?: number;
 }

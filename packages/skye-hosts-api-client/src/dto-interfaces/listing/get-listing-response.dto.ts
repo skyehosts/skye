@@ -61,6 +61,10 @@ export interface IGetListingResponseDto {
   accessibilityFeatures: ListingAccessibilityFeatureId[];
   safetyConsiderations: string[];
   safetyDevices: string[];
+  latitude: number | null;
+  longitude: number | null;
+  approximateLatitude: number | null;
+  approximateLongitude: number | null;
   coverImageUrl: string | null;
   images: IListingImageDto[];
   status: ListingStatus;

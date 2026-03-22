@@ -13,8 +13,10 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  Max,
   MaxLength,
   Min,
+  ValidateIf,
 } from 'class-validator';
 
 export class UpdateListingRequestDto implements IUpdateListingRequestDto {
@@ -250,4 +252,16 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsBoolean()
   shortTermLetLicenseConfirmed?: boolean;
+
+  @ValidateIf((o) => o.latitude !== undefined || o.longitude !== undefined)
+  @IsNumber()
+  @Min(-90)
+  @Max(90)
+  latitude?: number;
+
+  @ValidateIf((o) => o.latitude !== undefined || o.longitude !== undefined)
+  @IsNumber()
+  @Min(-180)
+  @Max(180)
+  longitude?: number;
 }
