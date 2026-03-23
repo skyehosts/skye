@@ -16,6 +16,7 @@ export interface ListingMapModalProps {
   approximateLatitude: number;
   approximateLongitude: number;
   mapboxAccessToken: string;
+  listingTitle: string;
 }
 
 export function ListingMapModal({
@@ -24,6 +25,7 @@ export function ListingMapModal({
   approximateLatitude,
   approximateLongitude,
   mapboxAccessToken,
+  listingTitle,
 }: ListingMapModalProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -51,7 +53,7 @@ export function ListingMapModal({
         accessToken: mapboxAccessToken,
         style: 'mapbox://styles/mapbox/streets-v12',
         center: [approximateLongitude, approximateLatitude],
-        zoom: 14,
+        zoom: 11,
       });
 
       map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -103,7 +105,7 @@ export function ListingMapModal({
   const directionsUrl = `https://www.google.com/maps?q=${approximateLatitude},${approximateLongitude}`;
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg" keepMounted>
       <DialogTitle
         sx={{
           display: 'flex',
@@ -112,7 +114,7 @@ export function ListingMapModal({
         }}
       >
         <Typography variant="h6" component="span">
-          Approximate location
+          Approximate location of {listingTitle}
         </Typography>
         <IconButton onClick={onClose} size="small">
           <CloseIcon />

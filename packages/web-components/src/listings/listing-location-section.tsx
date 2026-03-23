@@ -12,6 +12,7 @@ export interface ListingLocationSectionProps {
   approximateLongitude: number | null;
   googleMapsStaticApiKey: string;
   mapboxAccessToken: string;
+  listingTitle: string;
 }
 
 export function ListingLocationSection({
@@ -19,6 +20,7 @@ export function ListingLocationSection({
   approximateLongitude,
   googleMapsStaticApiKey,
   mapboxAccessToken,
+  listingTitle,
 }: ListingLocationSectionProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -87,6 +89,7 @@ export function ListingLocationSection({
         approximateLatitude={approximateLatitude}
         approximateLongitude={approximateLongitude}
         mapboxAccessToken={mapboxAccessToken}
+        listingTitle={listingTitle}
       />
     </>
   );

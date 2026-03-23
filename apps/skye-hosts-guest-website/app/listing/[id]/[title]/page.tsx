@@ -68,6 +68,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
           process.env.NEXT_PUBLIC_GOOGLE_MAPS_STATIC_KEY ?? ''
         }
         mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''}
+        listingTitle={listing.title}
       />
       {/* TODO: Replace hardcoded values with actual booking form data */}
       {guestId ? (
