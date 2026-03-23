@@ -1,6 +1,6 @@
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
 import {
   ActivityIndicator,
@@ -11,7 +11,7 @@ import {
 import { WizardAppBar } from "./wizard-app-bar";
 import { ScreenContainer } from "../components/screen-container";
 import { LocationPinPicker } from "../components/location-pin-picker";
-import { commonStyles } from "../theme";
+import { commonStyles, spacing } from "../theme";
 import {
   geocodePostcode,
   SKYE_POSTCODE_REGEX,
@@ -117,58 +117,63 @@ export default function LocationScreen() {
     <ScreenContainer>
       <WizardAppBar title="Tell us about your place" />
 
-      <ScrollView contentContainerStyle={commonStyles.contentScroll}>
-        <Text style={commonStyles.heading}>
-          Where&apos;s your place located?
-        </Text>
-        <Text style={commonStyles.subheading}>
-          Your address is only shared with guests after they&apos;ve made a
-          reservation.
-        </Text>
+      <View style={styles.contentArea}>
+        <ScrollView
+          contentContainerStyle={commonStyles.contentScroll}
+          style={styles.scrollView}
+        >
+          <Text style={commonStyles.heading}>
+            Where&apos;s your place located?
+          </Text>
+          <Text style={commonStyles.subheading}>
+            Your address is only shared with guests after they&apos;ve made a
+            reservation.
+          </Text>
 
-        <View>
-          <View style={commonStyles.postcodeRow}>
-            <TextInput
-              label="Postcode"
-              value={postCode}
-              onChangeText={(text) => {
-                setValue("postCode", text.toUpperCase());
-                if (errors.postCode) clearErrors("postCode");
-              }}
-              mode="outlined"
-              autoCapitalize="characters"
-              style={commonStyles.postcodeInput}
-              error={!!errors.postCode}
-            />
-            <Button
-              mode="outlined"
-              onPress={handleConfirmPostcode}
-              disabled={!postCode.trim() || isGeocoding}
-              style={commonStyles.locateButton}
-            >
-              Locate
-            </Button>
+          <View>
+            <View style={commonStyles.postcodeRow}>
+              <TextInput
+                label="Postcode"
+                value={postCode}
+                onChangeText={(text) => {
+                  setValue("postCode", text.toUpperCase());
+                  if (errors.postCode) clearErrors("postCode");
+                }}
+                mode="outlined"
+                autoCapitalize="characters"
+                style={commonStyles.postcodeInput}
+                error={!!errors.postCode}
+              />
+              <Button
+                mode="outlined"
+                onPress={handleConfirmPostcode}
+                disabled={!postCode.trim() || isGeocoding}
+                style={commonStyles.locateButton}
+              >
+                Locate
+              </Button>
+            </View>
+            {errors.postCode && (
+              <HelperText type="error">{errors.postCode.message}</HelperText>
+            )}
           </View>
-          {errors.postCode && (
-            <HelperText type="error">{errors.postCode.message}</HelperText>
+
+          {isGeocoding && (
+            <View style={commonStyles.locationLoadingContainer}>
+              <ActivityIndicator size="small" />
+              <Text style={commonStyles.locationLoadingText}>
+                Finding location...
+              </Text>
+            </View>
           )}
-        </View>
 
-        {isGeocoding && (
-          <View style={commonStyles.locationLoadingContainer}>
-            <ActivityIndicator size="small" />
-            <Text style={commonStyles.locationLoadingText}>
-              Finding location...
-            </Text>
-          </View>
-        )}
-
-        {geocodeError !== "" && (
-          <Text style={commonStyles.locationErrorText}>{geocodeError}</Text>
-        )}
+          {geocodeError !== "" && (
+            <Text style={commonStyles.locationErrorText}>{geocodeError}</Text>
+          )}
+        </ScrollView>
 
         {geocodedLocation && !isGeocoding && (
-          <View style={commonStyles.mapSection}>
+          <View style={styles.mapArea}>
             <Text style={commonStyles.mapLabel}>
               Drag the pin to your exact property location
             </Text>
@@ -185,7 +190,7 @@ export default function LocationScreen() {
             )}
           </View>
         )}
-      </ScrollView>
+      </View>
 
       <View style={commonStyles.footer}>
         <Button mode="text" onPress={() => router.back()}>
@@ -202,3 +207,17 @@ export default function LocationScreen() {
     </ScreenContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  contentArea: {
+    flex: 1,
+  },
+  scrollView: {
+    flexGrow: 0,
+  },
+  mapArea: {
+    flex: 1,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.sm,
+  },
+});

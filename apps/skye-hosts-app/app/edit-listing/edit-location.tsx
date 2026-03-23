@@ -150,51 +150,54 @@ export default function EditLocationScreen() {
       {loading ? (
         <ActivityIndicator style={styles.loader} />
       ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.content}
-        >
-          <View style={commonStyles.postcodeRow}>
-            <TextInput
-              label="Postcode"
-              value={postCode}
-              onChangeText={(text) => {
-                setValue("postCode", text.toUpperCase());
-                if (errors.postCode) clearErrors("postCode");
-              }}
-              mode="outlined"
-              autoCapitalize="characters"
-              style={commonStyles.postcodeInput}
-              error={!!errors.postCode}
-            />
-            <Button
-              mode="outlined"
-              onPress={handleLocate}
-              disabled={!postCode.trim() || isGeocoding}
-              style={commonStyles.locateButton}
-            >
-              Locate
-            </Button>
-          </View>
-          {errors.postCode && (
-            <HelperText type="error">{errors.postCode.message}</HelperText>
-          )}
-
-          {isGeocoding && (
-            <View style={commonStyles.locationLoadingContainer}>
-              <ActivityIndicator size="small" />
-              <Text style={commonStyles.locationLoadingText}>
-                Finding location...
-              </Text>
+        <View style={styles.contentArea}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.content}
+            style={styles.scrollView}
+          >
+            <View style={commonStyles.postcodeRow}>
+              <TextInput
+                label="Postcode"
+                value={postCode}
+                onChangeText={(text) => {
+                  setValue("postCode", text.toUpperCase());
+                  if (errors.postCode) clearErrors("postCode");
+                }}
+                mode="outlined"
+                autoCapitalize="characters"
+                style={commonStyles.postcodeInput}
+                error={!!errors.postCode}
+              />
+              <Button
+                mode="outlined"
+                onPress={handleLocate}
+                disabled={!postCode.trim() || isGeocoding}
+                style={commonStyles.locateButton}
+              >
+                Locate
+              </Button>
             </View>
-          )}
+            {errors.postCode && (
+              <HelperText type="error">{errors.postCode.message}</HelperText>
+            )}
 
-          {geocodeError !== "" && (
-            <Text style={commonStyles.locationErrorText}>{geocodeError}</Text>
-          )}
+            {isGeocoding && (
+              <View style={commonStyles.locationLoadingContainer}>
+                <ActivityIndicator size="small" />
+                <Text style={commonStyles.locationLoadingText}>
+                  Finding location...
+                </Text>
+              </View>
+            )}
+
+            {geocodeError !== "" && (
+              <Text style={commonStyles.locationErrorText}>{geocodeError}</Text>
+            )}
+          </ScrollView>
 
           {geocodedLocation && !isGeocoding && (
-            <View style={commonStyles.mapSection}>
+            <View style={styles.mapArea}>
               <Text style={commonStyles.mapLabel}>
                 Drag the pin to your exact property location
               </Text>
@@ -211,7 +214,7 @@ export default function EditLocationScreen() {
               )}
             </View>
           )}
-        </ScrollView>
+        </View>
       )}
 
       <View style={commonStyles.footer}>
@@ -236,7 +239,18 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: spacing.xl,
   },
+  contentArea: {
+    flex: 1,
+  },
+  scrollView: {
+    flexGrow: 0,
+  },
   content: {
     padding: spacing.lg,
+  },
+  mapArea: {
+    flex: 1,
+    paddingHorizontal: spacing.lg,
+    paddingBottom: spacing.sm,
   },
 });

@@ -6,6 +6,22 @@ const base = appJson.expo;
 
 const config: ExpoConfig = {
   ...base,
+  ios: {
+    ...base.ios,
+    config: {
+      ...base.ios?.config,
+      googleMapsApiKey: process.env.GOOGLE_MAPS_API_KEY,
+    },
+  },
+  android: {
+    ...base.android,
+    config: {
+      ...base.android?.config,
+      googleMaps: {
+        apiKey: process.env.GOOGLE_MAPS_API_KEY,
+      },
+    },
+  },
   extra: {
     ...base.extra,
     SKYE_ENVIRONMENT: process.env.SKYE_ENVIRONMENT,

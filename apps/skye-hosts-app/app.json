@@ -15,10 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "uk.co.skyehosts",
-      "associatedDomains": ["applinks:skyehosts.co.uk"],
-      "config": {
-        "googleMapsApiKey": "GOOGLE_MAPS_API_KEY_IOS"
-      }
+      "associatedDomains": ["applinks:skyehosts.co.uk"]
     },
     "android": {
       "adaptiveIcon": {
@@ -29,11 +26,6 @@
       },
       "package": "uk.co.skyehosts",
       "googleServicesFile": "./google-services.json",
-      "config": {
-        "googleMaps": {
-          "apiKey": "GOOGLE_MAPS_API_KEY_ANDROID"
-        }
-      },
       "intentFilters": [
         {
           "action": "VIEW",

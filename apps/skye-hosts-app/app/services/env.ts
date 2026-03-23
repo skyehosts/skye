@@ -25,6 +25,6 @@ export const env = {
     return extra["LOG_LEVEL"] as string | undefined;
   },
   get googleMapsApiKey() {
-    return extra["GOOGLE_MAPS_API_KEY"] as string | undefined;
+    return requireEnv("GOOGLE_MAPS_API_KEY");
   },
 };

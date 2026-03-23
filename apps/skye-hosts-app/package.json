@@ -21,8 +21,8 @@
     "test": "jest --passWithNoTests",
     "test:e2e": "playwright test",
     "eas-build-post-install": "cd ../.. && pnpm --filter @repo/common build && pnpm --filter @repo/skye-hosts-api-client build",
-    "eas-build-local": "eas build --profile development --platform android --local --output ./builds/app.apk",
-    "install-local": "adb install apps/skye-hosts-app/builds/app.apk"
+    "eas-build-local": "set -a && source .env.local && set +a && eas build --profile development --platform android --local --output ./builds/app.apk",
+    "deploy-local": "adb uninstall uk.co.skyehosts; adb install -r ./builds/app.apk"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.6",

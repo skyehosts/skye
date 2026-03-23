@@ -26,7 +26,7 @@ export function ListingLocationSection({
     return null;
   }
 
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${approximateLatitude},${approximateLongitude}&zoom=14&size=560x235&scale=2&markers=color:red|${approximateLatitude},${approximateLongitude}&key=${googleMapsStaticApiKey}`;
+  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=57.3463150,-6.2155023&zoom=8&size=560x235&scale=2&markers=size:small|color:red|${approximateLatitude},${approximateLongitude}&key=${googleMapsStaticApiKey}`;
   const directionsUrl = `https://www.google.com/maps?q=${approximateLatitude},${approximateLongitude}`;
 
   return (
@@ -51,7 +51,7 @@ export function ListingLocationSection({
             alt="Approximate listing location"
             sx={{
               width: '100%',
-              height: { xs: 200, md: 280 },
+              height: { xs: 300, md: 336 },
               objectFit: 'cover',
               display: 'block',
             }}

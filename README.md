@@ -118,7 +118,7 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
 - skye-hosts-app
   - Locally: Uses .env.local
   - Production:
-    - insensitive: eas.json
+    - insensitive: eas.json, app.json
     - sensitive: secrets stored in Expo cloud
 
 ## If app encountering network failuers when run inside Emulator
