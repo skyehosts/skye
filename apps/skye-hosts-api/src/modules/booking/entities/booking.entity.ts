@@ -28,6 +28,9 @@ export class Booking {
   @Column({ type: 'numeric', precision: 10, scale: 2 })
   totalPrice: number;
 
+  @Column({ type: 'integer', default: 1 })
+  numberOfGuests: number;
+
   @Column({ type: 'character varying', default: 'pending' })
   status: string;
 

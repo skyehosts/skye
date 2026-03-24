@@ -1,5 +1,6 @@
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { borderRadius } from "../../theme/border-radius";
 import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
 import { typography } from "../../theme/typography";
@@ -26,10 +27,14 @@ interface DayCellProps {
   dateString?: string;
   /** Whether this day is today */
   isToday: boolean;
+  /** Whether this day is in the past */
+  isPast: boolean;
   /** Booking/selection status for future use */
   status: DayCellStatus;
   /** Cell width — calculated by parent to fill 1/7 of available width */
   size: number;
+  /** Cell height — defaults to size if not provided */
+  height?: number;
   /** Called with the dateString when the day is pressed */
   onPress?: (dateString: string) => void;
 }
@@ -38,11 +43,15 @@ function DayCellInner({
   day,
   dateString,
   isToday,
+  isPast,
+  status,
   size,
+  height,
   onPress,
 }: DayCellProps) {
+  const cellHeight = height ?? size;
   if (day === null) {
-    return <View style={[styles.cell, { width: size, height: size }]} />;
+    return <View style={[styles.cell, { width: size, height: cellHeight }]} />;
   }
 
   const handlePress = () => {
@@ -53,11 +62,28 @@ function DayCellInner({
 
   return (
     <Pressable
-      style={[styles.cell, { width: size, height: size }]}
+      style={[
+        styles.cell,
+        { width: size, height: cellHeight },
+        status === "booked" && !isPast
+          ? styles.cellBooked
+          : isPast
+            ? styles.cellPast
+            : styles.cellCurrent,
+        status === "booked" && !isPast && styles.cellBookedBorder,
+      ]}
       onPress={handlePress}
     >
       <View style={[styles.dayContainer, isToday && styles.todayContainer]}>
-        <Text style={[styles.dayText, isToday && styles.todayText]}>{day}</Text>
+        <Text
+          style={[
+            styles.dayText,
+            isPast && styles.dayTextPast,
+            isToday && styles.todayText,
+          ]}
+        >
+          {day}
+        </Text>
       </View>
     </Pressable>
   );
@@ -70,7 +96,22 @@ const DAY_INNER_SIZE = 32;
 const styles = StyleSheet.create({
   cell: {
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    paddingTop: 10,
+    borderRadius: borderRadius.xs,
+  },
+  cellPast: {
+    backgroundColor: colors.calendarCellPast,
+  },
+  cellCurrent: {
+    backgroundColor: colors.calendarCellCurrent,
+  },
+  cellBooked: {
+    backgroundColor: colors.background,
+  },
+  cellBookedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellCurrent,
   },
   dayContainer: {
     width: DAY_INNER_SIZE,
@@ -80,15 +121,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   todayContainer: {
-    backgroundColor: colors.textPrimary,
+    borderWidth: 2,
+    borderColor: colors.primary,
   },
   dayText: {
     fontSize: typography.sm,
     fontWeight: fontWeight.normal,
     color: colors.textPrimary,
   },
+  dayTextPast: {
+    color: colors.calendarTextPast,
+  },
   todayText: {
-    color: colors.background,
+    color: colors.primary,
     fontWeight: fontWeight.semibold,
   },
 });

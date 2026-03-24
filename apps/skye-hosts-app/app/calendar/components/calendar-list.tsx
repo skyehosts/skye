@@ -1,15 +1,18 @@
+import type { IListingBookingItemDto } from "@repo/skye-hosts-api-client";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Dimensions, FlatList, View } from "react-native";
 import { commonStyles } from "../../theme/common-styles";
 import { spacing } from "../../theme/spacing";
-import { formatDateString } from "../utils/format-date-string";
+import { formatDateString, parseDateString } from "../utils/format-date-string";
 import type { DayCellStatus } from "./day-cell";
 import { MonthGrid, type MonthData } from "./month-grid";
 
 const MONTHS_IN_PAST = 6;
 const MONTHS_IN_FUTURE = 18;
 const SCREEN_WIDTH = Dimensions.get("window").width;
-const CELL_SIZE = (SCREEN_WIDTH - spacing.md * 2) / 7;
+const CELL_GAP = 3;
+const CELL_SIZE = (SCREEN_WIDTH - spacing.md * 2 - 6 * CELL_GAP) / 7;
+const CELL_HEIGHT = 96;
 
 /** Height of the weekday header row */
 const WEEKDAY_ROW_HEIGHT = 18 + spacing.xs;
@@ -62,18 +65,43 @@ function generateMonths(): MonthData[] {
 }
 
 function getMonthHeight(month: MonthData): number {
-  const weekRows = month.weeks.length * CELL_SIZE;
-  return MONTH_LABEL_HEIGHT + WEEKDAY_ROW_HEIGHT + weekRows + spacing.lg;
+  const weekRows = month.weeks.length * CELL_HEIGHT;
+  const rowGaps = (month.weeks.length - 1) * CELL_GAP;
+  return (
+    MONTH_LABEL_HEIGHT + WEEKDAY_ROW_HEIGHT + weekRows + rowGaps + spacing.lg
+  );
 }
 
 interface CalendarListProps {
+  bookings?: IListingBookingItemDto[];
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
 }
 
-export function CalendarList({ onDayPress, getDayStatus }: CalendarListProps) {
+export function CalendarList({
+  bookings,
+  onDayPress,
+  getDayStatus: getDayStatusProp,
+}: CalendarListProps) {
   const months = useMemo(() => generateMonths(), []);
   const flatListRef = useRef<FlatList<MonthData>>(null);
+
+  const bookedDates = useMemo(() => {
+    const set = new Set<string>();
+    for (const booking of bookings ?? []) {
+      const start = parseDateString(booking.checkInDate);
+      const end = parseDateString(booking.checkOutDate);
+      const cur = new Date(start.year, start.month, start.day);
+      const endDate = new Date(end.year, end.month, end.day);
+      while (cur <= endDate) {
+        set.add(
+          formatDateString(cur.getFullYear(), cur.getMonth(), cur.getDate()),
+        );
+        cur.setDate(cur.getDate() + 1);
+      }
+    }
+    return set;
+  }, [bookings]);
 
   const todayString = useMemo(() => {
     const now = new Date();
@@ -105,12 +133,16 @@ export function CalendarList({ onDayPress, getDayStatus }: CalendarListProps) {
       <MonthGrid
         data={item}
         cellSize={CELL_SIZE}
+        cellHeight={CELL_HEIGHT}
+        cellGap={CELL_GAP}
         todayString={todayString}
+        bookings={bookings}
+        bookedDates={bookedDates}
         onDayPress={onDayPress}
-        getDayStatus={getDayStatus}
+        getDayStatus={getDayStatusProp}
       />
     ),
-    [todayString, onDayPress, getDayStatus],
+    [todayString, bookings, bookedDates, onDayPress, getDayStatusProp],
   );
 
   const keyExtractor = useCallback((item: MonthData) => item.key, []);
@@ -120,6 +152,7 @@ export function CalendarList({ onDayPress, getDayStatus }: CalendarListProps) {
       <FlatList
         ref={flatListRef}
         data={months}
+        extraData={bookings}
         renderItem={renderMonth}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}

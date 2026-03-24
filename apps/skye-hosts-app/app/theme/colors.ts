@@ -47,4 +47,9 @@ export const colors = {
   messageSentTimestamp: "rgba(255,255,255,0.7)",
   placeholder: "#f0f0f0",
   shadow: "#000",
+  calendarCellPast: "#F7F7F7",
+  calendarCellCurrent: "#EBEBEB",
+  calendarTextPast: "#6c6c6c",
+  calendarBarPast: "#8c8c8c",
+  calendarBar: "#222222",
 } as const;

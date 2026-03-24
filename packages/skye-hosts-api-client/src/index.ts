@@ -33,6 +33,7 @@ export * from './dto-interfaces/auth/reset-password-response.dto';
 export * from './dto-interfaces/auth/sign-up-request.dto';
 export * from './dto-interfaces/availability/availability.dto';
 export * from './dto-interfaces/booking/get-booking-response.dto';
+export * from './dto-interfaces/booking/get-listing-bookings-response.dto';
 export * from './dto-interfaces/booking/sqs-booking-message.dto';
 export * from './dto-interfaces/co-host/accept-co-host-invite-request.dto';
 export * from './dto-interfaces/co-host/accept-co-host-invite-response.dto';

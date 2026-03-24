@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { ScheduledMessageCreationService } from '../../scheduled-message/providers/scheduled-message-creation.service';
 import { Booking } from '../entities';
 
@@ -10,6 +10,7 @@ interface CreateBookingParams {
   checkInDate: string;
   checkOutDate: string;
   totalPrice: number;
+  numberOfGuests: number;
   isTestBooking?: boolean;
 }
 
@@ -33,6 +34,7 @@ export class BookingService {
         checkInDate: params.checkInDate,
         checkOutDate: params.checkOutDate,
         totalPrice: params.totalPrice,
+        numberOfGuests: params.numberOfGuests,
         status: 'confirmed',
         createdAt: new Date(),
       } as Booking);
@@ -97,6 +99,16 @@ export class BookingService {
   async findByListingId(listingId: number): Promise<Booking[]> {
     return this.bookingRepo.find({
       where: { listingId },
+    });
+  }
+
+  async findByListingIdWithGuest(listingId: number): Promise<Booking[]> {
+    return this.bookingRepo.find({
+      where: {
+        listingId,
+        status: In(['confirmed', 'completed', 'pending']),
+      },
+      relations: ['guest', 'listing'],
     });
   }
 }

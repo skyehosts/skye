@@ -104,21 +104,18 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- On the calendar page for a listing in host app
-- Implement a Airbnb-Style Scrollable Calendar
-
-Create a **React Native vertical scrollable calendar** similar to Airbnb, focusing **only on basic UI and scroll**. Ignore date selection, range logic, or any extra functionality. Requirements:
-
-- Vertical scroll of months
-- Display **24 months** (2-year window) (18 months into the future and 6 months in the past)
-- Each month shows a **grid of days**
-- Lazy-render months for performance (virtualization)
-- Smooth scrolling, like a mobile calendar app
-- Use **React Native** (no external styling library required, but allow for future theming)
-- Clean, minimal UI (day numbers, month headers)
-- Modular code: separate components for **Month** and **Day**
-- User should see calendar centered on current date when loading page
-
+- Update the listing calendar detail page in hosts app to do the following
+- retrieve bookings throughout the full 2 year period for that listing, from the API
+- Overlay the bookings on the calendar at the appropriate dates.
+- The presentation of the bookings should appear as so:
+  - Height 50% of rectangle, bottom aligned, with small margin bottom (e.g 5px)
+  - Black background and text is white, left aligned
+  - More significant corner rounding e.g 100px
+  - The overlay should begin on check-in date, left aligned within rectangle with small 5px margin on left
+  - It should continue to the checkout date, however it should only protrude about 10% approx into this rectangle. (This reflected check out time is early in morning)
+- Scrutinise my plan, any flaws, identify them
+- Any recommdned enhancements, identify them
+- Any major decisions, ask
 
 ==================
 Re-useable prompts
