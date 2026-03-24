@@ -19,7 +19,6 @@ export class AccountController {
     }
     const dto = new GetAccountDetailsResponseDto();
     dto.email = account.email;
-    dto.emailVerified = account.emailVerified;
     dto.name = account.name;
     dto.phoneNumber = account.phoneNumber;
     return dto;

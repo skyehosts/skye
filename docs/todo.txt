@@ -61,7 +61,6 @@ Aws infrastructure
 ========
 Host App
 ========
-- Basic auth or prod protection.
 - Listing title, vertical height is too long
 - Test
   - Notification
@@ -69,7 +68,6 @@ Host App
 - deploy to device succesfully via eas / gha
 - Test scheduled messages arriving after booking
 - Notifications (Messages from guest)
-- SMS sending OTP (Twilio or other ?)
 - Today page
 - Calendar page
 - Menu page

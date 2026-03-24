@@ -20,7 +20,6 @@ interface PersonalDetailsItemProps {
   label: string;
   value: string | null;
   description?: string;
-  verified?: boolean;
   onPress: () => void;
   actionText?: string;
 }
@@ -30,7 +29,6 @@ function PersonalDetailsItem({
   label,
   value,
   description,
-  verified,
   onPress,
   actionText,
 }: PersonalDetailsItemProps) {
@@ -38,14 +36,7 @@ function PersonalDetailsItem({
     <TouchableOpacity style={styles.item} onPress={onPress}>
       <Icon source={icon} size={22} color={colors.textSecondary} />
       <View style={styles.itemText}>
-        <View style={styles.labelRow}>
-          <Text style={commonStyles.itemTitle}>{label}</Text>
-          {verified && (
-            <View style={styles.verifiedBadge}>
-              <Text style={styles.verifiedBadgeText}>Verified</Text>
-            </View>
-          )}
-        </View>
+        <Text style={commonStyles.itemTitle}>{label}</Text>
         {value && <Text style={commonStyles.itemSubtext}>{value}</Text>}
         {description && <Text style={styles.description}>{description}</Text>}
       </View>
@@ -89,9 +80,7 @@ export default function PersonalDetailsScreen() {
   }, [loadDetails]);
 
   function handleEmailVerified(email: string) {
-    setDetails((prev) =>
-      prev ? { ...prev, email, emailVerified: true } : prev,
-    );
+    setDetails((prev) => (prev ? { ...prev, email } : prev));
   }
 
   function handlePhoneChanged(phoneNumber: string) {
@@ -125,7 +114,6 @@ export default function PersonalDetailsScreen() {
             label="Email"
             value={null}
             description={emailDescription}
-            verified={details?.emailVerified}
             onPress={() => setEmailModalVisible(true)}
             actionText="Edit"
           />
@@ -176,22 +164,6 @@ const styles = StyleSheet.create({
   itemText: {
     flex: 1,
     gap: spacing.xs,
-  },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  verifiedBadge: {
-    backgroundColor: colors.successBackground,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  verifiedBadgeText: {
-    fontSize: 12,
-    color: colors.success,
-    fontWeight: "600",
   },
   description: {
     fontSize: typography.sm,

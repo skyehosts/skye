@@ -1,3 +1,3 @@
 export interface IEmailVerifyOtpResponseDto {
-  emailVerified: boolean;
+  success: boolean;
 }

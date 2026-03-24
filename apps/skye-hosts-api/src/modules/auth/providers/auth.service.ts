@@ -343,10 +343,9 @@ export class AuthService {
     }
 
     account.email = email;
-    account.emailVerified = true;
     await this.accountService.save(account);
 
-    return { emailVerified: true };
+    return { success: true };
   }
 
   async setupPin(

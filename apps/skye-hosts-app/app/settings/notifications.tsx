@@ -71,7 +71,7 @@ export default function NotificationsSettingsScreen() {
     null,
   );
   const [saving, setSaving] = useState(false);
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [hasEmail, setHasEmail] = useState(false);
 
   const loadPreferences = useCallback(async () => {
     try {
@@ -82,7 +82,7 @@ export default function NotificationsSettingsScreen() {
         fetchApi<IGetAccountDetailsResponseDto>("/account/details"),
       ]);
       setPreferences(prefsData.preferences);
-      setEmailVerified(accountData.emailVerified);
+      setHasEmail(!!accountData.email);
     } finally {
       setLoading(false);
     }
@@ -217,7 +217,7 @@ export default function NotificationsSettingsScreen() {
               <Text
                 style={[
                   commonStyles.switchLabel,
-                  !emailVerified && styles.switchLabelDisabled,
+                  !hasEmail && styles.switchLabelDisabled,
                 ]}
               >
                 Email notifications
@@ -227,13 +227,13 @@ export default function NotificationsSettingsScreen() {
                 onValueChange={(v) =>
                   handleToggle(editingEvent.eventType, "emailEnabled", v)
                 }
-                disabled={saving || !emailVerified}
+                disabled={saving || !hasEmail}
               />
             </View>
-            {!emailVerified && (
+            {!hasEmail && (
               <Text style={styles.emailWarning}>
-                Add and verify your email address to enable email notifications.
-                Go to Menu → Personal details.
+                Add your email address to enable email notifications. Go to Menu
+                → Personal details.
               </Text>
             )}
           </>
