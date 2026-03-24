@@ -151,9 +151,7 @@ export default function ChangePinScreen() {
   return (
     <ScreenContainer>
       <Appbar.Header>
-        <Appbar.BackAction
-          onPress={() => appRouter.replace("/settings/login-security")}
-        />
+        <Appbar.BackAction onPress={() => appRouter.back()} />
         <Appbar.Content title="Change PIN" />
       </Appbar.Header>
       <View style={commonStyles.securityContainer}>
