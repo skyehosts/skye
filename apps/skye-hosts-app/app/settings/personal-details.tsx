@@ -13,6 +13,7 @@ import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import { EmailModal } from "./components/email-modal";
+import { NameModal } from "./components/name-modal";
 import { PhoneModal } from "./components/phone-modal";
 
 interface PersonalDetailsItemProps {
@@ -66,6 +67,7 @@ export default function PersonalDetailsScreen() {
   const [details, setDetails] = useState<IGetAccountDetailsResponseDto | null>(
     null,
   );
+  const [nameModalVisible, setNameModalVisible] = useState(false);
   const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [phoneModalVisible, setPhoneModalVisible] = useState(false);
 
@@ -79,12 +81,8 @@ export default function PersonalDetailsScreen() {
     loadDetails();
   }, [loadDetails]);
 
-  function handleEmailVerified(email: string) {
-    setDetails((prev) => (prev ? { ...prev, email } : prev));
-  }
-
-  function handlePhoneChanged(phoneNumber: string) {
-    setDetails((prev) => (prev ? { ...prev, phoneNumber } : prev));
+  function updateDetail(patch: Partial<IGetAccountDetailsResponseDto>) {
+    setDetails((prev) => (prev ? { ...prev, ...patch } : prev));
   }
 
   const email = details?.email ?? null;
@@ -110,6 +108,14 @@ export default function PersonalDetailsScreen() {
       ) : (
         <View style={styles.section}>
           <PersonalDetailsItem
+            icon="account-outline"
+            label="Name"
+            value={null}
+            description={details.name}
+            onPress={() => setNameModalVisible(true)}
+            actionText="Edit"
+          />
+          <PersonalDetailsItem
             icon="email-outline"
             label="Email"
             value={null}
@@ -128,16 +134,22 @@ export default function PersonalDetailsScreen() {
         </View>
       )}
 
+      <NameModal
+        visible={nameModalVisible}
+        currentName={details?.name ?? ""}
+        onDismiss={() => setNameModalVisible(false)}
+        onNameChanged={(name) => updateDetail({ name })}
+      />
       <EmailModal
         visible={emailModalVisible}
         currentEmail={details?.email ?? null}
         onDismiss={() => setEmailModalVisible(false)}
-        onEmailVerified={handleEmailVerified}
+        onEmailVerified={(email) => updateDetail({ email })}
       />
       <PhoneModal
         visible={phoneModalVisible}
         onDismiss={() => setPhoneModalVisible(false)}
-        onPhoneChanged={handlePhoneChanged}
+        onPhoneChanged={(phoneNumber) => updateDetail({ phoneNumber })}
       />
     </ScreenContainer>
   );
