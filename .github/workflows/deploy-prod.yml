@@ -143,7 +143,7 @@ jobs:
       app-name: skye-hosts-guest-website
       watch-paths: ./apps/skye-hosts-guest-website ./packages/ui ./packages/config ./packages/auth
       vercel-org-id: ${{ vars.VERCEL_ORG_ID }}
-      vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_SKYE_GLAMPING_GUEST }}
+      vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_SKYE_HOSTS_GUEST }}
       env: production
     secrets:
       vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -169,7 +169,7 @@ jobs:
   #     app-name: skye-hosts-admin-website
   #     watch-paths: ./apps/skye-hosts-admin-website ./packages/ui ./packages/config ./packages/auth
   #     vercel-org-id: ${{ vars.VERCEL_ORG_ID }}
-  #     vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_SKYE_GLAMPING_ADMIN }}
+  #     vercel-project-id: ${{ vars.VERCEL_PROJECT_ID_SKYE_HOSTS_ADMIN }}
   #     env: production
   #   secrets:
   #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
