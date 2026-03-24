@@ -87,7 +87,6 @@ export default function VerifyCodeScreen() {
                 <TextInput
                   mode="outlined"
                   label="Verification code"
-                  placeholder="000000"
                   keyboardType="number-pad"
                   maxLength={6}
                   value={field.value}

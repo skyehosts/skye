@@ -70,9 +70,6 @@ Host App
 - Notifications (Messages from guest)
 - Today page
 - Calendar page
-- Menu page
-  - Change password
-  - Change pin
 - If you already signed up and reinstalled app, could you gain access
 - Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
   - Decide address upload or stripe verification (account vs name match)
@@ -108,25 +105,9 @@ Long term TODOs
 Pending Prompts
 ===============
 - In hosts app On, Personal details page
-- Add a list to list items called 'Phone number'
-  - TItle: Phone number
-  - Descriotion 
-    - {curentPhoneNumber} (In format +44 ***** last 4 digits unmasked) /n
-      Contact number (for confirmed guests and Skye Hosts to get in touch)
-  - Link (Top right), text: 'Edit' (style: underlined)
-- Tap behaviour:
-  - Begins journey to change phone number
-  - NB: An account will always already have a currente phone number at this stage
-  - You decide is modal or page is best. Re-use existing components/styles where possible
-  - Twilio verify should be used, so host verifies mobile number via code. (Only then, is the save persisted)
-- After succesfull save complete, new number should show up in list item
-
-- Include icon on list item and you decide best one
-- When clicked, enables user to change their pin
-- Ensure encapsulate in a component so it can moved easily in future if needed
-- Ensure the customer journey is secure / protected from malicious users
-- Keep flow simple as possible
-- Any major decisions, ask me
+- Add a new item to the list to change the hosts name.
+- Follow the same pattern for list item display -> modal -> error handling etc as the existing items
+- Any major decisions, ask
 
 ==================
 Re-useable prompts
