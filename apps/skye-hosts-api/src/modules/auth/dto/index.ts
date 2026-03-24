@@ -3,6 +3,8 @@ export * from './email-request-otp-request.dto';
 export * from './email-verify-otp-request.dto';
 export * from './forgot-password-request.dto';
 export * from './login-request.dto';
+export * from './phone-change-request-otp-request.dto';
+export * from './phone-change-verify-otp-request.dto';
 export * from './phone-lookup-request.dto';
 export * from './phone-request-otp-request.dto';
 export * from './phone-verify-otp-request.dto';

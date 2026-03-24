@@ -1,8 +1,8 @@
 import type {
-  IEmailRequestOtpRequestDto,
-  IEmailRequestOtpResponseDto,
-  IEmailVerifyOtpRequestDto,
-  IEmailVerifyOtpResponseDto,
+  IAccountPhoneRequestOtpRequestDto,
+  IAccountPhoneRequestOtpResponseDto,
+  IAccountPhoneVerifyOtpRequestDto,
+  IAccountPhoneVerifyOtpResponseDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,28 +20,26 @@ import {
 } from "../../theme";
 import { handleFormError } from "../../utils/form-error-handler";
 
-interface EmailModalProps {
+interface PhoneModalProps {
   visible: boolean;
-  currentEmail: string | null;
   onDismiss: () => void;
-  onEmailVerified: (email: string) => void;
+  onPhoneChanged: (phoneNumber: string) => void;
 }
 
-type Step = "enter-email" | "enter-code";
+type Step = "enter-phone" | "enter-code";
 
 interface FormValues {
-  email: string;
+  phoneNumber: string;
   code: string;
 }
 
-export function EmailModal({
+export function PhoneModal({
   visible,
-  currentEmail,
   onDismiss,
-  onEmailVerified,
-}: EmailModalProps) {
-  const [step, setStep] = useState<Step>("enter-email");
-  const [submittedEmail, setSubmittedEmail] = useState("");
+  onPhoneChanged,
+}: PhoneModalProps) {
+  const [step, setStep] = useState<Step>("enter-phone");
+  const [submittedPhone, setSubmittedPhone] = useState("");
   const [serverError, setServerError] = useState("");
 
   const {
@@ -51,13 +49,13 @@ export function EmailModal({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    defaultValues: { email: currentEmail ?? "", code: "" },
+    defaultValues: { phoneNumber: "", code: "" },
   });
 
   function handleDismiss() {
-    setStep("enter-email");
-    setSubmittedEmail("");
-    reset({ email: currentEmail ?? "", code: "" });
+    setStep("enter-phone");
+    setSubmittedPhone("");
+    reset({ phoneNumber: "", code: "" });
     setServerError("");
     onDismiss();
   }
@@ -65,12 +63,15 @@ export function EmailModal({
   const handleSendCode = async (data: FormValues) => {
     setServerError("");
     try {
-      await fetchApi<IEmailRequestOtpResponseDto, IEmailRequestOtpRequestDto>(
-        "/auth/email-request-otp",
-        { email: data.email.trim() },
+      await fetchApi<
+        IAccountPhoneRequestOtpResponseDto,
+        IAccountPhoneRequestOtpRequestDto
+      >(
+        "/auth/phone-change-request-otp",
+        { phoneNumber: data.phoneNumber.trim() },
         { method: "POST" },
       );
-      setSubmittedEmail(data.email.trim());
+      setSubmittedPhone(data.phoneNumber.trim());
       setStep("enter-code");
     } catch (e) {
       handleFormError(e, setError, setServerError);
@@ -80,12 +81,15 @@ export function EmailModal({
   const handleVerify = async (data: FormValues) => {
     setServerError("");
     try {
-      await fetchApi<IEmailVerifyOtpResponseDto, IEmailVerifyOtpRequestDto>(
-        "/auth/email-verify-otp",
-        { email: submittedEmail, code: data.code.trim() },
+      const result = await fetchApi<
+        IAccountPhoneVerifyOtpResponseDto,
+        IAccountPhoneVerifyOtpRequestDto
+      >(
+        "/auth/phone-change-verify-otp",
+        { phoneNumber: submittedPhone, code: data.code.trim() },
         { method: "POST" },
       );
-      onEmailVerified(submittedEmail);
+      onPhoneChanged(result.phoneNumber);
       handleDismiss();
     } catch (e) {
       handleFormError(e, setError, setServerError);
@@ -93,51 +97,45 @@ export function EmailModal({
   };
 
   const handleResend = () => {
-    handleSendCode({ email: submittedEmail, code: "" });
+    handleSendCode({ phoneNumber: submittedPhone, code: "" });
   };
 
   return (
     <AppModal visible={visible} onDismiss={handleDismiss}>
-      {step === "enter-email" ? (
+      {step === "enter-phone" ? (
         <>
-          <Text style={commonStyles.modalTitle}>
-            {currentEmail ? "Change email" : "Add email"}
-          </Text>
+          <Text style={commonStyles.modalTitle}>Change phone number</Text>
           <Text style={styles.description}>
-            Enter your email address. We'll send a verification code to confirm
-            it's yours.
+            Enter your new phone number. We'll send a verification code via SMS
+            to confirm it.
           </Text>
           <View>
             <Controller
               control={control}
-              name="email"
+              name="phoneNumber"
               rules={{
-                required: "Email is required",
+                required: "Phone number is required",
                 pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Enter a valid email address",
+                  value: /^\+?[0-9\s\-()]{7,15}$/,
+                  message: "Enter a valid phone number",
                 },
-                validate: (value: string) =>
-                  value.trim().toLowerCase() !== currentEmail?.toLowerCase() ||
-                  "This is your current email",
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
-                  label="Email address"
+                  label="Phone number"
                   value={value}
                   onChangeText={onChange}
                   onBlur={onBlur}
-                  autoCapitalize="none"
-                  keyboardType="email-address"
-                  autoComplete="email"
+                  keyboardType="phone-pad"
+                  autoComplete="tel"
                   mode="outlined"
-                  error={!!errors.email}
+                  error={!!errors.phoneNumber}
                   disabled={isSubmitting}
                 />
               )}
             />
-            {errors.email && (
-              <HelperText type="error">{errors.email.message}</HelperText>
+            {errors.phoneNumber && (
+              <HelperText type="error">{errors.phoneNumber.message}</HelperText>
             )}
           </View>
           <Button
@@ -151,11 +149,11 @@ export function EmailModal({
         </>
       ) : (
         <>
-          <Text style={commonStyles.modalTitle}>Check your email</Text>
+          <Text style={commonStyles.modalTitle}>Check your messages</Text>
           <Text style={styles.description}>
             We sent a 6-digit code to{" "}
-            <Text style={styles.emailHighlight}>{submittedEmail}</Text>. Enter
-            it below to verify your address.
+            <Text style={styles.highlight}>{submittedPhone}</Text>. Enter it
+            below to confirm your new number.
           </Text>
           <View>
             <Controller
@@ -163,10 +161,7 @@ export function EmailModal({
               name="code"
               rules={{
                 required: "Code is required",
-                minLength: {
-                  value: 6,
-                  message: "Code must be 6 digits",
-                },
+                minLength: { value: 6, message: "Code must be 6 digits" },
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
@@ -221,7 +216,7 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     lineHeight: lineHeight.sm,
   },
-  emailHighlight: {
+  highlight: {
     color: colors.textPrimary,
     fontWeight: "600",
   },

@@ -4,4 +4,5 @@ export class GetAccountDetailsResponseDto implements IGetAccountDetailsResponseD
   email: string | null;
   emailVerified: boolean;
   name: string;
+  phoneNumber: string | null;
 }

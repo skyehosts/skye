@@ -13,21 +13,26 @@ import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import { EmailModal } from "./components/email-modal";
+import { PhoneModal } from "./components/phone-modal";
 
 interface PersonalDetailsItemProps {
   icon: string;
   label: string;
   value: string | null;
+  description?: string;
   verified?: boolean;
   onPress: () => void;
+  actionText?: string;
 }
 
 function PersonalDetailsItem({
   icon,
   label,
   value,
+  description,
   verified,
   onPress,
+  actionText,
 }: PersonalDetailsItemProps) {
   return (
     <TouchableOpacity style={styles.item} onPress={onPress}>
@@ -42,10 +47,27 @@ function PersonalDetailsItem({
           )}
         </View>
         {value && <Text style={commonStyles.itemSubtext}>{value}</Text>}
+        {description && <Text style={styles.description}>{description}</Text>}
       </View>
-      <Icon source="chevron-right" size={22} color={colors.textSecondary} />
+      {actionText ? (
+        <Text style={styles.actionText}>{actionText}</Text>
+      ) : (
+        <Icon source="chevron-right" size={22} color={colors.textSecondary} />
+      )}
     </TouchableOpacity>
   );
+}
+
+function maskPhoneNumber(phoneNumber: string): string {
+  const digits = phoneNumber.replace(/\D/g, "");
+  if (digits.length < 5) return phoneNumber;
+  return `${digits.slice(0, 2)}******${digits.slice(-3)}`;
+}
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain || local.length < 2) return email;
+  return `${local.slice(0, 2)}****@${domain}`;
 }
 
 export default function PersonalDetailsScreen() {
@@ -54,6 +76,7 @@ export default function PersonalDetailsScreen() {
     null,
   );
   const [emailModalVisible, setEmailModalVisible] = useState(false);
+  const [phoneModalVisible, setPhoneModalVisible] = useState(false);
 
   const loadDetails = useCallback(async () => {
     const data =
@@ -71,7 +94,20 @@ export default function PersonalDetailsScreen() {
     );
   }
 
-  const emailValue = details?.email ?? null;
+  function handlePhoneChanged(phoneNumber: string) {
+    setDetails((prev) => (prev ? { ...prev, phoneNumber } : prev));
+  }
+
+  const email = details?.email ?? null;
+  const phoneNumber = details?.phoneNumber ?? null;
+  const maskedPhone = phoneNumber ? maskPhoneNumber(phoneNumber) : null;
+  const maskedEmail = email ? maskEmail(email) : null;
+  const phoneDescription = maskedPhone
+    ? `${maskedPhone}\nContact number (for confirmed guests and Skye Hosts to get in touch)`
+    : "Contact number (for confirmed guests and Skye Hosts to get in touch)";
+  const emailDescription = maskedEmail
+    ? `${maskedEmail}\nUsed for booking notifications and account updates`
+    : "No email added — Optional, useful for booking notifications and account updates";
 
   return (
     <ScreenContainer>
@@ -87,9 +123,19 @@ export default function PersonalDetailsScreen() {
           <PersonalDetailsItem
             icon="email-outline"
             label="Email"
-            value={emailValue}
+            value={null}
+            description={emailDescription}
             verified={details?.emailVerified}
             onPress={() => setEmailModalVisible(true)}
+            actionText="Edit"
+          />
+          <PersonalDetailsItem
+            icon="phone-outline"
+            label="Phone number"
+            value={null}
+            description={phoneDescription}
+            onPress={() => setPhoneModalVisible(true)}
+            actionText="Edit"
           />
         </View>
       )}
@@ -99,6 +145,11 @@ export default function PersonalDetailsScreen() {
         currentEmail={details?.email ?? null}
         onDismiss={() => setEmailModalVisible(false)}
         onEmailVerified={handleEmailVerified}
+      />
+      <PhoneModal
+        visible={phoneModalVisible}
+        onDismiss={() => setPhoneModalVisible(false)}
+        onPhoneChanged={handlePhoneChanged}
       />
     </ScreenContainer>
   );
@@ -141,5 +192,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.success,
     fontWeight: "600",
+  },
+  description: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
+  actionText: {
+    fontSize: typography.sm,
+    color: colors.primary,
+    textDecorationLine: "underline",
   },
 });

@@ -21,6 +21,7 @@ export class AccountController {
     dto.email = account.email;
     dto.emailVerified = account.emailVerified;
     dto.name = account.name;
+    dto.phoneNumber = account.phoneNumber;
     return dto;
   }
 }

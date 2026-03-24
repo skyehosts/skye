@@ -1,5 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import type {
+  IAccountPhoneRequestOtpResponseDto,
+  IAccountPhoneVerifyOtpResponseDto,
   IChangePasswordResponseDto,
   IEmailRequestOtpResponseDto,
   IEmailVerifyOtpResponseDto,
@@ -23,6 +25,8 @@ import {
   EmailVerifyOtpRequestDto,
   ForgotPasswordRequestDto,
   LoginRequestDto,
+  PhoneChangeRequestOtpRequestDto,
+  PhoneChangeVerifyOtpRequestDto,
   PhoneLookupRequestDto,
   PhoneRequestOtpRequestDto,
   PhoneVerifyOtpRequestDto,
@@ -117,6 +121,29 @@ export class AuthController {
       dto.code,
       dto.name,
       dto.email,
+    );
+  }
+
+  @Post('phone-change-request-otp')
+  async onPhoneChangeRequestOtp(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+    @Body() dto: PhoneChangeRequestOtpRequestDto,
+  ): Promise<IAccountPhoneRequestOtpResponseDto> {
+    return this.authService.phoneChangeRequestOtp(
+      authenticatedUser.sub,
+      dto.phoneNumber,
+    );
+  }
+
+  @Post('phone-change-verify-otp')
+  async onPhoneChangeVerifyOtp(
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+    @Body() dto: PhoneChangeVerifyOtpRequestDto,
+  ): Promise<IAccountPhoneVerifyOtpResponseDto> {
+    return this.authService.phoneChangeVerifyOtp(
+      authenticatedUser.sub,
+      dto.phoneNumber,
+      dto.code,
     );
   }
 

@@ -1,4 +1,5 @@
 import {
+  ApiValidationError,
   fetchApi as baseFetchApi,
   type FetchApiOptions,
 } from "../../../../packages/skye-hosts-api-client/src";
@@ -43,7 +44,11 @@ export async function fetchApi<TResponse, TBody = never>(
     log.debug(`${path} succeeded`);
     return result;
   } catch (e) {
-    log.error(`${path} failed:`, e);
+    if (e instanceof ApiValidationError) {
+      log.debug(`${path} validation error`);
+    } else {
+      log.error(`${path} failed:`, e);
+    }
     throw e;
   }
 }

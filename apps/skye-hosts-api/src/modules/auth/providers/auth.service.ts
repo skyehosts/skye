@@ -4,6 +4,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import type {
+  IAccountPhoneRequestOtpResponseDto,
+  IAccountPhoneVerifyOtpResponseDto,
   IChangePasswordResponseDto,
   IEmailRequestOtpResponseDto,
   IEmailVerifyOtpResponseDto,
@@ -22,6 +24,12 @@ import { AccountService } from '../../account/providers';
 import { ConfigService } from '../../config/providers/config.service';
 import { SignUpRequestDto } from '../dto';
 import { TwilioService } from './twilio.service';
+
+function fieldError(property: string, message: string) {
+  return new BadRequestException([
+    { property, constraints: { custom: message } },
+  ]);
+}
 
 const FORGOT_PASSWORD_MESSAGE =
   'If an account with that email exists, we have sent a password reset link.';
@@ -304,7 +312,7 @@ export class AuthService {
   ): Promise<IEmailRequestOtpResponseDto> {
     const existing = await this.accountService.findByEmail(email);
     if (existing && existing.id !== userId) {
-      throw new BadRequestException('Email address is already in use');
+      throw fieldError('email', 'Email address is already in use');
     }
 
     await this.twilioService.sendVerificationToEmail(email);
@@ -318,7 +326,7 @@ export class AuthService {
   ): Promise<IEmailVerifyOtpResponseDto> {
     const existing = await this.accountService.findByEmail(email);
     if (existing && existing.id !== userId) {
-      throw new BadRequestException('Email address is already in use');
+      throw fieldError('email', 'Email address is already in use');
     }
 
     const isValid = await this.twilioService.checkVerificationForEmail(
@@ -326,7 +334,7 @@ export class AuthService {
       code,
     );
     if (!isValid) {
-      throw new BadRequestException('Invalid or expired verification code');
+      throw fieldError('code', 'Invalid or expired verification code');
     }
 
     const account = await this.accountService.findById(userId);
@@ -353,6 +361,48 @@ export class AuthService {
     account.pinHash = pinHash;
     account.pinSalt = pinSalt;
     await this.accountService.save(account);
+  }
+
+  async phoneChangeRequestOtp(
+    userId: number,
+    phoneNumber: string,
+  ): Promise<IAccountPhoneRequestOtpResponseDto> {
+    const existing = await this.accountService.findByPhoneNumber(phoneNumber);
+    if (existing && existing.id !== userId) {
+      throw fieldError('phoneNumber', 'Phone number is already in use');
+    }
+
+    await this.twilioService.sendVerification(phoneNumber);
+    return { message: 'Verification code sent' };
+  }
+
+  async phoneChangeVerifyOtp(
+    userId: number,
+    phoneNumber: string,
+    code: string,
+  ): Promise<IAccountPhoneVerifyOtpResponseDto> {
+    const existing = await this.accountService.findByPhoneNumber(phoneNumber);
+    if (existing && existing.id !== userId) {
+      throw fieldError('phoneNumber', 'Phone number is already in use');
+    }
+
+    const isValid = await this.twilioService.checkVerification(
+      phoneNumber,
+      code,
+    );
+    if (!isValid) {
+      throw fieldError('code', 'Invalid or expired verification code');
+    }
+
+    const account = await this.accountService.findById(userId);
+    if (!account) {
+      throw new UnauthorizedException('Account not found');
+    }
+
+    account.phoneNumber = phoneNumber;
+    await this.accountService.save(account);
+
+    return { phoneNumber };
   }
 
   async signUp(dto: SignUpRequestDto): Promise<Account> {

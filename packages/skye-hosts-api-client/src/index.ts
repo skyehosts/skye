@@ -3,6 +3,8 @@ export * from './api-validation-error';
 export * from './constants/amenities';
 export * from './constants/template-tokens';
 export * from './dto-interfaces/account/account-authenticated.dto';
+export * from './dto-interfaces/account/account-phone-request-otp.dto';
+export * from './dto-interfaces/account/account-phone-verify-otp.dto';
 export * from './dto-interfaces/account/get-account-details-response.dto';
 export * from './dto-interfaces/auth/change-password-request.dto';
 export * from './dto-interfaces/auth/change-password-response.dto';

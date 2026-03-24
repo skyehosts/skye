@@ -17,10 +17,6 @@ export function handleFormError<T extends FieldValues>(
   setServerError: (message: string) => void,
 ): void {
   if (applyServerErrors(e, setError)) return;
-  if (e instanceof ApiRequestError && e.statusCode < 500) {
-    setServerError(e.message);
-    return;
-  }
   setServerError(SERVER_ERROR_MESSAGE);
 }
 
