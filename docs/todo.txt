@@ -104,10 +104,21 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In hosts app On, Personal details page
-- Add a new item to the list to change the hosts name.
-- Follow the same pattern for list item display -> modal -> error handling etc as the existing items
-- Any major decisions, ask
+- On the calendar page for a listing in host app
+- Implement a Airbnb-Style Scrollable Calendar
+
+Create a **React Native vertical scrollable calendar** similar to Airbnb, focusing **only on basic UI and scroll**. Ignore date selection, range logic, or any extra functionality. Requirements:
+
+- Vertical scroll of months
+- Display **24 months** (2-year window) (18 months into the future and 6 months in the past)
+- Each month shows a **grid of days**
+- Lazy-render months for performance (virtualization)
+- Smooth scrolling, like a mobile calendar app
+- Use **React Native** (no external styling library required, but allow for future theming)
+- Clean, minimal UI (day numbers, month headers)
+- Modular code: separate components for **Month** and **Day**
+- User should see calendar centered on current date when loading page
+
 
 ==================
 Re-useable prompts
