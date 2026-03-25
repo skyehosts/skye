@@ -1,9 +1,18 @@
 import { router } from "expo-router";
-import { StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { useForm } from "react-hook-form";
 import { Button, HelperText, TextInput } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const logoTall = require("../../assets/logo-tall.png");
 import {
   getRemainingAttempts,
   isPinLocked,
@@ -19,6 +28,8 @@ interface PinUnlockFormValues {
 
 export default function PinUnlockScreen() {
   const { unlock, signOut } = useAuth();
+  const { width } = useWindowDimensions();
+  const logoWidth = width >= 768 ? width * 0.4 : width * 0.65;
 
   const {
     setValue,
@@ -65,6 +76,11 @@ export default function PinUnlockScreen() {
   return (
     <ScreenContainer>
       <View style={commonStyles.securityContainer}>
+        <Image
+          source={logoTall}
+          style={[styles.logo, { width: logoWidth }]}
+          resizeMode="contain"
+        />
         <Text style={commonStyles.securityTitle}>Welcome back</Text>
         <Text style={commonStyles.securitySubtitle}>
           Enter your PIN to continue
@@ -105,6 +121,10 @@ export default function PinUnlockScreen() {
 }
 
 const styles = StyleSheet.create({
+  logo: {
+    aspectRatio: 1,
+    marginBottom: spacing.xl,
+  },
   inputWrapper: {
     width: "100%",
     marginBottom: spacing.lg,
