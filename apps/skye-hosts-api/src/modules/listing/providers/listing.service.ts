@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { In, Repository } from 'typeorm';
+import { Account } from '../../account/entities/account.entity';
 import { ListingAccessService } from '../../co-host/providers/listing-access.service';
 import {
   buildDerivedImageUrl,
@@ -46,6 +47,8 @@ export class ListingService {
   constructor(
     @InjectRepository(Listing)
     private readonly listingRepo: Repository<Listing>,
+    @InjectRepository(Account)
+    private readonly accountRepo: Repository<Account>,
     @InjectRepository(ListingImage)
     private readonly listingImageRepo: Repository<ListingImage>,
     private listingAccessService: ListingAccessService,
@@ -411,10 +414,13 @@ export class ListingService {
     listing: Listing,
     includeExactCoords = false,
   ): Promise<GetListingResponseDto> {
-    const allImages = await this.listingImageRepo.find({
-      where: { listingId: listing.id },
-      order: { position: 'ASC' },
-    });
+    const [allImages, host] = await Promise.all([
+      this.listingImageRepo.find({
+        where: { listingId: listing.id },
+        order: { position: 'ASC' },
+      }),
+      this.accountRepo.findOne({ where: { id: listing.hostId } }),
+    ]);
 
     const coverImage = allImages.find((img) => img.position === 0);
 
@@ -472,6 +478,7 @@ export class ListingService {
       longitude: includeExactCoords ? listing.longitude : null,
       approximateLatitude: listing.approximateLatitude,
       approximateLongitude: listing.approximateLongitude,
+      hostName: host?.name ?? '',
       coverImageUrl: coverImage
         ? this.buildCoverImageUrl(listing.id, coverImage.id)
         : null,

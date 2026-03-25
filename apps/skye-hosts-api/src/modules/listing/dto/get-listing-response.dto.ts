@@ -66,6 +66,7 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   longitude: number | null;
   approximateLatitude: number | null;
   approximateLongitude: number | null;
+  hostName: string;
   coverImageUrl: string | null;
   images: IListingImageDto[];
   status: ListingStatus;
