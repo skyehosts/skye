@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { View } from "react-native";
 import { Appbar } from "react-native-paper";
-import { MenuItem } from "../components/menu-item";
 import { ScreenContainer } from "../components/screen-container";
+import { SettingsListItem } from "../components/settings-list-item";
 import { commonStyles } from "../theme";
 
 export default function LoginSecurityScreen() {
@@ -16,10 +16,12 @@ export default function LoginSecurityScreen() {
       </Appbar.Header>
 
       <View style={commonStyles.menuSection}>
-        <MenuItem
+        <SettingsListItem
           icon="lock-reset"
-          label="Change PIN"
+          label="Pin number"
+          description="Change or update your 4-6 digit security PIN"
           onPress={() => router.push("/settings/change-pin")}
+          actionText="Edit"
         />
       </View>
     </ScreenContainer>

@@ -1,54 +1,15 @@
 import type { IGetAccountDetailsResponseDto } from "../../../../packages/skye-hosts-api-client/src";
 import { useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { Appbar, Icon } from "react-native-paper";
+import { ActivityIndicator, View } from "react-native";
+import { Appbar } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
+import { SettingsListItem } from "../components/settings-list-item";
 import { fetchApi } from "../services/api";
-import { colors, commonStyles, spacing, typography } from "../theme";
+import { commonStyles } from "../theme";
 import { EmailModal } from "./components/email-modal";
 import { NameModal } from "./components/name-modal";
 import { PhoneModal } from "./components/phone-modal";
-
-interface PersonalDetailsItemProps {
-  icon: string;
-  label: string;
-  value: string | null;
-  description?: string;
-  onPress: () => void;
-  actionText?: string;
-}
-
-function PersonalDetailsItem({
-  icon,
-  label,
-  value,
-  description,
-  onPress,
-  actionText,
-}: PersonalDetailsItemProps) {
-  return (
-    <TouchableOpacity style={styles.item} onPress={onPress}>
-      <Icon source={icon} size={22} color={colors.textSecondary} />
-      <View style={styles.itemText}>
-        <Text style={commonStyles.itemTitle}>{label}</Text>
-        {value && <Text style={commonStyles.itemSubtext}>{value}</Text>}
-        {description && <Text style={styles.description}>{description}</Text>}
-      </View>
-      {actionText ? (
-        <Text style={styles.actionText}>{actionText}</Text>
-      ) : (
-        <Icon source="chevron-right" size={22} color={colors.textSecondary} />
-      )}
-    </TouchableOpacity>
-  );
-}
 
 function maskPhoneNumber(phoneNumber: string): string {
   const digits = phoneNumber.replace(/\D/g, "");
@@ -106,8 +67,8 @@ export default function PersonalDetailsScreen() {
       {!details ? (
         <ActivityIndicator style={commonStyles.sectionLoader} />
       ) : (
-        <View style={styles.section}>
-          <PersonalDetailsItem
+        <View style={commonStyles.menuSection}>
+          <SettingsListItem
             icon="account-outline"
             label="Name"
             value={null}
@@ -115,7 +76,7 @@ export default function PersonalDetailsScreen() {
             onPress={() => setNameModalVisible(true)}
             actionText="Edit"
           />
-          <PersonalDetailsItem
+          <SettingsListItem
             icon="email-outline"
             label="Email"
             value={null}
@@ -123,7 +84,7 @@ export default function PersonalDetailsScreen() {
             onPress={() => setEmailModalVisible(true)}
             actionText="Edit"
           />
-          <PersonalDetailsItem
+          <SettingsListItem
             icon="phone-outline"
             label="Phone number"
             value={null}
@@ -154,36 +115,3 @@ export default function PersonalDetailsScreen() {
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    marginTop: spacing.md,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  item: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
-    gap: spacing.md,
-    backgroundColor: colors.background,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  itemText: {
-    flex: 1,
-    gap: spacing.xs,
-  },
-  description: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-  },
-  actionText: {
-    fontSize: typography.sm,
-    color: colors.primary,
-    textDecorationLine: "underline",
-  },
-});

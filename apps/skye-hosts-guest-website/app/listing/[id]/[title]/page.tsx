@@ -1,11 +1,15 @@
+import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import {
   fetchApi,
   type IGetListingResponseDto,
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
+import { ListingBookingSidebar } from '@repo/web-components/listings/listing-booking-sidebar';
+import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
+import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
@@ -49,47 +53,78 @@ export default async function ListingPage({ params }: ListingPageProps) {
   }
 
   return (
-    <Container maxWidth={false} sx={{ maxWidth: 1120, px: { xs: 0, md: 3 } }}>
-      <ListingHeroSection
-        title={listing.title}
-        description={listing.description}
-        spaceType={listing.spaceType}
-        typeId={listing.typeId}
-        maxGuests={listing.maxGuests}
-        beds={listing.beds}
-        bathrooms={listing.bathrooms}
-        postCode={listing.postCode}
-        images={listing.images}
-      />
-      <ListingLocationSection
-        approximateLatitude={listing.approximateLatitude}
-        approximateLongitude={listing.approximateLongitude}
-        googleMapsStaticApiKey={
-          process.env.NEXT_PUBLIC_GOOGLE_MAPS_STATIC_KEY ?? ''
-        }
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''}
-        listingTitle={listing.title}
-      />
-      {/* TODO: Replace hardcoded values with actual booking form data */}
-      {guestId ? (
-        <>
-          <FavouriteButton
-            listingId={listing.id}
-            initialFavourited={isFavourited}
+    <Container
+      maxWidth={false}
+      sx={{ maxWidth: 1120, px: { xs: 0, md: 3 }, pb: { xs: 10, md: 0 } }}
+    >
+      {/* Full-width images */}
+      <ListingHeroImages images={listing.images} title={listing.title} />
+
+      {/* Two-column layout: hero text + sidebar */}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: { md: 4 },
+        }}
+      >
+        {/* Left column: hero text + location + booking actions */}
+        <Box sx={{ flex: { md: '0 0 62%' }, minWidth: 0 }}>
+          <ListingHeroSection
+            title={listing.title}
+            description={listing.description}
+            spaceType={listing.spaceType}
+            typeId={listing.typeId}
+            maxGuests={listing.maxGuests}
+            beds={listing.beds}
+            bathrooms={listing.bathrooms}
+            postCode={listing.postCode}
+            images={listing.images}
+            hideImages
+            reviewSummary={{ rating: 4.85, reviewCount: 12 }}
+            hostInfo={{ name: listing.hostName }}
           />
-          <BookNowButton
-            listingId={listing.id}
-            guestId={guestId}
-            checkInDate="2026-04-01"
-            checkOutDate="2026-04-05"
-            totalPrice={500}
+          <ListingLocationSection
+            approximateLatitude={listing.approximateLatitude}
+            approximateLongitude={listing.approximateLongitude}
+            googleMapsStaticApiKey={
+              process.env.NEXT_PUBLIC_GOOGLE_MAPS_STATIC_KEY ?? ''
+            }
+            mapboxAccessToken={
+              process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''
+            }
+            listingTitle={listing.title}
           />
-        </>
-      ) : (
-        <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
-          Log in to book
-        </Link>
-      )}
+          {/* TODO: Replace hardcoded values with actual booking form data */}
+          {guestId ? (
+            <>
+              <FavouriteButton
+                listingId={listing.id}
+                initialFavourited={isFavourited}
+              />
+              <BookNowButton
+                listingId={listing.id}
+                guestId={guestId}
+                checkInDate="2026-04-01"
+                checkOutDate="2026-04-05"
+                totalPrice={500}
+              />
+            </>
+          ) : (
+            <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
+              Log in to book
+            </Link>
+          )}
+        </Box>
+
+        {/* Right column: booking sidebar (desktop only) */}
+        <Box sx={{ flex: { md: 1 }, display: { xs: 'none', md: 'block' } }}>
+          <ListingBookingSidebar />
+        </Box>
+      </Box>
+
+      {/* Mobile fixed booking bar */}
+      <ListingMobileBookingBar />
     </Container>
   );
 }

@@ -1,8 +1,8 @@
-import { router } from "expo-router";
+import { router, useRouter } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { useForm } from "react-hook-form";
-import { Button, HelperText, TextInput } from "react-native-paper";
+import { Appbar, Button, HelperText, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
@@ -25,6 +25,7 @@ type PinField = keyof ChangePinFormValues;
 
 export default function ChangePinScreen() {
   const { user, signOut } = useAuth();
+  const appRouter = useRouter();
   const [step, setStep] = useState<"verify" | "enter" | "confirm">("verify");
   const [serverError, setServerError] = useState("");
 
@@ -149,6 +150,10 @@ export default function ChangePinScreen() {
 
   return (
     <ScreenContainer>
+      <Appbar.Header>
+        <Appbar.BackAction onPress={() => appRouter.back()} />
+        <Appbar.Content title="Change PIN" />
+      </Appbar.Header>
       <View style={commonStyles.securityContainer}>
         <Text style={commonStyles.securityTitle}>{titles[step]}</Text>
         <Text style={[commonStyles.securitySubtitle, { textAlign: "center" }]}>

@@ -52,6 +52,7 @@ export class PaymentController {
         checkInDate: dto.checkInDate,
         checkOutDate: dto.checkOutDate,
         totalPrice: dto.totalPrice,
+        numberOfGuests: dto.numberOfGuests ?? 1,
         isTestBooking: dto.isTestBooking ?? false,
       },
       timestamp: new Date().toISOString(),

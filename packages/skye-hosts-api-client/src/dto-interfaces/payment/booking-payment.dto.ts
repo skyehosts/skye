@@ -4,6 +4,7 @@ export interface IBookingPaymentRequestDto {
   checkInDate: string;
   checkOutDate: string;
   totalPrice: number;
+  numberOfGuests?: number;
   isTestBooking?: boolean;
 }
 

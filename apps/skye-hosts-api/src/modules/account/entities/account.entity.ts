@@ -94,6 +94,12 @@ export class Account {
   stripeCustomerId: string | null;
 
   @Column({
+    type: 'boolean',
+    default: true,
+  })
+  searchEngineIndexingEnabled: boolean;
+
+  @Column({
     nullable: false,
     type: 'boolean',
   })

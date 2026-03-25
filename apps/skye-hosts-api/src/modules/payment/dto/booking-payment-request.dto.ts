@@ -18,6 +18,10 @@ export class BookingPaymentRequestDto implements IBookingPaymentRequestDto {
   totalPrice: number;
 
   @IsOptional()
+  @IsNumber()
+  numberOfGuests?: number;
+
+  @IsOptional()
   @IsBoolean()
   isTestBooking?: boolean;
 }

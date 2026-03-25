@@ -27,6 +27,11 @@ export default function MoreScreen() {
 
       <View style={commonStyles.menuSection}>
         <MenuItem
+          icon="cash-multiple"
+          label="Earnings"
+          onPress={() => router.push("/settings/earnings")}
+        />
+        <MenuItem
           icon="account-outline"
           label="Personal details"
           onPress={() => router.push("/settings/personal-details")}

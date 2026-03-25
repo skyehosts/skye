@@ -1,6 +1,7 @@
 ====
 Next
 ====
+- Why image upload not working in Prod
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
     - Publish app to google play (Beta)
@@ -9,6 +10,8 @@ Next
       - ## App Store URLs
       - ## Native Rebuild Required
   - Get Expo pipeline (GH) deployed to real device
+- Profile photo
+- Review system
 
 ===
 MVP
@@ -70,9 +73,6 @@ Host App
 - Notifications (Messages from guest)
 - Today page
 - Calendar page
-- Menu page
-  - Change password
-  - Change pin
 - If you already signed up and reinstalled app, could you gain access
 - Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
   - Decide address upload or stripe verification (account vs name match)
@@ -107,26 +107,61 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In hosts app On, Personal details page
-- Add a list to list items called 'Phone number'
-  - TItle: Phone number
-  - Descriotion 
-    - {curentPhoneNumber} (In format +44 ***** last 4 digits unmasked) /n
-      Contact number (for confirmed guests and Skye Hosts to get in touch)
-  - Link (Top right), text: 'Edit' (style: underlined)
+- In hosts app, on Personal details page
+  - Under name list item, add another one with information:
+  - Title: 'Profile photo'
+  - Description: This will be displayed on your listing pages to help show guests who they are booking with (Try improve this)
 - Tap behaviour:
-  - Begins journey to change phone number
-  - NB: An account will always already have a currente phone number at this stage
-  - You decide is modal or page is best. Re-use existing components/styles where possible
-  - Twilio verify should be used, so host verifies mobile number via code. (Only then, is the save persisted)
-- After succesfull save complete, new number should show up in list item
+  - Opens a new modal to enable host to upload a profile photo
+  - Note:
+    - There is an existing photo selector (used by listing editor) that could potentially be re-used with max selectable photos = 1 (instead of many)
+    - There is existing AWS infrastructure e.g:
+      - s3 bucket that could be re-used
+      - Lambda that reduces quality to 80 and saves variants
+      - SQS queue: But may be overkill
+  ? - Photo will only ever be displayed in 1:1 ratio so may need a way to allow user to crop their own photo to ensure face isn't inadvertently cut out
+- Scrutinise my plan, especially whether it's wise to re-use existing AWS infrastructure (overkill) or whether this should be simpler (no sqs / lambda)
+- Carefully consider best way to solve face cropping problem.
+- Prefer to re-use existing npm libraries (only if fit for purpose). Otherwise other npm packages can be considered but only if well maintained and populate
+- Preference for simple solution
+- Identify opportunities for improvement
+- Any major decisions, ask
 
-- Include icon on list item and you decide best one
-- When clicked, enables user to change their pin
-- Ensure encapsulate in a component so it can moved easily in future if needed
-- Ensure the customer journey is secure / protected from malicious users
-- Keep flow simple as possible
-- Any major decisions, ask me
+- On guest website, on listing/:id/:slug page
+- There is an existing booking box with lorem ipsum in it, let's implement it properly
+- Under Mobile breakpoint (Statically positioned):
+  - Height: 100px;
+  - Padding top/bottom: 20px
+  - Padding left/right: Normal gutters
+  - Content:
+    - Top box:
+      - £677 total (Price for selected date range)
+      - 13 - 18 Sept
+      - Hover behaviour: underline text
+      - Tap behaviour: Open modal [A]
+    - Button:
+      - Text:
+        - 'Reserve' (If instant book enabled)
+        - 'Request to book' (If instant book not enabled)
+        - Style; Full width, primary
+      - Tap behaviour:
+        - Open Modal [B]
+- Over mobile breakpoint:
+  - Row 1:
+    - Check-in date field
+    - Check-out date field
+    - Tapping either, should open a calendar datepicker to select both check-in and chec-out date in a single movement
+    - I.E: Two months displayed at once (Horizontal column)
+    - Arrows on left and right to cycle through months
+    - Suggest: @mui/x-date-pickers, check if optimal
+  - Row 2:
+    - Todo later (Guest selector)
+- Modal [B]
+  - Title 'Confirm and pay'
+  - Description: Lorem ipsum for now
+- Modal [A]
+  0 
+
 
 ==================
 Re-useable prompts

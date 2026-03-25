@@ -9,6 +9,7 @@ import {
   isPinLocked,
   verifyPin,
 } from "../services/pin.service";
+import { DEFAULT_TAB } from "../services/routes";
 import { ensureValidToken } from "../services/session.service";
 import { commonStyles, spacing, typography } from "../theme";
 
@@ -44,7 +45,7 @@ export default function PinUnlockScreen() {
       const tokenValid = await ensureValidToken();
       if (tokenValid) {
         unlock();
-        router.replace("/(tabs)/listings");
+        router.replace(DEFAULT_TAB);
       } else {
         await signOut();
       }

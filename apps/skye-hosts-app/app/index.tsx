@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { SplashScreen } from "./components/splash-screen";
 import { useAuth } from "./contexts/auth-context";
 import { sentryTest } from "./services/error-reporting";
+import { DEFAULT_TAB } from "./services/routes";
 import StorageService, { StorageKeys } from "./services/storage";
 
 const SPLASH_MIN_MS = 2000;
@@ -49,5 +50,5 @@ export default function HomeScreen() {
     return <Redirect href="/(security)/unlock" />;
   }
 
-  return <Redirect href="/(tabs)/listings" />;
+  return <Redirect href={DEFAULT_TAB} />;
 }

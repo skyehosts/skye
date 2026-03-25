@@ -10,6 +10,7 @@ import {
   getBiometricType,
   isBiometricAvailable,
 } from "../services/biometric.service";
+import { DEFAULT_TAB } from "../services/routes";
 import { commonStyles, spacing } from "../theme";
 
 export default function BiometricSetupScreen() {
@@ -23,7 +24,7 @@ export default function BiometricSetupScreen() {
       const isAvailable = await isBiometricAvailable();
       if (!isAvailable) {
         unlock();
-        router.replace("/(tabs)/listings");
+        router.replace(DEFAULT_TAB);
         return;
       }
       setAvailable(true);
@@ -39,12 +40,12 @@ export default function BiometricSetupScreen() {
       await enableBiometrics();
     }
     unlock();
-    router.replace("/(tabs)/listings");
+    router.replace(DEFAULT_TAB);
   };
 
   const handleSkip = () => {
     unlock();
-    router.replace("/(tabs)/listings");
+    router.replace(DEFAULT_TAB);
   };
 
   if (loading) {

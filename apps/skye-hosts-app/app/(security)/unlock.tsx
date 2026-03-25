@@ -9,6 +9,7 @@ import {
   getBiometricType,
   isBiometricEnabled,
 } from "../services/biometric.service";
+import { DEFAULT_TAB } from "../services/routes";
 import { ensureValidToken } from "../services/session.service";
 import { commonStyles, spacing } from "../theme";
 
@@ -23,7 +24,7 @@ export default function UnlockScreen() {
       const valid = await ensureValidToken();
       if (valid) {
         unlock();
-        router.replace("/(tabs)/listings");
+        router.replace(DEFAULT_TAB);
         return true;
       }
     }

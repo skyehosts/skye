@@ -179,6 +179,28 @@ export const commonStyles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
 
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
+    backgroundColor: colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+
+  menuItemText: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+
+  menuItemAction: {
+    fontSize: typography.sm,
+    color: colors.primary,
+    textDecorationLine: "underline",
+  },
+
   /* ── Dividers ───────────────────────────────────── */
 
   divider: {

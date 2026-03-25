@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Logger,
   NotFoundException,
@@ -9,9 +10,13 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import type { IGetBookingResponseDto } from '@repo/skye-hosts-api-client';
+import type {
+  IGetBookingResponseDto,
+  IGetListingBookingsResponseDto,
+} from '@repo/skye-hosts-api-client';
 import {
   AuthenticatedUser,
+  AuthoriseRole,
   IgnoreBearerAuthentication,
 } from '../../common/decorators';
 import { SecretAuthenticationGuard } from '../../common/guards';
@@ -28,6 +33,7 @@ interface SuccessfulBookingPaymentMessage extends AwsQueueBaseMessageBody {
     checkInDate: string;
     checkOutDate: string;
     totalPrice: number;
+    numberOfGuests?: number;
     isTestBooking?: boolean;
   };
   timestamp: string;
@@ -41,6 +47,31 @@ export class BookingController {
     private readonly bookingService: BookingService,
     private readonly notificationService: NotificationService,
   ) {}
+
+  @Get('listing/:listingId')
+  @AuthoriseRole('host')
+  async getListingBookings(
+    @Param('listingId', ParseIntPipe) listingId: number,
+    @AuthenticatedUser() user: IJwtClaims,
+  ): Promise<IGetListingBookingsResponseDto> {
+    const bookings =
+      await this.bookingService.findByListingIdWithGuest(listingId);
+
+    if (bookings.length > 0 && bookings[0].listing.hostId !== user.sub) {
+      throw new ForbiddenException('You do not have access to this listing');
+    }
+
+    return {
+      bookings: bookings.map((b) => ({
+        id: b.id,
+        guestFirstName: b.guest.name.split(' ')[0],
+        numberOfGuests: b.numberOfGuests,
+        checkInDate: b.checkInDate,
+        checkOutDate: b.checkOutDate,
+        status: b.status,
+      })),
+    };
+  }
 
   @Get(':id')
   async getBooking(
@@ -81,6 +112,7 @@ export class BookingController {
       checkInDate: payload.checkInDate,
       checkOutDate: payload.checkOutDate,
       totalPrice: payload.totalPrice,
+      numberOfGuests: payload.numberOfGuests ?? 1,
       isTestBooking: payload.isTestBooking,
     });
 
