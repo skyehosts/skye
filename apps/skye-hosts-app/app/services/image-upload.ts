@@ -17,7 +17,9 @@ const log = createLogger("imageUpload");
  * Read a local file URI into an ArrayBuffer using expo-file-system.
  * Isolated so that expo-file-system API changes only require updating this function.
  */
-async function readFileAsArrayBuffer(fileUri: string): Promise<ArrayBuffer> {
+export async function readFileAsArrayBuffer(
+  fileUri: string,
+): Promise<ArrayBuffer> {
   const file = new ExpoFile(fileUri);
   return file.arrayBuffer();
 }
@@ -68,7 +70,7 @@ async function compressImage(uri: string, width: number): Promise<string> {
 /**
  * Upload a single file to S3 via a presigned PUT URL.
  */
-async function uploadToS3(
+export async function uploadToS3(
   presignedUrl: string,
   fileUri: string,
 ): Promise<void> {

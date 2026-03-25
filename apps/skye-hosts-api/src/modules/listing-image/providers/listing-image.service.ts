@@ -54,11 +54,9 @@ export class ListingImageService {
       requestChecksumCalculation: 'WHEN_REQUIRED',
       responseChecksumValidation: 'WHEN_REQUIRED',
     });
-    this.bucketName = this.configService.get<string>(
-      'AWS_S3_LISTING_IMAGES_BUCKET',
-    );
+    this.bucketName = this.configService.get<string>('AWS_S3_IMAGES_BUCKET');
     this.cdnDomain = this.configService.get<string>(
-      'AWS_CLOUDFRONT_LISTING_IMAGES_DOMAIN',
+      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
     );
   }
 

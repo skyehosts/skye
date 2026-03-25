@@ -73,6 +73,12 @@ export class Account {
     nullable: true,
     type: 'character varying',
   })
+  profilePhotoKey: string | null;
+
+  @Column({
+    nullable: true,
+    type: 'character varying',
+  })
   pinSalt: string | null;
 
   @Column({

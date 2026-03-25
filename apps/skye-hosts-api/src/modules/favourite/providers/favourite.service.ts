@@ -27,7 +27,7 @@ export class FavouriteService {
     private readonly configService: ConfigService,
   ) {
     this.cdnDomain = this.configService.get<string>(
-      'AWS_CLOUDFRONT_LISTING_IMAGES_DOMAIN',
+      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
     );
   }
 

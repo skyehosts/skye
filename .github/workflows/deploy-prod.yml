@@ -121,6 +121,8 @@ jobs:
 
           # Set environment variables
           heroku config:set \
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }} \
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} \
             GITHUB_RUN_NUMBER=${{ github.run_number }} \
             GIT_COMMIT=${{ github.sha }} \
             GIT_REF=${{ github.ref }} \

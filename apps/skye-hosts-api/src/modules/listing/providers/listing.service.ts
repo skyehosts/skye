@@ -55,7 +55,7 @@ export class ListingService {
     private configService: ConfigService,
   ) {
     this.cdnDomain = this.configService.get<string>(
-      'AWS_CLOUDFRONT_LISTING_IMAGES_DOMAIN',
+      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
     );
   }
 
@@ -479,6 +479,9 @@ export class ListingService {
       approximateLatitude: listing.approximateLatitude,
       approximateLongitude: listing.approximateLongitude,
       hostName: host?.name ?? '',
+      hostProfilePhotoUrl: host?.profilePhotoKey
+        ? `https://${this.cdnDomain}/${host.profilePhotoKey}`
+        : null,
       coverImageUrl: coverImage
         ? this.buildCoverImageUrl(listing.id, coverImage.id)
         : null,
