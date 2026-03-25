@@ -10,6 +10,7 @@ import { commonStyles } from "../theme";
 import { EmailModal } from "./components/email-modal";
 import { NameModal } from "./components/name-modal";
 import { PhoneModal } from "./components/phone-modal";
+import { ProfilePhotoModal } from "./components/profile-photo-modal";
 
 function maskPhoneNumber(phoneNumber: string): string {
   const digits = phoneNumber.replace(/\D/g, "");
@@ -31,6 +32,8 @@ export default function PersonalDetailsScreen() {
   const [nameModalVisible, setNameModalVisible] = useState(false);
   const [emailModalVisible, setEmailModalVisible] = useState(false);
   const [phoneModalVisible, setPhoneModalVisible] = useState(false);
+  const [profilePhotoModalVisible, setProfilePhotoModalVisible] =
+    useState(false);
 
   const loadDetails = useCallback(async () => {
     const data =
@@ -77,6 +80,18 @@ export default function PersonalDetailsScreen() {
             actionText="Edit"
           />
           <SettingsListItem
+            icon="camera-outline"
+            label="Profile photo"
+            value={null}
+            description={
+              details.profilePhotoUrl
+                ? "Displayed on your listings to help guests know their host"
+                : "Add a photo so guests know who they're booking with"
+            }
+            onPress={() => setProfilePhotoModalVisible(true)}
+            actionText={details.profilePhotoUrl ? "Edit" : "Add"}
+          />
+          <SettingsListItem
             icon="email-outline"
             label="Email"
             value={null}
@@ -111,6 +126,12 @@ export default function PersonalDetailsScreen() {
         visible={phoneModalVisible}
         onDismiss={() => setPhoneModalVisible(false)}
         onPhoneChanged={(phoneNumber) => updateDetail({ phoneNumber })}
+      />
+      <ProfilePhotoModal
+        visible={profilePhotoModalVisible}
+        currentPhotoUrl={details?.profilePhotoUrl ?? null}
+        onDismiss={() => setProfilePhotoModalVisible(false)}
+        onPhotoChanged={(profilePhotoUrl) => updateDetail({ profilePhotoUrl })}
       />
     </ScreenContainer>
   );

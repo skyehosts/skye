@@ -82,7 +82,10 @@ export default async function ListingPage({ params }: ListingPageProps) {
             images={listing.images}
             hideImages
             reviewSummary={{ rating: 4.85, reviewCount: 12 }}
-            hostInfo={{ name: listing.hostName }}
+            hostInfo={{
+              name: listing.hostName,
+              avatarUrl: listing.hostProfilePhotoUrl ?? undefined,
+            }}
           />
           <ListingLocationSection
             approximateLatitude={listing.approximateLatitude}

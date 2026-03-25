@@ -1,17 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import {
+  DeleteObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { UserRole } from '@repo/skye-hosts-api-client';
+import { randomUUID } from 'crypto';
 import { DeleteResult, Repository } from 'typeorm';
+import { ConfigService } from '../../config/providers/config.service';
 import { StripeService } from '../../stripe/providers';
 import { Account } from '../entities';
 
 @Injectable()
 export class AccountService {
+  private readonly logger = new Logger(AccountService.name);
+  private readonly s3Client: S3Client;
+  private readonly bucketName: string;
+  private readonly cdnDomain: string;
+
   constructor(
     @InjectRepository(Account)
     private readonly accountRepo: Repository<Account>,
     private stripeService: StripeService,
-  ) {}
+    private configService: ConfigService,
+  ) {
+    this.s3Client = new S3Client({
+      region: 'eu-west-1',
+      requestChecksumCalculation: 'WHEN_REQUIRED',
+      responseChecksumValidation: 'WHEN_REQUIRED',
+    });
+    this.bucketName = this.configService.get<string>('AWS_S3_IMAGES_BUCKET');
+    this.cdnDomain = this.configService.get<string>(
+      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
+    );
+  }
 
   async create(
     email: string,
@@ -93,5 +117,68 @@ export class AccountService {
 
   async save(account: Account) {
     return this.accountRepo.save(account);
+  }
+
+  async requestProfilePhotoUpload(
+    accountId: number,
+  ): Promise<{ uploadUrl: string; photoKey: string }> {
+    const uuid = randomUUID();
+    const photoKey = `accounts/${accountId}/profile-photo/${uuid}.jpeg`;
+    const command = new PutObjectCommand({
+      Bucket: this.bucketName,
+      Key: photoKey,
+      ContentType: 'image/jpeg',
+    });
+    const uploadUrl = await getSignedUrl(this.s3Client, command, {
+      expiresIn: 300,
+    });
+    return { uploadUrl, photoKey };
+  }
+
+  async confirmProfilePhotoUpload(
+    accountId: number,
+    photoKey: string,
+  ): Promise<void> {
+    if (!photoKey.startsWith(`accounts/${accountId}/`)) {
+      throw new BadRequestException('Invalid photo key');
+    }
+    const account = await this.accountRepo.findOne({
+      where: { id: accountId },
+    });
+    if (account.profilePhotoKey) {
+      await this.deleteS3Object(account.profilePhotoKey);
+    }
+    account.profilePhotoKey = photoKey;
+    await this.accountRepo.save(account);
+  }
+
+  async deleteProfilePhoto(accountId: number): Promise<void> {
+    const account = await this.accountRepo.findOne({
+      where: { id: accountId },
+    });
+    if (account?.profilePhotoKey) {
+      await this.deleteS3Object(account.profilePhotoKey);
+      account.profilePhotoKey = null;
+      await this.accountRepo.save(account);
+    }
+  }
+
+  buildProfilePhotoUrl(key: string | null): string | null {
+    if (!key) return null;
+    return `https://${this.cdnDomain}/${key}`;
+  }
+
+  private async deleteS3Object(key: string): Promise<void> {
+    try {
+      await this.s3Client.send(
+        new DeleteObjectCommand({
+          Bucket: this.bucketName,
+          Key: key,
+        }),
+      );
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.debug(`Failed to delete S3 object ${key}: ${message}`);
+    }
   }
 }

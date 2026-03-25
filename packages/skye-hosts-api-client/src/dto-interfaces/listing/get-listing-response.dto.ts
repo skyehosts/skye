@@ -66,6 +66,7 @@ export interface IGetListingResponseDto {
   approximateLatitude: number | null;
   approximateLongitude: number | null;
   hostName: string;
+  hostProfilePhotoUrl: string | null;
   coverImageUrl: string | null;
   images: IListingImageDto[];
   status: ListingStatus;
