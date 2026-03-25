@@ -2,7 +2,6 @@ import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { SplashScreen } from "./components/splash-screen";
 import { useAuth } from "./contexts/auth-context";
-import { sentryTest } from "./services/error-reporting";
 import { DEFAULT_TAB } from "./services/routes";
 import StorageService, { StorageKeys } from "./services/storage";
 
@@ -16,7 +15,6 @@ export default function HomeScreen() {
   const [splashDone, setSplashDone] = useState(false);
 
   useEffect(() => {
-    sentryTest();
     StorageService.getItem<boolean>(StorageKeys.ONBOARDING_SEEN).then(
       (value) => {
         setOnboardingSeen(value === true);

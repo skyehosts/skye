@@ -51,13 +51,13 @@ export function EmailModal({
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    defaultValues: { email: currentEmail ?? "", code: "" },
+    defaultValues: { email: "", code: "" },
   });
 
   function handleDismiss() {
     setStep("enter-email");
     setSubmittedEmail("");
-    reset({ email: currentEmail ?? "", code: "" });
+    reset({ email: "", code: "" });
     setServerError("");
     onDismiss();
   }

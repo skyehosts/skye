@@ -55,7 +55,9 @@ export default async function RootLayout({
                     component="main"
                     sx={{ bgcolor: 'mainBackground', flexGrow: 1 }}
                   >
-                    <Container maxWidth={false}>{children}</Container>
+                    <Container maxWidth={false} disableGutters>
+                      {children}
+                    </Container>
                   </Box>
                   <FooterWrapper />
                 </Box>

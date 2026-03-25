@@ -107,26 +107,6 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In hosts app, on Personal details page
-  - Under name list item, add another one with information:
-  - Title: 'Profile photo'
-  - Description: This will be displayed on your listing pages to help show guests who they are booking with (Try improve this)
-- Tap behaviour:
-  - Opens a new modal to enable host to upload a profile photo
-  - Note:
-    - There is an existing photo selector (used by listing editor) that could potentially be re-used with max selectable photos = 1 (instead of many)
-    - There is existing AWS infrastructure e.g:
-      - s3 bucket that could be re-used
-      - Lambda that reduces quality to 80 and saves variants
-      - SQS queue: But may be overkill
-  ? - Photo will only ever be displayed in 1:1 ratio so may need a way to allow user to crop their own photo to ensure face isn't inadvertently cut out
-- Scrutinise my plan, especially whether it's wise to re-use existing AWS infrastructure (overkill) or whether this should be simpler (no sqs / lambda)
-- Carefully consider best way to solve face cropping problem.
-- Prefer to re-use existing npm libraries (only if fit for purpose). Otherwise other npm packages can be considered but only if well maintained and populate
-- Preference for simple solution
-- Identify opportunities for improvement
-- Any major decisions, ask
-
 - On guest website, on listing/:id/:slug page
 - There is an existing booking box with lorem ipsum in it, let's implement it properly
 - Under Mobile breakpoint (Statically positioned):
