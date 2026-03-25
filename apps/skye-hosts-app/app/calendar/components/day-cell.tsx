@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   cell: {
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: 10,
+    paddingTop: 7,
     borderRadius: borderRadius.xs,
   },
   cellPast: {
