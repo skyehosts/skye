@@ -64,7 +64,7 @@ function DayCellInner({
     <Pressable
       style={[
         styles.cell,
-        { width: size, height: cellHeight },
+        { width: size, height: cellHeight, opacity: isPast ? 0.8 : 1 },
         status === "booked" && !isPast
           ? styles.cellBooked
           : isPast

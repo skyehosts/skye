@@ -13,8 +13,6 @@ import { formatDateString } from "../utils/format-date-string";
 import { BookingBar } from "./booking-bar";
 import { DayCell, type DayCellStatus } from "./day-cell";
 
-const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
 export interface MonthData {
   /** Unique key e.g. "2026-03" */
   key: string;
@@ -69,13 +67,6 @@ function MonthGridInner({
   return (
     <View style={styles.container}>
       <Text style={styles.monthLabel}>{data.label}</Text>
-      <View style={styles.weekdayRow}>
-        {WEEKDAY_LABELS.map((label) => (
-          <View key={label} style={[styles.weekdayCell, { width: cellSize }]}>
-            <Text style={styles.weekdayText}>{label}</Text>
-          </View>
-        ))}
-      </View>
       <View style={{ rowGap: cellGap }}>
         {data.weeks.map((week, weekIndex) => (
           <View
@@ -139,20 +130,8 @@ const styles = StyleSheet.create({
   monthLabel: {
     fontSize: typography.lg,
     fontWeight: fontWeight.semibold,
-    color: colors.textPrimary,
+    color: colors.primary,
     paddingVertical: spacing.md,
-  },
-  weekdayRow: {
-    flexDirection: "row",
-    marginBottom: spacing.xs,
-  },
-  weekdayCell: {
-    alignItems: "center",
-  },
-  weekdayText: {
-    fontSize: typography.sm,
-    fontWeight: fontWeight.medium,
-    color: colors.textSecondary,
   },
   weekRow: {
     flexDirection: "row",

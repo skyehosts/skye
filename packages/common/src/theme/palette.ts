@@ -9,6 +9,7 @@ export const heatherPurple = '#8B6FAF';
 export const warmStone = '#C8BFAE';
 export const driftwoodSand = '#E7E1D6';
 export const seaGlassTeal = '#4F8C8D';
+export const seaGlassTealPale = '#7DA9AA';
 
 /** Functional UI colours */
 export const successGreen = '#3F9C5A';
