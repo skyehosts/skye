@@ -32,7 +32,6 @@ export function useListingBookingState(
 
   const handleDateClear = () => {
     setDateRange(null);
-    setDateModalOpen(false);
     options?.onBookingChange?.(null, guests);
   };
 

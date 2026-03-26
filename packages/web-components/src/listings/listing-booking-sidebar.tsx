@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { formatShortDateRange } from '@repo/common';
 import { format, isValid, parse } from 'date-fns';
@@ -32,11 +33,10 @@ function parseDateField(text: string): Date | null {
   return parsed;
 }
 
-const dateInputSx = {
+const dateInputBaseSx = {
   border: 'none',
   outline: 'none',
   background: 'transparent',
-  font: 'inherit',
   fontSize: '0.875rem',
   color: 'inherit',
   width: '100%',
@@ -61,6 +61,12 @@ export function ListingBookingSidebar({
   handleDateClear,
   handleGuestSave,
 }: ListingGuestRuleProps & ListingBookingStateProps) {
+  const theme = useTheme();
+  const dateInputSx = {
+    ...dateInputBaseSx,
+    fontFamily: theme.typography.fontFamily,
+  } as const;
+
   const captionSx = {
     fontWeight: 700,
     textTransform: 'uppercase',
