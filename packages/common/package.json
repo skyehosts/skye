@@ -27,7 +27,9 @@
       "default": "./dist/*.js"
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",

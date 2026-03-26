@@ -107,40 +107,48 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- On guest website, on listing/:id/:slug page
-- There is an existing booking box with lorem ipsum in it, let's implement it properly
-- Under Mobile breakpoint (Statically positioned):
-  - Height: 100px;
-  - Padding top/bottom: 20px
-  - Padding left/right: Normal gutters
-  - Content:
-    - Top box:
-      - £677 total (Price for selected date range)
-      - 13 - 18 Sept
-      - Hover behaviour: underline text
-      - Tap behaviour: Open modal [A]
-    - Button:
-      - Text:
-        - 'Reserve' (If instant book enabled)
-        - 'Request to book' (If instant book not enabled)
-        - Style; Full width, primary
-      - Tap behaviour:
-        - Open Modal [B]
-- Over mobile breakpoint:
-  - Row 1:
-    - Check-in date field
-    - Check-out date field
-    - Tapping either, should open a calendar datepicker to select both check-in and chec-out date in a single movement
-    - I.E: Two months displayed at once (Horizontal column)
-    - Arrows on left and right to cycle through months
-    - Suggest: @mui/x-date-pickers, check if optimal
-  - Row 2:
-    - Todo later (Guest selector)
-- Modal [B]
-  - Title 'Confirm and pay'
-  - Description: Lorem ipsum for now
+- On /listing/:id/:slug page in guest website
+- For < mobile breakpoints, update the statically positioned bar at the bottom as follows:
+- State 1: (No dates selected)
+  - Change 'From £XX / night' to 'Add dates for prices'
+  - CHange button text from 'Book' to 'Check availability'
+  - If bar is clicked anywhere, open modal [A]
+- State 2: (dates selcted)
+  - 'Add dates for prices' -> £{price} total (whereby price = booking price) (bolded)
+    - NB: Pricing data doesn't exist yet, just put static / placeholder data in
+    - Clicking on price or dates,
+  - To the right of price:
+    - {checkInDate}-{checkOutDate} (Format exmaple: 28-29 March)
+  - Undernearth both price & dates:
+    - Text link ("Change dates"), when clicked, opens Modal [A] with dates pre-selected
+  - 'Check availability' button text changed to 'Reserve'
+    - When clicked, opens Modal [B]
+- Ensure modals share re-sueable styles where appropriate without reducing versatility / future divergence
+
 - Modal [A]
-  0
+  - Title: 'Select check-in date'
+  - Description: 'Add your travel dates for exact pricing'
+  - Close icon top right
+  - Date range picker (check-in and check-out date)
+  - Use npm package: react-day-picker
+  - Remove @mui/x-date-pickers if not being used.
+  - Bottom bar:
+    - 1px solid warmstone top border
+    - Cnacel button (left-aligned)
+    - Save button (right-aligned) 
+      - Disabled until 2 dates selected
+  - After Modal [A] is saved, bottom bar start changes to State 2
+- Modal [B]
+  - Title: 'Confirm and pay'
+  - Close icon top right
+  - Text: Lorem ipsum for now
+
+- Scrutinise my plan, particularily with datepicker package, focusing on maintainability and optimal customer experience
+- Any big decisions, ask
+
+    
+
+
 
 
 ==================

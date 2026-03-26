@@ -27,6 +27,8 @@
     "./listings/listing-location-section": "./src/listings/listing-location-section.tsx",
     "./listings/listing-map-modal": "./src/listings/listing-map-modal.tsx",
     "./listings/listing-booking-sidebar": "./src/listings/listing-booking-sidebar.tsx",
+    "./listings/listing-date-picker-modal": "./src/listings/listing-date-picker-modal.tsx",
+    "./listings/listing-confirm-pay-modal": "./src/listings/listing-confirm-pay-modal.tsx",
     "./listings/listing-mobile-booking-bar": "./src/listings/listing-mobile-booking-bar.tsx",
     "./layout/form-card": "./src/layout/form-card.tsx",
     "./layout/heading-panel": "./src/layout/heading-panel.tsx",
@@ -69,11 +71,12 @@
     "@mui/material": "^7.3.8",
     "@mui/material-nextjs": "^7.3.8",
     "@mui/x-data-grid": "^8.27.1",
-    "@mui/x-date-pickers": "^8.27.2",
     "@repo/common": "workspace:^",
     "@repo/skye-hosts-api-client": "workspace:^",
     "mapbox-gl": "^3.20.0",
     "react": "^19.1.0",
+    "date-fns": "^4.1.0",
+    "react-day-picker": "^9.7.0",
     "react-hook-form": "^7.71.2"
   }
 }
