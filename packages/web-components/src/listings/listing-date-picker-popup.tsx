@@ -1,6 +1,7 @@
 'use client';
 
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import {
@@ -21,6 +22,8 @@ interface ListingDatePickerPopupProps {
   onSave: (range: { from: Date; to: Date }) => void;
   onClear: () => void;
   initialRange?: { from: Date; to: Date } | null;
+  externalFrom?: Date | null;
+  externalTo?: Date | null;
 }
 
 function formatLongDate(date: Date): string {
@@ -33,6 +36,8 @@ export function ListingDatePickerPopup({
   onSave,
   onClear,
   initialRange,
+  externalFrom,
+  externalTo,
 }: ListingDatePickerPopupProps) {
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
@@ -53,6 +58,35 @@ export function ListingDatePickerPopup({
     };
   }, [open, initialRange]);
 
+  // Sync when external fields (typed inputs) change while popup is open.
+  // Only react to non-null values to avoid overwriting popup-initiated state.
+  const prevExternalFrom = useRef(externalFrom);
+  const prevExternalTo = useRef(externalTo);
+
+  useEffect(() => {
+    if (!open) return;
+    if (
+      externalFrom != null &&
+      externalFrom.getTime() !== prevExternalFrom.current?.getTime()
+    ) {
+      setFrom(externalFrom);
+      setMonth(externalFrom);
+      setSelectingPhase('to');
+    }
+    prevExternalFrom.current = externalFrom;
+  }, [open, externalFrom]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (
+      externalTo != null &&
+      externalTo.getTime() !== prevExternalTo.current?.getTime()
+    ) {
+      setTo(externalTo);
+    }
+    prevExternalTo.current = externalTo;
+  }, [open, externalTo]);
+
   function handleDayClick(day: Date) {
     if (autoSaveTimer.current) {
       clearTimeout(autoSaveTimer.current);
@@ -60,23 +94,16 @@ export function ListingDatePickerPopup({
     }
 
     if (selectingPhase === 'from') {
-      // Selecting check-in: set from, clear to, advance to 'to' phase
       setFrom(day);
       setTo(null);
       setSelectingPhase('to');
     } else {
-      // Selecting check-out
-      if (isSameDay(day, from!)) {
-        // Clicked same day as check-in — ignore
-        return;
-      }
+      if (isSameDay(day, from!)) return;
       if (isBefore(day, from!)) {
-        // Clicked before check-in — treat as new check-in instead
         setFrom(day);
         setTo(null);
         return;
       }
-      // Valid check-out
       setTo(day);
       setSelectingPhase('from');
       autoSaveTimer.current = setTimeout(() => {
@@ -94,7 +121,6 @@ export function ListingDatePickerPopup({
 
   if (!open) return null;
 
-  // Build the selected range for rdp visual highlighting
   const selected: DateRange | undefined =
     from && to ? { from, to } : from ? { from, to: undefined } : undefined;
 
@@ -115,60 +141,33 @@ export function ListingDatePickerPopup({
         }}
       />
 
-      {/* Popup */}
+      {/* Popup — form fields sit at its top-right via higher z-index */}
       <Paper
         elevation={8}
         sx={{
           position: 'absolute',
-          right: 0,
-          top: '100%',
+          right: -20,
+          top: -20,
           zIndex: 1300,
           width: 700,
           maxWidth: 'calc(100vw - 32px)',
           borderRadius: 3,
-          mt: 1,
         }}
       >
         {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            px: 3,
-            pt: 2.5,
-            pb: 1,
-          }}
-        >
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 700 }}>
-              {hasRange
-                ? `${numberOfNights} night${numberOfNights !== 1 ? 's' : ''}`
-                : 'Select dates'}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {hasRange
-                ? `${formatLongDate(from!)} – ${formatLongDate(to!)}`
-                : hasFrom
-                  ? `${formatLongDate(from!)} – ...`
-                  : 'Add your travel dates for exact pricing'}
-            </Typography>
-          </Box>
-          {hasFrom && (
-            <Typography
-              variant="body2"
-              onClick={handleClear}
-              sx={{
-                textDecoration: 'underline',
-                cursor: 'pointer',
-                color: 'primary.main',
-                mt: 0.5,
-                flexShrink: 0,
-              }}
-            >
-              Clear dates
-            </Typography>
-          )}
+        <Box sx={{ px: 3, pt: 2.5, pb: 1 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+            {hasRange
+              ? `${numberOfNights} night${numberOfNights !== 1 ? 's' : ''}`
+              : 'Select dates'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {hasRange
+              ? `${formatLongDate(from!)} – ${formatLongDate(to!)}`
+              : hasFrom
+                ? `${formatLongDate(from!)} – ...`
+                : 'Add your travel dates for exact pricing'}
+          </Typography>
         </Box>
 
         {/* Calendar */}
@@ -178,7 +177,7 @@ export function ListingDatePickerPopup({
               display: 'flex',
               justifyContent: 'center',
               px: 3,
-              pb: 3,
+              pb: 2,
               '& .rdp-months': { flexWrap: 'nowrap' },
             },
             dayPickerThemeSx,
@@ -193,6 +192,35 @@ export function ListingDatePickerPopup({
             month={month}
             onMonthChange={setMonth}
           />
+        </Box>
+
+        {/* Footer */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            gap: 2,
+            px: 3,
+            pb: 2,
+          }}
+        >
+          <Button variant="text" onClick={onClose}>
+            Close
+          </Button>
+          {hasFrom && (
+            <Typography
+              variant="body2"
+              onClick={handleClear}
+              sx={{
+                textDecoration: 'underline',
+                cursor: 'pointer',
+                color: 'primary.main',
+              }}
+            >
+              Clear dates
+            </Typography>
+          )}
         </Box>
       </Paper>
     </>

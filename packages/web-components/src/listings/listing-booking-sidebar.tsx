@@ -6,6 +6,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { formatShortDateRange } from '@repo/common';
+import { format, isValid, parse } from 'date-fns';
+import { useEffect, useRef, useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerPopup } from './listing-date-picker-popup';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
@@ -14,6 +16,33 @@ import type {
   ListingGuestRuleProps,
 } from './listing-guest-types';
 import { formatGuestSummary } from './listing-guest-types';
+
+const DATE_FORMAT = 'dd/MM/yyyy';
+
+function formatDateField(date: Date | null | undefined): string {
+  if (!date) return '';
+  return format(date, DATE_FORMAT);
+}
+
+function parseDateField(text: string): Date | null {
+  if (!text.trim()) return null;
+  const parsed = parse(text.trim(), DATE_FORMAT, new Date());
+  if (!isValid(parsed)) return null;
+  if (parsed.getFullYear() < 2020 || parsed.getFullYear() > 2100) return null;
+  return parsed;
+}
+
+const dateInputSx = {
+  border: 'none',
+  outline: 'none',
+  background: 'transparent',
+  font: 'inherit',
+  fontSize: '0.875rem',
+  color: 'inherit',
+  width: '100%',
+  padding: 0,
+  cursor: 'text',
+} as const;
 
 export function ListingBookingSidebar({
   maxGuests,
@@ -37,6 +66,69 @@ export function ListingBookingSidebar({
     textTransform: 'uppercase',
     fontSize: '0.65rem',
   } as const;
+
+  const [checkInText, setCheckInText] = useState(
+    formatDateField(dateRange?.from),
+  );
+  const [checkOutText, setCheckOutText] = useState(
+    formatDateField(dateRange?.to),
+  );
+  const checkOutRef = useRef<HTMLInputElement>(null);
+
+  // Track parsed dates for syncing to popup
+  const [externalFrom, setExternalFrom] = useState<Date | null>(
+    dateRange?.from ?? null,
+  );
+  const [externalTo, setExternalTo] = useState<Date | null>(
+    dateRange?.to ?? null,
+  );
+
+  // Sync input text when dateRange changes externally (e.g. from calendar pick)
+  useEffect(() => {
+    setCheckInText(formatDateField(dateRange?.from));
+    setCheckOutText(formatDateField(dateRange?.to));
+    setExternalFrom(dateRange?.from ?? null);
+    setExternalTo(dateRange?.to ?? null);
+  }, [dateRange]);
+
+  function handleCheckInBlur() {
+    const parsed = parseDateField(checkInText);
+    if (parsed && parsed >= new Date(new Date().toDateString())) {
+      setExternalFrom(parsed);
+      // If check-out is before new check-in, clear it
+      if (externalTo && parsed >= externalTo) {
+        setExternalTo(null);
+        setCheckOutText('');
+      }
+    } else {
+      // Revert to previous valid value
+      setCheckInText(formatDateField(dateRange?.from));
+    }
+  }
+
+  function handleCheckOutBlur() {
+    const parsed = parseDateField(checkOutText);
+    if (parsed && externalFrom && parsed > externalFrom) {
+      setExternalTo(parsed);
+    } else {
+      // Revert to previous valid value
+      setCheckOutText(formatDateField(dateRange?.to));
+    }
+  }
+
+  function handleCheckInKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Tab' && !e.shiftKey) {
+      e.preventDefault();
+      (e.target as HTMLInputElement).blur();
+      checkOutRef.current?.focus();
+      checkOutRef.current?.select();
+    }
+  }
+
+  function handleInputFocus(e: React.FocusEvent<HTMLInputElement>) {
+    e.target.select();
+    if (!dateModalOpen) setDateModalOpen(true);
+  }
 
   return (
     <>
@@ -66,11 +158,22 @@ export function ListingBookingSidebar({
                   cursor: 'pointer',
                   mb: 1.5,
                   position: 'relative',
-                  zIndex: dateModalOpen ? 1301 : 'auto',
                   bgcolor: 'background.paper',
                 }}
               >
-                <Box sx={{ display: 'flex' }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    position: 'relative',
+                    zIndex: dateModalOpen ? 1301 : 'auto',
+                    bgcolor: 'background.paper',
+                    ...(dateModalOpen && {
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 2,
+                    }),
+                  }}
+                >
                   <Box
                     sx={{
                       flex: 1,
@@ -82,25 +185,37 @@ export function ListingBookingSidebar({
                     <Typography variant="caption" sx={captionSx}>
                       Check-in
                     </Typography>
-                    <Typography variant="body2">
-                      {dateRange
-                        ? dateRange.from.toLocaleDateString()
-                        : 'Add date'}
-                    </Typography>
+                    <input
+                      type="text"
+                      value={checkInText}
+                      placeholder="dd/mm/yyyy"
+                      onChange={(e) => setCheckInText(e.target.value)}
+                      onBlur={handleCheckInBlur}
+                      onFocus={handleInputFocus}
+                      onKeyDown={handleCheckInKeyDown}
+                      onClick={(e) => e.stopPropagation()}
+                      style={dateInputSx}
+                    />
                   </Box>
                   <Box sx={{ flex: 1, p: 1.5 }}>
                     <Typography variant="caption" sx={captionSx}>
                       Checkout
                     </Typography>
-                    <Typography variant="body2">
-                      {dateRange
-                        ? dateRange.to.toLocaleDateString()
-                        : 'Add date'}
-                    </Typography>
+                    <input
+                      ref={checkOutRef}
+                      type="text"
+                      value={checkOutText}
+                      placeholder="dd/mm/yyyy"
+                      onChange={(e) => setCheckOutText(e.target.value)}
+                      onBlur={handleCheckOutBlur}
+                      onFocus={handleInputFocus}
+                      onClick={(e) => e.stopPropagation()}
+                      style={dateInputSx}
+                    />
                   </Box>
                 </Box>
 
-                {/* Guest selector row */}
+                {/* Guest selector row — hidden when date popup is open */}
                 <Box
                   onClick={(e) => {
                     e.stopPropagation();
@@ -111,6 +226,7 @@ export function ListingBookingSidebar({
                     borderTop: '1px solid',
                     borderColor: 'divider',
                     cursor: 'pointer',
+                    ...(dateModalOpen && { visibility: 'hidden' }),
                   }}
                 >
                   <Typography variant="caption" sx={captionSx}>
@@ -129,6 +245,8 @@ export function ListingBookingSidebar({
                 onSave={handleDateSave}
                 onClear={handleDateClear}
                 initialRange={dateRange}
+                externalFrom={externalFrom}
+                externalTo={externalTo}
               />
             </Box>
 
