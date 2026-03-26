@@ -140,7 +140,7 @@ Pending Prompts
   - Title 'Confirm and pay'
   - Description: Lorem ipsum for now
 - Modal [A]
-  0 
+  0
 
 
 ==================

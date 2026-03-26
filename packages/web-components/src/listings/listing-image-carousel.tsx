@@ -1,24 +1,30 @@
 'use client';
 
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import type { IListingImageDto } from '@repo/skye-hosts-api-client';
 import { useRef, useState } from 'react';
+import { FavouriteIconContent } from './favourite-icon-content';
 import { getListingImageUrl } from './listing-image-utils';
 
 interface ListingImageCarouselProps {
   images: IListingImageDto[];
   title: string;
   onBack?: () => void;
+  isFavourited?: boolean;
+  onFavouriteToggle?: () => void;
+  isLoadingFavourite?: boolean;
 }
 
 export function ListingImageCarousel({
   images,
   title,
   onBack,
+  isFavourited,
+  onFavouriteToggle,
+  isLoadingFavourite,
 }: ListingImageCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef<number>(0);
@@ -105,19 +111,27 @@ export function ListingImageCarousel({
         </IconButton>
       )}
 
-      <IconButton
-        sx={{
-          position: 'absolute',
-          top: 12,
-          right: 12,
-          bgcolor: 'rgba(255,255,255,0.85)',
-          '&:hover': { bgcolor: 'rgba(255,255,255,0.95)' },
-          width: 36,
-          height: 36,
-        }}
-      >
-        <FavoriteBorderIcon sx={{ fontSize: 20 }} />
-      </IconButton>
+      {onFavouriteToggle && (
+        <IconButton
+          onClick={onFavouriteToggle}
+          disabled={isLoadingFavourite}
+          sx={{
+            position: 'absolute',
+            top: 12,
+            right: 12,
+            bgcolor: 'rgba(255,255,255,0.85)',
+            '&:hover': { bgcolor: 'rgba(255,255,255,0.95)' },
+            width: 44,
+            height: 44,
+          }}
+        >
+          <FavouriteIconContent
+            isFavourited={isFavourited}
+            isLoading={isLoadingFavourite}
+            size={24}
+          />
+        </IconButton>
+      )}
 
       <Typography
         variant="body2"

@@ -14,7 +14,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
-import { FavouriteButton } from './FavouriteButton';
+import { ListingHeroWithFavourite } from './ListingHeroWithFavourite';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
@@ -57,8 +57,22 @@ export default async function ListingPage({ params }: ListingPageProps) {
       maxWidth={false}
       sx={{ maxWidth: 1120, px: { xs: 0, md: 3 }, pb: { xs: 10, md: 0 } }}
     >
-      {/* Full-width images */}
-      <ListingHeroImages images={listing.images} title={listing.title} />
+      {/* Full-width images — guest: interactive favourite; logged-out: static */}
+      {guestId ? (
+        <ListingHeroWithFavourite
+          images={listing.images}
+          title={listing.title}
+          listingTitle={listing.title}
+          listingId={listing.id}
+          initialFavourited={isFavourited}
+        />
+      ) : (
+        <ListingHeroImages
+          images={listing.images}
+          title={listing.title}
+          listingTitle={listing.title}
+        />
+      )}
 
       {/* Two-column layout: hero text + sidebar */}
       <Box
@@ -101,19 +115,13 @@ export default async function ListingPage({ params }: ListingPageProps) {
           />
           {/* TODO: Replace hardcoded values with actual booking form data */}
           {guestId ? (
-            <>
-              <FavouriteButton
-                listingId={listing.id}
-                initialFavourited={isFavourited}
-              />
-              <BookNowButton
-                listingId={listing.id}
-                guestId={guestId}
-                checkInDate="2026-04-01"
-                checkOutDate="2026-04-05"
-                totalPrice={500}
-              />
-            </>
+            <BookNowButton
+              listingId={listing.id}
+              guestId={guestId}
+              checkInDate="2026-04-01"
+              checkOutDate="2026-04-05"
+              totalPrice={500}
+            />
           ) : (
             <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
               Log in to book

@@ -65,7 +65,11 @@ export function ListingHeroSection({
       )}
 
       <Box sx={{ mt: 3.75, textAlign: { xs: 'center', md: 'left' } }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{ fontWeight: 600, display: { xs: 'block', md: 'none' } }}
+        >
           {title}
         </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary', mt: 0.5 }}>

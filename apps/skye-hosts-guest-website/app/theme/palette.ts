@@ -3,6 +3,7 @@ export {
   driftwoodSand,
   heatherPurple,
   highlandMossGreen,
+  rowanBerry,
   seaGlassTeal,
   successGreen,
   warmStone,

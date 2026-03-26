@@ -14,3 +14,4 @@ export const seaGlassTealPale = '#7DA9AA';
 /** Functional UI colours */
 export const successGreen = '#3F9C5A';
 export const whiskyGold = '#E9B949';
+export const rowanBerry = '#B5473A';

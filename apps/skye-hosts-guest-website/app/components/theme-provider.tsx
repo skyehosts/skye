@@ -8,6 +8,7 @@ import {
   driftwoodSand,
   heatherPurple,
   highlandMossGreen,
+  rowanBerry,
   seaGlassTeal,
   successGreen,
   warmStone,
@@ -30,6 +31,7 @@ const highlandPalette: PaletteOptions = {
     seaGlassTeal,
     whiskyGold,
     successGreen,
+    rowanBerry,
   },
 };
 
