@@ -29,6 +29,7 @@ export interface ListingBookingStateProps {
   confirmModalOpen: boolean;
   setConfirmModalOpen: (open: boolean) => void;
   handleDateSave: (range: { from: Date; to: Date }) => void;
+  handleDateClear: () => void;
   handleGuestSave: (guests: GuestCounts) => void;
 }
 

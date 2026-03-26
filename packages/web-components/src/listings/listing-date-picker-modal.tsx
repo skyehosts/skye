@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
+import { dayPickerThemeSx, toDateRange } from './listing-date-picker-styles';
 import { ListingModalHeader, listingModalStyles } from './listing-modal-styles';
 
 interface ListingDatePickerModalProps {
@@ -16,12 +17,6 @@ interface ListingDatePickerModalProps {
   onClose: () => void;
   onSave: (range: { from: Date; to: Date }) => void;
   initialRange?: { from: Date; to: Date } | null;
-}
-
-function toDateRange(
-  range: { from: Date; to: Date } | null | undefined,
-): DateRange | undefined {
-  return range ? { from: range.from, to: range.to } : undefined;
 }
 
 export function ListingDatePickerModal({
@@ -58,27 +53,7 @@ export function ListingDatePickerModal({
         </Typography>
       </ListingModalHeader>
       <DialogContent sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-        <Box
-          sx={(theme) => ({
-            '& .rdp-root': {
-              '--rdp-accent-color': theme.palette.custom.seaGlassTeal,
-              '--rdp-accent-background-color':
-                theme.palette.custom.driftwoodSand,
-              '--rdp-today-color': theme.palette.custom.heatherPurple,
-              '--rdp-range_start-date-background-color':
-                theme.palette.primary.main,
-              '--rdp-range_start-color': '#fff',
-              '--rdp-range_end-date-background-color':
-                theme.palette.primary.main,
-              '--rdp-range_end-color': '#fff',
-              '--rdp-range_middle-background-color':
-                theme.palette.custom.driftwoodSand,
-              '--rdp-range_middle-color': theme.palette.primary.main,
-              '--rdp-selected-border': `2px solid ${theme.palette.primary.main}`,
-              fontFamily: theme.typography.fontFamily,
-            },
-          })}
-        >
+        <Box sx={dayPickerThemeSx}>
           <DayPicker
             mode="range"
             selected={selectedRange}

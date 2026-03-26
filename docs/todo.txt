@@ -16,6 +16,7 @@ Next
 ===
 MVP
 ===
+- x night minimum and restriction ondate picker
 - Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)
@@ -107,10 +108,11 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-
-    
-
-
+You've misunderstood the requirements
+- Expected behaviour is not a centered modal with backdrop
+- It is a popup that extends from the box itself
+- see date.png for reference
+- Also, the title shouldn't be 'select check-in date'
 
 
 ==================

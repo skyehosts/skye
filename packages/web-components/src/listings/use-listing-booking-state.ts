@@ -30,6 +30,12 @@ export function useListingBookingState(
     options?.onBookingChange?.(range, guests);
   };
 
+  const handleDateClear = () => {
+    setDateRange(null);
+    setDateModalOpen(false);
+    options?.onBookingChange?.(null, guests);
+  };
+
   const handleGuestSave = (g: GuestCounts) => {
     setGuests(g);
     setGuestModalOpen(false);
@@ -46,6 +52,7 @@ export function useListingBookingState(
     confirmModalOpen,
     setConfirmModalOpen,
     handleDateSave,
+    handleDateClear,
     handleGuestSave,
   };
 }

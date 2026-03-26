@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { formatShortDateRange } from '@repo/common';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
-import { ListingDatePickerModal } from './listing-date-picker-modal';
+import { ListingDatePickerPopup } from './listing-date-picker-popup';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
 import type {
   ListingBookingStateProps,
@@ -29,12 +29,19 @@ export function ListingBookingSidebar({
   confirmModalOpen,
   setConfirmModalOpen,
   handleDateSave,
+  handleDateClear,
   handleGuestSave,
 }: ListingGuestRuleProps & ListingBookingStateProps) {
+  const captionSx = {
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    fontSize: '0.65rem',
+  } as const;
+
   return (
     <>
       <Box sx={{ position: 'sticky', top: 24, mt: 3.75 }}>
-        <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+        <Card sx={{ borderRadius: 3, boxShadow: 3, overflow: 'visible' }}>
           <CardContent sx={{ p: 3 }}>
             <Box
               sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mb: 2 }}
@@ -47,87 +54,82 @@ export function ListingBookingSidebar({
               </Typography>
             </Box>
 
-            {/* Date selector row */}
-            <Box
-              onClick={() => setDateModalOpen(true)}
-              sx={{
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 2,
-                overflow: 'hidden',
-                cursor: 'pointer',
-                mb: 1.5,
-              }}
-            >
-              <Box sx={{ display: 'flex' }}>
+            {/* Date selector row + popup wrapper */}
+            <Box sx={{ position: 'relative' }}>
+              <Box
+                onClick={() => setDateModalOpen(true)}
+                sx={{
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  mb: 1.5,
+                  position: 'relative',
+                  zIndex: dateModalOpen ? 1301 : 'auto',
+                  bgcolor: 'background.paper',
+                }}
+              >
+                <Box sx={{ display: 'flex' }}>
+                  <Box
+                    sx={{
+                      flex: 1,
+                      p: 1.5,
+                      borderRight: '1px solid',
+                      borderColor: 'divider',
+                    }}
+                  >
+                    <Typography variant="caption" sx={captionSx}>
+                      Check-in
+                    </Typography>
+                    <Typography variant="body2">
+                      {dateRange
+                        ? dateRange.from.toLocaleDateString()
+                        : 'Add date'}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ flex: 1, p: 1.5 }}>
+                    <Typography variant="caption" sx={captionSx}>
+                      Checkout
+                    </Typography>
+                    <Typography variant="body2">
+                      {dateRange
+                        ? dateRange.to.toLocaleDateString()
+                        : 'Add date'}
+                    </Typography>
+                  </Box>
+                </Box>
+
+                {/* Guest selector row */}
                 <Box
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setGuestModalOpen(true);
+                  }}
                   sx={{
-                    flex: 1,
                     p: 1.5,
-                    borderRight: '1px solid',
+                    borderTop: '1px solid',
                     borderColor: 'divider',
+                    cursor: 'pointer',
                   }}
                 >
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      fontSize: '0.65rem',
-                    }}
-                  >
-                    Check-in
+                  <Typography variant="caption" sx={captionSx}>
+                    Guests
                   </Typography>
                   <Typography variant="body2">
-                    {dateRange
-                      ? dateRange.from.toLocaleDateString()
-                      : 'Add date'}
-                  </Typography>
-                </Box>
-                <Box sx={{ flex: 1, p: 1.5 }}>
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
-                      fontSize: '0.65rem',
-                    }}
-                  >
-                    Checkout
-                  </Typography>
-                  <Typography variant="body2">
-                    {dateRange ? dateRange.to.toLocaleDateString() : 'Add date'}
+                    {formatGuestSummary(guests)}
                   </Typography>
                 </Box>
               </Box>
 
-              {/* Guest selector row */}
-              <Box
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setGuestModalOpen(true);
-                }}
-                sx={{
-                  p: 1.5,
-                  borderTop: '1px solid',
-                  borderColor: 'divider',
-                  cursor: 'pointer',
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    fontSize: '0.65rem',
-                  }}
-                >
-                  Guests
-                </Typography>
-                <Typography variant="body2">
-                  {formatGuestSummary(guests)}
-                </Typography>
-              </Box>
+              {/* Desktop date picker popup */}
+              <ListingDatePickerPopup
+                open={dateModalOpen}
+                onClose={() => setDateModalOpen(false)}
+                onSave={handleDateSave}
+                onClear={handleDateClear}
+                initialRange={dateRange}
+              />
             </Box>
 
             <Button
@@ -169,13 +171,6 @@ export function ListingBookingSidebar({
           </CardContent>
         </Card>
       </Box>
-
-      <ListingDatePickerModal
-        open={dateModalOpen}
-        onClose={() => setDateModalOpen(false)}
-        onSave={handleDateSave}
-        initialRange={dateRange}
-      />
 
       <ListingGuestSelectorModal
         open={guestModalOpen}
