@@ -177,6 +177,7 @@ export function ListingDatePickerPopup({
               display: 'flex',
               justifyContent: 'center',
               px: 3,
+              pt: 2.5,
               pb: 2,
               '& .rdp-months': { flexWrap: 'nowrap' },
             },
