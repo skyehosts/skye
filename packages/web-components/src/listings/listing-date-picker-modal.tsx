@@ -33,10 +33,12 @@ export function ListingDatePickerModal({
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>(
     toDateRange(initialRange),
   );
+  const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
 
   useEffect(() => {
     if (open) {
       setSelectedRange(toDateRange(initialRange));
+      setMonth(initialRange?.from ?? new Date());
     }
   }, [open, initialRange]);
 
@@ -83,6 +85,8 @@ export function ListingDatePickerModal({
             onSelect={setSelectedRange}
             disabled={{ before: new Date() }}
             numberOfMonths={1}
+            month={month}
+            onMonthChange={setMonth}
           />
         </Box>
       </DialogContent>

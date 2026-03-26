@@ -9,29 +9,28 @@ import { formatShortDateRange } from '@repo/common';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerModal } from './listing-date-picker-modal';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
-import type { ListingGuestRuleProps } from './listing-guest-types';
+import type {
+  ListingBookingStateProps,
+  ListingGuestRuleProps,
+} from './listing-guest-types';
 import { formatGuestSummary } from './listing-guest-types';
-import { useListingBookingState } from './use-listing-booking-state';
 
 export function ListingBookingSidebar({
   maxGuests,
   childrenAllowed,
   infantsAllowed,
   petsAllowed,
-}: ListingGuestRuleProps) {
-  const {
-    dateRange,
-    guests,
-    dateModalOpen,
-    setDateModalOpen,
-    guestModalOpen,
-    setGuestModalOpen,
-    confirmModalOpen,
-    setConfirmModalOpen,
-    handleDateSave,
-    handleGuestSave,
-  } = useListingBookingState();
-
+  dateRange,
+  guests,
+  dateModalOpen,
+  setDateModalOpen,
+  guestModalOpen,
+  setGuestModalOpen,
+  confirmModalOpen,
+  setConfirmModalOpen,
+  handleDateSave,
+  handleGuestSave,
+}: ListingGuestRuleProps & ListingBookingStateProps) {
   return (
     <>
       <Box sx={{ position: 'sticky', top: 24, mt: 3.75 }}>

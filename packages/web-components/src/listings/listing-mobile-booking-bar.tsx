@@ -7,28 +7,34 @@ import { formatShortDateRange } from '@repo/common';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerModal } from './listing-date-picker-modal';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
-import type { ListingGuestRuleProps } from './listing-guest-types';
+import type {
+  ListingBookingStateProps,
+  ListingGuestRuleProps,
+} from './listing-guest-types';
 import { formatGuestSummary } from './listing-guest-types';
-import { useListingBookingState } from './use-listing-booking-state';
 
 export function ListingMobileBookingBar({
   maxGuests,
   childrenAllowed,
   infantsAllowed,
   petsAllowed,
-}: ListingGuestRuleProps) {
-  const {
-    dateRange,
-    guests,
-    dateModalOpen,
-    setDateModalOpen,
-    guestModalOpen,
-    setGuestModalOpen,
-    confirmModalOpen,
-    setConfirmModalOpen,
-    handleDateSave,
-    handleGuestSave,
-  } = useListingBookingState();
+  dateRange,
+  guests,
+  dateModalOpen,
+  setDateModalOpen,
+  guestModalOpen,
+  setGuestModalOpen,
+  confirmModalOpen,
+  setConfirmModalOpen,
+  handleDateSave,
+  handleGuestSave,
+}: ListingGuestRuleProps & ListingBookingStateProps) {
+  const ctaLinkSx = {
+    textDecoration: 'underline',
+    cursor: 'pointer',
+    color: 'primary.main',
+    fontWeight: 600,
+  } as const;
 
   return (
     <>
@@ -87,31 +93,22 @@ export function ListingMobileBookingBar({
                   total
                 </Typography>
                 <Typography
-                  variant="body2"
-                  sx={{ color: 'text.secondary', ml: 0.5 }}
+                  sx={{ fontSize: '0.7rem', color: 'text.secondary', ml: 0.5 }}
                 >
                   ({formatShortDateRange(dateRange.from, dateRange.to)})
                 </Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
                 <Typography
-                  variant="caption"
-                  sx={{
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    color: 'primary.main',
-                  }}
+                  variant="body2"
+                  sx={ctaLinkSx}
                   onClick={() => setDateModalOpen(true)}
                 >
                   Change dates
                 </Typography>
                 <Typography
-                  variant="caption"
-                  sx={{
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    color: 'primary.main',
-                  }}
+                  variant="body2"
+                  sx={ctaLinkSx}
                   onClick={() => setGuestModalOpen(true)}
                 >
                   {formatGuestSummary(guests)}

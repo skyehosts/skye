@@ -5,19 +5,20 @@ import {
   type IGetListingResponseDto,
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
-import { ListingBookingSidebar } from '@repo/web-components/listings/listing-booking-sidebar';
+import { parseBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
-import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
+import { BookingParamsSync } from './BookingParamsSync';
 import { ListingHeroWithFavourite } from './ListingHeroWithFavourite';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }
 
 export async function generateMetadata({
@@ -32,11 +33,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function ListingPage({ params }: ListingPageProps) {
+export default async function ListingPage({
+  params,
+  searchParams,
+}: ListingPageProps) {
   const { id, title } = await params;
+  const resolvedSearchParams = await searchParams;
   const listing = await fetchApi<IGetListingResponseDto>(`/listing/${id}`);
   const session = await auth();
   const guestId = session?.user?.id ? Number(session.user.id) : null;
+  const initialBookingParams = parseBookingSearchParams(resolvedSearchParams);
 
   let isFavourited = false;
   if (session?.apiToken) {
@@ -129,24 +135,15 @@ export default async function ListingPage({ params }: ListingPageProps) {
           )}
         </Box>
 
-        {/* Right column: booking sidebar (desktop only) */}
-        <Box sx={{ flex: { md: 1 }, display: { xs: 'none', md: 'block' } }}>
-          <ListingBookingSidebar
-            maxGuests={listing.maxGuests}
-            childrenAllowed={listing.houseRuleChildrenAllowed}
-            infantsAllowed={listing.houseRuleInfantsAllowed}
-            petsAllowed={listing.houseRulePetsAllowed ?? true}
-          />
-        </Box>
+        {/* Right column: booking sidebar (desktop) + mobile bar — via BookingParamsSync */}
+        <BookingParamsSync
+          initialBookingParams={initialBookingParams}
+          maxGuests={listing.maxGuests}
+          childrenAllowed={listing.houseRuleChildrenAllowed}
+          infantsAllowed={listing.houseRuleInfantsAllowed}
+          petsAllowed={listing.houseRulePetsAllowed ?? true}
+        />
       </Box>
-
-      {/* Mobile fixed booking bar */}
-      <ListingMobileBookingBar
-        maxGuests={listing.maxGuests}
-        childrenAllowed={listing.houseRuleChildrenAllowed}
-        infantsAllowed={listing.houseRuleInfantsAllowed}
-        petsAllowed={listing.houseRulePetsAllowed ?? true}
-      />
     </Container>
   );
 }

@@ -2,11 +2,24 @@ import { useState } from 'react';
 import type { GuestCounts } from './listing-guest-types';
 import { DEFAULT_GUEST_COUNTS } from './listing-guest-types';
 
-export function useListingBookingState() {
+interface UseListingBookingStateOptions {
+  initialDateRange?: { from: Date; to: Date } | null;
+  initialGuests?: GuestCounts;
+  onBookingChange?: (
+    dateRange: { from: Date; to: Date } | null,
+    guests: GuestCounts,
+  ) => void;
+}
+
+export function useListingBookingState(
+  options?: UseListingBookingStateOptions,
+) {
   const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(
-    null,
+    options?.initialDateRange ?? null,
   );
-  const [guests, setGuests] = useState<GuestCounts>(DEFAULT_GUEST_COUNTS);
+  const [guests, setGuests] = useState<GuestCounts>(
+    options?.initialGuests ?? DEFAULT_GUEST_COUNTS,
+  );
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -14,11 +27,13 @@ export function useListingBookingState() {
   const handleDateSave = (range: { from: Date; to: Date }) => {
     setDateRange(range);
     setDateModalOpen(false);
+    options?.onBookingChange?.(range, guests);
   };
 
   const handleGuestSave = (g: GuestCounts) => {
     setGuests(g);
     setGuestModalOpen(false);
+    options?.onBookingChange?.(dateRange, g);
   };
 
   return {
