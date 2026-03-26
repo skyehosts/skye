@@ -29,6 +29,8 @@
     "./listings/listing-booking-sidebar": "./src/listings/listing-booking-sidebar.tsx",
     "./listings/listing-date-picker-modal": "./src/listings/listing-date-picker-modal.tsx",
     "./listings/listing-confirm-pay-modal": "./src/listings/listing-confirm-pay-modal.tsx",
+    "./listings/listing-guest-selector-modal": "./src/listings/listing-guest-selector-modal.tsx",
+    "./listings/listing-guest-types": "./src/listings/listing-guest-types.ts",
     "./listings/listing-mobile-booking-bar": "./src/listings/listing-mobile-booking-bar.tsx",
     "./layout/form-card": "./src/layout/form-card.tsx",
     "./layout/heading-panel": "./src/layout/heading-panel.tsx",

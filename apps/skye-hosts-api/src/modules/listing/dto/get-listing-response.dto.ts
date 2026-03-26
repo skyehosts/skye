@@ -52,6 +52,8 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   checkoutInstructionAdditions: string | null;
   hostInteraction: HostInteractionId | null;
   houseRulePetsAllowed: boolean | null;
+  houseRuleChildrenAllowed: boolean;
+  houseRuleInfantsAllowed: boolean;
   houseRuleEventsAllowed: boolean | null;
   houseRuleSmokingAllowed: boolean | null;
   houseRuleVapingAllowed: boolean | null;

@@ -564,6 +564,22 @@ export const HOUSE_RULES_CONFIG: IHouseRuleConfig[] = [
     field: 'houseRulePetsAllowed',
   },
   {
+    id: 'children',
+    title: 'Children allowed',
+    description: 'Ages 2-12',
+    type: 'boolean',
+    icon: 'people-outline',
+    field: 'houseRuleChildrenAllowed',
+  },
+  {
+    id: 'infants',
+    title: 'Infants allowed',
+    description: 'Under 2',
+    type: 'boolean',
+    icon: 'happy-outline',
+    field: 'houseRuleInfantsAllowed',
+  },
+  {
     id: 'events',
     title: 'Events allowed',
     type: 'boolean',

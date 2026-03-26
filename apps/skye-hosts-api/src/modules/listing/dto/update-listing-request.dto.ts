@@ -201,6 +201,14 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
 
   @IsOptional()
   @IsBoolean()
+  houseRuleChildrenAllowed?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  houseRuleInfantsAllowed?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   houseRuleEventsAllowed?: boolean | null;
 
   @IsOptional()

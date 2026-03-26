@@ -49,6 +49,8 @@ export interface IUpdateListingRequestDto {
   checkoutInstructionAdditions?: string | null;
   hostInteraction?: HostInteractionId | null;
   houseRulePetsAllowed?: boolean | null;
+  houseRuleChildrenAllowed?: boolean;
+  houseRuleInfantsAllowed?: boolean;
   houseRuleEventsAllowed?: boolean | null;
   houseRuleSmokingAllowed?: boolean | null;
   houseRuleVapingAllowed?: boolean | null;

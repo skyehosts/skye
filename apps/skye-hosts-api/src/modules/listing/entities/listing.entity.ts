@@ -144,6 +144,12 @@ export class Listing {
   @Column({ type: 'boolean', nullable: true, default: null })
   houseRulePetsAllowed: boolean | null;
 
+  @Column({ type: 'boolean', default: true })
+  houseRuleChildrenAllowed: boolean;
+
+  @Column({ type: 'boolean', default: true })
+  houseRuleInfantsAllowed: boolean;
+
   @Column({ type: 'boolean', nullable: true, default: null })
   houseRuleEventsAllowed: boolean | null;
 

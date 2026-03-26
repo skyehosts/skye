@@ -131,12 +131,22 @@ export default async function ListingPage({ params }: ListingPageProps) {
 
         {/* Right column: booking sidebar (desktop only) */}
         <Box sx={{ flex: { md: 1 }, display: { xs: 'none', md: 'block' } }}>
-          <ListingBookingSidebar />
+          <ListingBookingSidebar
+            maxGuests={listing.maxGuests}
+            childrenAllowed={listing.houseRuleChildrenAllowed}
+            infantsAllowed={listing.houseRuleInfantsAllowed}
+            petsAllowed={listing.houseRulePetsAllowed ?? true}
+          />
         </Box>
       </Box>
 
       {/* Mobile fixed booking bar */}
-      <ListingMobileBookingBar />
+      <ListingMobileBookingBar
+        maxGuests={listing.maxGuests}
+        childrenAllowed={listing.houseRuleChildrenAllowed}
+        infantsAllowed={listing.houseRuleInfantsAllowed}
+        petsAllowed={listing.houseRulePetsAllowed ?? true}
+      />
     </Container>
   );
 }

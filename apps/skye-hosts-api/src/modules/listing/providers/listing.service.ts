@@ -464,6 +464,8 @@ export class ListingService {
       checkoutInstructionAdditions: listing.checkoutInstructionAdditions,
       hostInteraction: listing.hostInteraction,
       houseRulePetsAllowed: listing.houseRulePetsAllowed,
+      houseRuleChildrenAllowed: listing.houseRuleChildrenAllowed,
+      houseRuleInfantsAllowed: listing.houseRuleInfantsAllowed,
       houseRuleEventsAllowed: listing.houseRuleEventsAllowed,
       houseRuleSmokingAllowed: listing.houseRuleSmokingAllowed,
       houseRuleVapingAllowed: listing.houseRuleVapingAllowed,

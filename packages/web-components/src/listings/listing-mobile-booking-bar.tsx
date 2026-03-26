@@ -4,16 +4,31 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { formatShortDateRange } from '@repo/common';
-import { useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerModal } from './listing-date-picker-modal';
+import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
+import type { ListingGuestRuleProps } from './listing-guest-types';
+import { formatGuestSummary } from './listing-guest-types';
+import { useListingBookingState } from './use-listing-booking-state';
 
-export function ListingMobileBookingBar() {
-  const [dateRange, setDateRange] = useState<{ from: Date; to: Date } | null>(
-    null,
-  );
-  const [dateModalOpen, setDateModalOpen] = useState(false);
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+export function ListingMobileBookingBar({
+  maxGuests,
+  childrenAllowed,
+  infantsAllowed,
+  petsAllowed,
+}: ListingGuestRuleProps) {
+  const {
+    dateRange,
+    guests,
+    dateModalOpen,
+    setDateModalOpen,
+    guestModalOpen,
+    setGuestModalOpen,
+    confirmModalOpen,
+    setConfirmModalOpen,
+    handleDateSave,
+    handleGuestSave,
+  } = useListingBookingState();
 
   return (
     <>
@@ -78,17 +93,30 @@ export function ListingMobileBookingBar() {
                   ({formatShortDateRange(dateRange.from, dateRange.to)})
                 </Typography>
               </Box>
-              <Typography
-                variant="caption"
-                sx={{
-                  textDecoration: 'underline',
-                  cursor: 'pointer',
-                  color: 'primary.main',
-                }}
-                onClick={() => setDateModalOpen(true)}
-              >
-                Change dates
-              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    color: 'primary.main',
+                  }}
+                  onClick={() => setDateModalOpen(true)}
+                >
+                  Change dates
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    color: 'primary.main',
+                  }}
+                  onClick={() => setGuestModalOpen(true)}
+                >
+                  {formatGuestSummary(guests)}
+                </Typography>
+              </Box>
             </Box>
             <Button
               variant="contained"
@@ -104,11 +132,19 @@ export function ListingMobileBookingBar() {
       <ListingDatePickerModal
         open={dateModalOpen}
         onClose={() => setDateModalOpen(false)}
-        onSave={(range) => {
-          setDateRange(range);
-          setDateModalOpen(false);
-        }}
+        onSave={handleDateSave}
         initialRange={dateRange}
+      />
+
+      <ListingGuestSelectorModal
+        open={guestModalOpen}
+        onClose={() => setGuestModalOpen(false)}
+        onSave={handleGuestSave}
+        initialGuests={guests}
+        maxGuests={maxGuests}
+        childrenAllowed={childrenAllowed}
+        infantsAllowed={infantsAllowed}
+        petsAllowed={petsAllowed}
       />
 
       <ListingConfirmPayModal

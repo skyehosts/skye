@@ -1,24 +1,198 @@
+'use client';
+
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
+import { formatShortDateRange } from '@repo/common';
+import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
+import { ListingDatePickerModal } from './listing-date-picker-modal';
+import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
+import type { ListingGuestRuleProps } from './listing-guest-types';
+import { formatGuestSummary } from './listing-guest-types';
+import { useListingBookingState } from './use-listing-booking-state';
 
-export function ListingBookingSidebar() {
+export function ListingBookingSidebar({
+  maxGuests,
+  childrenAllowed,
+  infantsAllowed,
+  petsAllowed,
+}: ListingGuestRuleProps) {
+  const {
+    dateRange,
+    guests,
+    dateModalOpen,
+    setDateModalOpen,
+    guestModalOpen,
+    setGuestModalOpen,
+    confirmModalOpen,
+    setConfirmModalOpen,
+    handleDateSave,
+    handleGuestSave,
+  } = useListingBookingState();
+
   return (
-    <Box sx={{ position: 'sticky', top: 24, mt: 3.75 }}>
-      <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
-        <CardContent sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Book this listing
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat.
-          </Typography>
-        </CardContent>
-      </Card>
-    </Box>
+    <>
+      <Box sx={{ position: 'sticky', top: 24, mt: 3.75 }}>
+        <Card sx={{ borderRadius: 3, boxShadow: 3 }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box
+              sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5, mb: 2 }}
+            >
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                £120
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                night
+              </Typography>
+            </Box>
+
+            {/* Date selector row */}
+            <Box
+              onClick={() => setDateModalOpen(true)}
+              sx={{
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                overflow: 'hidden',
+                cursor: 'pointer',
+                mb: 1.5,
+              }}
+            >
+              <Box sx={{ display: 'flex' }}>
+                <Box
+                  sx={{
+                    flex: 1,
+                    p: 1.5,
+                    borderRight: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      fontSize: '0.65rem',
+                    }}
+                  >
+                    Check-in
+                  </Typography>
+                  <Typography variant="body2">
+                    {dateRange
+                      ? dateRange.from.toLocaleDateString()
+                      : 'Add date'}
+                  </Typography>
+                </Box>
+                <Box sx={{ flex: 1, p: 1.5 }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
+                      fontSize: '0.65rem',
+                    }}
+                  >
+                    Checkout
+                  </Typography>
+                  <Typography variant="body2">
+                    {dateRange ? dateRange.to.toLocaleDateString() : 'Add date'}
+                  </Typography>
+                </Box>
+              </Box>
+
+              {/* Guest selector row */}
+              <Box
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setGuestModalOpen(true);
+                }}
+                sx={{
+                  p: 1.5,
+                  borderTop: '1px solid',
+                  borderColor: 'divider',
+                  cursor: 'pointer',
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    fontSize: '0.65rem',
+                  }}
+                >
+                  Guests
+                </Typography>
+                <Typography variant="body2">
+                  {formatGuestSummary(guests)}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Button
+              variant="contained"
+              fullWidth
+              size="large"
+              onClick={() => {
+                if (!dateRange) {
+                  setDateModalOpen(true);
+                } else {
+                  setConfirmModalOpen(true);
+                }
+              }}
+              sx={{ mb: 1.5 }}
+            >
+              {dateRange ? 'Reserve' : 'Check availability'}
+            </Button>
+
+            {dateRange && (
+              <Box
+                sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  {formatShortDateRange(dateRange.from, dateRange.to)}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    textDecoration: 'underline',
+                    cursor: 'pointer',
+                    color: 'primary.main',
+                  }}
+                  onClick={() => setDateModalOpen(true)}
+                >
+                  Change dates
+                </Typography>
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+
+      <ListingDatePickerModal
+        open={dateModalOpen}
+        onClose={() => setDateModalOpen(false)}
+        onSave={handleDateSave}
+        initialRange={dateRange}
+      />
+
+      <ListingGuestSelectorModal
+        open={guestModalOpen}
+        onClose={() => setGuestModalOpen(false)}
+        onSave={handleGuestSave}
+        initialGuests={guests}
+        maxGuests={maxGuests}
+        childrenAllowed={childrenAllowed}
+        infantsAllowed={infantsAllowed}
+        petsAllowed={petsAllowed}
+      />
+
+      <ListingConfirmPayModal
+        open={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+      />
+    </>
   );
 }
