@@ -66,6 +66,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           gap: { md: 4 },
+          px: { xs: 2, md: 0 },
         }}
       >
         {/* Left column: hero text + location + booking actions */}
