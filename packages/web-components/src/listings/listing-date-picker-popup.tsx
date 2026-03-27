@@ -4,22 +4,24 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import {
-  differenceInCalendarDays,
-  format,
-  isBefore,
-  isSameDay,
-} from 'date-fns';
+import { useTheme } from '@mui/material/styles';
+import { differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
-import { dayPickerThemeSx } from './listing-date-picker-styles';
+import {
+  DatePickerHeaderText,
+  dayPickerThemeSx,
+  restrictedDayStyle,
+} from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
   buildNightDisabledMatcher,
-  formatNightConstraintMessage,
+  buildNightRestrictedMatcher,
+  formatGeneralConstraintMessage,
   getMinNightsForDate,
+  isNightCountValid,
 } from './listing-guest-types';
 
 interface ListingDatePickerPopupProps extends ListingNightRuleProps {
@@ -30,10 +32,6 @@ interface ListingDatePickerPopupProps extends ListingNightRuleProps {
   initialRange?: { from: Date; to: Date } | null;
   externalFrom?: Date | null;
   externalTo?: Date | null;
-}
-
-function formatLongDate(date: Date): string {
-  return format(date, 'd MMMM yyyy');
 }
 
 export function ListingDatePickerPopup({
@@ -48,6 +46,7 @@ export function ListingDatePickerPopup({
   minNightsByCheckInDay,
   maxNights,
 }: ListingDatePickerPopupProps) {
+  const theme = useTheme();
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
   const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
@@ -101,6 +100,17 @@ export function ListingDatePickerPopup({
       ? getMinNightsForDate(from, minNights, minNightsByCheckInDay)
       : minNights;
 
+  const generalConstraintMsg = formatGeneralConstraintMessage(
+    minNights,
+    minNightsByCheckInDay,
+    maxNights,
+  );
+
+  const restrictedMatcher =
+    selectingPhase === 'to'
+      ? buildNightRestrictedMatcher(from, effectiveMinNights, maxNights)
+      : [];
+
   function handleDayClick(day: Date) {
     if (autoSaveTimer.current) {
       clearTimeout(autoSaveTimer.current);
@@ -119,8 +129,7 @@ export function ListingDatePickerPopup({
         return;
       }
       const nights = differenceInCalendarDays(day, from!);
-      if (nights < effectiveMinNights) return;
-      if (maxNights !== null && nights > maxNights) return;
+      if (!isNightCountValid(nights, effectiveMinNights, maxNights)) return;
       setTo(day);
       setSelectingPhase('from');
       autoSaveTimer.current = setTimeout(() => {
@@ -178,22 +187,13 @@ export function ListingDatePickerPopup({
               ? `${numberOfNights} night${numberOfNights !== 1 ? 's' : ''}`
               : 'Select dates'}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {hasRange
-              ? `${formatLongDate(from!)} – ${formatLongDate(to!)}`
-              : hasFrom
-                ? `${formatLongDate(from!)} – ...`
-                : 'Add your travel dates for exact pricing'}
-          </Typography>
-          {hasFrom && !hasRange && (
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ mt: 0.5, fontStyle: 'italic' }}
-            >
-              {formatNightConstraintMessage(effectiveMinNights, maxNights)}
-            </Typography>
-          )}
+          <DatePickerHeaderText
+            from={from}
+            to={to}
+            effectiveMinNights={effectiveMinNights}
+            maxNights={maxNights}
+            generalConstraintMsg={generalConstraintMsg}
+          />
         </Box>
 
         {/* Calendar */}
@@ -219,6 +219,10 @@ export function ListingDatePickerPopup({
                 ? buildNightDisabledMatcher(from, effectiveMinNights, maxNights)
                 : { before: new Date() }
             }
+            modifiers={{ restricted: restrictedMatcher }}
+            modifiersStyles={{
+              restricted: restrictedDayStyle(theme),
+            }}
             numberOfMonths={2}
             month={month}
             onMonthChange={setMonth}

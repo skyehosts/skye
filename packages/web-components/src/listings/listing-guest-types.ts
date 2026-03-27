@@ -1,4 +1,4 @@
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
 
 export interface GuestCounts {
   adults: number;
@@ -63,24 +63,68 @@ export function formatNightConstraintMessage(
   return `Minimum stay: ${effectiveMin} night${effectiveMin !== 1 ? 's' : ''}`;
 }
 
+export function isNightCountValid(
+  nights: number,
+  effectiveMinNights: number,
+  maxNights: number | null,
+): boolean {
+  if (nights < effectiveMinNights) return false;
+  if (maxNights !== null && nights > maxNights) return false;
+  return true;
+}
+
+export function formatLongDate(date: Date): string {
+  return format(date, 'd MMMM yyyy');
+}
+
+export function formatGeneralConstraintMessage(
+  minNights: number,
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null,
+  maxNights: number | null,
+): string | null {
+  const hasPerDayMin = minNightsByCheckInDay !== null;
+  const hasUniformMin = !hasPerDayMin && minNights > 1;
+  const hasMax = maxNights !== null;
+
+  if (hasPerDayMin && hasMax) return 'Minimum and maximum night stays apply';
+  if (hasPerDayMin) return 'Minimum night stay varies by check-in day';
+  if (hasUniformMin && hasMax) {
+    return minNights === maxNights
+      ? `${minNights}-night stay required`
+      : `Stay must be ${minNights}–${maxNights} nights`;
+  }
+  if (hasUniformMin)
+    return `Minimum stay: ${minNights} night${minNights !== 1 ? 's' : ''}`;
+  if (hasMax)
+    return `Maximum stay: ${maxNights} night${maxNights !== 1 ? 's' : ''}`;
+  return null;
+}
+
+export function buildNightRestrictedMatcher(
+  from: Date | null,
+  effectiveMinNights: number,
+  maxNights: number | null,
+) {
+  if (!from) return [];
+  const matchers: ({ before: Date; after: Date } | { after: Date })[] = [];
+  if (effectiveMinNights > 1) {
+    matchers.push({ before: addDays(from, effectiveMinNights), after: from });
+  }
+  if (maxNights !== null) {
+    matchers.push({ after: addDays(from, maxNights) });
+  }
+  return matchers;
+}
+
 export function buildNightDisabledMatcher(
   from: Date | null,
   effectiveMinNights: number,
   maxNights: number | null,
 ) {
-  if (!from) return { before: new Date() };
-  const matchers: (
-    | { before: Date }
-    | { after: Date }
-    | { before: Date; after: Date }
-  )[] = [
+  return [
     { before: new Date() },
-    { before: addDays(from, effectiveMinNights), after: from },
+    ...buildNightRestrictedMatcher(from, effectiveMinNights, maxNights),
   ];
-  if (maxNights !== null) {
-    matchers.push({ after: addDays(from, maxNights) });
-  }
-  return matchers;
 }
 
 export interface ListingBookingStateProps {

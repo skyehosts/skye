@@ -9,6 +9,7 @@ import {
   heatherPurple,
   highlandMossGreen,
   rowanBerry,
+  rowanBerryLight,
   seaGlassTeal,
   successGreen,
   warmStone,
@@ -32,6 +33,7 @@ const highlandPalette: PaletteOptions = {
     whiskyGold,
     successGreen,
     rowanBerry,
+    rowanBerryLight,
   },
 };
 

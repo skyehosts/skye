@@ -4,6 +4,7 @@ export {
   heatherPurple,
   highlandMossGreen,
   rowanBerry,
+  rowanBerryLight,
   seaGlassTeal,
   successGreen,
   warmStone,

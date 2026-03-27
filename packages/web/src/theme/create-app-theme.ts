@@ -30,6 +30,7 @@ declare module "@mui/material/styles" {
       whiskyGold: string;
       successGreen: string;
       rowanBerry: string;
+      rowanBerryLight: string;
     };
   }
   interface PaletteOptions {
@@ -59,6 +60,7 @@ declare module "@mui/material/styles" {
       whiskyGold?: string;
       successGreen?: string;
       rowanBerry?: string;
+      rowanBerryLight?: string;
     };
   }
 }
