@@ -1,3 +1,5 @@
+import { addDays } from 'date-fns';
+
 export interface GuestCounts {
   adults: number;
   children: number;
@@ -17,6 +19,68 @@ export interface ListingGuestRuleProps {
   childrenAllowed: boolean;
   infantsAllowed: boolean;
   petsAllowed: boolean;
+}
+
+import type { IMinNightsByCheckInDay } from '@repo/skye-hosts-api-client';
+
+export type { IMinNightsByCheckInDay } from '@repo/skye-hosts-api-client';
+
+export interface ListingNightRuleProps {
+  minNights: number;
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null;
+  maxNights: number | null;
+}
+
+const DAY_KEYS = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+] as const satisfies readonly (keyof IMinNightsByCheckInDay)[];
+
+export function getMinNightsForDate(
+  date: Date,
+  minNights: number,
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null,
+): number {
+  if (!minNightsByCheckInDay) return minNights;
+  const key = DAY_KEYS[date.getDay() as 0 | 1 | 2 | 3 | 4 | 5 | 6];
+  return minNightsByCheckInDay[key];
+}
+
+export function formatNightConstraintMessage(
+  effectiveMin: number,
+  maxNights: number | null,
+): string {
+  if (maxNights !== null) {
+    return effectiveMin === maxNights
+      ? `${effectiveMin}-night stay required`
+      : `Stay must be ${effectiveMin}–${maxNights} nights`;
+  }
+  return `Minimum stay: ${effectiveMin} night${effectiveMin !== 1 ? 's' : ''}`;
+}
+
+export function buildNightDisabledMatcher(
+  from: Date | null,
+  effectiveMinNights: number,
+  maxNights: number | null,
+) {
+  if (!from) return { before: new Date() };
+  const matchers: (
+    | { before: Date }
+    | { after: Date }
+    | { before: Date; after: Date }
+  )[] = [
+    { before: new Date() },
+    { before: addDays(from, effectiveMinNights), after: from },
+  ];
+  if (maxNights !== null) {
+    matchers.push({ after: addDays(from, maxNights) });
+  }
+  return matchers;
 }
 
 export interface ListingBookingStateProps {

@@ -12,6 +12,7 @@ import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
 import type {
   ListingBookingStateProps,
   ListingGuestRuleProps,
+  ListingNightRuleProps,
 } from './listing-guest-types';
 import { formatGuestSummary } from './listing-guest-types';
 
@@ -20,6 +21,9 @@ export function ListingMobileBookingBar({
   childrenAllowed,
   infantsAllowed,
   petsAllowed,
+  minNights,
+  minNightsByCheckInDay,
+  maxNights,
   dateRange,
   guests,
   dateModalOpen,
@@ -30,7 +34,7 @@ export function ListingMobileBookingBar({
   setConfirmModalOpen,
   handleDateSave,
   handleGuestSave,
-}: ListingGuestRuleProps & ListingBookingStateProps) {
+}: ListingGuestRuleProps & ListingNightRuleProps & ListingBookingStateProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -137,6 +141,9 @@ export function ListingMobileBookingBar({
           onClose={() => setDateModalOpen(false)}
           onSave={handleDateSave}
           initialRange={dateRange}
+          minNights={minNights}
+          minNightsByCheckInDay={minNightsByCheckInDay}
+          maxNights={maxNights}
         />
       )}
 

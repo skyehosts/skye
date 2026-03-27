@@ -10,6 +10,7 @@ import type {
   ListingTypeId,
   PropertySizeUnit,
 } from '../../enums/listing-enums';
+import type { IMinNightsByCheckInDay } from './min-nights-by-check-in-day';
 
 export interface IUpdateListingRequestDto {
   title?: string;
@@ -65,4 +66,7 @@ export interface IUpdateListingRequestDto {
   shortTermLetLicenseConfirmed?: boolean;
   latitude?: number;
   longitude?: number;
+  minNights?: number;
+  minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
+  maxNights?: number | null;
 }

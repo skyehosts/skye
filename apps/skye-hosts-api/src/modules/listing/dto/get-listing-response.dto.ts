@@ -2,6 +2,7 @@ import type {
   HostInteractionId,
   IGetListingResponseDto,
   IListingImageDto,
+  IMinNightsByCheckInDay,
   ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
@@ -72,6 +73,9 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   hostProfilePhotoUrl: string | null;
   coverImageUrl: string | null;
   images: IListingImageDto[];
+  minNights: number;
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null;
+  maxNights: number | null;
   status: ListingStatus;
   shortTermLetLicenseConfirmed: boolean;
   createdAt: Date;

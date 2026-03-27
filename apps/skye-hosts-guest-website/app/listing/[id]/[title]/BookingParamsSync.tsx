@@ -6,6 +6,7 @@ import type {
   BookingSearchParams,
   GuestCounts,
   ListingGuestRuleProps,
+  ListingNightRuleProps,
 } from '@repo/web-components/listings/listing-guest-types';
 import { serializeBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
@@ -13,7 +14,8 @@ import { useListingBookingState } from '@repo/web-components/listings/use-listin
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
-interface BookingParamsSyncProps extends ListingGuestRuleProps {
+interface BookingParamsSyncProps
+  extends ListingGuestRuleProps, ListingNightRuleProps {
   initialBookingParams: BookingSearchParams;
 }
 
@@ -23,6 +25,9 @@ export function BookingParamsSync({
   childrenAllowed,
   infantsAllowed,
   petsAllowed,
+  minNights,
+  minNightsByCheckInDay,
+  maxNights,
 }: BookingParamsSyncProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -50,15 +55,29 @@ export function BookingParamsSync({
     petsAllowed,
   };
 
+  const nightRuleProps: ListingNightRuleProps = {
+    minNights,
+    minNightsByCheckInDay,
+    maxNights,
+  };
+
   return (
     <>
       {/* Desktop sidebar */}
       <Box sx={{ flex: { md: 1 }, display: { xs: 'none', md: 'block' } }}>
-        <ListingBookingSidebar {...guestRuleProps} {...bookingState} />
+        <ListingBookingSidebar
+          {...guestRuleProps}
+          {...nightRuleProps}
+          {...bookingState}
+        />
       </Box>
 
       {/* Mobile fixed booking bar */}
-      <ListingMobileBookingBar {...guestRuleProps} {...bookingState} />
+      <ListingMobileBookingBar
+        {...guestRuleProps}
+        {...nightRuleProps}
+        {...bookingState}
+      />
     </>
   );
 }

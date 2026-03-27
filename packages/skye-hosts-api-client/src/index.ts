@@ -68,6 +68,7 @@ export * from './dto-interfaces/listing/get-homepage-listings-response.dto';
 export * from './dto-interfaces/listing/get-host-listings-response.dto';
 export * from './dto-interfaces/listing/get-listing-response.dto';
 export * from './dto-interfaces/listing/get-space-types-response.dto';
+export * from './dto-interfaces/listing/min-nights-by-check-in-day';
 export * from './dto-interfaces/listing/update-listing-request.dto';
 export * from './dto-interfaces/message-template/message-template-request.dto';
 export * from './dto-interfaces/message-template/message-template-response.dto';

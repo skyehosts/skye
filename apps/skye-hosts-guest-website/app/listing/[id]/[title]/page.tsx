@@ -142,6 +142,9 @@ export default async function ListingPage({
           childrenAllowed={listing.houseRuleChildrenAllowed}
           infantsAllowed={listing.houseRuleInfantsAllowed}
           petsAllowed={listing.houseRulePetsAllowed ?? true}
+          minNights={listing.minNights}
+          minNightsByCheckInDay={listing.minNightsByCheckInDay}
+          maxNights={listing.maxNights}
         />
       </Box>
     </Container>

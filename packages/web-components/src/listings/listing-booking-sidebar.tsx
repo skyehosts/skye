@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { formatShortDateRange } from '@repo/common';
-import { format, isValid, parse } from 'date-fns';
+import { differenceInCalendarDays, format, isValid, parse } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerPopup } from './listing-date-picker-popup';
@@ -15,8 +15,9 @@ import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
 import type {
   ListingBookingStateProps,
   ListingGuestRuleProps,
+  ListingNightRuleProps,
 } from './listing-guest-types';
-import { formatGuestSummary } from './listing-guest-types';
+import { formatGuestSummary, getMinNightsForDate } from './listing-guest-types';
 
 const DATE_FORMAT = 'dd/MM/yyyy';
 
@@ -49,6 +50,9 @@ export function ListingBookingSidebar({
   childrenAllowed,
   infantsAllowed,
   petsAllowed,
+  minNights,
+  minNightsByCheckInDay,
+  maxNights,
   dateRange,
   guests,
   dateModalOpen,
@@ -60,7 +64,7 @@ export function ListingBookingSidebar({
   handleDateSave,
   handleDateClear,
   handleGuestSave,
-}: ListingGuestRuleProps & ListingBookingStateProps) {
+}: ListingGuestRuleProps & ListingNightRuleProps & ListingBookingStateProps) {
   const theme = useTheme();
   const dateInputSx = {
     ...dateInputBaseSx,
@@ -115,6 +119,16 @@ export function ListingBookingSidebar({
   function handleCheckOutBlur() {
     const parsed = parseDateField(checkOutText);
     if (parsed && externalFrom && parsed > externalFrom) {
+      const nights = differenceInCalendarDays(parsed, externalFrom);
+      const effectiveMin = getMinNightsForDate(
+        externalFrom,
+        minNights,
+        minNightsByCheckInDay,
+      );
+      if (nights < effectiveMin || (maxNights !== null && nights > maxNights)) {
+        setCheckOutText(formatDateField(dateRange?.to));
+        return;
+      }
       setExternalTo(parsed);
     } else {
       // Revert to previous valid value
@@ -253,6 +267,9 @@ export function ListingBookingSidebar({
                 initialRange={dateRange}
                 externalFrom={externalFrom}
                 externalTo={externalTo}
+                minNights={minNights}
+                minNightsByCheckInDay={minNightsByCheckInDay}
+                maxNights={maxNights}
               />
             </Box>
 

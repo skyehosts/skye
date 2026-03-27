@@ -108,11 +108,22 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-You've misunderstood the requirements
-- Expected behaviour is not a centered modal with backdrop
-- It is a popup that extends from the box itself
-- see date.png for reference
-- Also, the title shouldn't be 'select check-in date'
+- In apps/skye-hosts-guest-website
+- in packages/web-components/src/listings/listing-date-picker-modal.tsx you must prevent selected of dates that violate min or max night stays
+- This has already been enforced in packages/web-components/src/listings/listing-date-picker-popup.tsx and can be used as example.
+- For both popup and modal, centralise the validation logic so it's defined only once
+  - Determine best danger red that matches highland palette and add to palette.ts and reference it.
+  - For days that are unselectable (and not in the past), they should be colored a danger red.
+  - If maximum nights is not null, display helpful text explaining such for clarity for guest
+  - If minimum nights is not null and isn't different per check-in day, display helpful text explaining such for clarity for guest
+  - If minimum nights is not null and is different per check-in day, avoid verbose description, keep it simple, e.g "minium night stay applies"
+  - Dont' implement literally exactly what I've said, enhance it to be optimal based on your best judgement.
+    - E.G perhaps if Max is not null and min is per check-inday, perhaps message should simply be: "Both minimum and maximum night stays applies"
+- The modal title should be 'Select check-in date' when guest is selecting check-in date and 'Select check-out date' when guest is selecting check-out date
+- The modal should display current selected check-in and check-out dates at the top (same format as popup uses)
+- Scrutinise my plan
+- AnNy opportunities for improvement, recommend them
+- ANy big decisions, ask me
 
 
 ==================

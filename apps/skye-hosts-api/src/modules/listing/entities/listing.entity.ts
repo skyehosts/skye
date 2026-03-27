@@ -1,5 +1,6 @@
 import type {
   HostInteractionId,
+  IMinNightsByCheckInDay,
   ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
@@ -179,6 +180,15 @@ export class Listing {
 
   @Column({ type: 'simple-array', default: '' })
   safetyDevices: string[];
+
+  @Column({ type: 'integer', default: 1 })
+  minNights: number;
+
+  @Column({ type: 'json', nullable: true, default: null })
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null;
+
+  @Column({ type: 'integer', nullable: true, default: null })
+  maxNights: number | null;
 
   @Column({ type: 'character varying', default: 'Europe/London' })
   timezone: string;

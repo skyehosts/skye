@@ -33,6 +33,15 @@ import { fetchApi } from "../services/api";
 import { borderRadius, colors, commonStyles, spacing } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
 
+function formatNightsCardText(listing: IGetListingResponseDto): string {
+  const minDisplay = listing.minNightsByCheckInDay
+    ? `${Math.min(...Object.values(listing.minNightsByCheckInDay))}–${Math.max(...Object.values(listing.minNightsByCheckInDay))}`
+    : `${listing.minNights}`;
+  return listing.maxNights
+    ? `${minDisplay}–${listing.maxNights} night stays`
+    : `${minDisplay}+ night stays`;
+}
+
 function TriStateCardPreview({
   entries,
   config,
@@ -195,10 +204,17 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
 
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}
-          onPress={() => router.push("/edit-listing/availability")}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/availability",
+              params: { id: listingId },
+            })
+          }
         >
           <Text style={commonStyles.itemTitle}>Availability</Text>
-          <Text style={commonStyles.itemSubtext}>2-7 night stays</Text>
+          <Text style={commonStyles.itemSubtext}>
+            {listing ? formatNightsCardText(listing) : "Loading..."}
+          </Text>
           <Text style={commonStyles.itemSubtext}>Same-day advance notice</Text>
         </Pressable>
 

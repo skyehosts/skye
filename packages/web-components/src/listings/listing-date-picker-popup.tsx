@@ -15,8 +15,14 @@ import type { DateRange } from 'react-day-picker';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/style.css';
 import { dayPickerThemeSx } from './listing-date-picker-styles';
+import type { ListingNightRuleProps } from './listing-guest-types';
+import {
+  buildNightDisabledMatcher,
+  formatNightConstraintMessage,
+  getMinNightsForDate,
+} from './listing-guest-types';
 
-interface ListingDatePickerPopupProps {
+interface ListingDatePickerPopupProps extends ListingNightRuleProps {
   open: boolean;
   onClose: () => void;
   onSave: (range: { from: Date; to: Date }) => void;
@@ -38,6 +44,9 @@ export function ListingDatePickerPopup({
   initialRange,
   externalFrom,
   externalTo,
+  minNights,
+  minNightsByCheckInDay,
+  maxNights,
 }: ListingDatePickerPopupProps) {
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
@@ -87,6 +96,11 @@ export function ListingDatePickerPopup({
     prevExternalTo.current = externalTo;
   }, [open, externalTo]);
 
+  const effectiveMinNights =
+    from != null
+      ? getMinNightsForDate(from, minNights, minNightsByCheckInDay)
+      : minNights;
+
   function handleDayClick(day: Date) {
     if (autoSaveTimer.current) {
       clearTimeout(autoSaveTimer.current);
@@ -104,6 +118,9 @@ export function ListingDatePickerPopup({
         setTo(null);
         return;
       }
+      const nights = differenceInCalendarDays(day, from!);
+      if (nights < effectiveMinNights) return;
+      if (maxNights !== null && nights > maxNights) return;
       setTo(day);
       setSelectingPhase('from');
       autoSaveTimer.current = setTimeout(() => {
@@ -168,6 +185,15 @@ export function ListingDatePickerPopup({
                 ? `${formatLongDate(from!)} – ...`
                 : 'Add your travel dates for exact pricing'}
           </Typography>
+          {hasFrom && !hasRange && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.5, fontStyle: 'italic' }}
+            >
+              {formatNightConstraintMessage(effectiveMinNights, maxNights)}
+            </Typography>
+          )}
         </Box>
 
         {/* Calendar */}
@@ -188,7 +214,11 @@ export function ListingDatePickerPopup({
             mode="range"
             selected={selected}
             onDayClick={handleDayClick}
-            disabled={{ before: new Date() }}
+            disabled={
+              selectingPhase === 'to'
+                ? buildNightDisabledMatcher(from, effectiveMinNights, maxNights)
+                : { before: new Date() }
+            }
             numberOfMonths={2}
             month={month}
             onMonthChange={setMonth}
