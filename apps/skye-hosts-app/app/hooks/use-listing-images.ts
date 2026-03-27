@@ -1,5 +1,6 @@
 import type { IListingImageDto } from "../../../../packages/skye-hosts-api-client/src";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { captureException } from "../services/error-reporting";
 import { createLogger } from "../services/logger";
 
 const log = createLogger("useListingImages");
@@ -19,6 +20,7 @@ import { validateImageAspectRatios } from "../utils/image-validation";
 const MAX_IMAGES_PER_LISTING = 20;
 
 const POLL_INTERVAL_MS = 3000;
+const MAX_POLL_ATTEMPTS = 40; // ~2 minutes at 3s intervals
 
 interface UseListingImagesReturn {
   remoteImages: IListingImageDto[];
@@ -48,6 +50,7 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
     new Set(),
   );
   const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const pollCountRef = useRef<Map<string, number>>(new Map());
 
   const totalCount = remoteImages.length + localImages.length;
   const canAddMore = totalCount < MAX_IMAGES_PER_LISTING;
@@ -83,9 +86,26 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
 
     const checkDerivedUrls = async () => {
       const resolved: string[] = [];
+      const timedOut: string[] = [];
 
       await Promise.all(
         Array.from(processingImageIds).map(async (imageId) => {
+          const count = (pollCountRef.current.get(imageId) ?? 0) + 1;
+          pollCountRef.current.set(imageId, count);
+
+          if (count > MAX_POLL_ATTEMPTS) {
+            log.error(
+              `Image ${imageId} exceeded max poll attempts (${MAX_POLL_ATTEMPTS})`,
+            );
+            captureException(
+              new Error(
+                `Image processing timed out for ${imageId} after ${MAX_POLL_ATTEMPTS} attempts`,
+              ),
+            );
+            timedOut.push(imageId);
+            return;
+          }
+
           const image = remoteImages.find((img) => img.id === imageId);
           if (!image) return;
           const url640 = image.urls.find((u) => u.width === 640)?.url;
@@ -102,12 +122,20 @@ export function useListingImages(listingId: string): UseListingImagesReturn {
         }),
       );
 
-      if (resolved.length > 0) {
+      const idsToRemove = [...resolved, ...timedOut];
+      if (idsToRemove.length > 0) {
         setProcessingImageIds((prev) => {
           const next = new Set(prev);
-          for (const id of resolved) next.delete(id);
+          for (const id of idsToRemove) next.delete(id);
           return next;
         });
+        for (const id of idsToRemove) {
+          pollCountRef.current.delete(id);
+        }
+      }
+
+      if (timedOut.length > 0) {
+        setError("Some images failed to process. Please try re-uploading.");
       }
     };
 

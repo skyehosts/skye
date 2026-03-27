@@ -23,10 +23,14 @@ export class MessageGateway
 
   private readonly logger = new Logger(MessageGateway.name);
 
+  private readonly jwtSecret: string;
+
   constructor(
     private readonly messageService: MessageService,
     private readonly configService: ConfigService,
-  ) {}
+  ) {
+    this.jwtSecret = this.configService.getAll().jwtSecret;
+  }
 
   handleConnection(client: Socket): void {
     try {
@@ -40,8 +44,7 @@ export class MessageGateway
         return;
       }
 
-      const { jwtSecret } = this.configService.getAll();
-      const claims = jwt.verify(token, jwtSecret) as unknown as IJwtClaims;
+      const claims = jwt.verify(token, this.jwtSecret) as unknown as IJwtClaims;
       client.data.userId = claims.sub;
       client.data.userName = claims.name;
       void client.join(`user:${claims.sub}`);

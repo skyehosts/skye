@@ -33,6 +33,8 @@ const INVITE_EXPIRY_DAYS = 7;
 
 @Injectable()
 export class CoHostInviteService {
+  private readonly appLinkBaseUrl: string;
+
   constructor(
     @InjectRepository(CoHostInvite)
     private readonly coHostInviteRepo: Repository<CoHostInvite>,
@@ -47,7 +49,9 @@ export class CoHostInviteService {
     private resendService: ResendService,
     private configService: ConfigService,
     private logger: LoggerService,
-  ) {}
+  ) {
+    this.appLinkBaseUrl = this.configService.getAll().appLinkBaseUrl;
+  }
 
   async createInvite(
     inviterAccountId: number,
@@ -117,8 +121,7 @@ export class CoHostInviteService {
       Date.now() + INVITE_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
     );
 
-    const appLinkBaseUrl = this.configService.getAll().appLinkBaseUrl;
-    const inviteLink = `${appLinkBaseUrl}/invite?token=${rawToken}`;
+    const inviteLink = `${this.appLinkBaseUrl}/invite?token=${rawToken}`;
 
     const invite = await this.dataSource.transaction(async (manager) => {
       const saved = await manager.getRepository(CoHostInvite).save({

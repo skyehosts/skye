@@ -4,7 +4,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { In, Repository } from 'typeorm';
@@ -14,6 +13,7 @@ import {
   buildDerivedImageUrl,
   toListingImageDto,
 } from '../../common/utils/listing-image-url.util';
+import { ConfigService } from '../../config/providers/config.service';
 import { ListingImage } from '../../listing-image/entities';
 import {
   CreateListingRequestDto,
@@ -55,9 +55,7 @@ export class ListingService {
     private listingAccessService: ListingAccessService,
     private configService: ConfigService,
   ) {
-    this.cdnDomain = this.configService.get<string>(
-      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
-    );
+    this.cdnDomain = this.configService.getAll().awsCloudfrontImagesDomain;
   }
 
   private buildCoverImageUrl(

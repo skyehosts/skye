@@ -41,17 +41,21 @@ const REFRESH_TOKEN_EXPIRY_DAYS = 30;
 
 @Injectable()
 export class AuthService {
+  private readonly jwtSecret: string;
+
   constructor(
     private accountService: AccountService,
     private configService: ConfigService,
     private twilioService: TwilioService,
-  ) {}
+  ) {
+    this.jwtSecret = this.configService.getAll().jwtSecret;
+  }
 
   private async generateTokenPair(account: Account): Promise<{
     accessToken: string;
     refreshToken: string;
   }> {
-    const { jwtSecret } = this.configService.getAll();
+    const { jwtSecret } = this;
 
     const accessToken = jwt.sign(
       {
@@ -90,7 +94,7 @@ export class AuthService {
   }
 
   async refresh(refreshTokenRaw: string): Promise<IRefreshTokenResponseDto> {
-    const { jwtSecret } = this.configService.getAll();
+    const { jwtSecret } = this;
 
     let decoded: { sub: number; jti: string };
     try {

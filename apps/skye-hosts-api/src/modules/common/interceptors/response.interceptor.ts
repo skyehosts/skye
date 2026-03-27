@@ -21,11 +21,16 @@ export class ResponseInterceptor<T> implements NestInterceptor<
   IApiResponse<T>
 > {
   private readonly logger = new Logger(ResponseInterceptor.name);
+  private readonly responseMeta: IApiResponseMeta;
 
   constructor(
     private configService: ConfigService,
     private reflector: Reflector,
-  ) {}
+  ) {
+    this.responseMeta = getEnvironmentVarsForHttpResponse(
+      this.configService.getAll(),
+    );
+  }
   intercept(
     context: ExecutionContext,
     next: CallHandler,
@@ -57,7 +62,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<
       map((payload: T) => {
         return {
           payload,
-          meta: getEnvironmentVarsForHttpResponse(this.configService.getAll()),
+          meta: this.responseMeta,
         } as IApiResponse<T>;
       }),
     );
