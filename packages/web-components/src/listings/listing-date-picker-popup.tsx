@@ -54,22 +54,26 @@ export function ListingDatePickerPopup({
   // 'from' = waiting for check-in click, 'to' = waiting for check-out click
   const [selectingPhase, setSelectingPhase] = useState<'from' | 'to'>('from');
 
+  // Sync when external fields (typed inputs) change while popup is open.
+  // Only react to non-null values to avoid overwriting popup-initiated state.
+  const prevExternalFrom = useRef(externalFrom);
+  const prevExternalTo = useRef(externalTo);
+
   useEffect(() => {
     if (open) {
       setFrom(initialRange?.from ?? null);
       setTo(initialRange?.to ?? null);
       setMonth(initialRange?.from ?? new Date());
       setSelectingPhase('from');
+      // Snapshot current external values so the external-sync effects below
+      // don't see a stale diff and spuriously override the phase on reopen.
+      prevExternalFrom.current = externalFrom;
+      prevExternalTo.current = externalTo;
     }
     return () => {
       if (autoSaveTimer.current) clearTimeout(autoSaveTimer.current);
     };
   }, [open, initialRange]);
-
-  // Sync when external fields (typed inputs) change while popup is open.
-  // Only react to non-null values to avoid overwriting popup-initiated state.
-  const prevExternalFrom = useRef(externalFrom);
-  const prevExternalTo = useRef(externalTo);
 
   useEffect(() => {
     if (!open) return;
