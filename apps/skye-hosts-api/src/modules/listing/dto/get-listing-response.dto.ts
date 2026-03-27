@@ -2,6 +2,7 @@ import type {
   HostInteractionId,
   IGetListingResponseDto,
   IListingImageDto,
+  IMinNightsByCheckInDay,
   ListingAccessibilityFeatureId,
   ListingAmenityId,
   ListingBookingType,
@@ -52,6 +53,8 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   checkoutInstructionAdditions: string | null;
   hostInteraction: HostInteractionId | null;
   houseRulePetsAllowed: boolean | null;
+  houseRuleChildrenAllowed: boolean;
+  houseRuleInfantsAllowed: boolean;
   houseRuleEventsAllowed: boolean | null;
   houseRuleSmokingAllowed: boolean | null;
   houseRuleVapingAllowed: boolean | null;
@@ -70,6 +73,9 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   hostProfilePhotoUrl: string | null;
   coverImageUrl: string | null;
   images: IListingImageDto[];
+  minNights: number;
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null;
+  maxNights: number | null;
   status: ListingStatus;
   shortTermLetLicenseConfirmed: boolean;
   createdAt: Date;

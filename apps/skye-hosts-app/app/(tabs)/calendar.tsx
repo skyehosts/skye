@@ -56,6 +56,10 @@ export default function CalendarScreen() {
         <Appbar.Content title="Calendar" />
       </Appbar.Header>
 
+      <Text style={styles.subtitle}>
+        Select a listing to manage its bookings & availability.
+      </Text>
+
       {isLoading && (
         <View style={commonStyles.centered}>
           <ActivityIndicator size="large" />
@@ -125,11 +129,20 @@ function CalendarListingCard({
         <Text style={commonStyles.itemTitle} numberOfLines={1}>
           {listing.title}
         </Text>
-        <Text style={styles.statusLabel}>
-          {isListed ? "Listed" : "In progress"}
-        </Text>
+        <View style={styles.statusChip}>
+          <View
+            style={[
+              styles.statusDot,
+              { backgroundColor: isListed ? colors.success : colors.warning },
+            ]}
+          />
+          <Text style={styles.statusText}>
+            {isListed ? "Listed" : "In progress"}
+          </Text>
+        </View>
+        <Text style={styles.location}>{listing.postCode}</Text>
       </View>
-      <Icon source="calendar-month" size={24} color={colors.textSecondary} />
+      <Icon source="chevron-right" size={24} color={colors.textSecondary} />
     </Pressable>
   );
 }
@@ -163,9 +176,29 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: spacing.xs,
   },
-  statusLabel: {
+  statusChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  statusText: {
     fontSize: typography.sm,
-    color: colors.driftwoodSand,
+    color: colors.textPrimary,
     fontWeight: fontWeight.medium,
+  },
+  location: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
+  },
+  subtitle: {
+    ...commonStyles.emptySubtext,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    textAlign: "left",
   },
 });

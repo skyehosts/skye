@@ -7,6 +7,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { UserRole } from '@repo/skye-hosts-api-client';
+import * as Sentry from '@sentry/nestjs';
 import { randomUUID } from 'crypto';
 import { DeleteResult, Repository } from 'typeorm';
 import { ConfigService } from '../../config/providers/config.service';
@@ -178,7 +179,8 @@ export class AccountService {
       );
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      this.logger.debug(`Failed to delete S3 object ${key}: ${message}`);
+      this.logger.error(`Failed to delete S3 object ${key}: ${message}`);
+      Sentry.captureException(error);
     }
   }
 }

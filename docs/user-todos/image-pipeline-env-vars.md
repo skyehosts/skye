@@ -11,8 +11,8 @@ These are needed when deploying the `ListingImagePipelineStack`:
 
 Add these to your `.env.local` / `.env` / deployment config:
 
-- `AWS_S3_LISTING_IMAGES_BUCKET` — S3 bucket name (e.g. `skye-hosts-images-qa`)
-- `AWS_CLOUDFRONT_LISTING_IMAGES_DOMAIN` — CloudFront distribution domain (e.g. `d1234abcdef.cloudfront.net`)
+- `AWS_S3_IMAGES_BUCKET` — S3 bucket name (e.g. `skye-hosts-images-qa`)
+- `AWS_CLOUDFRONT_IMAGES_DOMAIN` — CloudFront distribution domain (e.g. `d1234abcdef.cloudfront.net`)
 - `AWS_SQS_ENVIRONMENT` — (already exists, used for queue name resolution)
 
 ## After deploying CDK

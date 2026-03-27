@@ -17,6 +17,7 @@ import {
   SKYE_POSTCODE_REGEX,
   type GeocodedLocation,
 } from "../utils/geocode-postcode";
+import { captureException } from "../services/error-reporting";
 import { useCreateListing } from "./context";
 
 interface LocationFormValues {
@@ -67,6 +68,7 @@ export default function LocationScreen() {
         setDraftField("latitude", loc.latitude);
         setDraftField("longitude", loc.longitude);
       } catch (e) {
+        captureException(e);
         setGeocodeError(
           e instanceof Error
             ? e.message

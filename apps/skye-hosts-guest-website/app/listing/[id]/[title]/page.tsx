@@ -5,19 +5,20 @@ import {
   type IGetListingResponseDto,
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
-import { ListingBookingSidebar } from '@repo/web-components/listings/listing-booking-sidebar';
+import { parseBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
-import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
-import { FavouriteButton } from './FavouriteButton';
+import { BookingParamsSync } from './BookingParamsSync';
+import { ListingHeroWithFavourite } from './ListingHeroWithFavourite';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
+  searchParams: Promise<Record<string, string | undefined>>;
 }
 
 export async function generateMetadata({
@@ -32,11 +33,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function ListingPage({ params }: ListingPageProps) {
+export default async function ListingPage({
+  params,
+  searchParams,
+}: ListingPageProps) {
   const { id, title } = await params;
+  const resolvedSearchParams = await searchParams;
   const listing = await fetchApi<IGetListingResponseDto>(`/listing/${id}`);
   const session = await auth();
   const guestId = session?.user?.id ? Number(session.user.id) : null;
+  const initialBookingParams = parseBookingSearchParams(resolvedSearchParams);
 
   let isFavourited = false;
   if (session?.apiToken) {
@@ -57,8 +63,22 @@ export default async function ListingPage({ params }: ListingPageProps) {
       maxWidth={false}
       sx={{ maxWidth: 1120, px: { xs: 0, md: 3 }, pb: { xs: 10, md: 0 } }}
     >
-      {/* Full-width images */}
-      <ListingHeroImages images={listing.images} title={listing.title} />
+      {/* Full-width images — guest: interactive favourite; logged-out: static */}
+      {guestId ? (
+        <ListingHeroWithFavourite
+          images={listing.images}
+          title={listing.title}
+          listingTitle={listing.title}
+          listingId={listing.id}
+          initialFavourited={isFavourited}
+        />
+      ) : (
+        <ListingHeroImages
+          images={listing.images}
+          title={listing.title}
+          listingTitle={listing.title}
+        />
+      )}
 
       {/* Two-column layout: hero text + sidebar */}
       <Box
@@ -66,6 +86,7 @@ export default async function ListingPage({ params }: ListingPageProps) {
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row' },
           gap: { md: 4 },
+          px: { xs: 2, md: 0 },
         }}
       >
         {/* Left column: hero text + location + booking actions */}
@@ -100,19 +121,13 @@ export default async function ListingPage({ params }: ListingPageProps) {
           />
           {/* TODO: Replace hardcoded values with actual booking form data */}
           {guestId ? (
-            <>
-              <FavouriteButton
-                listingId={listing.id}
-                initialFavourited={isFavourited}
-              />
-              <BookNowButton
-                listingId={listing.id}
-                guestId={guestId}
-                checkInDate="2026-04-01"
-                checkOutDate="2026-04-05"
-                totalPrice={500}
-              />
-            </>
+            <BookNowButton
+              listingId={listing.id}
+              guestId={guestId}
+              checkInDate="2026-04-01"
+              checkOutDate="2026-04-05"
+              totalPrice={500}
+            />
           ) : (
             <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
               Log in to book
@@ -120,14 +135,18 @@ export default async function ListingPage({ params }: ListingPageProps) {
           )}
         </Box>
 
-        {/* Right column: booking sidebar (desktop only) */}
-        <Box sx={{ flex: { md: 1 }, display: { xs: 'none', md: 'block' } }}>
-          <ListingBookingSidebar />
-        </Box>
+        {/* Right column: booking sidebar (desktop) + mobile bar — via BookingParamsSync */}
+        <BookingParamsSync
+          initialBookingParams={initialBookingParams}
+          maxGuests={listing.maxGuests}
+          childrenAllowed={listing.houseRuleChildrenAllowed}
+          infantsAllowed={listing.houseRuleInfantsAllowed}
+          petsAllowed={listing.houseRulePetsAllowed ?? true}
+          minNights={listing.minNights}
+          minNightsByCheckInDay={listing.minNightsByCheckInDay}
+          maxNights={listing.maxNights}
+        />
       </Box>
-
-      {/* Mobile fixed booking bar */}
-      <ListingMobileBookingBar />
     </Container>
   );
 }

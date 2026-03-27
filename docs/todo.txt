@@ -1,6 +1,8 @@
 ====
 Next
 ====
+- API caught exceptions -> Log to Sentry
+- 
 - Why image upload not working in Prod
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
@@ -107,61 +109,12 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In hosts app, on Personal details page
-  - Under name list item, add another one with information:
-  - Title: 'Profile photo'
-  - Description: This will be displayed on your listing pages to help show guests who they are booking with (Try improve this)
-- Tap behaviour:
-  - Opens a new modal to enable host to upload a profile photo
-  - Note:
-    - There is an existing photo selector (used by listing editor) that could potentially be re-used with max selectable photos = 1 (instead of many)
-    - There is existing AWS infrastructure e.g:
-      - s3 bucket that could be re-used
-      - Lambda that reduces quality to 80 and saves variants
-      - SQS queue: But may be overkill
-  ? - Photo will only ever be displayed in 1:1 ratio so may need a way to allow user to crop their own photo to ensure face isn't inadvertently cut out
-- Scrutinise my plan, especially whether it's wise to re-use existing AWS infrastructure (overkill) or whether this should be simpler (no sqs / lambda)
-- Carefully consider best way to solve face cropping problem.
-- Prefer to re-use existing npm libraries (only if fit for purpose). Otherwise other npm packages can be considered but only if well maintained and populate
-- Preference for simple solution
-- Identify opportunities for improvement
-- Any major decisions, ask
-
-- On guest website, on listing/:id/:slug page
-- There is an existing booking box with lorem ipsum in it, let's implement it properly
-- Under Mobile breakpoint (Statically positioned):
-  - Height: 100px;
-  - Padding top/bottom: 20px
-  - Padding left/right: Normal gutters
-  - Content:
-    - Top box:
-      - £677 total (Price for selected date range)
-      - 13 - 18 Sept
-      - Hover behaviour: underline text
-      - Tap behaviour: Open modal [A]
-    - Button:
-      - Text:
-        - 'Reserve' (If instant book enabled)
-        - 'Request to book' (If instant book not enabled)
-        - Style; Full width, primary
-      - Tap behaviour:
-        - Open Modal [B]
-- Over mobile breakpoint:
-  - Row 1:
-    - Check-in date field
-    - Check-out date field
-    - Tapping either, should open a calendar datepicker to select both check-in and chec-out date in a single movement
-    - I.E: Two months displayed at once (Horizontal column)
-    - Arrows on left and right to cycle through months
-    - Suggest: @mui/x-date-pickers, check if optimal
-  - Row 2:
-    - Todo later (Guest selector)
-- Modal [B]
-  - Title 'Confirm and pay'
-  - Description: Lorem ipsum for now
-- Modal [A]
-  0 
-
+- In apps/skye-hosts-api only
+- Ensure that everytime this.logger.error is called, it also captures it in sentry
+- Update Claude.md to include this coding pattern for API
+- Update Claude.md to include the coding pattern you did previously for mobile app as well.
+- Review all logger.debug calls in api and check if they should be .error
+- Update Claude.md to make a generaly statement about how we are adverse to silent failures, any unexpected errors should be reported.
 
 ==================
 Re-useable prompts

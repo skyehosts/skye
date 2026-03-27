@@ -11,6 +11,7 @@ import type {
   PropertySizeUnit,
 } from '../../enums/listing-enums';
 import type { IListingImageDto } from '../listing-image/listing-image.dto';
+import type { IMinNightsByCheckInDay } from './min-nights-by-check-in-day';
 
 export interface IGetListingResponseDto {
   id: number;
@@ -51,6 +52,8 @@ export interface IGetListingResponseDto {
   checkoutInstructionAdditions: string | null;
   hostInteraction: HostInteractionId | null;
   houseRulePetsAllowed: boolean | null;
+  houseRuleChildrenAllowed: boolean;
+  houseRuleInfantsAllowed: boolean;
   houseRuleEventsAllowed: boolean | null;
   houseRuleSmokingAllowed: boolean | null;
   houseRuleVapingAllowed: boolean | null;
@@ -69,6 +72,9 @@ export interface IGetListingResponseDto {
   hostProfilePhotoUrl: string | null;
   coverImageUrl: string | null;
   images: IListingImageDto[];
+  minNights: number;
+  minNightsByCheckInDay: IMinNightsByCheckInDay | null;
+  maxNights: number | null;
   status: ListingStatus;
   shortTermLetLicenseConfirmed: boolean;
   createdAt: Date;

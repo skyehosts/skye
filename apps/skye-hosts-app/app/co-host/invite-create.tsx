@@ -32,6 +32,7 @@ import {
   spacing,
   typography,
 } from "../theme";
+import { captureException } from "../services/error-reporting";
 import { handleFormError } from "../utils/form-error-handler";
 
 const ROLE_OPTIONS: {
@@ -90,8 +91,8 @@ export default function InviteCreateScreen() {
         const data = await fetchApi<IGetHostListingsResponseDto>("/listing");
         const found = data.listings.find((l) => l.id === Number(listingId));
         if (found) setListing(found);
-      } catch {
-        // Non-critical, just won't show listing name
+      } catch (e) {
+        captureException(e);
       } finally {
         setIsLoadingListing(false);
       }

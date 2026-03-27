@@ -65,7 +65,15 @@ export function ListingHeroSection({
       )}
 
       <Box sx={{ mt: 3.75, textAlign: { xs: 'center', md: 'left' } }}>
-        <Typography variant="h4" component="h1" sx={{ fontWeight: 600 }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{
+            fontWeight: 600,
+            display: { xs: 'block', md: 'none' },
+            color: 'custom.seaGlassTeal',
+          }}
+        >
           {title}
         </Typography>
         <Typography variant="body1" sx={{ color: 'text.secondary', mt: 0.5 }}>
@@ -111,7 +119,10 @@ export function ListingHeroSection({
                 src={hostInfo.avatarUrl}
                 sx={{ width: 50, height: 50, bgcolor: 'custom.warmStone' }}
               />
-              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+              <Typography
+                variant="body1"
+                sx={{ fontWeight: 600, color: 'custom.seaGlassTeal' }}
+              >
                 Hosted by {hostInfo.name}
               </Typography>
             </Stack>

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { UserRole } from '@repo/skye-hosts-api-client';
+import * as Sentry from '@sentry/nestjs';
 import * as jwt from 'jsonwebtoken';
 import {
   ConfigService,
@@ -62,6 +63,7 @@ export class BearerAuthenticationGuard implements CanActivate {
         throw e;
       }
       this.logger.error(`${BearerAuthenticationGuard.name}:catch()`, '', e);
+      Sentry.captureException(e);
       throw new HttpException(
         { status: TokenValidationStatus.ERROR_UNKNOWN },
         401,

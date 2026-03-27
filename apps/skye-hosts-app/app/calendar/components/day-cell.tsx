@@ -64,7 +64,7 @@ function DayCellInner({
     <Pressable
       style={[
         styles.cell,
-        { width: size, height: cellHeight },
+        { width: size, height: cellHeight, opacity: isPast ? 0.8 : 1 },
         status === "booked" && !isPast
           ? styles.cellBooked
           : isPast
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   cell: {
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: 10,
+    paddingTop: 7,
     borderRadius: borderRadius.xs,
   },
   cellPast: {

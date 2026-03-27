@@ -26,6 +26,8 @@ import { handleApiError } from "../utils/form-error-handler";
 
 interface RulesState {
   houseRulePetsAllowed: boolean | null;
+  houseRuleChildrenAllowed: boolean;
+  houseRuleInfantsAllowed: boolean;
   houseRuleEventsAllowed: boolean | null;
   houseRuleSmokingAllowed: boolean | null;
   houseRuleVapingAllowed: boolean | null;
@@ -38,6 +40,8 @@ interface RulesState {
 function initState(listing: IGetListingResponseDto): RulesState {
   return {
     houseRulePetsAllowed: listing.houseRulePetsAllowed,
+    houseRuleChildrenAllowed: listing.houseRuleChildrenAllowed,
+    houseRuleInfantsAllowed: listing.houseRuleInfantsAllowed,
     houseRuleEventsAllowed: listing.houseRuleEventsAllowed,
     houseRuleSmokingAllowed: listing.houseRuleSmokingAllowed,
     houseRuleVapingAllowed: listing.houseRuleVapingAllowed,
@@ -90,6 +94,8 @@ export default function HouseRulesScreen() {
         `/listing/${id}`,
         {
           houseRulePetsAllowed: rules.houseRulePetsAllowed,
+          houseRuleChildrenAllowed: rules.houseRuleChildrenAllowed,
+          houseRuleInfantsAllowed: rules.houseRuleInfantsAllowed,
           houseRuleEventsAllowed: rules.houseRuleEventsAllowed,
           houseRuleSmokingAllowed: rules.houseRuleSmokingAllowed,
           houseRuleVapingAllowed: rules.houseRuleVapingAllowed,

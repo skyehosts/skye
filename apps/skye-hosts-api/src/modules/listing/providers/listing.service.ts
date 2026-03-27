@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -386,6 +387,10 @@ export class ListingService {
       listing.safetyConsiderations = dto.safetyConsiderations;
     if (dto.safetyDevices !== undefined)
       listing.safetyDevices = dto.safetyDevices;
+    if (dto.minNights !== undefined) listing.minNights = dto.minNights;
+    if (dto.minNightsByCheckInDay !== undefined)
+      listing.minNightsByCheckInDay = dto.minNightsByCheckInDay ?? null;
+    if (dto.maxNights !== undefined) listing.maxNights = dto.maxNights ?? null;
     if (dto.status !== undefined) listing.status = dto.status;
     if (dto.shortTermLetLicenseConfirmed !== undefined)
       listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
@@ -399,6 +404,17 @@ export class ListingService {
       listing.approximateLatitude = approx.approximateLatitude;
       listing.approximateLongitude = approx.approximateLongitude;
     }
+    if (listing.maxNights !== null) {
+      const effectiveMin = listing.minNightsByCheckInDay
+        ? Math.max(...Object.values(listing.minNightsByCheckInDay))
+        : listing.minNights;
+      if (effectiveMin > listing.maxNights) {
+        throw new BadRequestException(
+          'Minimum nights cannot exceed maximum nights',
+        );
+      }
+    }
+
     listing.updatedAt = new Date();
 
     const updated = await this.listingRepo.save(listing);
@@ -464,6 +480,8 @@ export class ListingService {
       checkoutInstructionAdditions: listing.checkoutInstructionAdditions,
       hostInteraction: listing.hostInteraction,
       houseRulePetsAllowed: listing.houseRulePetsAllowed,
+      houseRuleChildrenAllowed: listing.houseRuleChildrenAllowed,
+      houseRuleInfantsAllowed: listing.houseRuleInfantsAllowed,
       houseRuleEventsAllowed: listing.houseRuleEventsAllowed,
       houseRuleSmokingAllowed: listing.houseRuleSmokingAllowed,
       houseRuleVapingAllowed: listing.houseRuleVapingAllowed,
@@ -474,6 +492,9 @@ export class ListingService {
       accessibilityFeatures: listing.accessibilityFeatures,
       safetyConsiderations: listing.safetyConsiderations,
       safetyDevices: listing.safetyDevices,
+      minNights: listing.minNights,
+      minNightsByCheckInDay: listing.minNightsByCheckInDay,
+      maxNights: listing.maxNights,
       latitude: includeExactCoords ? listing.latitude : null,
       longitude: includeExactCoords ? listing.longitude : null,
       approximateLatitude: listing.approximateLatitude,

@@ -1,4 +1,7 @@
-import type { IUpdateListingRequestDto } from '@repo/skye-hosts-api-client';
+import type {
+  IMinNightsByCheckInDay,
+  IUpdateListingRequestDto,
+} from '@repo/skye-hosts-api-client';
 import {
   HostInteractionId,
   LISTING_SPACE_TYPES,
@@ -6,18 +9,58 @@ import {
   LISTING_TYPE_IDS,
   PROPERTY_SIZE_UNITS,
 } from '@repo/skye-hosts-api-client';
+import { Type } from 'class-transformer';
 import {
   IsArray,
   IsBoolean,
   IsIn,
   IsNumber,
+  IsObject,
   IsOptional,
   IsString,
   Max,
   MaxLength,
   Min,
   ValidateIf,
+  ValidateNested,
 } from 'class-validator';
+
+class MinNightsByCheckInDayDto implements IMinNightsByCheckInDay {
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  monday: number;
+
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  tuesday: number;
+
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  wednesday: number;
+
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  thursday: number;
+
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  friday: number;
+
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  saturday: number;
+
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  sunday: number;
+}
 
 export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
@@ -201,6 +244,14 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
 
   @IsOptional()
   @IsBoolean()
+  houseRuleChildrenAllowed?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  houseRuleInfantsAllowed?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
   houseRuleEventsAllowed?: boolean | null;
 
   @IsOptional()
@@ -252,6 +303,26 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsBoolean()
   shortTermLetLicenseConfirmed?: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  minNights?: number;
+
+  @IsOptional()
+  @ValidateIf((o) => o.minNightsByCheckInDay !== null)
+  @IsObject()
+  @ValidateNested()
+  @Type(() => MinNightsByCheckInDayDto)
+  minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
+
+  @IsOptional()
+  @ValidateIf((o) => o.maxNights !== null)
+  @IsNumber()
+  @Min(1)
+  @Max(30)
+  maxNights?: number | null;
 
   @ValidateIf((o) => o.latitude !== undefined || o.longitude !== undefined)
   @IsNumber()

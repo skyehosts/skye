@@ -16,7 +16,7 @@ interface BookingBarProps {
 
 const CHECK_IN_MARGIN = 5;
 const BOTTOM_MARGIN = 5;
-const CHECKOUT_PENETRATION = 0.1;
+const CHECKOUT_PENETRATION = 0.14;
 
 function BookingBarInner({
   segment,
@@ -37,7 +37,7 @@ function BookingBarInner({
     : 0;
   const barWidth = fullSpanWidth - leftTrim - rightTrim;
 
-  const barHeight = cellHeight * 0.5;
+  const barHeight = cellHeight * 0.45;
 
   return (
     <Pressable
@@ -50,6 +50,7 @@ function BookingBarInner({
           bottom: BOTTOM_MARGIN,
           backgroundColor: isPast ? colors.calendarBarPast : colors.calendarBar,
           opacity: segment.status === "pending" ? 0.5 : 1,
+          zIndex: segment.isCheckIn ? 1 : 0,
         },
       ]}
       onPress={() => router.push(`/booking/${segment.bookingId}`)}
@@ -67,7 +68,7 @@ export const BookingBar = React.memo(BookingBarInner);
 const styles = StyleSheet.create({
   bar: {
     position: "absolute",
-    borderRadius: 100,
+    borderRadius: 150,
     paddingHorizontal: spacing.sm,
     justifyContent: "center",
   },

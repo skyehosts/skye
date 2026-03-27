@@ -33,6 +33,7 @@ import { ScreenContainer } from "../components/screen-container";
 import { TemplateTokenPicker } from "../components/template-token-picker";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
+import { captureException } from "../services/error-reporting";
 import { handleFormError } from "../utils/form-error-handler";
 
 interface FormValues {
@@ -102,7 +103,8 @@ export default function MessageTemplateFormScreen() {
           triggerPreset: templateData.triggers[0]?.triggerType ?? null,
         });
       }
-    } catch {
+    } catch (e) {
+      captureException(e);
       setServerError("Failed to load data. Please go back and try again.");
     } finally {
       setIsLoadingData(false);
@@ -180,7 +182,8 @@ export default function MessageTemplateFormScreen() {
         pathname: "/message-templates",
         params: { flash: "Template deleted" },
       });
-    } catch {
+    } catch (e) {
+      captureException(e);
       setServerError("Failed to delete template. Please try again.");
       setIsDeleting(false);
     }

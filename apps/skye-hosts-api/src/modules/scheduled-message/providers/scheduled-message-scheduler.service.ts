@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectDataSource } from '@nestjs/typeorm';
+import * as Sentry from '@sentry/nestjs';
 import { CronJob } from 'cron';
 import { DataSource } from 'typeorm';
 import { AwsQueueSendMessageService } from '../../queue/providers';
@@ -83,6 +84,7 @@ export class ScheduledMessageSchedulerService implements OnModuleInit {
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error('Failed to lock scheduled messages batch', error);
+      Sentry.captureException(error);
       return;
     } finally {
       await queryRunner.release();
@@ -102,6 +104,7 @@ export class ScheduledMessageSchedulerService implements OnModuleInit {
           `Failed to publish scheduled message #${id} to SQS`,
           error,
         );
+        Sentry.captureException(error);
       }
     }
 

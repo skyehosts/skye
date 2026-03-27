@@ -1,8 +1,11 @@
 import type { IListingBookingItemDto } from "@repo/skye-hosts-api-client";
 import React, { useCallback, useMemo, useRef } from "react";
-import { Dimensions, FlatList, View } from "react-native";
+import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { commonStyles } from "../../theme/common-styles";
+import { colors } from "../../theme/colors";
+import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
+import { typography } from "../../theme/typography";
 import { formatDateString, parseDateString } from "../utils/format-date-string";
 import type { DayCellStatus } from "./day-cell";
 import { MonthGrid, type MonthData } from "./month-grid";
@@ -13,8 +16,9 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const CELL_GAP = 3;
 const CELL_SIZE = (SCREEN_WIDTH - spacing.md * 2 - 6 * CELL_GAP) / 7;
 const CELL_HEIGHT = 96;
+const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-/** Height of the weekday header row */
+/** Height of the weekday header row (static) */
 const WEEKDAY_ROW_HEIGHT = 18 + spacing.xs;
 /** Height of the month label */
 const MONTH_LABEL_HEIGHT = 22 + spacing.md * 2;
@@ -67,9 +71,7 @@ function generateMonths(): MonthData[] {
 function getMonthHeight(month: MonthData): number {
   const weekRows = month.weeks.length * CELL_HEIGHT;
   const rowGaps = (month.weeks.length - 1) * CELL_GAP;
-  return (
-    MONTH_LABEL_HEIGHT + WEEKDAY_ROW_HEIGHT + weekRows + rowGaps + spacing.lg
-  );
+  return MONTH_LABEL_HEIGHT + weekRows + rowGaps + spacing.lg;
 }
 
 interface CalendarListProps {
@@ -149,6 +151,13 @@ export function CalendarList({
 
   return (
     <View style={commonStyles.flex}>
+      <View style={[styles.weekdayRow, { paddingHorizontal: spacing.md }]}>
+        {WEEKDAY_LABELS.map((label) => (
+          <View key={label} style={[styles.weekdayCell, { width: CELL_SIZE }]}>
+            <Text style={styles.weekdayText}>{label}</Text>
+          </View>
+        ))}
+      </View>
       <FlatList
         ref={flatListRef}
         data={months}
@@ -165,3 +174,19 @@ export function CalendarList({
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  weekdayRow: {
+    flexDirection: "row",
+    marginBottom: 5,
+  },
+  weekdayCell: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  weekdayText: {
+    fontSize: typography.sm,
+    fontWeight: fontWeight.medium,
+    color: colors.secondary,
+  },
+});

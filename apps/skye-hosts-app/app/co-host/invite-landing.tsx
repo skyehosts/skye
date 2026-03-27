@@ -24,6 +24,7 @@ import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
 import { fetchApi } from "../services/api";
+import { captureException } from "../services/error-reporting";
 import { phoneLookup, requestOtp, verifyOtp } from "../services/auth.service";
 import {
   borderRadius,
@@ -105,7 +106,8 @@ export default function InviteLandingScreen() {
       }
 
       setStep("preview");
-    } catch {
+    } catch (e) {
+      captureException(e);
       setServerError("Could not load invite. It may be invalid or expired.");
       setStep("error");
     }
@@ -124,9 +126,15 @@ export default function InviteLandingScreen() {
       setAcceptedListingId(result.listingId);
       setStep("accepted");
     } catch (e: unknown) {
-      if (e instanceof ApiRequestError && e.statusCode >= 500) {
-        setServerError(SERVER_ERROR_MESSAGE);
+      if (e instanceof ApiRequestError) {
+        if (e.statusCode >= 500) {
+          captureException(e);
+          setServerError(SERVER_ERROR_MESSAGE);
+        } else {
+          setServerError(e.message);
+        }
       } else {
+        captureException(e);
         setServerError(
           e instanceof Error ? e.message : "Failed to accept invite",
         );
