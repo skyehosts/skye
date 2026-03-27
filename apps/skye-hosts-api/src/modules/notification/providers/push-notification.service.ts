@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { NotificationEventType } from '@repo/skye-hosts-api-client';
+import * as Sentry from '@sentry/nestjs';
 import { Repository } from 'typeorm';
 import {
   DeviceToken,
@@ -44,6 +45,7 @@ export class PushNotificationService {
         `Unexpected error sending push for event ${params.eventType} to account ${params.recipientAccountId}`,
         error instanceof Error ? error.stack : error,
       );
+      Sentry.captureException(error);
     }
   }
 
@@ -186,6 +188,7 @@ export class PushNotificationService {
       await this.historyRepo.save(params as NotificationHistory);
     } catch (error) {
       this.logger.error('Failed to log notification history', error);
+      Sentry.captureException(error);
     }
   }
 

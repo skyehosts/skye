@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { NotificationEventType } from '@repo/skye-hosts-api-client';
+import * as Sentry from '@sentry/nestjs';
 import { Repository } from 'typeorm';
 import { Account } from '../../account/entities/account.entity';
 import { EmailTemplate } from '../../email/enums/email-template.enum';
@@ -68,6 +69,7 @@ export class EmailNotificationService {
         `Failed to send email for ${params.eventType} to account ${params.recipientAccountId}`,
         error instanceof Error ? error.stack : error,
       );
+      Sentry.captureException(error);
     }
   }
 

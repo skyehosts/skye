@@ -5,6 +5,7 @@ import {
 import { applyServerErrors } from "@repo/web-components/forms/apply-server-errors";
 import type { FieldValues, UseFormSetError } from "react-hook-form";
 import { createLogger } from "../services/logger";
+import { captureException } from "../services/error-reporting";
 
 const log = createLogger("handleApiError");
 
@@ -17,6 +18,7 @@ export function handleFormError<T extends FieldValues>(
   setServerError: (message: string) => void,
 ): void {
   if (applyServerErrors(e, setError)) return;
+  captureException(e);
   setServerError(SERVER_ERROR_MESSAGE);
 }
 
@@ -47,15 +49,13 @@ export function handleApiError(
       `ApiAuthenticationError: status=${e.statusCode} message="${e.message}"`,
     );
   } else if (e instanceof ApiRequestError) {
-    log.error(`ApiRequestError: status=${e.statusCode} message="${e.message}"`);
     if (e.statusCode < 500) {
       setServerError(e.message);
       return;
     }
-  } else if (e instanceof Error) {
-    log.error(`Error: name="${e.name}" message="${e.message}"`);
+    captureException(e);
   } else {
-    log.error("Unknown error:", e);
+    captureException(e);
   }
   setServerError(SERVER_ERROR_MESSAGE);
 }

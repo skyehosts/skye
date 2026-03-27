@@ -18,6 +18,7 @@ import { LocationPinPicker } from "../components/location-pin-picker";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { commonStyles, spacing } from "../theme";
+import { captureException } from "../services/error-reporting";
 import { handleApiError } from "../utils/form-error-handler";
 import {
   geocodePostcode,
@@ -83,6 +84,7 @@ export default function EditLocationScreen() {
       setGeocodedLocation(loc);
       setPinLocation(loc);
     } catch (e) {
+      captureException(e);
       setGeocodeError(
         e instanceof Error ? e.message : "Failed to look up postcode",
       );

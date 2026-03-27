@@ -1,6 +1,8 @@
 ====
 Next
 ====
+- API caught exceptions -> Log to Sentry
+- 
 - Why image upload not working in Prod
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
@@ -16,7 +18,6 @@ Next
 ===
 MVP
 ===
-- x night minimum and restriction ondate picker
 - Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)
@@ -108,6 +109,12 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
+- In apps/skye-hosts-api only
+- Ensure that everytime this.logger.error is called, it also captures it in sentry
+- Update Claude.md to include this coding pattern for API
+- Update Claude.md to include the coding pattern you did previously for mobile app as well.
+- Review all logger.debug calls in api and check if they should be .error
+- Update Claude.md to make a generaly statement about how we are adverse to silent failures, any unexpected errors should be reported.
 
 ==================
 Re-useable prompts

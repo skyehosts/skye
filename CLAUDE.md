@@ -6,6 +6,55 @@
 - Then run pnpm format
 - After you do things, if there are steps I need to take like adding env vars etc, create a new file in /docs/user-todos/x.md
 
+## Guide for: Error handling and observability
+
+We are strongly adverse to silent failures. Any unexpected error must be reported — both logged and sent to Sentry — so failures are always visible.
+
+### In `apps/skye-hosts-api` (NestJS)
+
+The `ErrorFormatFilter` only captures unhandled exceptions that escape the HTTP pipeline. Errors caught inside services (background jobs, cron tasks, swallowed catches) must be reported manually.
+
+**Rule: every `this.logger.error` call must be paired with `Sentry.captureException`.**
+
+```ts
+import * as Sentry from '@sentry/nestjs';
+
+} catch (error) {
+  this.logger.error('Failed to do X', error);
+  Sentry.captureException(error);
+}
+```
+
+Exceptions where Sentry is NOT needed alongside `logger.error`:
+
+- Errors that are immediately re-thrown (the caller or error filter will capture them)
+- Expected/handled HTTP errors (e.g. validation errors logged in response interceptor)
+
+**`logger.debug` vs `logger.error`:** Use `logger.debug` for operational flow (requests, queries, job status). Use `logger.error` only for unexpected failures. Never use `logger.debug` for caught errors.
+
+### In `apps/skye-hosts-app` (React Native)
+
+Use `captureException` from `app/services/error-reporting` for all unexpected errors. It logs to console via `log.error` and sends to Sentry in one call.
+
+```ts
+import { captureException } from '../services/error-reporting';
+
+} catch (e) {
+  captureException(e);
+  // then handle UI state...
+}
+```
+
+The central helpers already call `captureException` internally — you only need to add it manually when bypassing them:
+
+- `handleApiError(e, setServerError)` — captures 5xx and non-`ApiRequestError` automatically
+- `handleFormError(e, setError, setServerError)` — captures all non-validation errors automatically
+
+When to NOT call `captureException`:
+
+- Expected states that are not bugs (e.g. permission denied, image polling not-ready yet)
+- Errors that are immediately re-thrown (the outer catch will capture them)
+
 ## Guide for: skye-hosts-app (React Native / Expo)
 
 - Uses EAS for all native builds — never use `expo run:android` or `expo run:ios`

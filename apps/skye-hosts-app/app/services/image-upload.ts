@@ -9,6 +9,7 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { fetchApi } from "./api";
 import { createLogger } from "./logger";
+import { captureException } from "./error-reporting";
 import { getErrorMessage } from "../utils/form-error-handler";
 
 const log = createLogger("imageUpload");
@@ -208,8 +209,9 @@ export async function uploadImages(
       successfulImageIds.push(item.imageId);
       log.debug(`item ${item.index} (${item.imageId}) completed`);
     } catch (e) {
+      captureException(e);
       const msg = getErrorMessage(e, "Upload failed");
-      log.error(`item ${item.index} (${item.imageId}) failed: ${msg}`, e);
+      log.debug(`item ${item.index} (${item.imageId}) failed: ${msg}`);
       callbacks.onStatusChange(item.index, "error", msg);
     }
   });
@@ -223,9 +225,9 @@ export async function uploadImages(
     log.debug(`cleaning up ${failedImageIds.length} failed image record(s)`);
     await Promise.all(
       failedImageIds.map((id) =>
-        deleteListingImage(id).catch((e) =>
-          log.error(`failed to clean up image ${id}:`, e),
-        ),
+        deleteListingImage(id).catch((e) => {
+          captureException(e);
+        }),
       ),
     );
   }

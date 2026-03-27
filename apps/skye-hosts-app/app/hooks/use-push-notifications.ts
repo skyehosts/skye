@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { fetchApi } from "../services/api";
+import { captureException } from "../services/error-reporting";
 import { createLogger } from "../services/logger";
 
 const log = createLogger("PushPerms");
@@ -60,26 +61,40 @@ export function usePushNotifications(isAuthenticated: boolean) {
 }
 
 async function registerForPushNotifications(): Promise<void> {
+  let granted: boolean;
   try {
-    const granted = await requestPushPermission();
-    if (!granted) return;
+    granted = await requestPushPermission();
+  } catch (err) {
+    captureException(err);
+    return;
+  }
+  if (!granted) return;
 
-    const { data: token } = await Notifications.getExpoPushTokenAsync({
+  let token: string;
+  try {
+    const result = await Notifications.getExpoPushTokenAsync({
       projectId: "66d898a2-1e55-46e8-8cb0-19eb668136dd",
     });
+    token = result.data;
+  } catch (err) {
+    captureException(err);
+    return;
+  }
 
+  try {
     await fetchApi("/notification/device-token", {
       token,
       platform: Platform.OS as "ios" | "android",
     });
-
-    if (Platform.OS === "android") {
-      Notifications.setNotificationChannelAsync("default", {
-        name: "Default",
-        importance: Notifications.AndroidImportance.HIGH,
-      });
-    }
   } catch (err) {
-    log.warn("registration failed:", err);
+    captureException(err);
+    return;
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "Default",
+      importance: Notifications.AndroidImportance.HIGH,
+    });
   }
 }

@@ -12,6 +12,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import * as Sentry from '@sentry/nestjs';
 import { randomUUID } from 'crypto';
 import { DataSource, Repository } from 'typeorm';
 import {
@@ -343,7 +344,8 @@ export class ListingImageService {
       );
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      this.logger.debug(`Failed to delete S3 object ${key}: ${message}`);
+      this.logger.error(`Failed to delete S3 object ${key}: ${message}`);
+      Sentry.captureException(error);
     }
   }
 }
