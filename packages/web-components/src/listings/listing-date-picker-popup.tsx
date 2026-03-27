@@ -233,17 +233,13 @@ export function ListingDatePickerPopup({
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'flex-end',
+            justifyContent: 'space-between',
             alignItems: 'center',
-            gap: 2,
             px: 3,
             pb: 2,
           }}
         >
-          <Button variant="text" onClick={onClose}>
-            Close
-          </Button>
-          {hasFrom && (
+          {hasFrom ? (
             <Typography
               variant="body2"
               onClick={handleClear}
@@ -255,7 +251,12 @@ export function ListingDatePickerPopup({
             >
               Clear dates
             </Typography>
+          ) : (
+            <Box />
           )}
+          <Button variant="text" onClick={onClose}>
+            Close
+          </Button>
         </Box>
       </Paper>
     </>
