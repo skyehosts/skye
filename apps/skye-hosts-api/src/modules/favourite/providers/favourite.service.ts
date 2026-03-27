@@ -26,9 +26,7 @@ export class FavouriteService {
     private readonly listingImageRepo: Repository<ListingImage>,
     private readonly configService: ConfigService,
   ) {
-    this.cdnDomain = this.configService.get<string>(
-      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
-    );
+    this.cdnDomain = this.configService.getAll().awsCloudfrontImagesDomain;
   }
 
   async toggle(

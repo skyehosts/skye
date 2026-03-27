@@ -55,10 +55,9 @@ export class ListingImageService {
       requestChecksumCalculation: 'WHEN_REQUIRED',
       responseChecksumValidation: 'WHEN_REQUIRED',
     });
-    this.bucketName = this.configService.get<string>('AWS_S3_IMAGES_BUCKET');
-    this.cdnDomain = this.configService.get<string>(
-      'AWS_CLOUDFRONT_IMAGES_DOMAIN',
-    );
+    const env = this.configService.getAll();
+    this.bucketName = env.awsS3ImagesBucket;
+    this.cdnDomain = env.awsCloudfrontImagesDomain;
   }
 
   async requestUpload(

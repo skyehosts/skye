@@ -1,6 +1,75 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService as NestConfigService } from '@nestjs/config';
 import { Environments } from '@repo/common';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+import { validateConfig } from '../../../utils/validate-config.util';
+
+class AppEnvironmentVariablesValidator {
+  @IsOptional()
+  @IsNumber()
+  GITHUB_RUN_NUMBER: number;
+
+  @IsEnum(Environments)
+  SKYE_ENVIRONMENT: Environments;
+
+  @IsOptional()
+  @IsString()
+  GIT_COMMIT: string;
+
+  @IsOptional()
+  @IsString()
+  GIT_REF: string;
+
+  @IsString()
+  @IsNotEmpty()
+  HTTP_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET: string;
+
+  @IsOptional()
+  @IsString()
+  RELEASE_VERSION: string;
+
+  @IsString()
+  @IsNotEmpty()
+  RESEND_API_KEY: string;
+
+  @IsString()
+  @IsNotEmpty()
+  RESEND_FROM_EMAIL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  STRIPE_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  APP_LINK_BASE_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_S3_IMAGES_BUCKET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_CLOUDFRONT_IMAGES_DOMAIN: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AWS_SQS_ENVIRONMENT: string;
+
+  @IsOptional()
+  @IsString()
+  EXPO_ACCESS_TOKEN: string;
+}
 
 export interface IEnvironmentVariables {
   githubRunNumber: number;
@@ -14,12 +83,22 @@ export interface IEnvironmentVariables {
   resendFromEmail: string;
   stripeSecret: string;
   appLinkBaseUrl: string;
+  awsS3ImagesBucket: string;
+  awsCloudfrontImagesDomain: string;
+  awsSqsEnvironment: string;
+  expoAccessToken: string | undefined;
 }
 
 @Injectable()
 export class ConfigService extends NestConfigService {
+  private readonly logger = new Logger(ConfigService.name);
+
   constructor() {
     super();
+    if (process.env.NODE_ENV !== 'test') {
+      this.logger.debug('Validating application environment variables');
+      validateConfig(process.env, AppEnvironmentVariablesValidator);
+    }
   }
   getAll(): IEnvironmentVariables {
     return {
@@ -34,6 +113,12 @@ export class ConfigService extends NestConfigService {
       resendFromEmail: this.get<string>('RESEND_FROM_EMAIL'),
       stripeSecret: this.get<string>('STRIPE_SECRET'),
       appLinkBaseUrl: this.get<string>('APP_LINK_BASE_URL'),
+      awsS3ImagesBucket: this.get<string>('AWS_S3_IMAGES_BUCKET'),
+      awsCloudfrontImagesDomain: this.get<string>(
+        'AWS_CLOUDFRONT_IMAGES_DOMAIN',
+      ),
+      awsSqsEnvironment: this.get<string>('AWS_SQS_ENVIRONMENT'),
+      expoAccessToken: this.get<string>('EXPO_ACCESS_TOKEN') || undefined,
     };
   }
 }

@@ -27,8 +27,7 @@ export class ExpoPushClient {
   private readonly accessToken: string | undefined;
 
   constructor(private readonly configService: ConfigService) {
-    this.accessToken =
-      this.configService.get<string>('EXPO_ACCESS_TOKEN') || undefined;
+    this.accessToken = this.configService.getAll().expoAccessToken;
   }
 
   async sendPushNotifications(

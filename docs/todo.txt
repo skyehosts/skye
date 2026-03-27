@@ -1,8 +1,20 @@
+- api endpoint /listing-image/1 will return "originalUrl":"https://undefined/listings/1/original/64a1c4da-0d65-47b4-861b-88fc805b91dc" when                         
+  AWS_CLOUDFRONT_IMAGES_DOMAIN is undefined.
+- This caused a provlematic user experience in app. The loading spinner was stuck overlayed on image forever. Expected behaviour is spinner stops and error message displayed. (It can be the app-wide generic message)
+- 
+
+ Do three things: Firstly: Notice that usage of env vars from ConfigSrvice differs. Some (1) Update api to throw an     
+  exception if any of the env vars are undefined. Present approach options to me to decide on best (2) The mobile app has a bug whereby, the loading spinner is   
+  still overlayed on the photo and stuck (spinning forever). Investigate why the app did not display a error message.  
+
 ====
 Next
 ====
-- API caught exceptions -> Log to Sentry
-- 
+- config.service.ts useage is inconsistent
+- API should throw exceptions if envs are undefined
+- Make Request & Response logging env toggleabl
+- Once verified image upload failure captured in app sentry
+  - add heroku env var AWS_S3_IMAGES_BUCKET and check working
 - Why image upload not working in Prod
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
