@@ -11,15 +11,17 @@ import {
   Appbar,
   Banner,
   Button,
+  Dialog,
   Icon,
+  Portal,
   Text,
-  Tooltip,
 } from "react-native-paper";
 import * as Clipboard from "expo-clipboard";
 import type {
   ICalendarSyncDto,
   IGetCalendarSyncsResponseDto,
   ICalendarSyncResponseDto,
+  CalendarSyncPlatform,
 } from "@repo/skye-hosts-api-client";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
@@ -27,6 +29,7 @@ import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import { borderRadius } from "../theme/border-radius";
 import { fontWeight } from "../theme/font-weight";
+import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { handleApiError } from "../utils/form-error-handler";
 import { getSyncHealthColor, isAutoDisabled } from "../utils/sync-status";
 
@@ -42,6 +45,12 @@ function formatRelativeTime(dateStr: string | null): string {
   return `${days}d ago`;
 }
 
+const PLATFORM_LABELS: Record<CalendarSyncPlatform, string> = {
+  airbnb: "AirBnB",
+  booking_com: "Booking.com",
+  other: "Other",
+};
+
 function hasOnlyOneWaySync(syncs: ICalendarSyncDto[]): boolean {
   return syncs.some(
     (s) =>
@@ -56,6 +65,7 @@ export default function CalendarSyncScreen() {
   const [loading, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState("");
   const [syncingId, setSyncingId] = useState<number | null>(null);
+  const [helpVisible, setHelpVisible] = useState(false);
 
   const loadSyncs = useCallback(async () => {
     try {
@@ -123,9 +133,9 @@ export default function CalendarSyncScreen() {
               color={colors.primary}
             />
             <Text style={styles.infoText}>
-              Keep your calendars in sync across platforms to avoid
-              double-bookings. Changes may take up to 3 hours to appear on
-              external platforms.
+              Keep your calendars in sync across platforms to avoid double
+              bookings. Changes may take up to 3 hours to appear on other
+              platforms.
             </Text>
           </View>
 
@@ -148,7 +158,7 @@ export default function CalendarSyncScreen() {
               <Text style={commonStyles.emptyText}>No calendars connected</Text>
               <Text style={commonStyles.emptySubtext}>
                 Connect your AirBnB or other platform calendars to automatically
-                block dates and prevent double-bookings.
+                block dates and prevent double bookings.
               </Text>
             </View>
           )}
@@ -172,7 +182,9 @@ export default function CalendarSyncScreen() {
                       { backgroundColor: getSyncHealthColor(sync) },
                     ]}
                   />
-                  <Text style={commonStyles.itemTitle}>{sync.label}</Text>
+                  <Text style={commonStyles.itemTitle}>
+                    {PLATFORM_LABELS[sync.platform] ?? sync.platform}
+                  </Text>
                 </View>
                 <Icon
                   source="chevron-right"
@@ -245,23 +257,50 @@ export default function CalendarSyncScreen() {
             icon="plus"
             style={styles.addButton}
           >
-            Add external calendar
+            Connect a platform
           </Button>
 
-          <Tooltip title="iCal syncing has inherent delays — changes on one platform may take several hours to appear on another. This is a limitation of the iCal protocol, not Skye Hosts. For the most reliable sync, always enable both import and export.">
-            <Pressable style={styles.helpLink}>
-              <Icon
-                source="help-circle-outline"
-                size={16}
-                color={colors.primary}
-              />
-              <Text style={styles.helpLinkText}>
-                How does calendar sync work?
-              </Text>
-            </Pressable>
-          </Tooltip>
+          <Pressable
+            style={styles.helpLink}
+            onPress={() => setHelpVisible(true)}
+          >
+            <Icon
+              source="help-circle-outline"
+              size={16}
+              color={colors.primary}
+            />
+            <Text style={styles.helpLinkText}>
+              How does calendar sync work?
+            </Text>
+          </Pressable>
         </ScrollView>
       )}
+
+      <Portal>
+        <Dialog visible={helpVisible} onDismiss={() => setHelpVisible(false)}>
+          <Dialog.Title>How does calendar sync work?</Dialog.Title>
+          <Dialog.Content>
+            <Text>
+              Calendar syncing has built-in delays — when a booking is made on
+              one platform, it may take up to a few hours to appear on another.
+              This is normal and is a limitation of how calendar syncing works
+              across all platforms, not just {APP_DISPLAY_NAME}.
+            </Text>
+            <Text style={styles.helpDialogTip}>
+              For the best protection against double bookings, enable both
+              import and export for each platform you use.
+            </Text>
+            <Text style={styles.helpDialogNote}>
+              In the rare event that a double booking does slip through, don't
+              worry — simply cancel the duplicate on whichever platform you
+              prefer and you're all sorted.
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setHelpVisible(false)}>Got it</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
 
       <AppSnackbar message={snackbar} onDismiss={() => setSnackbar("")} />
     </ScreenContainer>
@@ -337,5 +376,13 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.primary,
     fontWeight: fontWeight.semibold,
+  },
+  helpDialogTip: {
+    marginTop: spacing.md,
+    fontWeight: fontWeight.semibold,
+  },
+  helpDialogNote: {
+    marginTop: spacing.md,
+    color: colors.textSecondary,
   },
 });

@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
-import { Appbar } from "react-native-paper";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Appbar, Icon, Text } from "react-native-paper";
 import type {
   ICalendarBlockDto,
   ICalendarSyncDto,
@@ -12,7 +12,8 @@ import type {
 } from "@repo/skye-hosts-api-client";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
-import { colors } from "../theme";
+import { colors, spacing, typography } from "../theme";
+import { borderRadius } from "../theme/border-radius";
 import { getAggregateSyncColor } from "../utils/sync-status";
 import { CalendarList } from "./components/calendar-list";
 
@@ -82,6 +83,28 @@ export default function CalendarDetailScreen() {
           )}
         </View>
       </Appbar.Header>
+      {syncs.length === 0 && (
+        <Pressable
+          style={styles.syncBanner}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/calendar-sync",
+              params: { id },
+            })
+          }
+        >
+          <Icon source="sync-alert" size={20} color={colors.primary} />
+          <View style={styles.syncBannerText}>
+            <Text style={styles.syncBannerTitle}>
+              List on multiple platforms?
+            </Text>
+            <Text style={styles.syncBannerSubtext}>
+              Sync your calendars to avoid double bookings
+            </Text>
+          </View>
+          <Icon source="chevron-right" size={20} color={colors.textSecondary} />
+        </Pressable>
+      )}
       <CalendarList bookings={bookings} blocks={blocks} />
     </ScreenContainer>
   );
@@ -97,5 +120,26 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     borderWidth: 1.5,
     borderColor: colors.background,
+  },
+  syncBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+    margin: spacing.md,
+    padding: spacing.md,
+    backgroundColor: colors.inputBackground,
+    borderRadius: borderRadius.md,
+  },
+  syncBannerText: {
+    flex: 1,
+  },
+  syncBannerTitle: {
+    fontSize: typography.sm,
+    fontWeight: "600",
+    color: colors.textPrimary,
+  },
+  syncBannerSubtext: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
   },
 });

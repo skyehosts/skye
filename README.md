@@ -153,7 +153,7 @@ adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:
   - npx expo install expo-dev-client
 - Then:
   - pnpm --filter=skye-hosts-app eas-build-local
-  - pnpm --filter=skye-hosts-app install-local
+  - pnpm --filter=skye-hosts-app deploy-local
   - pnpm --filter=skye-hosts-app dev
 
 ## How to get logs from real apk on real device via USB when it crashes on startup

@@ -68,7 +68,6 @@ export class CalendarSyncService {
     listingId: number,
     data: {
       platform: string;
-      label: string;
       importUrl?: string;
       isImportEnabled?: boolean;
       isExportEnabled?: boolean;
@@ -77,7 +76,6 @@ export class CalendarSyncService {
     const sync = this.calendarSyncRepo.create({
       listingId,
       platform: data.platform as CalendarSync['platform'],
-      label: data.label,
       importUrl: data.importUrl ?? null,
       exportToken: randomUUID(),
       isImportEnabled: data.isImportEnabled ?? true,
@@ -89,7 +87,6 @@ export class CalendarSyncService {
   async updateSync(
     id: number,
     data: {
-      label?: string;
       importUrl?: string | null;
       isImportEnabled?: boolean;
       isExportEnabled?: boolean;
@@ -100,7 +97,6 @@ export class CalendarSyncService {
       throw new NotFoundException('Calendar sync not found');
     }
 
-    if (data.label !== undefined) sync.label = data.label;
     if (data.importUrl !== undefined) sync.importUrl = data.importUrl;
     if (data.isImportEnabled !== undefined)
       sync.isImportEnabled = data.isImportEnabled;
@@ -176,7 +172,6 @@ export class CalendarSyncService {
       id: sync.id,
       listingId: sync.listingId,
       platform: sync.platform,
-      label: sync.label,
       importUrl: sync.importUrl,
       exportUrl: this.buildExportUrl(sync.exportToken),
       lastImportAt: sync.lastImportAt?.toISOString() ?? null,

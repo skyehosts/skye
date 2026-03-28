@@ -1,6 +1,9 @@
 ====
 Next
 ====
+- block out dates on pickers from:
+  - existing calendar bookings on our site
+  - bookings from air bnb
 - Why the fuck does apiBaseUrl exist in api .env not used.
   - it was made by calendar sycn work, not sure whats it used for but something?
 - redeploy app
@@ -114,16 +117,25 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- Create a testing plan that is focused primarily on testing your full calender sync implementation pis working correctly
-- It should use both unit and e2e tests
-- Focusing on the critical journeys only
-- Should only test the API (No tests running on react native app)
-- Prefer that your e2e tests leverage the e2e db present in docker-compose.local.yml to help verify full flow end to end
-- Write the tests, then run the tests until all passing.
-- Scrutinise my plan
-- Present options and make recommendations
-- Any major decisions ask
+- apps/skye-hosts-app tasks:
+  - On 'Add external calendar' page: 
+      - Change 'Skye' to APP_DISPLAY_NAME in all instances
+      - Improve wording to improve clarity to for non-technical folks / i.e laymens terms. on the page as a whole.
+        - E.G For import: When guests try to book your BNB on APP_DISPLAY_NAME, any dates where bookings were made on AirBNB will be automatically blocked on on their calendar on APP_DISPLAY_NAME. Preventing double bookings
+      - For Export: Do same as for import
+    - Is it possible to Deep link them to their iCal URL in AirBNB app (Ideal)
+      - For both import and Export
+    - The tooltips have a bug, they are single line, and the text is not wrapping and most of it therefore is out of bounds of viewport
+    - On 'Add external calendar' page:  Replace "External" with The currently selected platform from radiogroup at top
+  - Is 'Label' superfluous / not necessary given platform already indicates this and multiple can't be added per platform?
 
+- apps/skye-guest-website tasks:
+  - On /listing/:id/:slug page
+    "Where you'll be" and "Log in to book" colors appear correct on chrome desktop browser but on phone they are wrong, they look light grey.
+- apps/skye-hosts-app tasks:
+  - On Privacy page, if I set search engine visibility to true. Then go back to 'Menu' page, then go back to privacy page, and open search engine visibility modal, the switch is in off position, despiuyte value in db being true.
+  - This does not happen unless I go back to Menu page.
+  
 ==================
 Re-useable prompts
 ==================

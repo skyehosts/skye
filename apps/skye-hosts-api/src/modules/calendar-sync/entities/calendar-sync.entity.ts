@@ -23,9 +23,6 @@ export class CalendarSync {
   @Column({ type: 'character varying' })
   platform: CalendarSyncPlatform;
 
-  @Column({ type: 'character varying' })
-  label: string;
-
   @Column({ type: 'text', nullable: true })
   importUrl: string | null;
 

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  Pressable,
   ScrollView,
   StyleSheet,
   View,
@@ -10,13 +11,14 @@ import {
 import {
   Appbar,
   Button,
+  Dialog,
   HelperText,
   Icon,
+  Portal,
   SegmentedButtons,
   Switch,
   Text,
   TextInput,
-  Tooltip,
 } from "react-native-paper";
 import * as Clipboard from "expo-clipboard";
 import { Controller, useForm } from "react-hook-form";
@@ -26,6 +28,7 @@ import type {
   IGetCalendarSyncsResponseDto,
   CalendarSyncPlatform,
 } from "@repo/skye-hosts-api-client";
+import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
@@ -37,7 +40,6 @@ import { handleApiError, handleFormError } from "../utils/form-error-handler";
 
 interface FormData {
   platform: CalendarSyncPlatform;
-  label: string;
   importUrl: string;
   isImportEnabled: boolean;
   isExportEnabled: boolean;
@@ -51,12 +53,18 @@ const PLATFORM_OPTIONS = [
 
 const PLATFORM_HELP: Record<CalendarSyncPlatform, string> = {
   airbnb:
-    "Find your iCal URL in AirBnB: go to your listing, tap Calendar, then Availability Settings, scroll to 'Export Calendar', and copy the link.",
+    "To find your calendar link in AirBnB: open your listing → tap Calendar → Availability Settings → scroll to 'Export Calendar' → copy the link.",
   booking_com:
-    "Find your iCal URL in Booking.com: go to your property, tap Calendar & Pricing, then Sync Calendars, and copy the export link.",
+    "To find your calendar link in Booking.com: open your property → Calendar & Pricing → Sync Calendars → copy the export link.",
   other:
-    "Ask your booking platform for their iCal export URL. It usually ends in .ics.",
+    "Check your booking platform for a calendar export link (sometimes called an iCal or .ics link).",
 };
+
+function getPlatformLabel(platform: CalendarSyncPlatform): string {
+  return (
+    PLATFORM_OPTIONS.find((o) => o.value === platform)?.label ?? "External"
+  );
+}
 
 export default function CalendarSyncFormScreen() {
   const { id, syncId } = useLocalSearchParams<{
@@ -68,21 +76,21 @@ export default function CalendarSyncFormScreen() {
   const [existingSync, setExistingSync] = useState<ICalendarSyncDto | null>(
     null,
   );
-  const [loading, setLoading] = useState(isEditing);
+  const [existingSyncs, setExistingSyncs] = useState<ICalendarSyncDto[]>([]);
+  const [loading, setLoading] = useState(true);
   const [snackbar, setSnackbar] = useState("");
   const [serverError, setServerError] = useState("");
+  const [helpVisible, setHelpVisible] = useState(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue,
     watch,
     reset,
   } = useForm<FormData>({
     defaultValues: {
       platform: "airbnb",
-      label: "AirBnB Calendar",
       importUrl: "",
       isImportEnabled: true,
       isExportEnabled: true,
@@ -92,7 +100,6 @@ export default function CalendarSyncFormScreen() {
   const platform = watch("platform");
 
   useEffect(() => {
-    if (!isEditing) return;
     (async () => {
       try {
         const data = await fetchApi<IGetCalendarSyncsResponseDto>(
@@ -100,16 +107,18 @@ export default function CalendarSyncFormScreen() {
           undefined,
           { method: "GET" },
         );
-        const sync = data.syncs.find((s) => s.id === Number(syncId));
-        if (sync) {
-          setExistingSync(sync);
-          reset({
-            platform: sync.platform,
-            label: sync.label,
-            importUrl: sync.importUrl ?? "",
-            isImportEnabled: sync.isImportEnabled,
-            isExportEnabled: sync.isExportEnabled,
-          });
+        setExistingSyncs(data.syncs);
+        if (isEditing) {
+          const sync = data.syncs.find((s) => s.id === Number(syncId));
+          if (sync) {
+            setExistingSync(sync);
+            reset({
+              platform: sync.platform,
+              importUrl: sync.importUrl ?? "",
+              isImportEnabled: sync.isImportEnabled,
+              isExportEnabled: sync.isExportEnabled,
+            });
+          }
         }
       } catch (e) {
         captureException(e);
@@ -123,11 +132,24 @@ export default function CalendarSyncFormScreen() {
   const onSubmit = async (data: FormData) => {
     try {
       setServerError("");
+      const platformLabel = getPlatformLabel(data.platform);
+
+      if (!isEditing) {
+        const duplicate = existingSyncs.find(
+          (s) => s.platform === data.platform,
+        );
+        if (duplicate) {
+          setServerError(
+            `You already have a sync for ${platformLabel}. Edit the existing one instead.`,
+          );
+          return;
+        }
+      }
+
       if (isEditing) {
         await fetchApi<ICalendarSyncResponseDto>(
           `/calendar-sync/${syncId}`,
           {
-            label: data.label,
             importUrl: data.importUrl || null,
             isImportEnabled: data.isImportEnabled,
             isExportEnabled: data.isExportEnabled,
@@ -139,7 +161,6 @@ export default function CalendarSyncFormScreen() {
           `/calendar-sync/listing/${id}`,
           {
             platform: data.platform,
-            label: data.label,
             importUrl: data.importUrl || undefined,
             isImportEnabled: data.isImportEnabled,
             isExportEnabled: data.isExportEnabled,
@@ -203,12 +224,18 @@ export default function CalendarSyncFormScreen() {
     );
   }
 
+  const platformLabel = getPlatformLabel(platform);
+
   return (
     <ScreenContainer>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content
-          title={isEditing ? "Edit calendar sync" : "Add external calendar"}
+          title={
+            isEditing
+              ? `Edit ${existingSync ? getPlatformLabel(existingSync.platform) : ""} sync`
+              : `Add ${platformLabel} calendar`
+          }
         />
       </Appbar.Header>
 
@@ -223,11 +250,7 @@ export default function CalendarSyncFormScreen() {
               render={({ field: { value, onChange } }) => (
                 <SegmentedButtons
                   value={value}
-                  onValueChange={(val) => {
-                    onChange(val);
-                    const opt = PLATFORM_OPTIONS.find((o) => o.value === val);
-                    if (opt) setValue("label", `${opt.label} Calendar`);
-                  }}
+                  onValueChange={onChange}
                   buttons={PLATFORM_OPTIONS.map((o) => ({
                     value: o.value,
                     label: o.label,
@@ -238,44 +261,22 @@ export default function CalendarSyncFormScreen() {
           </View>
         )}
 
-        {/* Label */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Label</Text>
-          <Controller
-            control={control}
-            name="label"
-            rules={{ required: "Label is required" }}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <TextInput
-                mode="outlined"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="e.g. AirBnB Calendar"
-                error={!!errors.label}
-              />
-            )}
-          />
-          {errors.label && (
-            <HelperText type="error">{errors.label.message}</HelperText>
-          )}
-        </View>
-
         {/* Import section */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Import (External to Skye)</Text>
-            <Tooltip title={PLATFORM_HELP[platform]}>
+            <Text style={styles.sectionTitle}>Import from {platformLabel}</Text>
+            <Pressable onPress={() => setHelpVisible(true)}>
               <Icon
                 source="help-circle-outline"
                 size={20}
                 color={colors.primary}
               />
-            </Tooltip>
+            </Pressable>
           </View>
           <Text style={styles.sectionDescription}>
-            Paste the iCal export URL from your external platform. Skye will
-            periodically fetch this to block dates on your Skye calendar.
+            Paste your {platformLabel} calendar link below. When a guest books
+            on {platformLabel}, those dates will automatically be blocked on{" "}
+            {APP_DISPLAY_NAME} — preventing double bookings.
           </Text>
 
           <Controller
@@ -319,10 +320,11 @@ export default function CalendarSyncFormScreen() {
 
         {/* Export section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Export (Skye to External)</Text>
+          <Text style={styles.sectionTitle}>Export to {platformLabel}</Text>
           <Text style={styles.sectionDescription}>
-            When enabled, a public link is generated that your external platform
-            can import to see your Skye bookings and blocked dates.
+            When a guest books on {APP_DISPLAY_NAME}, those dates will
+            automatically be blocked on {platformLabel} — preventing double
+            bookings.
           </Text>
 
           <Controller
@@ -382,6 +384,18 @@ export default function CalendarSyncFormScreen() {
           </Button>
         )}
       </ScrollView>
+
+      <Portal>
+        <Dialog visible={helpVisible} onDismiss={() => setHelpVisible(false)}>
+          <Dialog.Title>Where to find your calendar link</Dialog.Title>
+          <Dialog.Content>
+            <Text>{PLATFORM_HELP[platform]}</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setHelpVisible(false)}>Got it</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
 
       <AppSnackbar message={snackbar} onDismiss={() => setSnackbar("")} />
     </ScreenContainer>
