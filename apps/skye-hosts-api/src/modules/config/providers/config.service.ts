@@ -69,6 +69,14 @@ class AppEnvironmentVariablesValidator {
   @IsOptional()
   @IsString()
   EXPO_ACCESS_TOKEN: string;
+
+  @IsOptional()
+  @IsString()
+  LOG_REQUESTS: string;
+
+  @IsOptional()
+  @IsString()
+  LOG_RESPONSES: string;
 }
 
 export interface IEnvironmentVariables {
@@ -87,6 +95,8 @@ export interface IEnvironmentVariables {
   awsCloudfrontImagesDomain: string;
   awsSqsEnvironment: string;
   expoAccessToken: string | undefined;
+  logRequests: boolean;
+  logResponses: boolean;
 }
 
 @Injectable()
@@ -119,6 +129,8 @@ export class ConfigService extends NestConfigService {
       ),
       awsSqsEnvironment: this.get<string>('AWS_SQS_ENVIRONMENT'),
       expoAccessToken: this.get<string>('EXPO_ACCESS_TOKEN') || undefined,
+      logRequests: this.get<string>('LOG_REQUESTS') !== 'false',
+      logResponses: this.get<string>('LOG_RESPONSES') !== 'false',
     };
   }
 }
