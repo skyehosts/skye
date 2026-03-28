@@ -1,6 +1,7 @@
 import type { IGetAccountDetailsResponseDto } from "../../../../packages/skye-hosts-api-client/src";
 import { useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { Appbar } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
@@ -22,9 +23,11 @@ export default function PrivacyScreen() {
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    loadDetails();
-  }, [loadDetails]);
+  useFocusEffect(
+    useCallback(() => {
+      loadDetails();
+    }, [loadDetails]),
+  );
 
   return (
     <ScreenContainer>

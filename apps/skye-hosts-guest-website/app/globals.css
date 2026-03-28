@@ -1,16 +1,10 @@
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #1F3F4A;
   --border-color: #C8BFAE;
   --placeholder-bg: #E7E1D6;
   --text-muted: #666;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 html,
@@ -43,8 +37,3 @@ h1, h2, h3, h4, h5, h6 {
   font-style: normal;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
