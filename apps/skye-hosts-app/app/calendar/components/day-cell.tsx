@@ -12,13 +12,15 @@ import { typography } from "../../theme/typography";
  * - checkIn: half-day check-in (booking starts afternoon)
  * - checkOut: half-day check-out (booking ends morning)
  * - booked: fully booked day
+ * - blocked: blocked via calendar sync or manual block
  */
 export type DayCellStatus =
   | "none"
   | "selected"
   | "checkIn"
   | "checkOut"
-  | "booked";
+  | "booked"
+  | "blocked";
 
 interface DayCellProps {
   /** Day of the month (1-31), or null for empty grid slots */
@@ -67,10 +69,13 @@ function DayCellInner({
         { width: size, height: cellHeight, opacity: isPast ? 0.8 : 1 },
         status === "booked" && !isPast
           ? styles.cellBooked
-          : isPast
-            ? styles.cellPast
-            : styles.cellCurrent,
+          : status === "blocked" && !isPast
+            ? styles.cellBlocked
+            : isPast
+              ? styles.cellPast
+              : styles.cellCurrent,
         status === "booked" && !isPast && styles.cellBookedBorder,
+        status === "blocked" && !isPast && styles.cellBlockedBorder,
       ]}
       onPress={handlePress}
     >
@@ -112,6 +117,14 @@ const styles = StyleSheet.create({
   cellBookedBorder: {
     borderWidth: 1,
     borderColor: colors.calendarCellCurrent,
+  },
+  cellBlocked: {
+    backgroundColor: colors.calendarCellBlocked,
+  },
+  cellBlockedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellBlockedBorder,
+    borderStyle: "dashed",
   },
   dayContainer: {
     width: DAY_INNER_SIZE,

@@ -66,6 +66,10 @@ class AppEnvironmentVariablesValidator {
   @IsNotEmpty()
   AWS_SQS_ENVIRONMENT: string;
 
+  @IsString()
+  @IsNotEmpty()
+  API_BASE_URL: string;
+
   @IsOptional()
   @IsString()
   EXPO_ACCESS_TOKEN: string;
@@ -94,6 +98,7 @@ export interface IEnvironmentVariables {
   awsS3ImagesBucket: string;
   awsCloudfrontImagesDomain: string;
   awsSqsEnvironment: string;
+  apiBaseUrl: string;
   expoAccessToken: string | undefined;
   logRequests: boolean;
   logResponses: boolean;
@@ -128,6 +133,7 @@ export class ConfigService extends NestConfigService {
         'AWS_CLOUDFRONT_IMAGES_DOMAIN',
       ),
       awsSqsEnvironment: this.get<string>('AWS_SQS_ENVIRONMENT'),
+      apiBaseUrl: this.get<string>('API_BASE_URL'),
       expoAccessToken: this.get<string>('EXPO_ACCESS_TOKEN') || undefined,
       logRequests: this.get<string>('LOG_REQUESTS') !== 'false',
       logResponses: this.get<string>('LOG_RESPONSES') !== 'false',

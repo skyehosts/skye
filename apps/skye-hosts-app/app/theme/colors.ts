@@ -53,4 +53,7 @@ export const colors = {
   calendarTextPast: "#6c6c6c",
   calendarBarPast: seaGlassTealPale,
   calendarBar: seaGlassTeal,
+  calendarCellBlocked: "#F0E6E6",
+  calendarCellBlockedBorder: "#D4B5B5",
+  warningBackground: "#FFF3E0",
 } as const;

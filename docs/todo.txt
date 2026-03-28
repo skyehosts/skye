@@ -1,6 +1,8 @@
 ====
 Next
 ====
+- Why the fuck does apiBaseUrl exist in api .env not used.
+  - it was made by calendar sycn work, not sure whats it used for but something?
 - redeploy app
   - unset AWS_CLOUDFRONT_IMAGES_DOMAIN
   - test if image upload failure gracefully shows error
@@ -112,6 +114,15 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
+- Create a testing plan that is focused primarily on testing your full calender sync implementation pis working correctly
+- It should use both unit and e2e tests
+- Focusing on the critical journeys only
+- Should only test the API (No tests running on react native app)
+- Prefer that your e2e tests leverage the e2e db present in docker-compose.local.yml to help verify full flow end to end
+- Write the tests, then run the tests until all passing.
+- Scrutinise my plan
+- Present options and make recommendations
+- Any major decisions ask
 
 ==================
 Re-useable prompts

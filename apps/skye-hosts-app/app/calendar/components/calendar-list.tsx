@@ -1,4 +1,7 @@
-import type { IListingBookingItemDto } from "@repo/skye-hosts-api-client";
+import type {
+  ICalendarBlockDto,
+  IListingBookingItemDto,
+} from "@repo/skye-hosts-api-client";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
 import { commonStyles } from "../../theme/common-styles";
@@ -17,6 +20,26 @@ const CELL_GAP = 3;
 const CELL_SIZE = (SCREEN_WIDTH - spacing.md * 2 - 6 * CELL_GAP) / 7;
 const CELL_HEIGHT = 96;
 const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+/** Expand a date range into individual YYYY-MM-DD strings */
+function expandDateRange(
+  startStr: string,
+  endStr: string,
+  inclusive: boolean,
+): string[] {
+  const start = parseDateString(startStr);
+  const end = parseDateString(endStr);
+  const cur = new Date(start.year, start.month, start.day);
+  const endDate = new Date(end.year, end.month, end.day);
+  const dates: string[] = [];
+  while (inclusive ? cur <= endDate : cur < endDate) {
+    dates.push(
+      formatDateString(cur.getFullYear(), cur.getMonth(), cur.getDate()),
+    );
+    cur.setDate(cur.getDate() + 1);
+  }
+  return dates;
+}
 
 /** Height of the weekday header row (static) */
 const WEEKDAY_ROW_HEIGHT = 18 + spacing.xs;
@@ -76,12 +99,14 @@ function getMonthHeight(month: MonthData): number {
 
 interface CalendarListProps {
   bookings?: IListingBookingItemDto[];
+  blocks?: ICalendarBlockDto[];
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
 }
 
 export function CalendarList({
   bookings,
+  blocks,
   onDayPress,
   getDayStatus: getDayStatusProp,
 }: CalendarListProps) {
@@ -91,19 +116,27 @@ export function CalendarList({
   const bookedDates = useMemo(() => {
     const set = new Set<string>();
     for (const booking of bookings ?? []) {
-      const start = parseDateString(booking.checkInDate);
-      const end = parseDateString(booking.checkOutDate);
-      const cur = new Date(start.year, start.month, start.day);
-      const endDate = new Date(end.year, end.month, end.day);
-      while (cur <= endDate) {
-        set.add(
-          formatDateString(cur.getFullYear(), cur.getMonth(), cur.getDate()),
-        );
-        cur.setDate(cur.getDate() + 1);
+      for (const d of expandDateRange(
+        booking.checkInDate,
+        booking.checkOutDate,
+        true,
+      )) {
+        set.add(d);
       }
     }
     return set;
   }, [bookings]);
+
+  const blockedDates = useMemo(() => {
+    const set = new Set<string>();
+    for (const block of blocks ?? []) {
+      // endDate is exclusive per iCal DTEND semantics
+      for (const d of expandDateRange(block.startDate, block.endDate, false)) {
+        if (!bookedDates.has(d)) set.add(d);
+      }
+    }
+    return set;
+  }, [blocks, bookedDates]);
 
   const todayString = useMemo(() => {
     const now = new Date();
@@ -140,11 +173,19 @@ export function CalendarList({
         todayString={todayString}
         bookings={bookings}
         bookedDates={bookedDates}
+        blockedDates={blockedDates}
         onDayPress={onDayPress}
         getDayStatus={getDayStatusProp}
       />
     ),
-    [todayString, bookings, bookedDates, onDayPress, getDayStatusProp],
+    [
+      todayString,
+      bookings,
+      bookedDates,
+      blockedDates,
+      onDayPress,
+      getDayStatusProp,
+    ],
   );
 
   const keyExtractor = useCallback((item: MonthData) => item.key, []);
@@ -161,7 +202,7 @@ export function CalendarList({
       <FlatList
         ref={flatListRef}
         data={months}
-        extraData={bookings}
+        extraData={{ bookings, blocks }}
         renderItem={renderMonth}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}

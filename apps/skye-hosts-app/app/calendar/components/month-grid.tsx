@@ -37,6 +37,7 @@ interface MonthGridProps {
   todayString: string;
   bookings?: IListingBookingItemDto[];
   bookedDates?: Set<string>;
+  blockedDates?: Set<string>;
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
 }
@@ -49,6 +50,7 @@ function MonthGridInner({
   todayString,
   bookings,
   bookedDates,
+  blockedDates,
   onDayPress,
   getDayStatus,
 }: MonthGridProps) {
@@ -80,7 +82,11 @@ function MonthGridInner({
                   : undefined;
               const status: DayCellStatus = dateString
                 ? (getDayStatus?.(dateString) ??
-                  (bookedDates?.has(dateString) ? "booked" : "none"))
+                  (bookedDates?.has(dateString)
+                    ? "booked"
+                    : blockedDates?.has(dateString)
+                      ? "blocked"
+                      : "none"))
                 : "none";
               return (
                 <DayCell

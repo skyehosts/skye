@@ -1,5 +1,6 @@
 import { Account } from '../modules/account/entities';
 import { Booking } from '../modules/booking/entities';
+import { CalendarBlock, CalendarSync } from '../modules/calendar-sync/entities';
 import { CoHostInvite, ListingUserRole } from '../modules/co-host/entities';
 import { Demo } from '../modules/demo/entities';
 import { Favourite } from '../modules/favourite/entities';
@@ -24,6 +25,8 @@ import {
 export const entities = [
   Account,
   Booking,
+  CalendarBlock,
+  CalendarSync,
   CoHostInvite,
   Demo,
   Favourite,

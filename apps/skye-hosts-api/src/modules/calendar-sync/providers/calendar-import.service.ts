@@ -1,0 +1,208 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import * as Sentry from '@sentry/nestjs';
+import { DataSource, Repository } from 'typeorm';
+import { CalendarBlock, CalendarSync } from '../entities';
+import {
+  IcalParserService,
+  type ParsedCalendarEvent,
+} from './ical-parser.service';
+
+const MAX_RESPONSE_SIZE = 1_000_000; // 1MB
+const FETCH_TIMEOUT_MS = 10_000;
+const MAX_CONSECUTIVE_FAILURES = 10;
+
+@Injectable()
+export class CalendarImportService {
+  private readonly logger = new Logger(CalendarImportService.name);
+
+  constructor(
+    @InjectRepository(CalendarSync)
+    private readonly calendarSyncRepo: Repository<CalendarSync>,
+    @InjectRepository(CalendarBlock)
+    private readonly calendarBlockRepo: Repository<CalendarBlock>,
+    private readonly icalParserService: IcalParserService,
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async importSingleSync(sync: CalendarSync): Promise<CalendarSync> {
+    if (!sync.importUrl) {
+      return sync;
+    }
+
+    try {
+      const icalText = await this.fetchIcal(sync.importUrl);
+      const events = this.icalParserService.parse(icalText);
+      await this.reconcileBlocks(sync.id, sync.listingId, events);
+
+      sync.lastImportAt = new Date();
+      sync.lastImportStatus = 'success';
+      sync.lastImportError = null;
+      sync.lastImportEventCount = events.length;
+      sync.consecutiveFailures = 0;
+
+      this.logger.debug(
+        `Import success for sync ${sync.id} (listing ${sync.listingId}): ${events.length} events`,
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      sync.lastImportAt = new Date();
+      sync.lastImportStatus = 'error';
+      sync.lastImportError = errorMessage;
+      sync.consecutiveFailures += 1;
+
+      this.logger.error(
+        `Import failed for sync ${sync.id} (listing ${sync.listingId}): ${errorMessage}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      Sentry.captureException(error, {
+        tags: {
+          calendarSyncId: sync.id,
+          listingId: sync.listingId,
+          platform: sync.platform,
+        },
+      });
+
+      if (sync.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+        sync.isImportEnabled = false;
+        this.logger.error(
+          `Auto-disabled import for sync ${sync.id} after ${MAX_CONSECUTIVE_FAILURES} consecutive failures`,
+        );
+        Sentry.captureMessage(
+          `Calendar sync auto-disabled: sync ${sync.id}, listing ${sync.listingId}, platform ${sync.platform}`,
+          'warning',
+        );
+      }
+    }
+
+    return this.calendarSyncRepo.save(sync);
+  }
+
+  private async fetchIcal(url: string): Promise<string> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { 'User-Agent': 'SkyeHosts/1.0 Calendar Sync' },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const contentLength = response.headers.get('content-length');
+      if (contentLength && parseInt(contentLength, 10) > MAX_RESPONSE_SIZE) {
+        throw new Error(
+          `Response too large: ${contentLength} bytes (max ${MAX_RESPONSE_SIZE})`,
+        );
+      }
+
+      const text = await response.text();
+
+      if (text.length > MAX_RESPONSE_SIZE) {
+        throw new Error(
+          `Response body too large: ${text.length} chars (max ${MAX_RESPONSE_SIZE})`,
+        );
+      }
+
+      return text;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  private async reconcileBlocks(
+    calendarSyncId: number,
+    listingId: number,
+    events: ParsedCalendarEvent[],
+  ): Promise<void> {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const existing = await queryRunner.manager.find(CalendarBlock, {
+        where: { calendarSyncId },
+      });
+
+      const existingByUid = new Map<string, CalendarBlock>();
+      for (const block of existing) {
+        if (block.externalUid) {
+          existingByUid.set(block.externalUid, block);
+        }
+      }
+
+      const incomingByUid = new Map<string, ParsedCalendarEvent>();
+      for (const event of events) {
+        incomingByUid.set(event.uid, event);
+      }
+
+      // Determine inserts, updates, deletes
+      const toInsert: ParsedCalendarEvent[] = [];
+      const toUpdate: { block: CalendarBlock; event: ParsedCalendarEvent }[] =
+        [];
+      const toDeleteIds: number[] = [];
+
+      for (const event of events) {
+        const existingBlock = existingByUid.get(event.uid);
+        if (!existingBlock) {
+          toInsert.push(event);
+        } else if (
+          existingBlock.startDate !== event.startDate ||
+          existingBlock.endDate !== event.endDate
+        ) {
+          toUpdate.push({ block: existingBlock, event });
+        }
+      }
+
+      for (const block of existing) {
+        if (block.externalUid && !incomingByUid.has(block.externalUid)) {
+          toDeleteIds.push(block.id);
+        }
+      }
+
+      // Execute changes
+      if (toDeleteIds.length > 0) {
+        await queryRunner.manager.delete(CalendarBlock, toDeleteIds);
+      }
+
+      for (const { block, event } of toUpdate) {
+        await queryRunner.manager.update(CalendarBlock, block.id, {
+          startDate: event.startDate,
+          endDate: event.endDate,
+          summary: event.summary,
+        });
+      }
+
+      if (toInsert.length > 0) {
+        const newBlocks = toInsert.map((event) =>
+          queryRunner.manager.create(CalendarBlock, {
+            listingId,
+            calendarSyncId,
+            source: 'import' as const,
+            startDate: event.startDate,
+            endDate: event.endDate,
+            summary: event.summary,
+            externalUid: event.uid,
+          }),
+        );
+        await queryRunner.manager.save(CalendarBlock, newBlocks);
+      }
+
+      await queryRunner.commitTransaction();
+
+      this.logger.debug(
+        `Reconciled sync ${calendarSyncId}: +${toInsert.length} ~${toUpdate.length} -${toDeleteIds.length}`,
+      );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+}

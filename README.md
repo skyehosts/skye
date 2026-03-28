@@ -41,6 +41,21 @@ heroku logs --num 200 --app skye-hosts-{env} #Most recent lines
 heroku config --app skye-hosts-{env} #Env vars
 heroku run sh --app skye-hosts-{env} #Bash inside docker container
 
+### Prerequisite #6: PGAdmin setup
+
+Go to PGAdmin URL
+Login with credentials from /apps/web-api/.local.env:
+
+- Email: $PGADMIN_DEFAULT_ADMIN
+- Password: $PGADMIN_DEFAULT_ADMIN
+
+Then right click on servers & 'Create' -> 'Server'
+
+- Host: host.docker.internal
+- Port: $WEB_API_POSTGRES_PORT
+- Username: $WEB_API_POSTGRES_USER
+- Password: $WEB_API_POSTGRES_PASSWORD
+
 ### Add environment vars
 
 - Manually add 'Config vars' in Heroku via browser
