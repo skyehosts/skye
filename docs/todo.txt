@@ -1,6 +1,8 @@
 ====
 Next
 ====
+- update listing editor card to displya same info as calendar sync card (excluding arrow and sync now). Define any shared logic/text in a shared location, create    
+re-useable component if optimal. any decisions ask 
 - block out dates on pickers from:
   - existing calendar bookings on our site
   - bookings from air bnb
@@ -117,25 +119,7 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- apps/skye-hosts-app tasks:
-  - On 'Add external calendar' page: 
-      - Change 'Skye' to APP_DISPLAY_NAME in all instances
-      - Improve wording to improve clarity to for non-technical folks / i.e laymens terms. on the page as a whole.
-        - E.G For import: When guests try to book your BNB on APP_DISPLAY_NAME, any dates where bookings were made on AirBNB will be automatically blocked on on their calendar on APP_DISPLAY_NAME. Preventing double bookings
-      - For Export: Do same as for import
-    - Is it possible to Deep link them to their iCal URL in AirBNB app (Ideal)
-      - For both import and Export
-    - The tooltips have a bug, they are single line, and the text is not wrapping and most of it therefore is out of bounds of viewport
-    - On 'Add external calendar' page:  Replace "External" with The currently selected platform from radiogroup at top
-  - Is 'Label' superfluous / not necessary given platform already indicates this and multiple can't be added per platform?
 
-- apps/skye-guest-website tasks:
-  - On /listing/:id/:slug page
-    "Where you'll be" and "Log in to book" colors appear correct on chrome desktop browser but on phone they are wrong, they look light grey.
-- apps/skye-hosts-app tasks:
-  - On Privacy page, if I set search engine visibility to true. Then go back to 'Menu' page, then go back to privacy page, and open search engine visibility modal, the switch is in off position, despiuyte value in db being true.
-  - This does not happen unless I go back to Menu page.
-  
 ==================
 Re-useable prompts
 ==================

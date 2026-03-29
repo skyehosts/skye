@@ -1,6 +1,8 @@
 /* ── Highland-inspired colour palette ──────────────────────────── */
 
 import {
+  autumnBracken,
+  cairngormRed,
   deepSkyeBlue,
   driftwoodSand,
   heatherPurple,
@@ -38,8 +40,8 @@ export const colors = {
   textPrimary: "#333",
   textSecondary: "#666",
   border: "#ddd",
-  danger: "#FF3B30",
-  warning: "#FF9500",
+  danger: cairngormRed,
+  warning: autumnBracken,
   successBackground: "#EAF7EC",
   inputBackground: "#F6F6F6",
   messageSent: deepSkyeBlue,

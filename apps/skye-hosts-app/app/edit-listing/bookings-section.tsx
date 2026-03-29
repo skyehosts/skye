@@ -3,7 +3,6 @@ import type {
   IUpdateListingRequestDto,
   ICalendarSyncDto,
   IGetCalendarSyncsResponseDto,
-  CalendarSyncPlatform,
   ListingStatus,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useFocusEffect } from "expo-router";
@@ -21,13 +20,12 @@ import { ListingStatusRow } from "../components/listing-status-row";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
-import { getAggregateSyncColor } from "../utils/sync-status";
-
-const PLATFORM_LABELS: Record<CalendarSyncPlatform, string> = {
-  airbnb: "AirBnB",
-  booking_com: "Booking.com",
-  other: "Other",
-};
+import { Icon } from "react-native-paper";
+import {
+  PLATFORM_LABELS,
+  getAggregateSyncDirection,
+  getSyncDirection,
+} from "../utils/sync-status";
 
 function formatNightsCardText(listing: IGetListingResponseDto): string {
   const minDisplay = listing.minNightsByCheckInDay
@@ -160,40 +158,42 @@ export function BookingsSection({
             })
           }
         >
-          <View style={styles.syncCardHeader}>
-            <Text style={commonStyles.itemTitle}>Calendar sync</Text>
-            {syncs.length > 0 && (
-              <View
-                style={[
-                  styles.syncDot,
-                  {
-                    backgroundColor:
-                      getAggregateSyncColor(syncs) ?? colors.textSecondary,
-                  },
-                ]}
-              />
-            )}
-          </View>
+          <Text style={commonStyles.itemTitle}>Calendar sync</Text>
           {syncs.length === 0 ? (
             <Text style={commonStyles.itemSubtext}>
               Sync with AirBnB or Booking.com to avoid double bookings
             </Text>
           ) : (
             <>
-              <Text style={commonStyles.itemSubtext}>
-                {syncs
-                  .map((s) => PLATFORM_LABELS[s.platform] ?? s.platform)
-                  .join(", ")}{" "}
-                connected
-              </Text>
-              {syncs.some(
-                (s) =>
-                  (s.importUrl && s.isImportEnabled && !s.isExportEnabled) ||
-                  (!s.importUrl && s.isExportEnabled),
-              ) && (
-                <Text style={styles.oneWayHint}>
-                  One-way sync — enable import and export for full protection
-                </Text>
+              {syncs.map((s) => (
+                <View key={s.id} style={styles.syncConnectedRow}>
+                  <View
+                    style={[
+                      styles.syncDot,
+                      {
+                        backgroundColor:
+                          getSyncDirection(s) === "none"
+                            ? colors.danger
+                            : colors.success,
+                      },
+                    ]}
+                  />
+                  <Text style={commonStyles.itemSubtext}>
+                    {PLATFORM_LABELS[s.platform] ?? s.platform} connected
+                  </Text>
+                </View>
+              ))}
+              {getAggregateSyncDirection(syncs) === "one-way" && (
+                <View style={styles.syncConnectedRow}>
+                  <Icon
+                    source="alert-outline"
+                    size={16}
+                    color={colors.warning}
+                  />
+                  <Text style={styles.oneWayHint}>
+                    Enable import and export for full protection
+                  </Text>
+                </View>
               )}
             </>
           )}
@@ -235,10 +235,10 @@ export function BookingsSection({
 }
 
 const styles = StyleSheet.create({
-  syncCardHeader: {
+  syncConnectedRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    gap: spacing.sm,
   },
   syncDot: {
     width: 10,

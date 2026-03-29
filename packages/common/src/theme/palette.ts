@@ -16,3 +16,5 @@ export const successGreen = '#3F9C5A';
 export const whiskyGold = '#E9B949';
 export const rowanBerry = '#B5473A';
 export const rowanBerryLight = '#D4837A';
+export const cairngormRed = '#FF7B74';
+export const autumnBracken = '#FF9500';

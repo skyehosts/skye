@@ -18,10 +18,8 @@ import {
 } from "react-native-paper";
 import * as Clipboard from "expo-clipboard";
 import type {
-  ICalendarSyncDto,
-  IGetCalendarSyncsResponseDto,
   ICalendarSyncResponseDto,
-  CalendarSyncPlatform,
+  IGetCalendarSyncsResponseDto,
 } from "@repo/skye-hosts-api-client";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
@@ -31,7 +29,13 @@ import { borderRadius } from "../theme/border-radius";
 import { fontWeight } from "../theme/font-weight";
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { handleApiError } from "../utils/form-error-handler";
-import { getSyncHealthColor, isAutoDisabled } from "../utils/sync-status";
+import {
+  PLATFORM_LABELS,
+  getAggregateSyncDirection,
+  getSyncDirection,
+  getSyncHealthColor,
+  isAutoDisabled,
+} from "../utils/sync-status";
 
 function formatRelativeTime(dateStr: string | null): string {
   if (!dateStr) return "Never";
@@ -43,20 +47,6 @@ function formatRelativeTime(dateStr: string | null): string {
   if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
   return `${days}d ago`;
-}
-
-const PLATFORM_LABELS: Record<CalendarSyncPlatform, string> = {
-  airbnb: "AirBnB",
-  booking_com: "Booking.com",
-  other: "Other",
-};
-
-function hasOnlyOneWaySync(syncs: ICalendarSyncDto[]): boolean {
-  return syncs.some(
-    (s) =>
-      (s.importUrl && s.isImportEnabled && !s.isExportEnabled) ||
-      (!s.importUrl && s.isExportEnabled),
-  );
 }
 
 export default function CalendarSyncScreen() {
@@ -139,18 +129,19 @@ export default function CalendarSyncScreen() {
             </Text>
           </View>
 
-          {syncs.length > 0 && hasOnlyOneWaySync(syncs) && (
-            <Banner
-              visible
-              icon="alert-outline"
-              style={styles.warningBanner}
-              actions={[]}
-            >
-              Set up 2-way sync for best protection against double-bookings.
-              Syncing only one direction may still result in overlapping
-              reservations.
-            </Banner>
-          )}
+          {syncs.length > 0 &&
+            getAggregateSyncDirection(syncs) === "one-way" && (
+              <Banner
+                visible
+                icon="alert-outline"
+                style={styles.warningBanner}
+                actions={[]}
+              >
+                Set up 2-way sync for best protection against double-bookings.
+                Syncing only one direction may still result in overlapping
+                reservations.
+              </Banner>
+            )}
 
           {syncs.length === 0 && (
             <View style={styles.emptyState}>
@@ -204,6 +195,18 @@ export default function CalendarSyncScreen() {
                 <Text style={commonStyles.itemSubtext}>
                   Export: {sync.isExportEnabled ? "On" : "Off"}
                 </Text>
+                {getSyncDirection(sync) === "one-way" && (
+                  <View style={styles.syncDetailRow}>
+                    <Icon
+                      source="alert-outline"
+                      size={16}
+                      color={colors.warning}
+                    />
+                    <Text style={styles.oneWayHint}>
+                      Enable import and export for full protection
+                    </Text>
+                  </View>
+                )}
               </View>
 
               {sync.lastImportStatus === "error" && sync.lastImportError && (
@@ -348,6 +351,15 @@ const styles = StyleSheet.create({
   },
   syncDetails: {
     gap: spacing.xs,
+  },
+  syncDetailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+  },
+  oneWayHint: {
+    fontSize: typography.sm,
+    color: colors.warning,
   },
   errorText: {
     fontSize: typography.sm,
