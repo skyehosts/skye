@@ -9,7 +9,9 @@ import type {
   IGetCalendarBlocksResponseDto,
   IGetCalendarSyncsResponseDto,
   IGetListingBookingsResponseDto,
+  IGetListingResponseDto,
   IListingBookingItemDto,
+  IMinNightsByCheckInDay,
 } from "@repo/skye-hosts-api-client";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
@@ -25,9 +27,12 @@ export default function CalendarDetailScreen() {
   const [bookings, setBookings] = useState<IListingBookingItemDto[]>([]);
   const [blocks, setBlocks] = useState<ICalendarBlockDto[]>([]);
   const [syncs, setSyncs] = useState<ICalendarSyncDto[]>([]);
+  const [minNights, setMinNights] = useState(1);
+  const [minNightsByCheckInDay, setMinNightsByCheckInDay] =
+    useState<IMinNightsByCheckInDay | null>(null);
 
   const loadData = useCallback(async () => {
-    const [bookingsResult, blocksResult, syncsResult] =
+    const [bookingsResult, blocksResult, syncsResult, listingResult] =
       await Promise.allSettled([
         fetchApi<IGetListingBookingsResponseDto>(
           `/booking/listing/${id}`,
@@ -44,6 +49,9 @@ export default function CalendarDetailScreen() {
           undefined,
           { method: "GET" },
         ),
+        fetchApi<IGetListingResponseDto>(`/listing/${id}`, undefined, {
+          method: "GET",
+        }),
       ]);
 
     if (bookingsResult.status === "fulfilled") {
@@ -54,6 +62,10 @@ export default function CalendarDetailScreen() {
     }
     if (syncsResult.status === "fulfilled") {
       setSyncs(syncsResult.value.syncs);
+    }
+    if (listingResult.status === "fulfilled") {
+      setMinNights(listingResult.value.minNights);
+      setMinNightsByCheckInDay(listingResult.value.minNightsByCheckInDay);
     }
   }, [id]);
 
@@ -95,6 +107,8 @@ export default function CalendarDetailScreen() {
         bookings={bookings}
         blocks={blocks}
         platformBySyncId={platformBySyncId}
+        minNights={minNights}
+        minNightsByCheckInDay={minNightsByCheckInDay}
         onReloadData={loadData}
       />
     </ScreenContainer>

@@ -21,6 +21,7 @@ import { BookingBar } from "./booking-bar";
 import { type BlockedDateInfo, MONTH_LABEL_HEIGHT } from "./calendar-list";
 import { DayCell, type DayCellStatus } from "./day-cell";
 import { ExternalBookingBar } from "./external-booking-bar";
+import { RestrictedDateTooltip } from "./restricted-date-tooltip";
 
 export interface MonthData {
   /** Unique key e.g. "2026-03" */
@@ -49,6 +50,8 @@ interface MonthGridProps {
   platformBySyncId?: Map<number, CalendarSyncPlatform>;
   bookedDates?: Set<string>;
   blockedDateInfo?: Map<string, BlockedDateInfo[]>;
+  restrictedDates?: Set<string>;
+  minNights?: number;
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
   onReloadData?: () => void;
@@ -65,6 +68,8 @@ function MonthGridInner({
   platformBySyncId,
   bookedDates,
   blockedDateInfo,
+  restrictedDates,
+  minNights: minNightsProp,
   onDayPress,
   getDayStatus,
   onReloadData,
@@ -72,6 +77,11 @@ function MonthGridInner({
   const [tooltipState, setTooltipState] = useState<{
     dateString: string;
     infos: BlockedDateInfo[];
+    x: number;
+    y: number;
+  } | null>(null);
+  const [restrictedTooltip, setRestrictedTooltip] = useState<{
+    dateString: string;
     x: number;
     y: number;
   } | null>(null);
@@ -106,27 +116,39 @@ function MonthGridInner({
     return map;
   }, [blocks, platformBySyncId, data]);
 
+  const measureTooltipPosition = useCallback(
+    (
+      dayIndex: number,
+      weekIndex: number,
+      callback: (pos: { x: number; y: number }) => void,
+    ) => {
+      const x = dayIndex * (cellSize + cellGap) + spacing.md;
+      containerRef.current?.measureInWindow((_cx, cy) => {
+        const yOffset = MONTH_LABEL_HEIGHT + weekIndex * (cellHeight + cellGap);
+        callback({ x, y: cy + yOffset + cellHeight });
+      });
+    },
+    [cellSize, cellGap, cellHeight],
+  );
+
   const handleDayPress = useCallback(
     (dateString: string, dayIndex: number, weekIndex: number) => {
       const infos = blockedDateInfo?.get(dateString);
       if (infos?.length) {
-        // Compute position from grid layout
-        const x = dayIndex * (cellSize + cellGap) + spacing.md;
-        containerRef.current?.measureInWindow((_cx, cy) => {
-          const yOffset =
-            MONTH_LABEL_HEIGHT + weekIndex * (cellHeight + cellGap);
-          setTooltipState({
-            dateString,
-            infos,
-            x,
-            y: cy + yOffset + cellHeight,
-          });
-        });
+        measureTooltipPosition(dayIndex, weekIndex, ({ x, y }) =>
+          setTooltipState({ dateString, infos, x, y }),
+        );
+        return;
+      }
+      if (restrictedDates?.has(dateString)) {
+        measureTooltipPosition(dayIndex, weekIndex, ({ x, y }) =>
+          setRestrictedTooltip({ dateString, x, y }),
+        );
         return;
       }
       onDayPress?.(dateString);
     },
-    [blockedDateInfo, cellSize, cellGap, cellHeight, onDayPress],
+    [blockedDateInfo, restrictedDates, measureTooltipPosition, onDayPress],
   );
 
   return (
@@ -149,7 +171,9 @@ function MonthGridInner({
                     ? "booked"
                     : blockedDateInfo?.has(dateString)
                       ? "blocked"
-                      : "none"))
+                      : restrictedDates?.has(dateString)
+                        ? "restricted"
+                        : "none"))
                 : "none";
               return (
                 <DayCell
@@ -209,6 +233,14 @@ function MonthGridInner({
           position={{ x: tooltipState.x, y: tooltipState.y }}
           onClose={() => setTooltipState(null)}
           onReloadData={onReloadData}
+        />
+      )}
+      {restrictedTooltip && (
+        <RestrictedDateTooltip
+          dateString={restrictedTooltip.dateString}
+          minNights={minNightsProp ?? 1}
+          position={{ x: restrictedTooltip.x, y: restrictedTooltip.y }}
+          onClose={() => setRestrictedTooltip(null)}
         />
       )}
     </View>

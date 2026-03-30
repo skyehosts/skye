@@ -3,6 +3,7 @@ import type {
   CalendarSyncPlatform,
   ICalendarBlockDto,
   IListingBookingItemDto,
+  IMinNightsByCheckInDay,
 } from "@repo/skye-hosts-api-client";
 import React, { useCallback, useMemo, useRef } from "react";
 import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
@@ -13,6 +14,7 @@ import { spacing } from "../../theme/spacing";
 import { typography } from "../../theme/typography";
 import { isExternalBooking } from "../utils/booking-segments";
 import { formatDateString, parseDateString } from "../utils/format-date-string";
+import { computeRestrictedDates } from "../utils/min-nights-gap";
 import type { DayCellStatus } from "./day-cell";
 import { MonthGrid, type MonthData } from "./month-grid";
 
@@ -110,6 +112,8 @@ interface CalendarListProps {
   bookings?: IListingBookingItemDto[];
   blocks?: ICalendarBlockDto[];
   platformBySyncId?: Map<number, CalendarSyncPlatform>;
+  minNights?: number;
+  minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
   onReloadData?: () => void;
@@ -119,6 +123,8 @@ export function CalendarList({
   bookings,
   blocks,
   platformBySyncId,
+  minNights: minNightsProp,
+  minNightsByCheckInDay,
   onDayPress,
   getDayStatus: getDayStatusProp,
   onReloadData,
@@ -165,6 +171,56 @@ export function CalendarList({
     return map;
   }, [blocks, bookedDates, platformBySyncId]);
 
+  const restrictedDates = useMemo(() => {
+    const effectiveMin = minNightsProp ?? 1;
+    const occupiedDates = new Set(bookedDates);
+    for (const key of blockedDateInfo.keys()) {
+      occupiedDates.add(key);
+    }
+    // Include external booking dates (imported iCal blocks with "Reserved"
+    // summary) — these are excluded from both bookedDates and blockedDateInfo
+    // but still occupy the calendar.
+    for (const block of blocks ?? []) {
+      if (block.source === "import" && isExternalBooking(block.summary)) {
+        // endDate is exclusive per iCal DTEND semantics
+        for (const d of expandDateRange(
+          block.startDate,
+          block.endDate,
+          false,
+        )) {
+          occupiedDates.add(d);
+        }
+      }
+    }
+    const firstMonth = months[0];
+    const lastMonth = months[months.length - 1];
+    const rangeStart = formatDateString(firstMonth.year, firstMonth.month, 1);
+    const lastDaysInMonth = new Date(
+      lastMonth.year,
+      lastMonth.month + 1,
+      0,
+    ).getDate();
+    const rangeEnd = formatDateString(
+      lastMonth.year,
+      lastMonth.month,
+      lastDaysInMonth,
+    );
+    return computeRestrictedDates(
+      occupiedDates,
+      effectiveMin,
+      minNightsByCheckInDay ?? null,
+      rangeStart,
+      rangeEnd,
+    );
+  }, [
+    bookedDates,
+    blockedDateInfo,
+    blocks,
+    minNightsProp,
+    minNightsByCheckInDay,
+    months,
+  ]);
+
   const todayString = useMemo(() => {
     const now = new Date();
     return formatDateString(now.getFullYear(), now.getMonth(), now.getDate());
@@ -203,6 +259,8 @@ export function CalendarList({
         platformBySyncId={platformBySyncId}
         bookedDates={bookedDates}
         blockedDateInfo={blockedDateInfo}
+        restrictedDates={restrictedDates}
+        minNights={minNightsProp ?? 1}
         onDayPress={onDayPress}
         getDayStatus={getDayStatusProp}
         onReloadData={onReloadData}
@@ -215,6 +273,8 @@ export function CalendarList({
       platformBySyncId,
       bookedDates,
       blockedDateInfo,
+      restrictedDates,
+      minNightsProp,
       onDayPress,
       getDayStatusProp,
       onReloadData,

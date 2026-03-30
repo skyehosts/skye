@@ -61,5 +61,7 @@ export const colors = {
   calendarBarBookingCom: "#003580",
   calendarBarAirbnb: "#FF5A5F",
   calendarBarExternal: "#888888",
+  calendarCellRestricted: "#FFF3E0",
+  calendarCellRestrictedBorder: autumnBracken,
   warningBackground: "#FFF3E0",
 } as const;

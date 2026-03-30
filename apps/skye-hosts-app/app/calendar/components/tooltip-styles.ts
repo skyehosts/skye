@@ -3,6 +3,19 @@ import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
 
+export const TOOLTIP_MAX_WIDTH = 280;
+export const TOOLTIP_MARGIN = 8;
+
+export function formatTooltipDate(dateStr: string): string {
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
 export const tooltipStyles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
@@ -27,6 +40,11 @@ export const tooltipStyles = StyleSheet.create({
     fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
     marginBottom: 2,
+  },
+  date: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginBottom: 4,
   },
   text: {
     fontSize: 13,

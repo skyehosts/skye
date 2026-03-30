@@ -13,6 +13,7 @@ import { typography } from "../../theme/typography";
  * - checkOut: half-day check-out (booking ends morning)
  * - booked: fully booked day
  * - blocked: blocked via calendar sync or manual block
+ * - restricted: available but unbookable due to minimum nights gap
  */
 export type DayCellStatus =
   | "none"
@@ -20,7 +21,8 @@ export type DayCellStatus =
   | "checkIn"
   | "checkOut"
   | "booked"
-  | "blocked";
+  | "blocked"
+  | "restricted";
 
 interface DayCellProps {
   /** Day of the month (1-31), or null for empty grid slots */
@@ -71,11 +73,14 @@ function DayCellInner({
           ? styles.cellBooked
           : status === "blocked" && !isPast
             ? styles.cellBlocked
-            : isPast
-              ? styles.cellPast
-              : styles.cellCurrent,
+            : status === "restricted" && !isPast
+              ? styles.cellRestricted
+              : isPast
+                ? styles.cellPast
+                : styles.cellCurrent,
         status === "booked" && !isPast && styles.cellBookedBorder,
         status === "blocked" && !isPast && styles.cellBlockedBorder,
+        status === "restricted" && !isPast && styles.cellRestrictedBorder,
       ]}
       onPress={handlePress}
     >
@@ -124,6 +129,14 @@ const styles = StyleSheet.create({
   cellBlockedBorder: {
     borderWidth: 1,
     borderColor: colors.calendarCellBlockedBorder,
+    borderStyle: "dashed",
+  },
+  cellRestricted: {
+    backgroundColor: colors.calendarCellRestricted,
+  },
+  cellRestrictedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellRestrictedBorder,
     borderStyle: "dashed",
   },
   dayContainer: {

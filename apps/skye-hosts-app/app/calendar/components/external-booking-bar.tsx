@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
 import { Portal } from "react-native-paper";
 import type { CalendarSyncPlatform } from "@repo/skye-hosts-api-client";
 import AirbnbLogo from "../../../assets/icons/airbnb-logo.svg";
@@ -9,7 +9,11 @@ import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
 import type { ExternalBlockSegment } from "../utils/booking-segments";
 import { getPlatformName } from "../utils/platform-helpers";
-import { tooltipStyles } from "./tooltip-styles";
+import {
+  tooltipStyles,
+  TOOLTIP_MAX_WIDTH,
+  TOOLTIP_MARGIN,
+} from "./tooltip-styles";
 
 interface ExternalBookingBarProps {
   segment: ExternalBlockSegment;
@@ -129,7 +133,15 @@ function ExternalBookingBarInner({
               style={[
                 tooltipStyles.tooltip,
                 {
-                  left: Math.max(8, barLayout.x),
+                  left: Math.max(
+                    TOOLTIP_MARGIN,
+                    Math.min(
+                      barLayout.x,
+                      Dimensions.get("window").width -
+                        TOOLTIP_MAX_WIDTH -
+                        TOOLTIP_MARGIN,
+                    ),
+                  ),
                   top: barLayout.y - 80,
                 },
               ]}

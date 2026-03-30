@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Dimensions,
   Pressable,
   StyleSheet,
   Text,
@@ -15,7 +16,12 @@ import { fetchApi } from "../../services/api";
 import { captureException } from "../../services/error-reporting";
 import { getPlatformName } from "../utils/platform-helpers";
 import type { BlockedDateInfo } from "./calendar-list";
-import { tooltipStyles } from "./tooltip-styles";
+import {
+  formatTooltipDate,
+  tooltipStyles,
+  TOOLTIP_MAX_WIDTH,
+  TOOLTIP_MARGIN,
+} from "./tooltip-styles";
 
 interface BlockedDateTooltipProps {
   infos: BlockedDateInfo[];
@@ -38,16 +44,6 @@ function getRemedialText(
     default:
       return "Unblock this date on the external platform to make it available here.";
   }
-}
-
-function formatTooltipDate(dateStr: string): string {
-  const d = new Date(dateStr + "T00:00:00");
-  return d.toLocaleDateString(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 function BlockedDateTooltipInner({
@@ -81,12 +77,22 @@ function BlockedDateTooltipInner({
           style={[
             tooltipStyles.tooltip,
             {
-              left: Math.max(8, Math.min(position.x, 260)),
+              left: Math.max(
+                TOOLTIP_MARGIN,
+                Math.min(
+                  position.x,
+                  Dimensions.get("window").width -
+                    TOOLTIP_MAX_WIDTH -
+                    TOOLTIP_MARGIN,
+                ),
+              ),
               top: position.y - 10,
             },
           ]}
         >
-          <Text style={styles.date}>{formatTooltipDate(dateString)}</Text>
+          <Text style={tooltipStyles.date}>
+            {formatTooltipDate(dateString)}
+          </Text>
           {infos.map((info, i) => (
             <View
               key={`${info.source}-${info.blockId}-${i}`}
@@ -128,11 +134,6 @@ function BlockedDateTooltipInner({
 export const BlockedDateTooltip = React.memo(BlockedDateTooltipInner);
 
 const styles = StyleSheet.create({
-  date: {
-    fontSize: 12,
-    color: colors.textSecondary,
-    marginBottom: 4,
-  },
   sourceRow: {
     marginTop: spacing.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
