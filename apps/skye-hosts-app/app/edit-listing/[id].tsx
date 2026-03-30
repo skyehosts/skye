@@ -17,7 +17,7 @@ type Section = "your-space" | "arrival-guide" | "bookings";
 
 export default function EditListingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [section, setSection] = useState<Section>("your-space");
+  const [section, setSection] = useState<Section>("bookings");
   const [listingRole, setListingRole] = useState<ListingRole>("owner");
 
   useEffect(() => {
@@ -50,9 +50,9 @@ export default function EditListingScreen() {
           value={section}
           onValueChange={(value) => setSection(value as Section)}
           buttons={[
+            { value: "bookings", label: "Bookings" },
             { value: "your-space", label: "Your space" },
             { value: "arrival-guide", label: "Arrival guide" },
-            { value: "bookings", label: "Bookings" },
           ]}
           style={styles.segmentedButtons}
         />
