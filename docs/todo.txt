@@ -119,17 +119,21 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- On date picker modal, changing dates bug
+- On date picker modal and popup there is a bug:
+    - If you select a check-in date, then select the same date.
+    - The visual 'selected' state on the date disappears (I.E the filled green cricle goes and it returns to non selcted date visually)
+    - However, top left still says 'Select check-out date' so it's only the visual selected state reverted, clearly, the check-in date data is still set
+    - Expected behaviour: Do not undo the selected visual state on the check-in date if user clicks same date after already selected check-in date.
+  - Task:
+    - On both date picker modal and popup, change unavailabl date to use rowanBerryLight not grey
   - Bug 1:
     - Select 21st - 22nd, then
-    - Select 27th - 28th, it does update dates but visualation bar still shows 21st - 28
-  - Bug 2:
-    - 22nd May is red, other dates are grey.
-    - Suggest grey for past dates, red for unavailable dates, clearer.
+    - Select 27th - 28th, it does update dates but visualation bar still shows 21st - 28 as selected
+  
 - Date picker popup and modal
   - Selecting may 21st, becomes visually too confusing, with old dates still rendered in booking bar, can't tell what dates are available
 - Easiest soluton is just clear bar when open modal.
-- A tree hydrated but some attributes of th
+- A tree hydrated but some attributes of the 
 
 ==================
 Re-useable prompts

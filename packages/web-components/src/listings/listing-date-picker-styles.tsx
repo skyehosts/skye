@@ -1,6 +1,5 @@
 import Typography from '@mui/material/Typography';
 import type { Theme } from '@mui/material/styles';
-import type { CSSProperties } from 'react';
 import type { DateRange } from 'react-day-picker';
 import {
   formatLongDate,
@@ -27,15 +26,11 @@ export const dayPickerThemeSx = (theme: Theme) => ({
     '--rdp-selected-border': `2px solid ${theme.palette.primary.main}`,
     fontFamily: theme.typography.fontFamily,
   },
-});
-
-export function restrictedDayStyle(theme: Theme): CSSProperties {
-  return {
-    color: theme.palette.custom.rowanBerryLight,
-    opacity: 0.7,
+  '& .rdp-disabled .rdp-day_button': {
+    color: theme.palette.text.disabled,
     textDecoration: 'line-through',
-  };
-}
+  },
+});
 
 interface DatePickerHeaderTextProps {
   from: Date | null;

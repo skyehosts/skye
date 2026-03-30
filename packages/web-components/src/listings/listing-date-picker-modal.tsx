@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import { useTheme } from '@mui/material/styles';
 import { differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -13,12 +12,10 @@ import 'react-day-picker/style.css';
 import {
   DatePickerHeaderText,
   dayPickerThemeSx,
-  restrictedDayStyle,
 } from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
   buildNightDisabledMatcher,
-  buildNightRestrictedMatcher,
   formatGeneralConstraintMessage,
   getMinNightsForDate,
   isNightCountValid,
@@ -43,7 +40,6 @@ export function ListingDatePickerModal({
   minNightsByCheckInDay,
   maxNights,
 }: ListingDatePickerModalProps) {
-  const theme = useTheme();
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
   const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
@@ -68,18 +64,16 @@ export function ListingDatePickerModal({
     maxNights,
   );
 
-  const restrictedMatcher =
-    selectingPhase === 'to'
-      ? buildNightRestrictedMatcher(from, effectiveMinNights, maxNights)
-      : [];
-
   function handleDayClick(day: Date) {
     if (selectingPhase === 'from') {
       setFrom(day);
       setTo(null);
       setSelectingPhase('to');
     } else {
-      if (isSameDay(day, from!)) return;
+      if (isSameDay(day, from!)) {
+        setFrom(new Date(from!.getTime()));
+        return;
+      }
       if (isBefore(day, from!)) {
         setFrom(day);
         setTo(null);
@@ -137,10 +131,6 @@ export function ListingDatePickerModal({
                   )
                 : buildNightDisabledMatcher(null, 1, null, unavailableDates)
             }
-            modifiers={{ restricted: restrictedMatcher }}
-            modifiersStyles={{
-              restricted: restrictedDayStyle(theme),
-            }}
             numberOfMonths={1}
             month={month}
             onMonthChange={setMonth}

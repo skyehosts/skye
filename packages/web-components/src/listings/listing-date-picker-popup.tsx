@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
 import { differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -13,12 +12,10 @@ import 'react-day-picker/style.css';
 import {
   DatePickerHeaderText,
   dayPickerThemeSx,
-  restrictedDayStyle,
 } from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
   buildNightDisabledMatcher,
-  buildNightRestrictedMatcher,
   formatGeneralConstraintMessage,
   getMinNightsForDate,
   isNightCountValid,
@@ -48,7 +45,6 @@ export function ListingDatePickerPopup({
   minNightsByCheckInDay,
   maxNights,
 }: ListingDatePickerPopupProps) {
-  const theme = useTheme();
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
   const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
@@ -112,11 +108,6 @@ export function ListingDatePickerPopup({
     maxNights,
   );
 
-  const restrictedMatcher =
-    selectingPhase === 'to'
-      ? buildNightRestrictedMatcher(from, effectiveMinNights, maxNights)
-      : [];
-
   function handleDayClick(day: Date) {
     if (autoSaveTimer.current) {
       clearTimeout(autoSaveTimer.current);
@@ -128,7 +119,11 @@ export function ListingDatePickerPopup({
       setTo(null);
       setSelectingPhase('to');
     } else {
-      if (isSameDay(day, from!)) return;
+      if (isSameDay(day, from!)) {
+        // Re-set to force DayPicker to re-render with the selection intact
+        setFrom(new Date(from!.getTime()));
+        return;
+      }
       if (isBefore(day, from!)) {
         setFrom(day);
         setTo(null);
@@ -230,10 +225,6 @@ export function ListingDatePickerPopup({
                   )
                 : buildNightDisabledMatcher(null, 1, null, unavailableDates)
             }
-            modifiers={{ restricted: restrictedMatcher }}
-            modifiersStyles={{
-              restricted: restrictedDayStyle(theme),
-            }}
             numberOfMonths={2}
             month={month}
             onMonthChange={setMonth}

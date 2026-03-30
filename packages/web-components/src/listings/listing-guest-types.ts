@@ -100,7 +100,7 @@ export function formatGeneralConstraintMessage(
   return null;
 }
 
-export function buildNightRestrictedMatcher(
+function buildNightRestrictedMatcher(
   from: Date | null,
   effectiveMinNights: number,
   maxNights: number | null,
