@@ -33,6 +33,20 @@ export class CalendarImportService {
     try {
       const icalText = await this.fetchIcal(sync.importUrl);
       const events = this.icalParserService.parse(icalText);
+
+      // Check sync still exists before reconciling — it may have been deleted
+      // by the user while we were fetching the iCal.
+      const stillExists = await this.calendarSyncRepo.findOne({
+        where: { id: sync.id },
+        select: ['id'],
+      });
+      if (!stillExists) {
+        this.logger.debug(
+          `Sync ${sync.id} was deleted during import, skipping reconciliation`,
+        );
+        return sync;
+      }
+
       await this.reconcileBlocks(sync.id, sync.listingId, events);
 
       sync.lastImportAt = new Date();
@@ -77,7 +91,18 @@ export class CalendarImportService {
       }
     }
 
-    return this.calendarSyncRepo.save(sync);
+    // Final check: sync may have been deleted during import (race with user
+    // delete). Using `update` instead of `save` avoids resurrecting a deleted row.
+    await this.calendarSyncRepo.update(sync.id, {
+      lastImportAt: sync.lastImportAt,
+      lastImportStatus: sync.lastImportStatus,
+      lastImportError: sync.lastImportError,
+      lastImportEventCount: sync.lastImportEventCount,
+      consecutiveFailures: sync.consecutiveFailures,
+      isImportEnabled: sync.isImportEnabled,
+    });
+
+    return sync;
   }
 
   private async fetchIcal(url: string): Promise<string> {

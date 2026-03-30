@@ -125,6 +125,9 @@ export class CalendarSyncController {
     );
 
     await this.calendarSyncService.deleteSync(id, removeBlocks ?? false);
+    this.logger.debug(
+      `Deleted sync ${id} (removeBlocks=${removeBlocks ?? false})`,
+    );
     return { deleted: true };
   }
 

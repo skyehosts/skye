@@ -221,6 +221,10 @@ export class CalendarSyncService {
       }),
     ]);
 
+    this.logger.debug(
+      `getUnavailabilityForListing(${listingId}): blocks=${blocks.length}, bookings=${bookings.length}`,
+    );
+
     const ranges: IUnavailableDateRange[] = [];
 
     for (const block of blocks) {
