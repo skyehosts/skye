@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -67,6 +67,7 @@ function getPlatformLabel(platform: CalendarSyncPlatform): string {
 }
 
 export default function CalendarSyncFormScreen() {
+  const router = useRouter();
   const { id, syncId } = useLocalSearchParams<{
     id: string;
     syncId?: string;
@@ -157,7 +158,7 @@ export default function CalendarSyncFormScreen() {
           { method: "PATCH" },
         );
       } else {
-        await fetchApi<ICalendarSyncResponseDto>(
+        const result = await fetchApi<ICalendarSyncResponseDto>(
           `/calendar-sync/listing/${id}`,
           {
             platform: data.platform,
@@ -166,11 +167,34 @@ export default function CalendarSyncFormScreen() {
             isExportEnabled: data.isExportEnabled,
           },
         );
+
+        // Trigger an immediate import so dates appear on the calendar
+        // without waiting for the next scheduled poll.
+        if (data.importUrl && data.isImportEnabled) {
+          try {
+            await fetchApi<ICalendarSyncResponseDto>(
+              `/calendar-sync/${result.sync.id}/trigger-import`,
+              {},
+              { method: "POST" },
+            );
+          } catch {
+            // Non-critical — import will happen on next poll
+          }
+        }
       }
-      router.back();
+      navigateBackWithFlash(
+        isEditing ? "Sync updated" : "Sync created successfully",
+      );
     } catch (e) {
       handleFormError(e, control.setError as never, setServerError);
     }
+  };
+
+  const navigateBackWithFlash = (flash: string) => {
+    router.replace({
+      pathname: "/edit-listing/calendar-sync",
+      params: { id, flash },
+    });
   };
 
   const handleDelete = () => {
@@ -199,7 +223,7 @@ export default function CalendarSyncFormScreen() {
         undefined,
         { method: "DELETE" },
       );
-      router.back();
+      navigateBackWithFlash("Sync deleted");
     } catch (e) {
       handleApiError(e, setSnackbar);
     }

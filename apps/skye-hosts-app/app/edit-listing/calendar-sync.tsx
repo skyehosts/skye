@@ -1,5 +1,5 @@
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -50,12 +50,33 @@ function formatRelativeTime(dateStr: string | null): string {
 }
 
 export default function CalendarSyncScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
+  const { id, flash } = useLocalSearchParams<{
+    id: string;
+    flash?: string;
+  }>();
   const [syncs, setSyncs] = useState<ICalendarSyncDto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [snackbar, setSnackbar] = useState("");
+  const [snackbar, setSnackbar] = useState<{
+    message: string;
+    type: "error" | "success";
+  } | null>(null);
   const [syncingId, setSyncingId] = useState<number | null>(null);
   const [helpVisible, setHelpVisible] = useState(false);
+
+  const showSnackbar = useCallback(
+    (message: string, type: "error" | "success" = "error") => {
+      setSnackbar({ message, type });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (flash) {
+      showSnackbar(flash, "success");
+      router.setParams({ flash: undefined });
+    }
+  }, [flash, router, showSnackbar]);
 
   const loadSyncs = useCallback(async () => {
     try {
@@ -67,7 +88,7 @@ export default function CalendarSyncScreen() {
       );
       setSyncs(data.syncs);
     } catch (e) {
-      handleApiError(e, setSnackbar);
+      handleApiError(e, (msg) => showSnackbar(msg));
     } finally {
       setLoading(false);
     }
@@ -88,13 +109,15 @@ export default function CalendarSyncScreen() {
         { method: "POST" },
       );
       setSyncs((prev) => prev.map((s) => (s.id === syncId ? data.sync : s)));
-      setSnackbar(
-        data.sync.lastImportStatus === "success"
+      const isSuccess = data.sync.lastImportStatus === "success";
+      showSnackbar(
+        isSuccess
           ? "Sync completed successfully"
           : "Sync failed — check the error details",
+        isSuccess ? "success" : "error",
       );
     } catch (e) {
-      handleApiError(e, setSnackbar);
+      handleApiError(e, (msg) => showSnackbar(msg));
     } finally {
       setSyncingId(null);
     }
@@ -102,7 +125,7 @@ export default function CalendarSyncScreen() {
 
   const handleCopyExportUrl = async (url: string) => {
     await Clipboard.setStringAsync(url);
-    setSnackbar("Export link copied to clipboard");
+    showSnackbar("Export link copied to clipboard", "success");
   };
 
   return (
@@ -305,7 +328,11 @@ export default function CalendarSyncScreen() {
         </Dialog>
       </Portal>
 
-      <AppSnackbar message={snackbar} onDismiss={() => setSnackbar("")} />
+      <AppSnackbar
+        message={snackbar?.message ?? ""}
+        onDismiss={() => setSnackbar(null)}
+        type={snackbar?.type}
+      />
     </ScreenContainer>
   );
 }
