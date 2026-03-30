@@ -2,9 +2,7 @@
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { formatShortDateRange } from '@repo/common';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerModal } from './listing-date-picker-modal';
@@ -45,9 +43,6 @@ export function ListingMobileBookingBar({
   handleDateClear,
   handleGuestSave,
 }: ListingMobileBookingBarProps) {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
   const ctaLinkSx = {
     textDecoration: 'underline',
     cursor: 'pointer',
@@ -145,19 +140,17 @@ export function ListingMobileBookingBar({
         )}
       </Box>
 
-      {isMobile && (
-        <ListingDatePickerModal
-          open={dateModalOpen}
-          onClose={() => setDateModalOpen(false)}
-          onSave={handleDateSave}
-          onClear={handleDateClear}
-          initialRange={dateRange}
-          unavailableDates={unavailableDates}
-          minNights={minNights}
-          minNightsByCheckInDay={minNightsByCheckInDay}
-          maxNights={maxNights}
-        />
-      )}
+      <ListingDatePickerModal
+        open={dateModalOpen}
+        onClose={() => setDateModalOpen(false)}
+        onSave={handleDateSave}
+        onClear={handleDateClear}
+        initialRange={dateRange}
+        unavailableDates={unavailableDates}
+        minNights={minNights}
+        minNightsByCheckInDay={minNightsByCheckInDay}
+        maxNights={maxNights}
+      />
 
       <ListingGuestSelectorModal
         open={guestModalOpen}
