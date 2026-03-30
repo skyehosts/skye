@@ -51,6 +51,10 @@ function BookingBarInner({
           backgroundColor: isPast ? colors.calendarBarPast : colors.calendarBar,
           opacity: segment.status === "pending" ? 0.5 : 1,
           zIndex: segment.isCheckIn ? 1 : 0,
+          borderTopLeftRadius: segment.isCheckIn ? 150 : 0,
+          borderBottomLeftRadius: segment.isCheckIn ? 150 : 0,
+          borderTopRightRadius: segment.isCheckOut ? 150 : 0,
+          borderBottomRightRadius: segment.isCheckOut ? 150 : 0,
         },
       ]}
       onPress={() => router.push(`/booking/${segment.bookingId}`)}
@@ -68,7 +72,6 @@ export const BookingBar = React.memo(BookingBarInner);
 const styles = StyleSheet.create({
   bar: {
     position: "absolute",
-    borderRadius: 150,
     paddingHorizontal: spacing.sm,
     justifyContent: "center",
     borderWidth: 1.5,

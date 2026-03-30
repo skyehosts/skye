@@ -112,6 +112,10 @@ function ExternalBookingBarInner({
             bottom: BOTTOM_MARGIN,
             backgroundColor: platformColor,
             opacity: isPast ? 0.5 : 1,
+            borderTopLeftRadius: segment.isStart ? 150 : 0,
+            borderBottomLeftRadius: segment.isStart ? 150 : 0,
+            borderTopRightRadius: segment.isEnd ? 150 : 0,
+            borderBottomRightRadius: segment.isEnd ? 150 : 0,
           },
         ]}
         onLayout={(e) => {
@@ -168,7 +172,6 @@ export const ExternalBookingBar = React.memo(ExternalBookingBarInner);
 const styles = StyleSheet.create({
   bar: {
     position: "absolute",
-    borderRadius: 150,
     paddingHorizontal: spacing.sm,
     justifyContent: "center",
     alignItems: "flex-start",
