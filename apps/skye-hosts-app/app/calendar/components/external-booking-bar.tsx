@@ -46,7 +46,7 @@ function getPlatformLabel(platform: CalendarSyncPlatform | null): string {
 }
 
 function PlatformIcon({ platform }: { platform: CalendarSyncPlatform | null }) {
-  const size = 18;
+  const size = 24;
   // SVG transformer converts imports to components; without a rebuild they
   // resolve to numeric asset IDs. Fall back to a text label in that case.
   const Logo =

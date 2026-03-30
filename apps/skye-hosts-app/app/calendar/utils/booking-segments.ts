@@ -202,22 +202,27 @@ export function getExternalBlockSegmentsForMonth(
     if (block.source !== "import") continue;
     if (!isExternalBooking(block.summary)) continue;
 
-    // endDate is exclusive, so the last occupied day is endDate - 1
+    // endDate is exclusive (iCal DTEND), so the last occupied night is
+    // endDate - 1.  But for the visual bar we use endDate itself as the
+    // checkout date (the bar should penetrate partially into it, just like
+    // regular booking bars use checkOutDate).
     const lastOccupiedDay = previousDay(block.endDate);
+    const checkoutDay = block.endDate; // the day the guest leaves
 
     // Skip blocks that don't overlap this month
     if (lastOccupiedDay < monthStart || block.startDate > monthEnd) continue;
 
-    // Clamp to this month
+    // Clamp to this month — use checkoutDay for the end so the bar
+    // visually reaches into the checkout date cell.
     const clampedStart =
       block.startDate < monthStart ? monthStart : block.startDate;
-    const clampedEnd = lastOccupiedDay > monthEnd ? monthEnd : lastOccupiedDay;
+    const clampedEnd = checkoutDay > monthEnd ? monthEnd : checkoutDay;
 
     const startParsed = parseDateString(clampedStart);
     const endParsed = parseDateString(clampedEnd);
 
     const blockStartParsed = parseDateString(block.startDate);
-    const blockEndParsed = parseDateString(lastOccupiedDay);
+    const blockEndParsed = parseDateString(checkoutDay);
     const startDay = startParsed.day;
     const endDay = endParsed.day;
 

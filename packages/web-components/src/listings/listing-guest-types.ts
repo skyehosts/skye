@@ -135,21 +135,35 @@ export function buildNightDisabledMatcher(
   if (unavailableDates && unavailableDates.size > 0) {
     if (from) {
       // When selecting checkout: find the first unavailable date after check-in
-      // and disable everything from that point onward to prevent spanning over blocks
+      // and disable everything beyond that point to prevent spanning over blocks.
+      // The first blocked date itself IS allowed as a checkout date (same-day
+      // turnover: current guest checks out, next guest checks in).
       const firstBlockedAfterFrom = findFirstUnavailableAfter(
         from,
         unavailableDates,
       );
       if (firstBlockedAfterFrom) {
-        matchers.push({ after: addDays(firstBlockedAfterFrom, -1) });
+        matchers.push({ after: firstBlockedAfterFrom });
+        // Disable individual unavailable dates between check-in and the
+        // boundary, but NOT the boundary itself (valid for checkout).
+        const boundaryKey = format(firstBlockedAfterFrom, 'yyyy-MM-dd');
+        matchers.push((date: Date) => {
+          const key = format(date, 'yyyy-MM-dd');
+          return unavailableDates.has(key) && key !== boundaryKey;
+        });
+      } else {
+        matchers.push((date: Date) => {
+          const key = format(date, 'yyyy-MM-dd');
+          return unavailableDates.has(key);
+        });
       }
+    } else {
+      // When selecting check-in: disable all unavailable dates
+      matchers.push((date: Date) => {
+        const key = format(date, 'yyyy-MM-dd');
+        return unavailableDates.has(key);
+      });
     }
-
-    // Always disable individually unavailable dates
-    matchers.push((date: Date) => {
-      const key = format(date, 'yyyy-MM-dd');
-      return unavailableDates.has(key);
-    });
   }
 
   return matchers;

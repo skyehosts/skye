@@ -119,15 +119,20 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- Bugs found in skye-hosts-app:
-- Bug 1:
-  - Imported AirBnB dates are landing on the wrong dates
-  - I am using iCal link https://www.airbnb.co.uk/calendar/ical/872192109698537589.ics?t=b9ee11233e904cca9ab898241453b16f
-  - First booking should be 05/05/2026 but first date rendered is 28/03/2026
-- Bug 2:
-  - I was expecting to see the AirBnB logo but I just see the letter 'A'
-- Bug 3:
-  - After tapping AirBnB booking bar, the tooltip has 'AirBnB (Not available)'. Why is Not available displayed, ,what is intention here?
+- In hosts app, May 21st should be blocked out due to minimum nights of 2 being violated
+- Booking bar overlap
+- Booking tab on edit listing page, on left and default
+- On date picker modal, changing dates bug
+  - Bug 1:
+    - Select 21st - 22nd, then
+    - Select 27th - 28th, it does update dates but visualation bar still shows 21st - 28
+  - Bug 2:
+    - 22nd May is red, other dates are grey.
+    - Suggest grey for past dates, red for unavailable dates, clearer.
+- Date picker popup and modal
+  - Selecting may 21st, becomes visually too confusing, with old dates still rendered in booking bar, can't tell what dates are available
+- Easiest soluton is just clear bar when open modal.
+- A tree hydrated but some attributes of th
 
 ==================
 Re-useable prompts
