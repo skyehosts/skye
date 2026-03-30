@@ -76,6 +76,9 @@ Aws infrastructure
 ========
 Host App
 ========
+- Shold enable/disable switch even exist for calendar sync, I mean when would you disable and not just delete?
+- If you delete sync but don't select 'delete dates' , are you in a stuck position, how to clear dates?
+- It's not clear to host that enabling export isn't enough, you have to add URL into AirBnB, need provide instructions somewhere
 - Listing title, vertical height is too long
 - Test
   - Notification
@@ -119,17 +122,6 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- On date picker modal and popup there is a bug:
-    - If you select a check-in date, then select the same date.
-    - The visual 'selected' state on the date disappears (I.E the filled green cricle goes and it returns to non selcted date visually)
-    - However, top left still says 'Select check-out date' so it's only the visual selected state reverted, clearly, the check-in date data is still set
-    - Expected behaviour: Check-in date selected visual state should remain
-  - Task:
-    - On both date picker modal and popup, change unavailabl date to use rowanBerryLight not grey
-  - Bug 1:
-    - Select 21st - 22nd, then
-    - Select 27th - 28th, it does update dates but visualation bar still shows 21st - 28 as selected
-  
 - Date picker popup and modal
   - Selecting may 21st, becomes visually too confusing, with old dates still rendered in booking bar, can't tell what dates are available
 - Easiest soluton is just clear bar when open modal.

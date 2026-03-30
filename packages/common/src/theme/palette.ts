@@ -13,8 +13,26 @@ export const seaGlassTealPale = '#7DA9AA';
 
 /** Functional UI colours */
 export const successGreen = '#3F9C5A';
+export const successGreenLight = '#EAF7EC';
 export const whiskyGold = '#E9B949';
 export const rowanBerry = '#B5473A';
 export const rowanBerryLight = '#D4837A';
-export const cairngormRed = '#FF7B74';
 export const autumnBracken = '#FF9500';
+export const autumnBrackenLight = '#FFF3E0';
+export const calendarBlockedPink = '#F5E0DE';
+
+/** Neutral / UI colours */
+export const white = '#FFFFFF';
+export const black = '#000000';
+export const grey900 = '#333333';
+export const grey600 = '#666666';
+export const grey500 = '#888888';
+export const grey400 = '#6C6C6C';
+export const grey300 = '#DDDDDD';
+export const grey200 = '#F0F0F0';
+export const grey100 = '#F6F6F6';
+export const grey50 = '#F7F7F7';
+
+/** Third-party brand colours */
+export const brandBookingCom = '#003580';
+export const brandAirbnb = '#FF5A5F';

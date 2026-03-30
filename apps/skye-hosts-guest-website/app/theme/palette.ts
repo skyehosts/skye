@@ -9,4 +9,5 @@ export {
   successGreen,
   warmStone,
   whiskyGold,
+  white,
 } from '@repo/common';

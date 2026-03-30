@@ -14,17 +14,18 @@ import {
   successGreen,
   warmStone,
   whiskyGold,
+  white,
 } from '../theme/palette';
 
 const highlandPalette: PaletteOptions = {
   primary: { main: deepSkyeBlue },
   secondary: { main: highlandMossGreen },
   success: { main: successGreen },
-  background: { default: '#FFFFFF', paper: '#FFFFFF' },
+  background: { default: white, paper: white },
   brand: { primary: deepSkyeBlue, accent: seaGlassTeal },
   header: { linkUnderline: highlandMossGreen },
   footer: { background: deepSkyeBlue },
-  mainBackground: '#FFFFFF',
+  mainBackground: white,
   custom: {
     heatherPurple,
     warmStone,

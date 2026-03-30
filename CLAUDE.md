@@ -213,14 +213,16 @@ export default async function DemoPage() {
 - **Wrap every screen in `<ScreenContainer>`** (from `app/components/screen-container.tsx`). Pass additional layout styles via the `style` prop.
 - **Keep `StyleSheet.create()` colocated** at the bottom of each screen file — no separate `styles.ts` files.
 - If a new color, spacing value, or font size is needed, add it to the relevant token file rather than inlining it.
+- **All hex color values must live in `packages/common/src/theme/palette.ts`** — `colors.ts` must only reference palette imports, never inline hex values. The only exception is `rgba(...)` for transparency.
 - **Check `commonStyles` before writing any new local style.** `app/theme/common-styles.ts` is the single source of truth for shared patterns. Before adding a style to a local `StyleSheet.create()`, check if an equivalent already exists in `commonStyles` and use that instead.
 - **Promote repeated styles to `commonStyles`.** If the same style object appears in more than one file, move it to `common-styles.ts` and replace all local copies. Key shared patterns already there include: `card`, `modal`, `modalTitle`, `row`, `divider`, `borderedRows`, `itemTitle`, `itemSubtext`, `editSection`, `editSectionCards`, `sectionLoader` — use these rather than redefining them locally.
 
 ## Guide for: Styling in web apps (Next.js / MUI)
 
-- **Never hardcode hex colors that exist in the palette** — use MUI theme tokens instead.
+- **Never hardcode hex colors** — use MUI theme tokens in components and palette imports in theme config.
   - Colors from `packages/common/src/theme/palette.ts` are mapped to `theme.palette.custom.*` (e.g. `bgcolor: 'custom.driftwoodSand'`, not `'#E7E1D6'`).
   - Use MUI semantic tokens for standard text colors (`text.primary`, `text.secondary`, `text.disabled`).
+  - **All hex color values must live in `packages/common/src/theme/palette.ts`** — theme providers and palette re-exports must only reference palette imports, never inline hex values.
 - **Use MUI's `shape.borderRadius` multiplier** — write `borderRadius: 1` (= 4px) instead of `'4px'`. The theme sets `shape.borderRadius: 4` in `packages/web/src/theme/create-app-theme.ts`.
 - **Use MUI `sx` prop spacing shorthands** — `mt: 2`, `px: 3`, etc. rather than raw pixel values.
 
