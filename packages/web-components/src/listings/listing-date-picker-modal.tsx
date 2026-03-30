@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import Typography from '@mui/material/Typography';
 import { differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -26,6 +27,7 @@ interface ListingDatePickerModalProps extends ListingNightRuleProps {
   open: boolean;
   onClose: () => void;
   onSave: (range: { from: Date; to: Date }) => void;
+  onClear: () => void;
   initialRange?: { from: Date; to: Date } | null;
   unavailableDates?: Set<string>;
 }
@@ -34,6 +36,7 @@ export function ListingDatePickerModal({
   open,
   onClose,
   onSave,
+  onClear,
   initialRange,
   unavailableDates,
   minNights,
@@ -91,12 +94,19 @@ export function ListingDatePickerModal({
   const canSave = hasRange;
 
   const selected: DateRange | undefined =
-    from && to ? { from, to } : from ? { from, to: undefined } : undefined;
+    from && to ? { from, to } : from ? { from, to: from } : undefined;
 
   const title =
     selectingPhase === 'from'
       ? 'Select check-in date'
       : 'Select check-out date';
+
+  function handleClear() {
+    setFrom(null);
+    setTo(null);
+    setSelectingPhase('from');
+    onClear();
+  }
 
   function handleSave() {
     if (canSave) {
@@ -120,6 +130,7 @@ export function ListingDatePickerModal({
           <DayPicker
             mode="range"
             selected={selected}
+            onSelect={() => {}}
             onDayClick={handleDayClick}
             disabled={
               selectingPhase === 'to'
@@ -138,12 +149,29 @@ export function ListingDatePickerModal({
         </Box>
       </DialogContent>
       <Box sx={listingModalStyles.bottomBar}>
-        <Button variant="text" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="contained" disabled={!canSave} onClick={handleSave}>
-          Save
-        </Button>
+        {hasFrom ? (
+          <Typography
+            variant="body2"
+            onClick={handleClear}
+            sx={{
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              color: 'primary.main',
+            }}
+          >
+            Clear dates
+          </Typography>
+        ) : (
+          <Box />
+        )}
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="text" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" disabled={!canSave} onClick={handleSave}>
+            Save
+          </Button>
+        </Box>
       </Box>
     </Dialog>
   );

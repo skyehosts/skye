@@ -149,7 +149,7 @@ export function ListingDatePickerPopup({
   if (!open) return null;
 
   const selected: DateRange | undefined =
-    from && to ? { from, to } : from ? { from, to: undefined } : undefined;
+    from && to ? { from, to } : from ? { from, to: from } : undefined;
 
   const hasFrom = from != null;
   const hasRange = from != null && to != null;
@@ -214,6 +214,7 @@ export function ListingDatePickerPopup({
           <DayPicker
             mode="range"
             selected={selected}
+            onSelect={() => {}}
             onDayClick={handleDayClick}
             disabled={
               selectingPhase === 'to'

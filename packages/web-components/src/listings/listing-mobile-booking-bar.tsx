@@ -42,6 +42,7 @@ export function ListingMobileBookingBar({
   confirmModalOpen,
   setConfirmModalOpen,
   handleDateSave,
+  handleDateClear,
   handleGuestSave,
 }: ListingMobileBookingBarProps) {
   const theme = useTheme();
@@ -149,6 +150,7 @@ export function ListingMobileBookingBar({
           open={dateModalOpen}
           onClose={() => setDateModalOpen(false)}
           onSave={handleDateSave}
+          onClear={handleDateClear}
           initialRange={dateRange}
           unavailableDates={unavailableDates}
           minNights={minNights}

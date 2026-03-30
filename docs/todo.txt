@@ -123,7 +123,7 @@ Pending Prompts
     - If you select a check-in date, then select the same date.
     - The visual 'selected' state on the date disappears (I.E the filled green cricle goes and it returns to non selcted date visually)
     - However, top left still says 'Select check-out date' so it's only the visual selected state reverted, clearly, the check-in date data is still set
-    - Expected behaviour: Do not undo the selected visual state on the check-in date if user clicks same date after already selected check-in date.
+    - Expected behaviour: Check-in date selected visual state should remain
   - Task:
     - On both date picker modal and popup, change unavailabl date to use rowanBerryLight not grey
   - Bug 1:
