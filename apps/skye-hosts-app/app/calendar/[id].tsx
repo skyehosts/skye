@@ -1,8 +1,9 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Appbar } from "react-native-paper";
 import type {
+  CalendarSyncPlatform,
   ICalendarBlockDto,
   ICalendarSyncDto,
   IGetCalendarBlocksResponseDto,
@@ -62,6 +63,14 @@ export default function CalendarDetailScreen() {
 
   const syncDirection = getAggregateSyncDirection(syncs);
 
+  const platformBySyncId = useMemo(() => {
+    const map = new Map<number, CalendarSyncPlatform>();
+    for (const sync of syncs) {
+      map.set(sync.id, sync.platform);
+    }
+    return map;
+  }, [syncs]);
+
   return (
     <ScreenContainer>
       <Appbar.Header>
@@ -82,7 +91,12 @@ export default function CalendarDetailScreen() {
           </View>
         </View>
       </Appbar.Header>
-      <CalendarList bookings={bookings} blocks={blocks} />
+      <CalendarList
+        bookings={bookings}
+        blocks={blocks}
+        platformBySyncId={platformBySyncId}
+        onReloadData={loadData}
+      />
     </ScreenContainer>
   );
 }

@@ -16,6 +16,14 @@ import type {
 } from './listing-guest-types';
 import { formatGuestSummary } from './listing-guest-types';
 
+interface ListingMobileBookingBarProps
+  extends
+    ListingGuestRuleProps,
+    ListingNightRuleProps,
+    ListingBookingStateProps {
+  unavailableDates?: Set<string>;
+}
+
 export function ListingMobileBookingBar({
   maxGuests,
   childrenAllowed,
@@ -24,6 +32,7 @@ export function ListingMobileBookingBar({
   minNights,
   minNightsByCheckInDay,
   maxNights,
+  unavailableDates,
   dateRange,
   guests,
   dateModalOpen,
@@ -34,7 +43,7 @@ export function ListingMobileBookingBar({
   setConfirmModalOpen,
   handleDateSave,
   handleGuestSave,
-}: ListingGuestRuleProps & ListingNightRuleProps & ListingBookingStateProps) {
+}: ListingMobileBookingBarProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -141,6 +150,7 @@ export function ListingMobileBookingBar({
           onClose={() => setDateModalOpen(false)}
           onSave={handleDateSave}
           initialRange={dateRange}
+          unavailableDates={unavailableDates}
           minNights={minNights}
           minNightsByCheckInDay={minNightsByCheckInDay}
           maxNights={maxNights}

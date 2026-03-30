@@ -30,6 +30,7 @@ interface ListingDatePickerModalProps extends ListingNightRuleProps {
   onClose: () => void;
   onSave: (range: { from: Date; to: Date }) => void;
   initialRange?: { from: Date; to: Date } | null;
+  unavailableDates?: Set<string>;
 }
 
 export function ListingDatePickerModal({
@@ -37,6 +38,7 @@ export function ListingDatePickerModal({
   onClose,
   onSave,
   initialRange,
+  unavailableDates,
   minNights,
   minNightsByCheckInDay,
   maxNights,
@@ -127,8 +129,13 @@ export function ListingDatePickerModal({
             onDayClick={handleDayClick}
             disabled={
               selectingPhase === 'to'
-                ? buildNightDisabledMatcher(from, effectiveMinNights, maxNights)
-                : { before: new Date() }
+                ? buildNightDisabledMatcher(
+                    from,
+                    effectiveMinNights,
+                    maxNights,
+                    unavailableDates,
+                  )
+                : buildNightDisabledMatcher(null, 1, null, unavailableDates)
             }
             modifiers={{ restricted: restrictedMatcher }}
             modifiersStyles={{

@@ -1,4 +1,6 @@
 import type {
+  CalendarBlockSource,
+  CalendarSyncPlatform,
   ICalendarBlockDto,
   IListingBookingItemDto,
 } from "@repo/skye-hosts-api-client";
@@ -9,6 +11,7 @@ import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
 import { typography } from "../../theme/typography";
+import { isExternalBooking } from "../utils/booking-segments";
 import { formatDateString, parseDateString } from "../utils/format-date-string";
 import type { DayCellStatus } from "./day-cell";
 import { MonthGrid, type MonthData } from "./month-grid";
@@ -44,7 +47,7 @@ function expandDateRange(
 /** Height of the weekday header row (static) */
 const WEEKDAY_ROW_HEIGHT = 18 + spacing.xs;
 /** Height of the month label */
-const MONTH_LABEL_HEIGHT = 22 + spacing.md * 2;
+export const MONTH_LABEL_HEIGHT = 22 + spacing.md * 2;
 
 function buildMonthData(year: number, month: number): MonthData {
   const date = new Date(year, month, 1);
@@ -97,18 +100,28 @@ function getMonthHeight(month: MonthData): number {
   return MONTH_LABEL_HEIGHT + weekRows + rowGaps + spacing.lg;
 }
 
+export interface BlockedDateInfo {
+  source: CalendarBlockSource;
+  platform: CalendarSyncPlatform | null;
+  blockId: number;
+}
+
 interface CalendarListProps {
   bookings?: IListingBookingItemDto[];
   blocks?: ICalendarBlockDto[];
+  platformBySyncId?: Map<number, CalendarSyncPlatform>;
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
+  onReloadData?: () => void;
 }
 
 export function CalendarList({
   bookings,
   blocks,
+  platformBySyncId,
   onDayPress,
   getDayStatus: getDayStatusProp,
+  onReloadData,
 }: CalendarListProps) {
   const months = useMemo(() => generateMonths(), []);
   const flatListRef = useRef<FlatList<MonthData>>(null);
@@ -127,16 +140,30 @@ export function CalendarList({
     return set;
   }, [bookings]);
 
-  const blockedDates = useMemo(() => {
-    const set = new Set<string>();
+  const blockedDateInfo = useMemo(() => {
+    const map = new Map<string, BlockedDateInfo[]>();
     for (const block of blocks ?? []) {
+      // Imported blocks that are actual bookings render as bars, not blocked cells
+      if (block.source === "import" && isExternalBooking(block.summary))
+        continue;
+      const info: BlockedDateInfo = {
+        source: block.source,
+        platform:
+          block.calendarSyncId !== null
+            ? (platformBySyncId?.get(block.calendarSyncId) ?? null)
+            : null,
+        blockId: block.id,
+      };
       // endDate is exclusive per iCal DTEND semantics
       for (const d of expandDateRange(block.startDate, block.endDate, false)) {
-        if (!bookedDates.has(d)) set.add(d);
+        if (bookedDates.has(d)) continue;
+        const existing = map.get(d);
+        if (existing) existing.push(info);
+        else map.set(d, [info]);
       }
     }
-    return set;
-  }, [blocks, bookedDates]);
+    return map;
+  }, [blocks, bookedDates, platformBySyncId]);
 
   const todayString = useMemo(() => {
     const now = new Date();
@@ -172,19 +199,25 @@ export function CalendarList({
         cellGap={CELL_GAP}
         todayString={todayString}
         bookings={bookings}
+        blocks={blocks}
+        platformBySyncId={platformBySyncId}
         bookedDates={bookedDates}
-        blockedDates={blockedDates}
+        blockedDateInfo={blockedDateInfo}
         onDayPress={onDayPress}
         getDayStatus={getDayStatusProp}
+        onReloadData={onReloadData}
       />
     ),
     [
       todayString,
       bookings,
+      blocks,
+      platformBySyncId,
       bookedDates,
-      blockedDates,
+      blockedDateInfo,
       onDayPress,
       getDayStatusProp,
+      onReloadData,
     ],
   );
 

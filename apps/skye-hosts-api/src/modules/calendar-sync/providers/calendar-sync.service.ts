@@ -8,10 +8,12 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import type {
   ICalendarBlockDto,
   ICalendarSyncDto,
+  IUnavailableDateRange,
 } from '@repo/skye-hosts-api-client';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
 import { randomUUID } from 'crypto';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, MoreThanOrEqual, Repository } from 'typeorm';
+import { Booking } from '../../booking/entities/booking.entity';
 import { ListingAccessService } from '../../co-host/providers';
 import { ConfigService } from '../../config/providers/config.service';
 import { CalendarBlock, CalendarSync } from '../entities';
@@ -25,6 +27,8 @@ export class CalendarSyncService {
     private readonly calendarSyncRepo: Repository<CalendarSync>,
     @InjectRepository(CalendarBlock)
     private readonly calendarBlockRepo: Repository<CalendarBlock>,
+    @InjectRepository(Booking)
+    private readonly bookingRepo: Repository<Booking>,
     private readonly listingAccessService: ListingAccessService,
     private readonly configService: ConfigService,
     @InjectDataSource() private readonly dataSource: DataSource,
@@ -195,5 +199,56 @@ export class CalendarSyncService {
       endDate: block.endDate,
       summary: block.summary,
     };
+  }
+
+  async getUnavailabilityForListing(
+    listingId: number,
+  ): Promise<IUnavailableDateRange[]> {
+    const today = new Date().toISOString().slice(0, 10);
+
+    const [blocks, bookings] = await Promise.all([
+      this.calendarBlockRepo.find({
+        where: { listingId, endDate: MoreThanOrEqual(today) },
+        order: { startDate: 'ASC' },
+      }),
+      this.bookingRepo.find({
+        where: {
+          listingId,
+          status: In(['confirmed', 'pending']),
+          checkOutDate: MoreThanOrEqual(today),
+        },
+        order: { checkInDate: 'ASC' },
+      }),
+    ]);
+
+    const ranges: IUnavailableDateRange[] = [];
+
+    for (const block of blocks) {
+      ranges.push({ startDate: block.startDate, endDate: block.endDate });
+    }
+
+    for (const booking of bookings) {
+      ranges.push({
+        startDate: booking.checkInDate,
+        endDate: booking.checkOutDate,
+      });
+    }
+
+    ranges.sort((a, b) => a.startDate.localeCompare(b.startDate));
+
+    // Merge overlapping/adjacent ranges
+    const merged: IUnavailableDateRange[] = [];
+    for (const range of ranges) {
+      const last = merged[merged.length - 1];
+      if (last && range.startDate <= last.endDate) {
+        if (range.endDate > last.endDate) {
+          last.endDate = range.endDate;
+        }
+      } else {
+        merged.push({ startDate: range.startDate, endDate: range.endDate });
+      }
+    }
+
+    return merged;
   }
 }

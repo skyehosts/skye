@@ -119,6 +119,15 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
+- Bugs found in skye-hosts-app:
+- Bug 1:
+  - Imported AirBnB dates are landing on the wrong dates
+  - I am using iCal link https://www.airbnb.co.uk/calendar/ical/872192109698537589.ics?t=b9ee11233e904cca9ab898241453b16f
+  - First booking should be 05/05/2026 but first date rendered is 28/03/2026
+- Bug 2:
+  - I was expecting to see the AirBnB logo but I just see the letter 'A'
+- Bug 3:
+  - After tapping AirBnB booking bar, the tooltip has 'AirBnB (Not available)'. Why is Not available displayed, ,what is intention here?
 
 ==================
 Re-useable prompts
@@ -126,7 +135,7 @@ Re-useable prompts
 Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
 
-===========================
+==========================
 Notes about copying AirBNB
 ==========================
 You cannot copy:

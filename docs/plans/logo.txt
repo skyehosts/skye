@@ -1,0 +1,127 @@
+🧭 HighlandHosts Logo Specification (Refined Concept)
+🧱 1. Overall Layout (Very Important)
+
+Shape: Circular badge (clean, balanced)
+
+   [ Top: Mountains / sky (minimal) ]
+
+   [ Center: CABIN (main focus) ]
+
+   [ Left: Host (Male) Waving with right arm
+   [ Right: Host (Female) Waving with right arm]
+
+   -------------------------------
+   |        RIBBON (bottom)      |
+   |  Highland Hosts             |
+   |  Book local & save on stays |
+   -------------------------------
+
+👉 Key rule:
+Top = visual story
+Bottom = brand + message
+❌ No elements below the ribbon
+
+🏠 2. Cabin (Primary Focus – ~70% visual weight)
+
+Style:
+
+Traditional Scottish Highland cottage
+Whitewashed or stone walls
+Dark slate roof
+Chimney with visible smoke
+Warm glowing windows (cosy feel)
+
+Details to include:
+
+Slightly asymmetrical stonework (authentic feel)
+Small porch or wooden door
+Soft warm light (#E9B949 whisky gold tone)
+
+👉 This should be the first thing your eye goes to
+
+🧍‍♂️ 3. Host Figures (Secondary – ~30%)
+
+Style:
+
+Friendly Highland host (not cartoonish)
+Subtle tartan sash (not overpowering)
+Pose: Enthusiaast, welcoming wave. It must not simliar to a heil hitler gesture AT ALL
+CRITICAL FIXES:
+
+Eyes perfectly aligned (symmetrical)
+Man has long but not unkempt ginger hair and a thick but smart beard.
+Woman has a tam hat and looks like a hearty scottish lass. (Not overly good looking but pleasant, kind face)
+Expression: warm, very welcoming, natural, overly animated
+
+👉 Think: “trustworthy local host”, not mascot
+
+🎗 6. Ribbon (Bottom Placement Only)
+
+Position:
+
+Fully below main illustration
+Slight curve, but not too dramatic
+
+Content (all centered)
+
+Highland Hosts
+Motto: 
+"Book local" Then new line, then "Save on stays"
+Both lines of motto should use same font and weight
+
+Typography:
+
+Top line: bold serif (clear, strong)
+Bottom line: smaller, simpler
+
+Color:
+
+Background: highlandMossGreen (#5F7F4B)
+Text: driftwoodSand (#E7E1D6)
+Accent: whiskyGold (#E9B949) for subtle trim
+
+Highland wilfflowers stick out of top of ribbon, including some from heatherPurple = '#8B6FAF';
+👉 Must remain readable at small sizes
+
+🎨 7. Colour Usage (Keep Tight)
+
+Stick mainly to:
+
+Deep Skye Blue (#1F3F4A) – outlines / depth
+Moss Green (#5F7F4B) – ribbon / trees
+Warm Stone / Sand – cabin + text contrast
+Whisky Gold – window glow + highlights
+
+👉 Avoid overusing purple/red—keep it natural
+
+🔍 8. Scalability Rule (Super Important)
+
+At 50px × 50px, the logo should still:
+
+Clearly show:
+Cabin shape
+Circular badge
+Host becomes simplified silhouette
+Cow may reduce to shape or disappear
+
+👉 If details don’t survive at 50px → remove/simplify
+
+🧠 9. Hidden Pro Move (Optional but Powerful)
+
+Design a secondary icon version:
+
+Just:
+Cabin + chimney smoke
+Subtle “H” shape in structure
+
+👉 This becomes:
+
+App icon
+Favicon
+Mobile header logo
+🏆 Final Design Priorities (in order)
+Cabin clarity & warmth
+Clean, readable structure
+Friendly but not cartoonish host
+Minimal, supportive cow
+Strong, legible ribbon text

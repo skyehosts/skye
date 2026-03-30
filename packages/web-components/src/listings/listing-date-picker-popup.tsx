@@ -32,6 +32,7 @@ interface ListingDatePickerPopupProps extends ListingNightRuleProps {
   initialRange?: { from: Date; to: Date } | null;
   externalFrom?: Date | null;
   externalTo?: Date | null;
+  unavailableDates?: Set<string>;
 }
 
 export function ListingDatePickerPopup({
@@ -42,6 +43,7 @@ export function ListingDatePickerPopup({
   initialRange,
   externalFrom,
   externalTo,
+  unavailableDates,
   minNights,
   minNightsByCheckInDay,
   maxNights,
@@ -220,8 +222,13 @@ export function ListingDatePickerPopup({
             onDayClick={handleDayClick}
             disabled={
               selectingPhase === 'to'
-                ? buildNightDisabledMatcher(from, effectiveMinNights, maxNights)
-                : { before: new Date() }
+                ? buildNightDisabledMatcher(
+                    from,
+                    effectiveMinNights,
+                    maxNights,
+                    unavailableDates,
+                  )
+                : buildNightDisabledMatcher(null, 1, null, unavailableDates)
             }
             modifiers={{ restricted: restrictedMatcher }}
             modifiersStyles={{

@@ -1,4 +1,15 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Header,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import type { IGetListingUnavailabilityResponseDto } from '@repo/skye-hosts-api-client';
+import { CalendarSyncService } from '../../calendar-sync/providers';
 import {
   AuthenticatedUser,
   IgnoreBearerAuthentication,
@@ -17,7 +28,10 @@ import { ListingService } from '../providers';
 
 @Controller('listing')
 export class ListingController {
-  constructor(private readonly listingService: ListingService) {}
+  constructor(
+    private readonly listingService: ListingService,
+    private readonly calendarSyncService: CalendarSyncService,
+  ) {}
 
   @Post()
   async onCreate(
@@ -44,6 +58,17 @@ export class ListingController {
   @IgnoreBearerAuthentication()
   async onGetHomepageListings(): Promise<GetHomepageListingsResponseDto> {
     return this.listingService.getHomepage();
+  }
+
+  @Get(':id/unavailability')
+  @IgnoreBearerAuthentication()
+  @Header('Cache-Control', 'public, max-age=300')
+  async onGetUnavailability(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<IGetListingUnavailabilityResponseDto> {
+    const unavailableDates =
+      await this.calendarSyncService.getUnavailabilityForListing(id);
+    return { unavailableDates };
   }
 
   @Get(':id/edit')

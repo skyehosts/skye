@@ -45,6 +45,14 @@ const dateInputBaseSx = {
   cursor: 'text',
 } as const;
 
+interface ListingBookingSidebarProps
+  extends
+    ListingGuestRuleProps,
+    ListingNightRuleProps,
+    ListingBookingStateProps {
+  unavailableDates?: Set<string>;
+}
+
 export function ListingBookingSidebar({
   maxGuests,
   childrenAllowed,
@@ -53,6 +61,7 @@ export function ListingBookingSidebar({
   minNights,
   minNightsByCheckInDay,
   maxNights,
+  unavailableDates,
   dateRange,
   guests,
   dateModalOpen,
@@ -64,7 +73,7 @@ export function ListingBookingSidebar({
   handleDateSave,
   handleDateClear,
   handleGuestSave,
-}: ListingGuestRuleProps & ListingNightRuleProps & ListingBookingStateProps) {
+}: ListingBookingSidebarProps) {
   const theme = useTheme();
   const dateInputSx = {
     ...dateInputBaseSx,
@@ -267,6 +276,7 @@ export function ListingBookingSidebar({
                 initialRange={dateRange}
                 externalFrom={externalFrom}
                 externalTo={externalTo}
+                unavailableDates={unavailableDates}
                 minNights={minNights}
                 minNightsByCheckInDay={minNightsByCheckInDay}
                 maxNights={maxNights}

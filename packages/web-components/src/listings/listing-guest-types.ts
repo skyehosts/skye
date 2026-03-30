@@ -120,11 +120,53 @@ export function buildNightDisabledMatcher(
   from: Date | null,
   effectiveMinNights: number,
   maxNights: number | null,
+  unavailableDates?: Set<string>,
 ) {
-  return [
+  const matchers: (
+    | { before: Date }
+    | { before: Date; after: Date }
+    | { after: Date }
+    | ((date: Date) => boolean)
+  )[] = [
     { before: new Date() },
     ...buildNightRestrictedMatcher(from, effectiveMinNights, maxNights),
   ];
+
+  if (unavailableDates && unavailableDates.size > 0) {
+    if (from) {
+      // When selecting checkout: find the first unavailable date after check-in
+      // and disable everything from that point onward to prevent spanning over blocks
+      const firstBlockedAfterFrom = findFirstUnavailableAfter(
+        from,
+        unavailableDates,
+      );
+      if (firstBlockedAfterFrom) {
+        matchers.push({ after: addDays(firstBlockedAfterFrom, -1) });
+      }
+    }
+
+    // Always disable individually unavailable dates
+    matchers.push((date: Date) => {
+      const key = format(date, 'yyyy-MM-dd');
+      return unavailableDates.has(key);
+    });
+  }
+
+  return matchers;
+}
+
+function findFirstUnavailableAfter(
+  from: Date,
+  unavailableDates: Set<string>,
+): Date | null {
+  // Scan up to 730 days ahead (2 years)
+  for (let i = 1; i <= 730; i++) {
+    const d = addDays(from, i);
+    if (unavailableDates.has(format(d, 'yyyy-MM-dd'))) {
+      return d;
+    }
+  }
+  return null;
 }
 
 export interface ListingBookingStateProps {

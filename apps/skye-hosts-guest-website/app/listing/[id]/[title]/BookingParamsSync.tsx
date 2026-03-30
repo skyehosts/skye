@@ -11,15 +11,18 @@ import type {
 import { serializeBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
 import { useListingBookingState } from '@repo/web-components/listings/use-listing-booking-state';
+import { useListingUnavailability } from '@repo/web-components/listings/use-listing-unavailability';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 interface BookingParamsSyncProps
   extends ListingGuestRuleProps, ListingNightRuleProps {
+  listingId: number;
   initialBookingParams: BookingSearchParams;
 }
 
 export function BookingParamsSync({
+  listingId,
   initialBookingParams,
   maxGuests,
   childrenAllowed,
@@ -41,6 +44,8 @@ export function BookingParamsSync({
     },
     [router, pathname],
   );
+
+  const { unavailableDates } = useListingUnavailability(listingId);
 
   const bookingState = useListingBookingState({
     initialDateRange: initialBookingParams.dateRange,
@@ -69,6 +74,7 @@ export function BookingParamsSync({
           {...guestRuleProps}
           {...nightRuleProps}
           {...bookingState}
+          unavailableDates={unavailableDates}
         />
       </Box>
 
@@ -77,6 +83,7 @@ export function BookingParamsSync({
         {...guestRuleProps}
         {...nightRuleProps}
         {...bookingState}
+        unavailableDates={unavailableDates}
       />
     </>
   );
