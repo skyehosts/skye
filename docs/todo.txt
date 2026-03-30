@@ -119,9 +119,8 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In hosts app, May 21st should be blocked out due to minimum nights of 2 being violated
-- Booking bar overlap
 - Booking tab on edit listing page, on left and default
+  - [Sonnet] In hosts app, on edit listing page, move 'Booking' option from top radiogroup to left most option and make it default when page loads.
 - On date picker modal, changing dates bug
   - Bug 1:
     - Select 21st - 22nd, then

@@ -25,7 +25,7 @@ interface ExternalBookingBarProps {
 
 const CHECK_IN_MARGIN = 5;
 const BOTTOM_MARGIN = 5;
-const CHECKOUT_PENETRATION = 0.14;
+const CHECKOUT_PENETRATION = 0.35;
 
 function getPlatformColor(platform: CalendarSyncPlatform | null): string {
   switch (platform) {
@@ -121,7 +121,9 @@ function ExternalBookingBarInner({
         }}
         onPress={() => setTooltipVisible(true)}
       >
-        <PlatformIcon platform={segment.platform} />
+        {(segment.isStart || !segment.isEnd) && (
+          <PlatformIcon platform={segment.platform} />
+        )}
       </Pressable>
       {tooltipVisible && barLayout && (
         <Portal>
@@ -170,6 +172,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     justifyContent: "center",
     alignItems: "flex-start",
+    borderWidth: 1.5,
+    borderColor: "#fff",
   },
   label: {
     color: "#fff",

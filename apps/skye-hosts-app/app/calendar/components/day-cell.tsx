@@ -115,13 +115,15 @@ const styles = StyleSheet.create({
   },
   cellCurrent: {
     backgroundColor: colors.calendarCellCurrent,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cellBooked: {
     backgroundColor: colors.background,
   },
   cellBookedBorder: {
     borderWidth: 1,
-    borderColor: colors.calendarCellCurrent,
+    borderColor: colors.border,
   },
   cellBlocked: {
     backgroundColor: colors.calendarCellBlocked,

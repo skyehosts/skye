@@ -16,7 +16,7 @@ interface BookingBarProps {
 
 const CHECK_IN_MARGIN = 5;
 const BOTTOM_MARGIN = 5;
-const CHECKOUT_PENETRATION = 0.14;
+const CHECKOUT_PENETRATION = 0.35;
 
 function BookingBarInner({
   segment,
@@ -71,6 +71,8 @@ const styles = StyleSheet.create({
     borderRadius: 150,
     paddingHorizontal: spacing.sm,
     justifyContent: "center",
+    borderWidth: 1.5,
+    borderColor: "#fff",
   },
   label: {
     color: colors.background,
