@@ -41,6 +41,11 @@ export function useListingBookingState(
     options?.onBookingChange?.(dateRange, g);
   };
 
+  const handleGuestChange = (g: GuestCounts) => {
+    setGuests(g);
+    options?.onBookingChange?.(dateRange, g);
+  };
+
   return {
     dateRange,
     guests,
@@ -53,5 +58,6 @@ export function useListingBookingState(
     handleDateSave,
     handleDateClear,
     handleGuestSave,
+    handleGuestChange,
   };
 }

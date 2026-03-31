@@ -21,6 +21,65 @@ export interface ListingGuestRuleProps {
   petsAllowed: boolean;
 }
 
+export interface GuestRow {
+  key: keyof GuestCounts;
+  label: string;
+  subtitle: string;
+  getMax: (counts: GuestCounts) => number;
+  getMin: () => number;
+}
+
+export function buildGuestRows(
+  maxGuests: number,
+  childrenAllowed: boolean,
+  infantsAllowed: boolean,
+  petsAllowed: boolean,
+): GuestRow[] {
+  return [
+    {
+      key: 'adults',
+      label: 'Adults',
+      subtitle: 'Age 13+',
+      getMax: (c) => maxGuests - c.children,
+      getMin: () => 1,
+    },
+    {
+      key: 'children',
+      label: 'Children',
+      subtitle: 'Ages 2–12',
+      getMax: (c) => (childrenAllowed ? maxGuests - c.adults : 0),
+      getMin: () => 0,
+    },
+    {
+      key: 'infants',
+      label: 'Infants',
+      subtitle: 'Under 2',
+      getMax: () => (infantsAllowed ? 5 : 0),
+      getMin: () => 0,
+    },
+    {
+      key: 'pets',
+      label: 'Pets',
+      subtitle: 'Service animals always welcome',
+      getMax: () => (petsAllowed ? 5 : 0),
+      getMin: () => 0,
+    },
+  ];
+}
+
+export function buildGuestInfoText(
+  maxGuests: number,
+  petsAllowed: boolean,
+  childrenAllowed: boolean,
+  infantsAllowed: boolean,
+): string {
+  let text = `This place has a maximum of ${maxGuests} guests, not including infants.`;
+  if (!petsAllowed) text += " Pets aren't allowed.";
+  if (!childrenAllowed) text += ' No children.';
+  if (!infantsAllowed) text += ' No infants.';
+  return text;
+}
+
 import type { IMinNightsByCheckInDay } from '@repo/skye-hosts-api-client';
 
 export type { IMinNightsByCheckInDay } from '@repo/skye-hosts-api-client';
@@ -195,6 +254,7 @@ export interface ListingBookingStateProps {
   handleDateSave: (range: { from: Date; to: Date }) => void;
   handleDateClear: () => void;
   handleGuestSave: (guests: GuestCounts) => void;
+  handleGuestChange: (guests: GuestCounts) => void;
 }
 
 export interface BookingSearchParams {

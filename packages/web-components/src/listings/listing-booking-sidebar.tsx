@@ -6,12 +6,14 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { formatShortDateRange } from '@repo/common';
 import { differenceInCalendarDays, format, isValid, parse } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerPopup } from './listing-date-picker-popup';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
+import { ListingGuestSelectorPopup } from './listing-guest-selector-popup';
 import type {
   ListingBookingStateProps,
   ListingGuestRuleProps,
@@ -73,8 +75,10 @@ export function ListingBookingSidebar({
   handleDateSave,
   handleDateClear,
   handleGuestSave,
+  handleGuestChange,
 }: ListingBookingSidebarProps) {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
   const dateInputSx = {
     ...dateInputBaseSx,
     fontFamily: theme.typography.fontFamily,
@@ -267,6 +271,18 @@ export function ListingBookingSidebar({
                 </Box>
               </Box>
 
+              {/* Desktop guest selector popup — outside overflow:hidden bordered box */}
+              <ListingGuestSelectorPopup
+                open={isDesktop && guestModalOpen}
+                onClose={() => setGuestModalOpen(false)}
+                onChange={handleGuestChange}
+                initialGuests={guests}
+                maxGuests={maxGuests}
+                childrenAllowed={childrenAllowed}
+                infantsAllowed={infantsAllowed}
+                petsAllowed={petsAllowed}
+              />
+
               {/* Desktop date picker popup */}
               <ListingDatePickerPopup
                 open={dateModalOpen}
@@ -324,7 +340,7 @@ export function ListingBookingSidebar({
       </Box>
 
       <ListingGuestSelectorModal
-        open={guestModalOpen}
+        open={!isDesktop && guestModalOpen}
         onClose={() => setGuestModalOpen(false)}
         onSave={handleGuestSave}
         initialGuests={guests}
