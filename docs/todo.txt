@@ -76,9 +76,6 @@ Aws infrastructure
 ========
 Host App
 ========
-- Shold enable/disable switch even exist for calendar sync, I mean when would you disable and not just delete?
-- If you delete sync but don't select 'delete dates' , are you in a stuck position, how to clear dates?
-- It's not clear to host that enabling export isn't enough, you have to add URL into AirBnB, need provide instructions somewhere
 - Listing title, vertical height is too long
 - Test
   - Notification
@@ -122,16 +119,26 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- Date picker popup and modal
-  - Selecting may 21st, becomes visually too confusing, with old dates still rendered in booking bar, can't tell what dates are available
-- Easiest soluton is just clear bar when open modal.
-- A tree hydrated but some attributes of the 
+- Examining existing patterns within host app and in particular (the calendar sync feature)
+- Calendar sync enable / disable
+  - Examine the current implemtation of External Calendar Sync in hosts App.
+  - It is possible to toggle either an import or export as Enabled or Disabled.
+  - Determine whether this feature is superfluous. I.E: Is this a desirable feature from the Hosts perspective. What is the motivation for them to disable a External Calendar sync rather than simply deleting it.
+  - Recommend if you think it should be retained due to value it provides or should be removed for simplification
+- Shold enable/disable switch even exist for calendar sync, I mean when would you disable and not just delete?
+- If you delete sync but don't select 'delete dates' , are you in a stuck position, how to clear dates?
 
 ==================
 Re-useable prompts
 ==================
 Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
+
+==================
+Things to test
+==================
+- iCal export
+- iCal booking.com
 
 ==========================
 Notes about copying AirBNB

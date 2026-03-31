@@ -243,7 +243,7 @@ Canonical reference: `apps/skye-hosts-app/app/demo.tsx`. Every form with text in
 2. **`rules` on Controller** — add frontend validation (required, pattern, minLength, etc.) directly on the `Controller` `rules` prop. Use `pattern` with regex for emails: `{ value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Enter a valid email address" }`.
 3. **`HelperText type="error"`** — render field-level errors from `formState.errors` using react-native-paper's `<HelperText>` directly below each field.
 4. **`handleFormError(e, setError, setServerError)`** — use in every form catch block. Maps API validation errors to fields via `applyServerErrors`, shows `SERVER_ERROR_MESSAGE` for 5xx, and `e.message` for <500.
-5. **`AppSnackbar`** — display server-level errors (non-field errors, 5xx) via `<AppSnackbar message={serverError} onDismiss={() => setServerError("")} />`.
+5. **`AppSnackbar`** — display toast messages. **Defaults to `type="error"` (danger colors)** — always pass `type="success"` explicitly for non-error messages (e.g. confirmations, copy-to-clipboard). Example: `<AppSnackbar message={snackbar?.message ?? ""} onDismiss={() => setSnackbar(null)} type={snackbar?.type} />`.
 6. **`isSubmitting` from `formState`** — use for loading/disabled state instead of manual `useState(loading)`.
 7. **`handleSubmit(onSubmit)`** — wire to button's `onPress`.
 

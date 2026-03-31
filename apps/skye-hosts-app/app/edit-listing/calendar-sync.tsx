@@ -16,7 +16,6 @@ import {
   Portal,
   Text,
 } from "react-native-paper";
-import * as Clipboard from "expo-clipboard";
 import type {
   ICalendarSyncResponseDto,
   IGetCalendarSyncsResponseDto,
@@ -121,11 +120,6 @@ export default function CalendarSyncScreen() {
     } finally {
       setSyncingId(null);
     }
-  };
-
-  const handleCopyExportUrl = async (url: string) => {
-    await Clipboard.setStringAsync(url);
-    showSnackbar("Export link copied to clipboard", "success");
   };
 
   return (
@@ -256,16 +250,6 @@ export default function CalendarSyncScreen() {
                     icon="sync"
                   >
                     Sync now
-                  </Button>
-                )}
-                {sync.isExportEnabled && (
-                  <Button
-                    mode="outlined"
-                    compact
-                    onPress={() => handleCopyExportUrl(sync.exportUrl)}
-                    icon="content-copy"
-                  >
-                    Copy export link
                   </Button>
                 )}
               </View>
