@@ -13,6 +13,7 @@ import 'react-day-picker/style.css';
 import {
   DatePickerHeaderText,
   dayPickerThemeSx,
+  useHoverRange,
 } from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
@@ -47,6 +48,7 @@ export function ListingDatePickerModal({
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
   const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
   const [selectingPhase, setSelectingPhase] = useState<'from' | 'to'>('from');
+  const hoverRangeProps = useHoverRange(from, to);
 
   useEffect(() => {
     if (open) {
@@ -132,6 +134,7 @@ export function ListingDatePickerModal({
             selected={selected}
             onSelect={() => {}}
             onDayClick={handleDayClick}
+            {...hoverRangeProps}
             disabled={
               selectingPhase === 'to'
                 ? buildNightDisabledMatcher(

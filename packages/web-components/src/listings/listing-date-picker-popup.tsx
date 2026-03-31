@@ -12,6 +12,7 @@ import 'react-day-picker/style.css';
 import {
   DatePickerHeaderText,
   dayPickerThemeSx,
+  useHoverRange,
 } from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
@@ -51,6 +52,7 @@ export function ListingDatePickerPopup({
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // 'from' = waiting for check-in click, 'to' = waiting for check-out click
   const [selectingPhase, setSelectingPhase] = useState<'from' | 'to'>('from');
+  const hoverRangeProps = useHoverRange(from, to);
 
   // Sync when external fields (typed inputs) change while popup is open.
   // Only react to non-null values to avoid overwriting popup-initiated state.
@@ -216,6 +218,7 @@ export function ListingDatePickerPopup({
             selected={selected}
             onSelect={() => {}}
             onDayClick={handleDayClick}
+            {...hoverRangeProps}
             disabled={
               selectingPhase === 'to'
                 ? buildNightDisabledMatcher(
