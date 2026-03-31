@@ -1,13 +1,6 @@
 ====
 Next
 ====
-- update listing editor card to displya same info as calendar sync card (excluding arrow and sync now). Define any shared logic/text in a shared location, create    
-re-useable component if optimal. any decisions ask 
-- block out dates on pickers from:
-  - existing calendar bookings on our site
-  - bookings from air bnb
-- Why the fuck does apiBaseUrl exist in api .env not used.
-  - it was made by calendar sycn work, not sure whats it used for but something?
 - redeploy app
   - unset AWS_CLOUDFRONT_IMAGES_DOMAIN
   - test if image upload failure gracefully shows error
@@ -119,14 +112,7 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- Examining existing patterns within host app and in particular (the calendar sync feature)
-- Calendar sync enable / disable
-  - Examine the current implemtation of External Calendar Sync in hosts App.
-  - It is possible to toggle either an import or export as Enabled or Disabled.
-  - Determine whether this feature is superfluous. I.E: Is this a desirable feature from the Hosts perspective. What is the motivation for them to disable a External Calendar sync rather than simply deleting it.
-  - Recommend if you think it should be retained due to value it provides or should be removed for simplification
-- Shold enable/disable switch even exist for calendar sync, I mean when would you disable and not just delete?
-- If you delete sync but don't select 'delete dates' , are you in a stuck position, how to clear dates?
+- Back button issue after adding ext cal
 
 ==================
 Re-useable prompts

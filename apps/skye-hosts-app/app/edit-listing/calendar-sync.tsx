@@ -1,5 +1,5 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -20,6 +20,8 @@ import type {
   ICalendarSyncResponseDto,
   IGetCalendarSyncsResponseDto,
 } from "@repo/skye-hosts-api-client";
+import { tooltipStyles } from "../calendar/components/tooltip-styles";
+import { clampTooltipLeft } from "../utils/tooltip";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
@@ -62,6 +64,17 @@ export default function CalendarSyncScreen() {
   } | null>(null);
   const [syncingId, setSyncingId] = useState<number | null>(null);
   const [helpVisible, setHelpVisible] = useState(false);
+  const [infoTooltip, setInfoTooltip] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const infoIconRef = useRef<View>(null);
+
+  const showInfoTooltip = useCallback(() => {
+    infoIconRef.current?.measureInWindow((x, y, _w, h) => {
+      setInfoTooltip({ x, y: y + h + 4 });
+    });
+  }, []);
 
   const showSnackbar = useCallback(
     (message: string, type: "error" | "success" = "error") => {
@@ -241,16 +254,27 @@ export default function CalendarSyncScreen() {
 
               <View style={styles.syncActions}>
                 {sync.importUrl && sync.isImportEnabled && (
-                  <Button
-                    mode="outlined"
-                    compact
-                    onPress={() => handleTriggerImport(sync.id)}
-                    loading={syncingId === sync.id}
-                    disabled={syncingId === sync.id}
-                    icon="sync"
-                  >
-                    Sync now
-                  </Button>
+                  <>
+                    <Button
+                      mode="outlined"
+                      compact
+                      onPress={() => handleTriggerImport(sync.id)}
+                      loading={syncingId === sync.id}
+                      disabled={syncingId === sync.id}
+                      icon="download"
+                    >
+                      Import now
+                    </Button>
+                    <Pressable onPress={showInfoTooltip}>
+                      <View ref={infoIconRef}>
+                        <Icon
+                          source="information-outline"
+                          size={20}
+                          color={colors.textSecondary}
+                        />
+                      </View>
+                    </Pressable>
+                  </>
                 )}
               </View>
             </Pressable>
@@ -311,6 +335,30 @@ export default function CalendarSyncScreen() {
           </Dialog.Actions>
         </Dialog>
       </Portal>
+
+      {infoTooltip && (
+        <Portal>
+          <Pressable
+            style={tooltipStyles.backdrop}
+            onPress={() => setInfoTooltip(null)}
+          >
+            <View
+              style={[
+                tooltipStyles.tooltip,
+                {
+                  left: clampTooltipLeft(infoTooltip.x),
+                  top: infoTooltip.y,
+                },
+              ]}
+            >
+              <Text style={tooltipStyles.text}>
+                Pulls the latest calendar from the connected platform. Export
+                updates happen automatically and cannot be triggered manually.
+              </Text>
+            </View>
+          </Pressable>
+        </Portal>
+      )}
 
       <AppSnackbar
         message={snackbar?.message ?? ""}
@@ -382,6 +430,7 @@ const styles = StyleSheet.create({
   },
   syncActions: {
     flexDirection: "row",
+    alignItems: "center",
     gap: spacing.sm,
     flexWrap: "wrap",
   },

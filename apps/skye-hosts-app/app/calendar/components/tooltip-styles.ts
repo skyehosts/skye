@@ -3,8 +3,11 @@ import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
 
-export const TOOLTIP_MAX_WIDTH = 280;
-export const TOOLTIP_MARGIN = 8;
+export {
+  TOOLTIP_MAX_WIDTH,
+  TOOLTIP_MARGIN,
+  clampTooltipLeft,
+} from "../../utils/tooltip";
 
 export function formatTooltipDate(dateStr: string): string {
   const d = new Date(dateStr + "T00:00:00");

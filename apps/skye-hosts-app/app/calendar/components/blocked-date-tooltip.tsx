@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   Pressable,
   StyleSheet,
   Text,
@@ -19,8 +18,7 @@ import type { BlockedDateInfo } from "./calendar-list";
 import {
   formatTooltipDate,
   tooltipStyles,
-  TOOLTIP_MAX_WIDTH,
-  TOOLTIP_MARGIN,
+  clampTooltipLeft,
 } from "./tooltip-styles";
 
 interface BlockedDateTooltipProps {
@@ -77,15 +75,7 @@ function BlockedDateTooltipInner({
           style={[
             tooltipStyles.tooltip,
             {
-              left: Math.max(
-                TOOLTIP_MARGIN,
-                Math.min(
-                  position.x,
-                  Dimensions.get("window").width -
-                    TOOLTIP_MAX_WIDTH -
-                    TOOLTIP_MARGIN,
-                ),
-              ),
+              left: clampTooltipLeft(position.x),
               top: position.y - 10,
             },
           ]}

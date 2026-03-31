@@ -1,11 +1,10 @@
 import React from "react";
-import { Dimensions, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Portal } from "react-native-paper";
 import {
   formatTooltipDate,
   tooltipStyles,
-  TOOLTIP_MAX_WIDTH,
-  TOOLTIP_MARGIN,
+  clampTooltipLeft,
 } from "./tooltip-styles";
 
 interface RestrictedDateTooltipProps {
@@ -28,15 +27,7 @@ function RestrictedDateTooltipInner({
           style={[
             tooltipStyles.tooltip,
             {
-              left: Math.max(
-                TOOLTIP_MARGIN,
-                Math.min(
-                  position.x,
-                  Dimensions.get("window").width -
-                    TOOLTIP_MAX_WIDTH -
-                    TOOLTIP_MARGIN,
-                ),
-              ),
+              left: clampTooltipLeft(position.x),
               top: position.y - 10,
             },
           ]}

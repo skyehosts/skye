@@ -218,6 +218,15 @@ export default async function DemoPage() {
 - **Check `commonStyles` before writing any new local style.** `app/theme/common-styles.ts` is the single source of truth for shared patterns. Before adding a style to a local `StyleSheet.create()`, check if an equivalent already exists in `commonStyles` and use that instead.
 - **Promote repeated styles to `commonStyles`.** If the same style object appears in more than one file, move it to `common-styles.ts` and replace all local copies. Key shared patterns already there include: `card`, `modal`, `modalTitle`, `row`, `divider`, `borderedRows`, `itemTitle`, `itemSubtext`, `editSection`, `editSectionCards`, `sectionLoader` — use these rather than redefining them locally.
 
+## Guide for: Tooltips in skye-hosts-app
+
+- **Do NOT use react-native-paper's `<Tooltip>`** — it does not reliably clamp to viewport bounds and can overflow off-screen.
+- Use the viewport-safe tooltip pattern: a `<Portal>` with a backdrop `<Pressable>` to dismiss, and a positioned `<View>` using `clampTooltipLeft()` from `app/utils/tooltip.ts` for horizontal positioning.
+- Shared tooltip styles (container, text, backdrop) live in `app/calendar/components/tooltip-styles.ts`.
+- `clampTooltipLeft(x)` guarantees the tooltip stays within the viewport with an 8px margin on both sides.
+- To measure trigger position, use `ref.current.measureInWindow((x, y, w, h) => ...)`.
+- See `app/components/calendar-sync-summary-card.tsx` for a canonical example of an info-icon tooltip, and `app/calendar/components/blocked-date-tooltip.tsx` for a full calendar tooltip.
+
 ## Guide for: Styling in web apps (Next.js / MUI)
 
 - **Never hardcode hex colors** — use MUI theme tokens in components and palette imports in theme config.
