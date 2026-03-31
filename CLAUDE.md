@@ -5,6 +5,7 @@
 - Always run pnpm lint and pnpm build after making changes and fix issues if present.
 - Then run pnpm format
 - After you do things, if there are steps I need to take like adding env vars etc, create a new file in /docs/user-todos/x.md
+- After completing work on any feature, update `docs/architecture/`. If no file exists for the feature, create one. If one exists, keep it current. Focus on: critical journeys, unintuitive or concealed logic, non-obvious design decisions, and high-level flow. Not exhaustive references. Also update `docs/architecture/table-of-contents.md` if a new file was created.
 
 ## Guide for: Error handling and observability
 

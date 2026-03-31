@@ -106,6 +106,7 @@ export interface BlockedDateInfo {
   source: CalendarBlockSource;
   platform: CalendarSyncPlatform | null;
   blockId: number;
+  calendarSyncId: number | null;
 }
 
 interface CalendarListProps {
@@ -159,6 +160,7 @@ export function CalendarList({
             ? (platformBySyncId?.get(block.calendarSyncId) ?? null)
             : null,
         blockId: block.id,
+        calendarSyncId: block.calendarSyncId,
       };
       // endDate is exclusive per iCal DTEND semantics
       for (const d of expandDateRange(block.startDate, block.endDate, false)) {

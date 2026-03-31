@@ -12,6 +12,16 @@ const MAX_RESPONSE_SIZE = 1_000_000; // 1MB
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_CONSECUTIVE_FAILURES = 10;
 
+class CalendarFetchError extends Error {
+  constructor(
+    public readonly statusCode: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = 'CalendarFetchError';
+  }
+}
+
 @Injectable()
 export class CalendarImportService {
   private readonly logger = new Logger(CalendarImportService.name);
@@ -61,34 +71,45 @@ export class CalendarImportService {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
+      const transient = this.isTransientError(error);
 
       sync.lastImportAt = new Date();
       sync.lastImportStatus = 'error';
       sync.lastImportError = errorMessage;
-      sync.consecutiveFailures += 1;
 
-      this.logger.error(
-        `Import failed for sync ${sync.id} (listing ${sync.listingId}): ${errorMessage}`,
-        error instanceof Error ? error.stack : undefined,
-      );
+      if (transient) {
+        this.logger.error(
+          `Transient import error for sync ${sync.id} (listing ${sync.listingId}), consecutive failures unchanged at ${sync.consecutiveFailures}: ${errorMessage}`,
+          error instanceof Error ? error.stack : undefined,
+        );
+      } else {
+        sync.consecutiveFailures += 1;
+
+        this.logger.error(
+          `Import failed for sync ${sync.id} (listing ${sync.listingId}): ${errorMessage}`,
+          error instanceof Error ? error.stack : undefined,
+        );
+
+        if (sync.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
+          sync.isImportEnabled = false;
+          this.logger.error(
+            `Auto-disabled import for sync ${sync.id} after ${MAX_CONSECUTIVE_FAILURES} consecutive permanent failures`,
+          );
+          Sentry.captureMessage(
+            `Calendar sync auto-disabled: sync ${sync.id}, listing ${sync.listingId}, platform ${sync.platform}`,
+            'warning',
+          );
+        }
+      }
+
       Sentry.captureException(error, {
         tags: {
           calendarSyncId: sync.id,
           listingId: sync.listingId,
           platform: sync.platform,
+          errorType: transient ? 'transient' : 'permanent',
         },
       });
-
-      if (sync.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-        sync.isImportEnabled = false;
-        this.logger.error(
-          `Auto-disabled import for sync ${sync.id} after ${MAX_CONSECUTIVE_FAILURES} consecutive failures`,
-        );
-        Sentry.captureMessage(
-          `Calendar sync auto-disabled: sync ${sync.id}, listing ${sync.listingId}, platform ${sync.platform}`,
-          'warning',
-        );
-      }
     }
 
     // Final check: sync may have been deleted during import (race with user
@@ -105,6 +126,26 @@ export class CalendarImportService {
     return sync;
   }
 
+  /**
+   * Returns true for infrastructure/transient failures that should not count
+   * toward the auto-disable threshold (e.g. platform temporarily down, rate
+   * limited, network timeout). Returns false for permanent failures that
+   * indicate a bad URL or misconfiguration (e.g. 404, 401, parse error).
+   */
+  private isTransientError(error: unknown): boolean {
+    // Timeout (AbortController fires)
+    if (error instanceof Error && error.name === 'AbortError') return true;
+    // HTTP errors: 5xx (server error) and 429 (rate limited) are transient
+    if (error instanceof CalendarFetchError) {
+      return error.statusCode >= 500 || error.statusCode === 429;
+    }
+    // Network-level errors (ECONNREFUSED, ENOTFOUND, etc.) surface as TypeError
+    // from the fetch API — treat as transient infrastructure issues
+    if (error instanceof TypeError) return true;
+    // Everything else (parse errors, size errors, 4xx) is permanent
+    return false;
+  }
+
   private async fetchIcal(url: string): Promise<string> {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
@@ -116,7 +157,10 @@ export class CalendarImportService {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        throw new CalendarFetchError(
+          response.status,
+          `HTTP ${response.status}: ${response.statusText}`,
+        );
       }
 
       const contentLength = response.headers.get('content-length');

@@ -113,6 +113,23 @@ function BlockedDateTooltipInner({
                     )}
                   </Pressable>
                 </>
+              ) : info.calendarSyncId === null ? (
+                <>
+                  <Text style={tooltipStyles.title}>
+                    Blocked on {getPlatformName(info.platform)}
+                  </Text>
+                  <Pressable
+                    style={styles.removeButton}
+                    onPress={() => handleRemoveBlock(info.blockId)}
+                    disabled={removing !== null}
+                  >
+                    {removing === info.blockId ? (
+                      <ActivityIndicator size="small" color={colors.danger} />
+                    ) : (
+                      <Text style={styles.removeText}>Remove block</Text>
+                    )}
+                  </Pressable>
+                </>
               ) : (
                 <>
                   <Text style={tooltipStyles.title}>
