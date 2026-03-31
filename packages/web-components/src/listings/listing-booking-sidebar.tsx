@@ -4,6 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -12,14 +13,19 @@ import { differenceInCalendarDays, format, isValid, parse } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerPopup } from './listing-date-picker-popup';
+import { GuestCounterRows } from './listing-guest-counter-rows';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
-import { ListingGuestSelectorPopup } from './listing-guest-selector-popup';
 import type {
   ListingBookingStateProps,
   ListingGuestRuleProps,
   ListingNightRuleProps,
 } from './listing-guest-types';
-import { formatGuestSummary, getMinNightsForDate } from './listing-guest-types';
+import {
+  buildGuestInfoText,
+  buildGuestRows,
+  formatGuestSummary,
+  getMinNightsForDate,
+} from './listing-guest-types';
 
 const DATE_FORMAT = 'dd/MM/yyyy';
 
@@ -79,6 +85,12 @@ export function ListingBookingSidebar({
 }: ListingBookingSidebarProps) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
+  const guestRows = buildGuestRows(
+    maxGuests,
+    childrenAllowed,
+    infantsAllowed,
+    petsAllowed,
+  );
   const dateInputSx = {
     ...dateInputBaseSx,
     fontFamily: theme.typography.fontFamily,
@@ -250,38 +262,61 @@ export function ListingBookingSidebar({
 
                 {/* Guest selector row — hidden when date popup is open */}
                 <Box
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setGuestModalOpen(true);
-                  }}
                   sx={{
-                    p: 1.5,
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                    cursor: 'pointer',
                     ...(dateModalOpen && { visibility: 'hidden' }),
                   }}
                 >
-                  <Typography variant="caption" sx={captionSx}>
-                    Guests
-                  </Typography>
-                  <Typography variant="body2">
-                    {formatGuestSummary(guests)}
-                  </Typography>
+                  <Box
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGuestModalOpen(!guestModalOpen);
+                    }}
+                    sx={{
+                      p: 1.5,
+                      borderTop: '1px solid',
+                      borderColor: 'divider',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Typography variant="caption" sx={captionSx}>
+                      Guests
+                    </Typography>
+                    <Typography variant="body2">
+                      {formatGuestSummary(guests)}
+                    </Typography>
+                  </Box>
+
+                  <Collapse in={isDesktop && guestModalOpen}>
+                    <Box
+                      onClick={(e) => e.stopPropagation()}
+                      sx={{ px: 1.5, pb: 1.5 }}
+                    >
+                      <GuestCounterRows
+                        counts={guests}
+                        rows={guestRows}
+                        onChangeKey={(key, delta) => {
+                          handleGuestChange({
+                            ...guests,
+                            [key]: guests[key] + delta,
+                          });
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 1 }}
+                      >
+                        {buildGuestInfoText(
+                          maxGuests,
+                          petsAllowed,
+                          childrenAllowed,
+                          infantsAllowed,
+                        )}
+                      </Typography>
+                    </Box>
+                  </Collapse>
                 </Box>
               </Box>
-
-              {/* Desktop guest selector popup — outside overflow:hidden bordered box */}
-              <ListingGuestSelectorPopup
-                open={isDesktop && guestModalOpen}
-                onClose={() => setGuestModalOpen(false)}
-                onChange={handleGuestChange}
-                initialGuests={guests}
-                maxGuests={maxGuests}
-                childrenAllowed={childrenAllowed}
-                infantsAllowed={infantsAllowed}
-                petsAllowed={petsAllowed}
-              />
 
               {/* Desktop date picker popup */}
               <ListingDatePickerPopup
