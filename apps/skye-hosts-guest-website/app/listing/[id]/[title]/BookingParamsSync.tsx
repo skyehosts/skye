@@ -1,6 +1,8 @@
 'use client';
 
 import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { ListingBookingSidebar } from '@repo/web-components/listings/listing-booking-sidebar';
 import type {
   BookingSearchParams,
@@ -47,6 +49,9 @@ export function BookingParamsSync({
 
   const { unavailableDates } = useListingUnavailability(listingId);
 
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+
   const bookingState = useListingBookingState({
     initialDateRange: initialBookingParams.dateRange,
     initialGuests: initialBookingParams.guests,
@@ -74,6 +79,7 @@ export function BookingParamsSync({
           {...guestRuleProps}
           {...nightRuleProps}
           {...bookingState}
+          dateModalOpen={isDesktop && bookingState.dateModalOpen}
           unavailableDates={unavailableDates}
         />
       </Box>
@@ -83,6 +89,7 @@ export function BookingParamsSync({
         {...guestRuleProps}
         {...nightRuleProps}
         {...bookingState}
+        dateModalOpen={!isDesktop && bookingState.dateModalOpen}
         unavailableDates={unavailableDates}
       />
     </>
