@@ -8,7 +8,6 @@ import Collapse from '@mui/material/Collapse';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { formatShortDateRange } from '@repo/common';
 import { differenceInCalendarDays, format, isValid, parse } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
@@ -349,27 +348,6 @@ export function ListingBookingSidebar({
             >
               {dateRange ? 'Reserve' : 'Check availability'}
             </Button>
-
-            {dateRange && (
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  {formatShortDateRange(dateRange.from, dateRange.to)}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    color: 'primary.main',
-                  }}
-                  onClick={() => setDateModalOpen(true)}
-                >
-                  Change dates
-                </Typography>
-              </Box>
-            )}
           </CardContent>
         </Card>
       </Box>
