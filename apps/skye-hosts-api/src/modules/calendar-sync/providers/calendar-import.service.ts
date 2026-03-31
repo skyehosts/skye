@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as Sentry from '@sentry/nestjs';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, IsNull, Repository } from 'typeorm';
 import { CalendarBlock, CalendarSync } from '../entities';
 import {
   IcalParserService,
@@ -11,6 +11,7 @@ import {
 const MAX_RESPONSE_SIZE = 1_000_000; // 1MB
 const FETCH_TIMEOUT_MS = 10_000;
 const MAX_CONSECUTIVE_FAILURES = 10;
+const VERBOSE_LOGGING = !!process.env.CALENDAR_SYNC_VERBOSE_LOGGING;
 
 class CalendarFetchError extends Error {
   constructor(
@@ -51,12 +52,14 @@ export class CalendarImportService {
         select: ['id'],
       });
       if (!stillExists) {
-        this.logger.debug(
-          `Sync ${sync.id} was deleted during import, skipping reconciliation`,
-        );
+        if (VERBOSE_LOGGING)
+          this.logger.debug(
+            `Sync ${sync.id} was deleted during import, skipping reconciliation`,
+          );
         return sync;
       }
 
+      await this.adoptOrphanedBlocks(sync.id, sync.listingId, events);
       await this.reconcileBlocks(sync.id, sync.listingId, events);
 
       sync.lastImportAt = new Date();
@@ -65,9 +68,10 @@ export class CalendarImportService {
       sync.lastImportEventCount = events.length;
       sync.consecutiveFailures = 0;
 
-      this.logger.debug(
-        `Import success for sync ${sync.id} (listing ${sync.listingId}): ${events.length} events`,
-      );
+      if (VERBOSE_LOGGING)
+        this.logger.debug(
+          `Import success for sync ${sync.id} (listing ${sync.listingId}): ${events.length} events`,
+        );
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -184,6 +188,57 @@ export class CalendarImportService {
     }
   }
 
+  /**
+   * Re-assigns orphaned import blocks (calendarSyncId = null) that match
+   * incoming events to the new sync. This prevents duplicate blocks when a
+   * host deletes a sync with "Remove sync only" and then re-imports the same
+   * calendar under a new sync record.
+   */
+  private async adoptOrphanedBlocks(
+    calendarSyncId: number,
+    listingId: number,
+    events: ParsedCalendarEvent[],
+  ): Promise<void> {
+    const uids = events.map((e) => e.uid);
+
+    if (VERBOSE_LOGGING)
+      this.logger.debug(
+        `[adoptOrphanedBlocks] sync=${calendarSyncId} listing=${listingId} incomingEvents=${events.length} uids=${JSON.stringify(uids)}`,
+      );
+
+    if (uids.length === 0) {
+      if (VERBOSE_LOGGING)
+        this.logger.debug(
+          `[adoptOrphanedBlocks] sync=${calendarSyncId} — skipping, no incoming events`,
+        );
+      return;
+    }
+
+    // Log how many orphaned blocks exist before adoption
+    const orphanedCount = await this.calendarBlockRepo.count({
+      where: { listingId, calendarSyncId: IsNull(), source: 'import' },
+    });
+    if (VERBOSE_LOGGING)
+      this.logger.debug(
+        `[adoptOrphanedBlocks] sync=${calendarSyncId} listing=${listingId} orphanedBlocksFound=${orphanedCount}`,
+      );
+
+    const result = await this.calendarBlockRepo.update(
+      {
+        listingId,
+        calendarSyncId: IsNull() as unknown as number,
+        source: 'import',
+        externalUid: In(uids),
+      },
+      { calendarSyncId },
+    );
+
+    if (VERBOSE_LOGGING)
+      this.logger.debug(
+        `[adoptOrphanedBlocks] sync=${calendarSyncId} listing=${listingId} blocksAdopted=${result.affected ?? 0}`,
+      );
+  }
+
   private async reconcileBlocks(
     calendarSyncId: number,
     listingId: number,
@@ -264,9 +319,10 @@ export class CalendarImportService {
 
       await queryRunner.commitTransaction();
 
-      this.logger.debug(
-        `Reconciled sync ${calendarSyncId}: +${toInsert.length} ~${toUpdate.length} -${toDeleteIds.length}`,
-      );
+      if (VERBOSE_LOGGING)
+        this.logger.debug(
+          `Reconciled sync ${calendarSyncId}: +${toInsert.length} ~${toUpdate.length} -${toDeleteIds.length}`,
+        );
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;

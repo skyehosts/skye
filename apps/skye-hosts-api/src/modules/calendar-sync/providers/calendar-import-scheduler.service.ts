@@ -9,6 +9,7 @@ import { CalendarImportService } from './calendar-import.service';
 
 const CONCURRENCY = 20;
 const PAGE_SIZE = 100;
+const VERBOSE_LOGGING = !!process.env.CALENDAR_SYNC_VERBOSE_LOGGING;
 
 @Injectable()
 export class CalendarImportSchedulerService implements OnModuleInit {
@@ -33,11 +34,12 @@ export class CalendarImportSchedulerService implements OnModuleInit {
       start: true,
     });
     this.schedulerRegistry.addCronJob('calendar-sync-import', job);
-    this.logger.debug(`Calendar import poller registered (${expression})`);
+    if (VERBOSE_LOGGING)
+      this.logger.debug(`Calendar import poller registered (${expression})`);
   }
 
   async pollAndImport(): Promise<void> {
-    this.logger.debug('Calendar import poll started');
+    if (VERBOSE_LOGGING) this.logger.debug('Calendar import poll started');
     const startTime = Date.now();
 
     try {
@@ -87,9 +89,10 @@ export class CalendarImportSchedulerService implements OnModuleInit {
       }
 
       const durationMs = Date.now() - startTime;
-      this.logger.debug(
-        `Calendar import poll completed: ${successCount} success, ${failureCount} failed, ${durationMs}ms`,
-      );
+      if (VERBOSE_LOGGING)
+        this.logger.debug(
+          `Calendar import poll completed: ${successCount} success, ${failureCount} failed, ${durationMs}ms`,
+        );
 
       if (durationMs > 30 * 60 * 1000) {
         this.logger.error(

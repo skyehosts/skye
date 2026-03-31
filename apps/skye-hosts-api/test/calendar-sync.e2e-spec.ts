@@ -334,6 +334,92 @@ describe('Calendar Sync (e2e)', () => {
     });
   });
 
+  // ── ORPHANED BLOCKS ───────────────────────────────────
+
+  describe('Orphaned blocks (delete sync only, keep blocks)', () => {
+    it('should set calendarSyncId to null on blocks when sync is deleted with removeBlocks=false', async () => {
+      // Create a sync and a manual block linked to it (simulating an imported block)
+      const syncRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ platform: 'airbnb', isExportEnabled: false })
+        .expect(201);
+      const syncId = syncRes.body.payload.sync.id;
+
+      // Create a block (manual — we can't do a real import in e2e, but the
+      // delete-sync-only path with removeBlocks=false is what we're testing)
+      const blockRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-09-01', endDate: '2027-09-05' })
+        .expect(201);
+      const blockId = blockRes.body.payload.block.id;
+
+      // Delete the sync without removing blocks
+      await request(app.getHttpServer())
+        .delete(`/calendar-sync/${syncId}?removeBlocks=false`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .expect(200);
+
+      // Sync should be gone
+      const listRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`);
+      const remaining = listRes.body.payload.syncs.find(
+        (s: { id: number }) => s.id === syncId,
+      );
+      expect(remaining).toBeUndefined();
+
+      // Block should still exist
+      const blocksRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`);
+      const block = blocksRes.body.payload.blocks.find(
+        (b: { id: number }) => b.id === blockId,
+      );
+      expect(block).toBeDefined();
+      // calendarSyncId should be null (orphaned)
+      expect(block.calendarSyncId).toBeNull();
+    });
+
+    it('should allow deleting an orphaned imported block via DELETE /calendar-sync/blocks/:id', async () => {
+      // Create and delete a sync, keeping blocks
+      const syncRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ platform: 'booking_com', isExportEnabled: false })
+        .expect(201);
+      const syncId = syncRes.body.payload.sync.id;
+
+      const blockRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-10-01', endDate: '2027-10-03' })
+        .expect(201);
+      const blockId = blockRes.body.payload.block.id;
+
+      await request(app.getHttpServer())
+        .delete(`/calendar-sync/${syncId}?removeBlocks=false`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .expect(200);
+
+      // Should be able to delete the now-orphaned block
+      await request(app.getHttpServer())
+        .delete(`/calendar-sync/blocks/${blockId}`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .expect(200);
+
+      // Block should be gone
+      const blocksRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`);
+      const block = blocksRes.body.payload.blocks.find(
+        (b: { id: number }) => b.id === blockId,
+      );
+      expect(block).toBeUndefined();
+    });
+  });
+
   // ── PERMISSIONS ───────────────────────────────────────
 
   describe('Permission enforcement', () => {

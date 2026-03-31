@@ -55,6 +55,10 @@ When a host deletes a sync and chooses **"Remove sync only"** (not dates), `Cale
 
 The calendar tooltip detects this state (`source = 'import'` AND `calendarSyncId = null`) and shows a **"Remove block"** button, allowing the host to clear them individually. Active imported blocks (live sync) instead show guidance to cancel on the external platform.
 
+### Re-import after "delete sync only"
+
+If a host re-creates a sync for the same iCal URL, `reconcileBlocks()` scopes to the new `calendarSyncId` — orphaned blocks are invisible to it, which would cause duplicate blocks for the same dates. To prevent this, `adoptOrphanedBlocks()` runs before reconciliation: it re-assigns any orphaned blocks whose `externalUid` matches an incoming event to the new sync ID. Reconciliation then finds them as existing records and updates rather than duplicating. Orphaned blocks with no matching UID are left alone (host can clear manually).
+
 ## Sentry tagging
 
 All import errors are sent to Sentry with tags: `calendarSyncId`, `listingId`, `platform`, `errorType` (`'transient'` or `'permanent'`). Use these to filter auto-disable incidents.
