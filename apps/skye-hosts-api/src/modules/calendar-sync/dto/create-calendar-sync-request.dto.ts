@@ -7,6 +7,10 @@ export class CreateCalendarSyncRequestDto implements ICreateCalendarSyncRequestD
   platform: 'airbnb' | 'booking_com' | 'other';
 
   @IsOptional()
+  @IsString()
+  label?: string;
+
+  @IsOptional()
   @IsUrl()
   importUrl?: string;
 

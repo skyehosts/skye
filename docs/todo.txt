@@ -4,7 +4,6 @@ Next
 - redeploy app
   - unset AWS_CLOUDFRONT_IMAGES_DOMAIN
   - test if image upload failure gracefully shows error
-- Make Request & Response logging env toggleabl
 - Once verified image upload failure captured in app sentry
   - add heroku env var AWS_S3_IMAGES_BUCKET and check working
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
@@ -74,7 +73,6 @@ Host App
   - Notification
 - Login / Sign - up separation in app.?
 - deploy to device succesfully via eas / gha
-- Test scheduled messages arriving after booking
 - Notifications (Messages from guest)
 - Today page
 - Calendar page

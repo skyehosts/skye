@@ -29,11 +29,12 @@ const makeBookingRepo = () => ({
 
 describe('CalendarSyncService', () => {
   let service: CalendarSyncService;
+  let syncRepo: ReturnType<typeof makeSyncRepo>;
   let calendarBlockRepo: ReturnType<typeof makeBlockRepo>;
   let bookingRepo: ReturnType<typeof makeBookingRepo>;
 
   beforeEach(async () => {
-    const syncRepo = makeSyncRepo();
+    syncRepo = makeSyncRepo();
     calendarBlockRepo = makeBlockRepo();
     bookingRepo = makeBookingRepo();
 
@@ -198,6 +199,113 @@ describe('CalendarSyncService', () => {
       expect(result).toEqual([
         { startDate: '2027-06-01', endDate: '2027-06-30' },
       ]);
+    });
+
+    it('should scope block query to the given listingId with a future endDate filter', async () => {
+      calendarBlockRepo.find.mockResolvedValue([]);
+      bookingRepo.find.mockResolvedValue([]);
+
+      await service.getUnavailabilityForListing(42);
+
+      const [opts] = calendarBlockRepo.find.mock.calls[0];
+      expect(opts.where.listingId).toBe(42);
+      expect(opts.where.endDate).toBeDefined(); // MoreThanOrEqual operator present
+    });
+
+    it('should scope booking query to listingId, future checkOutDate, and confirmed/pending status', async () => {
+      calendarBlockRepo.find.mockResolvedValue([]);
+      bookingRepo.find.mockResolvedValue([]);
+
+      await service.getUnavailabilityForListing(42);
+
+      const [opts] = bookingRepo.find.mock.calls[0];
+      expect(opts.where.listingId).toBe(42);
+      expect(opts.where.checkOutDate).toBeDefined(); // MoreThanOrEqual operator present
+      expect(opts.where.status).toBeDefined(); // In(['confirmed', 'pending']) operator present
+    });
+  });
+
+  // ── updateSync ──────────────────────────────────────────────────────────────
+
+  describe('updateSync', () => {
+    function makeExistingSync(
+      overrides: Partial<{
+        isImportEnabled: boolean;
+        consecutiveFailures: number;
+        importUrl: string | null;
+        lastImportError: string | null;
+      }> = {},
+    ) {
+      return {
+        id: 1,
+        importUrl: null,
+        isImportEnabled: true,
+        isExportEnabled: true,
+        consecutiveFailures: 0,
+        lastImportError: null,
+        ...overrides,
+      };
+    }
+
+    it('should reset failures and re-enable import when URL updated and sync was auto-disabled', async () => {
+      const existing = makeExistingSync({
+        consecutiveFailures: 10,
+        isImportEnabled: false,
+        lastImportError: 'HTTP 404: Not Found',
+      });
+      syncRepo.findOne.mockResolvedValue(existing);
+      syncRepo.save.mockImplementation((s) => Promise.resolve(s));
+
+      await service.updateSync(1, {
+        importUrl: 'https://example.com/new.ics',
+      });
+
+      expect(existing.consecutiveFailures).toBe(0);
+      expect(existing.isImportEnabled).toBe(true);
+      expect(existing.lastImportError).toBeNull();
+    });
+
+    it('should not re-enable import when user explicitly passes isImportEnabled: false', async () => {
+      const existing = makeExistingSync({
+        consecutiveFailures: 10,
+        isImportEnabled: false,
+      });
+      syncRepo.findOne.mockResolvedValue(existing);
+      syncRepo.save.mockImplementation((s) => Promise.resolve(s));
+
+      await service.updateSync(1, {
+        importUrl: 'https://example.com/new.ics',
+        isImportEnabled: false,
+      });
+
+      expect(existing.consecutiveFailures).toBe(10); // unchanged
+      expect(existing.isImportEnabled).toBe(false);
+    });
+
+    it('should not reset failures when URL is updated but failures are below threshold', async () => {
+      const existing = makeExistingSync({ consecutiveFailures: 5 });
+      syncRepo.findOne.mockResolvedValue(existing);
+      syncRepo.save.mockImplementation((s) => Promise.resolve(s));
+
+      await service.updateSync(1, {
+        importUrl: 'https://example.com/new.ics',
+      });
+
+      expect(existing.consecutiveFailures).toBe(5); // unchanged
+    });
+
+    it('should not reset failures when importUrl is not provided even with failures at threshold', async () => {
+      const existing = makeExistingSync({
+        consecutiveFailures: 10,
+        isImportEnabled: false,
+      });
+      syncRepo.findOne.mockResolvedValue(existing);
+      syncRepo.save.mockImplementation((s) => Promise.resolve(s));
+
+      await service.updateSync(1, { isExportEnabled: true });
+
+      expect(existing.consecutiveFailures).toBe(10); // unchanged
+      expect(existing.isImportEnabled).toBe(false); // unchanged
     });
   });
 });

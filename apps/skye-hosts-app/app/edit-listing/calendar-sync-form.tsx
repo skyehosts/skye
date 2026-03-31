@@ -185,7 +185,7 @@ export default function CalendarSyncFormScreen() {
           },
           { method: "PATCH" },
         );
-        navigateBackWithFlash("Sync updated");
+        dismissWithFlash("Sync updated");
       } else {
         const result = await fetchApi<ICalendarSyncResponseDto>(
           `/calendar-sync/listing/${id}`,
@@ -220,7 +220,7 @@ export default function CalendarSyncFormScreen() {
             type: "success",
           });
         } else {
-          navigateBackWithFlash("Sync created successfully");
+          dismissWithFlash("Sync created successfully");
         }
       }
     } catch (e) {
@@ -228,8 +228,8 @@ export default function CalendarSyncFormScreen() {
     }
   };
 
-  const navigateBackWithFlash = (flash: string) => {
-    router.replace({
+  const dismissWithFlash = (flash: string) => {
+    router.navigate({
       pathname: "/edit-listing/calendar-sync",
       params: { id, flash },
     });
@@ -261,7 +261,7 @@ export default function CalendarSyncFormScreen() {
         undefined,
         { method: "DELETE" },
       );
-      navigateBackWithFlash("Sync deleted");
+      dismissWithFlash("Sync deleted");
     } catch (e) {
       handleApiError(e, (msg) => setSnackbar({ message: msg, type: "error" }));
     }

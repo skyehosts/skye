@@ -7,6 +7,7 @@ export interface ICalendarSyncDto {
   id: number;
   listingId: number;
   platform: CalendarSyncPlatform;
+  label: string | null;
   importUrl: string | null;
   exportUrl: string;
   lastImportAt: string | null;
