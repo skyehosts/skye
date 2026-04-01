@@ -1,6 +1,7 @@
 ===
 MVP
 ===
+- Info card style on calendar sycn could use some life
 - Decide & implement if public booking possible via signup during booking flow.
 - Test graceful failure error displayed when uploading listing image in App
   - redeploy app
@@ -199,24 +200,3 @@ TLDR:
 On both thes pages in host app:
   - Create message template
   - Edit message template.
-
-                                                                                                                                                       
-  4. Manual blocks don't leak to Airbnb                                                                                                                            
-                                                                                                                                                                   
-  1. Create a manual block on the Skye calendar                                                                                                                    
-  2. Open the listing's iCal export URL in a browser (find it on the calendar sync settings page)
-  3. The export file should contain your bookings but not the manual block you just created                                                                        
-                                                                                                                                                                   
-  5. Imported blocks can't be unblocked here                                                                                                                       
-                                                                                                                                                                   
-  1. If you have an Airbnb calendar synced, find dates blocked by the import (they show the platform icon)                                                         
-  2. Drag-select those dates — the bottom sheet should only show a hint saying to unblock in Airbnb, not an unblock button for those
-                                                                                                                                                                   
-  6. Guidance text shows up                                 
-                                                                                                                                                                   
-  1. Go to the calendar sync settings page (tap the sync icon on the calendar)                                                                                     
-  2. You should see an info section explaining that Skye Hosts is "open by default" and recommending Airbnb be set to "unavailable by default"
-                                                                                                                                                                   
-  7. Can't select past dates                                
-                                                                                                                                                                   
-  1. Try long-pressing on a date in the past — nothing should happen, no selection starts

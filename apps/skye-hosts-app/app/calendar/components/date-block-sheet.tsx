@@ -123,10 +123,11 @@ export function DateBlockSheet({
           )}
         </View>
 
-        {hasManualBlocks && !hasUnblockedDates && (
+        {!hasUnblockedDates && (
           <Text style={styles.hint}>
-            Only manually blocked dates can be unblocked here. Dates imported
-            from Airbnb or other platforms must be unblocked there.
+            {hasManualBlocks
+              ? "Only manually blocked dates can be unblocked here. Dates imported from Airbnb or other platforms must be unblocked there."
+              : "These dates are blocked by an imported calendar (e.g. Airbnb). To unblock them, update availability on that platform."}
           </Text>
         )}
 
@@ -183,7 +184,11 @@ const styles = StyleSheet.create({
   },
   hint: {
     fontSize: typography.sm,
-    color: colors.textSecondary,
+    color: colors.textPrimary,
+    backgroundColor: colors.calendarCellRestricted,
+    padding: spacing.sm,
+    borderRadius: borderRadius.sm,
     marginBottom: spacing.sm,
+    overflow: "hidden",
   },
 });
