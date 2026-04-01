@@ -22,7 +22,9 @@
     "test:e2e": "playwright test",
     "eas-build-post-install": "cd ../.. && pnpm --filter @repo/common build && pnpm --filter @repo/skye-hosts-api-client build",
     "eas-build-local": "set -a && source .env.local && set +a && eas build --profile development --platform android --local --output ./builds/app.apk",
-    "deploy-local": "adb uninstall uk.co.skyehosts; adb install -r ./builds/app.apk"
+    "deploy-local": "adb uninstall uk.co.skyehosts; adb install -r ./builds/app.apk",
+    "generate-icons": "node -e \"const fs=require('fs');const src=process.argv[1];if(!src){console.error('Usage: pnpm generate-icons <path-to-icon>');process.exit(1)}const targets=['icon.png','android-icon-foreground.png','android-icon-background.png'];targets.forEach(t=>{fs.copyFileSync(src,'./assets/'+t);console.log('Updated ./assets/'+t)});console.log('Done — rebuild to apply')\" --",
+    "generate-icons:monochrome": "node -e \"const fs=require('fs');const src=process.argv[1];if(!src){console.error('Usage: pnpm generate-icons:monochrome <path-to-icon>');process.exit(1)}fs.copyFileSync(src,'./assets/android-icon-monochrome.png');console.log('Updated ./assets/android-icon-monochrome.png — rebuild to apply')\" --"
   },
   "dependencies": {
     "@expo/metro-runtime": "~55.0.6",

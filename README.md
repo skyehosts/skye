@@ -147,6 +147,56 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
 adb push 1.jpg /sdcard/DCIM/Camera
 adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/DCIM/Camera/1.jpg
 
+## How to update app icons (skye-hosts-app)
+
+Two scripts handle icon generation — one for the main app icon and one for the Android monochrome (themed) icon, since they require different source images.
+
+### Main icon
+
+```bash
+pnpm --filter skye-hosts-app generate-icons ../../temp/app_icon.png  
+```
+
+**Source image requirements:**
+
+- PNG format
+- Minimum 1024x1024 pixels
+- Square aspect ratio (1:1)
+- Non-transparent — full icon with solid background
+
+**Outputs** (written to `apps/skye-hosts-app/assets/`):
+
+| File | Used by |
+| --- | --- |
+| `icon.png` | iOS app icon |
+| `android-icon-foreground.png` | Android adaptive icon foreground layer |
+| `android-icon-background.png` | Android adaptive icon background layer |
+
+### Monochrome icon (Android 13+ themed icons)
+
+```bash
+pnpm --filter skye-hosts-app generate-icons:monochrome ../../temp/app_icon_monochrome.png  
+```
+
+When users enable "Themed icons" on Android 13+, the OS tints this image to match their wallpaper colour palette. It must be a silhouette so the tinting works correctly.
+
+**Source image requirements:**
+
+- PNG format
+- Minimum 1024x1024 pixels
+- Square aspect ratio (1:1)
+- **Transparent background** — logo/silhouette only (white or black shape on transparent)
+
+**Output** (written to `apps/skye-hosts-app/assets/`):
+
+| File | Used by |
+| --- | --- |
+| `android-icon-monochrome.png` | Android adaptive icon monochrome layer (themed icons) |
+
+### After updating icons
+
+Rebuild via EAS. On Android, uninstall the previous build before installing to clear the cached icon. Expo generates all platform-specific sizes from these source files at build time.
+
 ## How to deploy host app to real device locally from Expo
 
 - Only needed very first time
