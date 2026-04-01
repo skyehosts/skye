@@ -159,6 +159,21 @@ export default function CalendarSyncScreen() {
             </Text>
           </View>
 
+          <View style={styles.infoBanner}>
+            <Icon
+              source="calendar-blank-outline"
+              size={20}
+              color={colors.primary}
+            />
+            <Text style={styles.infoText}>
+              Your Skye Hosts calendar is open by default. We recommend setting
+              your Airbnb calendar to 'unavailable by default' so only your open
+              season dates are available across both platforms. Bookings made on
+              Skye Hosts are shared with connected calendars automatically.
+              Manual blocks you create here stay on Skye Hosts only.
+            </Text>
+          </View>
+
           {syncs.length > 0 &&
             getAggregateSyncDirection(syncs) === "one-way" && (
               <Banner

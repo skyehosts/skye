@@ -154,7 +154,7 @@ Two scripts handle icon generation — one for the main app icon and one for the
 ### Main icon
 
 ```bash
-pnpm --filter skye-hosts-app generate-icons ../../temp/app_icon.png  
+pnpm --filter skye-hosts-app generate-icons ../../temp/app_icon.png
 ```
 
 **Source image requirements:**
@@ -166,16 +166,16 @@ pnpm --filter skye-hosts-app generate-icons ../../temp/app_icon.png
 
 **Outputs** (written to `apps/skye-hosts-app/assets/`):
 
-| File | Used by |
-| --- | --- |
-| `icon.png` | iOS app icon |
+| File                          | Used by                                |
+| ----------------------------- | -------------------------------------- |
+| `icon.png`                    | iOS app icon                           |
 | `android-icon-foreground.png` | Android adaptive icon foreground layer |
 | `android-icon-background.png` | Android adaptive icon background layer |
 
 ### Monochrome icon (Android 13+ themed icons)
 
 ```bash
-pnpm --filter skye-hosts-app generate-icons:monochrome ../../temp/app_icon_monochrome.png  
+pnpm --filter skye-hosts-app generate-icons:monochrome ../../temp/app_icon_monochrome.png
 ```
 
 When users enable "Themed icons" on Android 13+, the OS tints this image to match their wallpaper colour palette. It must be a silhouette so the tinting works correctly.
@@ -189,8 +189,8 @@ When users enable "Themed icons" on Android 13+, the OS tints this image to matc
 
 **Output** (written to `apps/skye-hosts-app/assets/`):
 
-| File | Used by |
-| --- | --- |
+| File                          | Used by                                               |
+| ----------------------------- | ----------------------------------------------------- |
 | `android-icon-monochrome.png` | Android adaptive icon monochrome layer (themed icons) |
 
 ### After updating icons

@@ -50,6 +50,7 @@ export class CalendarExportService {
       this.calendarBlockRepo.find({
         where: {
           listingId: sync.listingId,
+          source: 'import',
           endDate: MoreThanOrEqual(today),
         },
       }),

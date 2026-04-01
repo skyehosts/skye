@@ -20,6 +20,7 @@ import type {
   ICalendarSyncResponseDto,
   IGetCalendarBlocksResponseDto,
   IGetCalendarSyncsResponseDto,
+  IUnblockRangeResponseDto,
 } from '@repo/skye-hosts-api-client';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
 import type { Response } from 'express';
@@ -32,6 +33,7 @@ import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard
 import {
   CreateCalendarBlockRequestDto,
   CreateCalendarSyncRequestDto,
+  UnblockRangeRequestDto,
   UpdateCalendarSyncRequestDto,
 } from '../dto';
 import { CalendarExportService } from '../providers/calendar-export.service';
@@ -203,6 +205,30 @@ export class CalendarSyncController {
     );
 
     return { block: this.calendarSyncService.toBlockDto(block) };
+  }
+
+  @Post('listing/:listingId/blocks/unblock-range')
+  @AuthoriseRole('host')
+  async unblockRange(
+    @Param('listingId', ParseIntPipe) listingId: number,
+    @Body() body: UnblockRangeRequestDto,
+    @AuthenticatedUser() user: IJwtClaims,
+  ): Promise<IUnblockRangeResponseDto> {
+    await this.calendarSyncService.assertPermission(
+      user.sub,
+      listingId,
+      ListingPermission.EDIT_CALENDAR,
+    );
+
+    const blocks = await this.calendarSyncService.unblockRange(
+      listingId,
+      body.startDate,
+      body.endDate,
+    );
+
+    return {
+      blocks: blocks.map((b) => this.calendarSyncService.toBlockDto(b)),
+    };
   }
 
   @Delete('blocks/:id')

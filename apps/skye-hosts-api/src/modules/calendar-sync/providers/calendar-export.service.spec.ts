@@ -181,6 +181,19 @@ describe('CalendarExportService', () => {
     expect(result).toContain('X-WR-CALNAME:Cozy\\; Cabin\\, with\\\\views');
   });
 
+  it('should only query imported blocks, excluding manual blocks from export', async () => {
+    calendarSyncRepo.findOne.mockResolvedValue(mockSync);
+    listingRepo.findOne.mockResolvedValue(mockListing);
+    bookingRepo.find.mockResolvedValue([]);
+    calendarBlockRepo.find.mockResolvedValue([]);
+
+    await service.generateIcal('test-token-123');
+
+    const [opts] = calendarBlockRepo.find.mock.calls[0];
+    expect(opts.where.source).toBe('import');
+    expect(opts.where.listingId).toBe(10);
+  });
+
   it('should use CRLF line endings per RFC 5545', async () => {
     calendarSyncRepo.findOne.mockResolvedValue(mockSync);
     listingRepo.findOne.mockResolvedValue(mockListing);

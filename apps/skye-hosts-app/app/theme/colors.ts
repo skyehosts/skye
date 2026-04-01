@@ -7,6 +7,8 @@ import {
   brandAirbnb,
   brandBookingCom,
   calendarBlockedPink,
+  calendarSelectedBlue,
+  calendarSelectedBlueBorder,
   deepSkyeBlue,
   driftwoodSand,
   grey100,
@@ -77,5 +79,7 @@ export const colors = {
   calendarBarExternal: grey500,
   calendarCellRestricted: autumnBrackenLight,
   calendarCellRestrictedBorder: autumnBracken,
+  calendarCellSelected: calendarSelectedBlue,
+  calendarCellSelectedBorder: calendarSelectedBlueBorder,
   warningBackground: autumnBrackenLight,
 } as const;

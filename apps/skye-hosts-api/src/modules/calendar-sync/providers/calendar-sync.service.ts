@@ -170,6 +170,75 @@ export class CalendarSyncService {
     }
   }
 
+  async unblockRange(
+    listingId: number,
+    rangeStart: string,
+    rangeEnd: string,
+  ): Promise<CalendarBlock[]> {
+    return this.dataSource.transaction(async (manager) => {
+      const blockRepo = manager.getRepository(CalendarBlock);
+
+      // Find manual blocks that overlap the unblock range
+      const overlapping = await blockRepo
+        .createQueryBuilder('block')
+        .where('block.listingId = :listingId', { listingId })
+        .andWhere("block.source = 'manual'")
+        .andWhere('block.startDate < :rangeEnd', { rangeEnd })
+        .andWhere('block.endDate > :rangeStart', { rangeStart })
+        .getMany();
+
+      if (overlapping.length === 0) {
+        return blockRepo.find({
+          where: { listingId },
+          order: { startDate: 'ASC' },
+        });
+      }
+
+      this.logger.debug(
+        `unblockRange(${listingId}, ${rangeStart}..${rangeEnd}): ${overlapping.length} overlapping blocks`,
+      );
+
+      // Delete all overlapping blocks
+      await blockRepo.delete(overlapping.map((b) => b.id));
+
+      // Create trimmed blocks for portions outside the unblock range
+      const newBlocks: Partial<CalendarBlock>[] = [];
+      for (const block of overlapping) {
+        if (block.startDate < rangeStart) {
+          newBlocks.push({
+            listingId,
+            source: 'manual',
+            startDate: block.startDate,
+            endDate: rangeStart,
+            calendarSyncId: null,
+            externalUid: null,
+            summary: null,
+          });
+        }
+        if (block.endDate > rangeEnd) {
+          newBlocks.push({
+            listingId,
+            source: 'manual',
+            startDate: rangeEnd,
+            endDate: block.endDate,
+            calendarSyncId: null,
+            externalUid: null,
+            summary: null,
+          });
+        }
+      }
+
+      if (newBlocks.length > 0) {
+        await blockRepo.save(newBlocks.map((b) => blockRepo.create(b)));
+      }
+
+      return blockRepo.find({
+        where: { listingId },
+        order: { startDate: 'ASC' },
+      });
+    });
+  }
+
   buildExportUrl(exportToken: string): string {
     const baseUrl = this.configService.getAll().apiBaseUrl;
     return `${baseUrl}/calendar-sync/export/${exportToken}.ics`;

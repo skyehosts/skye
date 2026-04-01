@@ -20,6 +20,8 @@ export const rowanBerryLight = '#D4837A';
 export const autumnBracken = '#FF9500';
 export const autumnBrackenLight = '#FFF3E0';
 export const calendarBlockedPink = '#F5E0DE';
+export const calendarSelectedBlue = '#DBEAFE';
+export const calendarSelectedBlueBorder = '#93C5FD';
 
 /** Neutral / UI colours */
 export const white = '#FFFFFF';

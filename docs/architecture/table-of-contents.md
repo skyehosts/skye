@@ -4,6 +4,7 @@ High-level documentation of key features and systems. These docs focus on critic
 
 ## Files
 
-| File                                   | Feature                                                               |
-| -------------------------------------- | --------------------------------------------------------------------- |
-| [calendar-sync.md](./calendar-sync.md) | External calendar sync (import/export, auto-disable, orphaned blocks) |
+| File                                                   | Feature                                                               |
+| ------------------------------------------------------ | --------------------------------------------------------------------- |
+| [calendar-availability.md](./calendar-availability.md) | Calendar availability model, manual blocking, drag-to-select          |
+| [calendar-sync.md](./calendar-sync.md)                 | External calendar sync (import/export, auto-disable, orphaned blocks) |

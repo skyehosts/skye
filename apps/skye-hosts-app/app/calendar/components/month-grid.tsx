@@ -53,8 +53,9 @@ interface MonthGridProps {
   restrictedDates?: Set<string>;
   minNights?: number;
   onDayPress?: (dateString: string) => void;
-  getDayStatus?: (dateString: string) => DayCellStatus;
+  getDayStatus?: (dateString: string) => DayCellStatus | undefined;
   onReloadData?: () => void;
+  onLongPress?: (dateString: string) => void;
 }
 
 function MonthGridInner({
@@ -73,6 +74,7 @@ function MonthGridInner({
   onDayPress,
   getDayStatus,
   onReloadData,
+  onLongPress,
 }: MonthGridProps) {
   const [tooltipState, setTooltipState] = useState<{
     dateString: string;
@@ -186,6 +188,7 @@ function MonthGridInner({
                   size={cellSize}
                   height={cellHeight}
                   onPress={(ds) => handleDayPress(ds, dayIndex, weekIndex)}
+                  onLongPress={onLongPress}
                 />
               );
             })}

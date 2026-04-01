@@ -45,6 +45,8 @@ export * from './dto-interfaces/calendar-sync/create-calendar-block-request.dto'
 export * from './dto-interfaces/calendar-sync/create-calendar-sync-request.dto';
 export * from './dto-interfaces/calendar-sync/get-calendar-blocks-response.dto';
 export * from './dto-interfaces/calendar-sync/get-calendar-syncs-response.dto';
+export * from './dto-interfaces/calendar-sync/unblock-range-request.dto';
+export * from './dto-interfaces/calendar-sync/unblock-range-response.dto';
 export * from './dto-interfaces/calendar-sync/update-calendar-sync-request.dto';
 export * from './dto-interfaces/co-host/accept-co-host-invite-request.dto';
 export * from './dto-interfaces/co-host/accept-co-host-invite-response.dto';

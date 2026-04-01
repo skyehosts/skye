@@ -41,6 +41,8 @@ interface DayCellProps {
   height?: number;
   /** Called with the dateString when the day is pressed */
   onPress?: (dateString: string) => void;
+  /** Called with the dateString when the day is long-pressed */
+  onLongPress?: (dateString: string) => void;
 }
 
 function DayCellInner({
@@ -52,6 +54,7 @@ function DayCellInner({
   size,
   height,
   onPress,
+  onLongPress,
 }: DayCellProps) {
   const cellHeight = height ?? size;
   if (day === null) {
@@ -64,25 +67,36 @@ function DayCellInner({
     }
   };
 
+  const handleLongPress = () => {
+    if (dateString && onLongPress) {
+      onLongPress(dateString);
+    }
+  };
+
   return (
     <Pressable
       style={[
         styles.cell,
         { width: size, height: cellHeight, opacity: isPast ? 0.8 : 1 },
-        status === "booked" && !isPast
-          ? styles.cellBooked
-          : status === "blocked" && !isPast
-            ? styles.cellBlocked
-            : status === "restricted" && !isPast
-              ? styles.cellRestricted
-              : isPast
-                ? styles.cellPast
-                : styles.cellCurrent,
+        status === "selected" && !isPast
+          ? styles.cellSelected
+          : status === "booked" && !isPast
+            ? styles.cellBooked
+            : status === "blocked" && !isPast
+              ? styles.cellBlocked
+              : status === "restricted" && !isPast
+                ? styles.cellRestricted
+                : isPast
+                  ? styles.cellPast
+                  : styles.cellCurrent,
+        status === "selected" && !isPast && styles.cellSelectedBorder,
         status === "booked" && !isPast && styles.cellBookedBorder,
         status === "blocked" && !isPast && styles.cellBlockedBorder,
         status === "restricted" && !isPast && styles.cellRestrictedBorder,
       ]}
       onPress={handlePress}
+      onLongPress={handleLongPress}
+      delayLongPress={400}
     >
       <View style={[styles.dayContainer, isToday && styles.todayContainer]}>
         <Text
@@ -140,6 +154,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.calendarCellRestrictedBorder,
     borderStyle: "dashed",
+  },
+  cellSelected: {
+    backgroundColor: colors.calendarCellSelected,
+  },
+  cellSelectedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellSelectedBorder,
   },
   dayContainer: {
     width: DAY_INNER_SIZE,

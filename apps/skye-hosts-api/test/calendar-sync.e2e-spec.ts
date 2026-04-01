@@ -227,6 +227,120 @@ describe('Calendar Sync (e2e)', () => {
     });
   });
 
+  // ── UNBLOCK RANGE ───────────────────────────────────
+
+  describe('POST /calendar-sync/listing/:listingId/blocks/unblock-range', () => {
+    it('should unblock a sub-range and split the original block', async () => {
+      // Create a large manual block
+      const createRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-09-01', endDate: '2027-09-30' })
+        .expect(201);
+
+      const originalBlockId = createRes.body.payload.block.id;
+
+      // Unblock the middle portion
+      const unblockRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-09-10', endDate: '2027-09-20' })
+        .expect(201);
+
+      const blocks = unblockRes.body.payload.blocks;
+
+      // Original block should be gone
+      const original = blocks.find(
+        (b: { id: number }) => b.id === originalBlockId,
+      );
+      expect(original).toBeUndefined();
+
+      // Should have two trimmed blocks
+      const leftTrim = blocks.find(
+        (b: { startDate: string; endDate: string }) =>
+          b.startDate === '2027-09-01' && b.endDate === '2027-09-10',
+      );
+      const rightTrim = blocks.find(
+        (b: { startDate: string; endDate: string }) =>
+          b.startDate === '2027-09-20' && b.endDate === '2027-09-30',
+      );
+      expect(leftTrim).toBeDefined();
+      expect(leftTrim.source).toBe('manual');
+      expect(rightTrim).toBeDefined();
+      expect(rightTrim.source).toBe('manual');
+    });
+
+    it('should delete a block fully inside the unblock range', async () => {
+      // Create a small block
+      const createRes = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-07-10', endDate: '2027-07-15' })
+        .expect(201);
+
+      const blockId = createRes.body.payload.block.id;
+
+      // Unblock a wider range
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-07-01', endDate: '2027-07-31' })
+        .expect(201);
+
+      // Verify block is gone
+      const listRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`);
+
+      const remaining = listRes.body.payload.blocks.find(
+        (b: { id: number }) => b.id === blockId,
+      );
+      expect(remaining).toBeUndefined();
+    });
+
+    it('should return all blocks when no overlapping manual blocks exist', async () => {
+      const res = await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2028-01-01', endDate: '2028-01-31' })
+        .expect(201);
+
+      expect(res.body.payload.blocks).toBeDefined();
+      expect(Array.isArray(res.body.payload.blocks)).toBe(true);
+    });
+
+    it('should reject when startDate >= endDate', async () => {
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-09-20', endDate: '2027-09-10' })
+        .expect(400);
+    });
+
+    it('should reject when startDate == endDate', async () => {
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-09-10', endDate: '2027-09-10' })
+        .expect(400);
+    });
+
+    it('should return 401 without auth token', async () => {
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .send({ startDate: '2027-09-10', endDate: '2027-09-20' })
+        .expect(401);
+    });
+
+    it('should return 403 for guest role', async () => {
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks/unblock-range`)
+        .set('Authorization', `Bearer ${guestToken}`)
+        .send({ startDate: '2027-09-10', endDate: '2027-09-20' })
+        .expect(403);
+    });
+  });
+
   // ── EXPORT ENDPOINT ───────────────────────────────────
 
   describe('GET /calendar-sync/export/:exportToken.ics', () => {
@@ -274,7 +388,14 @@ describe('Calendar Sync (e2e)', () => {
       expect(res.text).toContain('SUMMARY:Reserved');
     });
 
-    it('should include manual blocks in export', async () => {
+    it('should NOT include manual blocks in export', async () => {
+      // Create a manual block
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}/blocks`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ startDate: '2027-11-01', endDate: '2027-11-05' })
+        .expect(201);
+
       const listRes = await request(app.getHttpServer())
         .get(`/calendar-sync/listing/${listingId}`)
         .set('Authorization', `Bearer ${hostToken}`);
@@ -288,9 +409,28 @@ describe('Calendar Sync (e2e)', () => {
         .get(`/calendar-sync/export/${tokenMatch[1]}.ics`)
         .expect(200);
 
-      // We created a block for 2027-08-01 to 2027-08-05 earlier
-      expect(res.text).toContain('DTSTART;VALUE=DATE:20270801');
-      expect(res.text).toContain('DTEND;VALUE=DATE:20270805');
+      // Manual block for 2027-11-01 should NOT appear in export
+      expect(res.text).not.toContain('DTSTART;VALUE=DATE:20271101');
+      expect(res.text).not.toContain('DTEND;VALUE=DATE:20271105');
+    });
+
+    it('should exclude previously-created manual block from export', async () => {
+      const listRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`);
+
+      const sync = listRes.body.payload.syncs[0];
+      const tokenMatch = sync.exportUrl.match(
+        /\/calendar-sync\/export\/(.+)\.ics$/,
+      );
+
+      const res = await request(app.getHttpServer())
+        .get(`/calendar-sync/export/${tokenMatch[1]}.ics`)
+        .expect(200);
+
+      // The manual block for 2027-08-01 to 2027-08-05 should NOT be exported
+      expect(res.text).not.toContain('DTSTART;VALUE=DATE:20270801');
+      expect(res.text).not.toContain('DTEND;VALUE=DATE:20270805');
     });
 
     it('should return 404 for unknown export token', async () => {
