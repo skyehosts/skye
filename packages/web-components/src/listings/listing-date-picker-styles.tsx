@@ -1,6 +1,7 @@
 import Typography from '@mui/material/Typography';
 import type { Theme } from '@mui/material/styles';
-import type { CSSProperties } from 'react';
+import { eachDayOfInterval, isAfter } from 'date-fns';
+import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
 import {
   formatLongDate,
@@ -22,18 +23,56 @@ export const dayPickerThemeSx = (theme: Theme) => ({
     '--rdp-range_start-color': '#fff',
     '--rdp-range_end-date-background-color': theme.palette.primary.main,
     '--rdp-range_end-color': '#fff',
-    '--rdp-range_middle-background-color': theme.palette.custom.driftwoodSand,
+    '--rdp-range_middle-background-color': '#f7f7f7',
     '--rdp-range_middle-color': theme.palette.primary.main,
     '--rdp-selected-border': `2px solid ${theme.palette.primary.main}`,
     fontFamily: theme.typography.fontFamily,
   },
+  '& .rdp-day_button': {
+    borderRadius: '50%',
+    border: '2px solid transparent',
+    transition: 'border-color 0.15s ease, background-color 0.15s ease',
+  },
+  '& .rdp-day:not(.rdp-disabled):not(.rdp-range_start):not(.rdp-range_end):not(.rdp-range_middle) .rdp-day_button:hover':
+    {
+      border: `2px solid ${theme.palette.primary.main}`,
+    },
+  '& .rdp-hover-range:not(.rdp-range_start):not(.rdp-hover-range-end)': {
+    backgroundColor: '#f7f7f7',
+  },
+  '& .rdp-hover-range-end .rdp-day_button': {
+    backgroundColor: '#f7f7f7',
+    borderRadius: '50%',
+  },
+  '& .rdp-disabled .rdp-day_button': {
+    color: theme.palette.text.disabled,
+    textDecoration: 'line-through',
+  },
 });
 
-export function restrictedDayStyle(theme: Theme): CSSProperties {
+export function useHoverRange(from: Date | null, to: Date | null) {
+  const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
+
+  const hasFrom = from != null;
+  const hasRange = from != null && to != null;
+
+  const hoverRangeDates =
+    hasFrom && !hasRange && hoveredDate && isAfter(hoveredDate, from!)
+      ? eachDayOfInterval({ start: from!, end: hoveredDate }).slice(1)
+      : [];
+
   return {
-    color: theme.palette.custom.rowanBerryLight,
-    opacity: 0.7,
-    textDecoration: 'line-through',
+    onDayMouseEnter: (day: Date) => setHoveredDate(day),
+    onDayMouseLeave: () => setHoveredDate(null),
+    modifiers: {
+      hoverRange: hoverRangeDates,
+      hoverRangeEnd:
+        hoveredDate && hoverRangeDates.length > 0 ? [hoveredDate] : [],
+    },
+    modifiersClassNames: {
+      hoverRange: 'rdp-hover-range',
+      hoverRangeEnd: 'rdp-hover-range-end',
+    },
   };
 }
 

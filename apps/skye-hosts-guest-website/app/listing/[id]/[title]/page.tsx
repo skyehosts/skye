@@ -137,6 +137,7 @@ export default async function ListingPage({
 
         {/* Right column: booking sidebar (desktop) + mobile bar — via BookingParamsSync */}
         <BookingParamsSync
+          listingId={listing.id}
           initialBookingParams={initialBookingParams}
           maxGuests={listing.maxGuests}
           childrenAllowed={listing.houseRuleChildrenAllowed}

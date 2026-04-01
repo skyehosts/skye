@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
 import { differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -13,12 +12,11 @@ import 'react-day-picker/style.css';
 import {
   DatePickerHeaderText,
   dayPickerThemeSx,
-  restrictedDayStyle,
+  useHoverRange,
 } from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
   buildNightDisabledMatcher,
-  buildNightRestrictedMatcher,
   formatGeneralConstraintMessage,
   getMinNightsForDate,
   isNightCountValid,
@@ -32,6 +30,7 @@ interface ListingDatePickerPopupProps extends ListingNightRuleProps {
   initialRange?: { from: Date; to: Date } | null;
   externalFrom?: Date | null;
   externalTo?: Date | null;
+  unavailableDates?: Set<string>;
 }
 
 export function ListingDatePickerPopup({
@@ -42,17 +41,18 @@ export function ListingDatePickerPopup({
   initialRange,
   externalFrom,
   externalTo,
+  unavailableDates,
   minNights,
   minNightsByCheckInDay,
   maxNights,
 }: ListingDatePickerPopupProps) {
-  const theme = useTheme();
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
   const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // 'from' = waiting for check-in click, 'to' = waiting for check-out click
   const [selectingPhase, setSelectingPhase] = useState<'from' | 'to'>('from');
+  const hoverRangeProps = useHoverRange(from, to);
 
   // Sync when external fields (typed inputs) change while popup is open.
   // Only react to non-null values to avoid overwriting popup-initiated state.
@@ -110,11 +110,6 @@ export function ListingDatePickerPopup({
     maxNights,
   );
 
-  const restrictedMatcher =
-    selectingPhase === 'to'
-      ? buildNightRestrictedMatcher(from, effectiveMinNights, maxNights)
-      : [];
-
   function handleDayClick(day: Date) {
     if (autoSaveTimer.current) {
       clearTimeout(autoSaveTimer.current);
@@ -126,7 +121,11 @@ export function ListingDatePickerPopup({
       setTo(null);
       setSelectingPhase('to');
     } else {
-      if (isSameDay(day, from!)) return;
+      if (isSameDay(day, from!)) {
+        // Re-set to force DayPicker to re-render with the selection intact
+        setFrom(new Date(from!.getTime()));
+        return;
+      }
       if (isBefore(day, from!)) {
         setFrom(day);
         setTo(null);
@@ -152,7 +151,7 @@ export function ListingDatePickerPopup({
   if (!open) return null;
 
   const selected: DateRange | undefined =
-    from && to ? { from, to } : from ? { from, to: undefined } : undefined;
+    from && to ? { from, to } : from ? { from, to: from } : undefined;
 
   const hasFrom = from != null;
   const hasRange = from != null && to != null;
@@ -217,16 +216,19 @@ export function ListingDatePickerPopup({
           <DayPicker
             mode="range"
             selected={selected}
+            onSelect={() => {}}
             onDayClick={handleDayClick}
+            {...hoverRangeProps}
             disabled={
               selectingPhase === 'to'
-                ? buildNightDisabledMatcher(from, effectiveMinNights, maxNights)
-                : { before: new Date() }
+                ? buildNightDisabledMatcher(
+                    from,
+                    effectiveMinNights,
+                    maxNights,
+                    unavailableDates,
+                  )
+                : buildNightDisabledMatcher(null, 1, null, unavailableDates)
             }
-            modifiers={{ restricted: restrictedMatcher }}
-            modifiersStyles={{
-              restricted: restrictedDayStyle(theme),
-            }}
             numberOfMonths={2}
             month={month}
             onMonthChange={setMonth}

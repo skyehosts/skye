@@ -2,7 +2,7 @@ import type {
   IUpdateAccountPrivacyRequestDto,
   IUpdateAccountPrivacyResponseDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Button, Switch } from "react-native-paper";
 import { AppModal } from "../../components/app-modal";
@@ -27,6 +27,12 @@ export function SearchEngineIndexingModal({
   const [enabled, setEnabled] = useState(currentValue);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
+
+  useEffect(() => {
+    if (visible) {
+      setEnabled(currentValue);
+    }
+  }, [visible, currentValue]);
 
   function handleDismiss() {
     setEnabled(currentValue);

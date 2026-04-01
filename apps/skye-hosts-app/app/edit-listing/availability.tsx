@@ -78,12 +78,14 @@ export default function AvailabilityScreen() {
                 label="Minimum nights"
                 description={formatMinNightsDescription(listing)}
                 onPress={() => setMinNightsModalVisible(true)}
+                actionText="Edit"
               />
               <SettingsListItem
                 icon="moon-waning-crescent"
                 label="Maximum nights"
                 description={formatMaxNightsDescription(listing)}
                 onPress={() => setMaxNightsModalVisible(true)}
+                actionText="Edit"
               />
             </View>
           </ScrollView>

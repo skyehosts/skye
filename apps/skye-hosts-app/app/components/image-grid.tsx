@@ -15,7 +15,13 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import type { ImageUploadStatus, LocalImage } from "../services/image-upload";
-import { borderRadius, colors, spacing, typography } from "../theme";
+import {
+  borderRadius,
+  colors,
+  fontWeight,
+  spacing,
+  typography,
+} from "../theme";
 
 const NUM_COLUMNS = 3;
 const GRID_GAP = spacing.sm;
@@ -258,6 +264,6 @@ const styles = StyleSheet.create({
   statusText: {
     color: colors.background,
     fontSize: typography.sm,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
 });

@@ -17,7 +17,12 @@ function AppContent() {
 
   return (
     <>
-      <Stack screenOptions={{ headerShown: false }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="edit-listing/calendar-sync-form"
+          options={{ presentation: "modal" }}
+        />
+      </Stack>
       <StatusBar style="auto" />
     </>
   );

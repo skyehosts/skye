@@ -1,39 +1,19 @@
+// Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require("expo/metro-config");
-const path = require("path");
 
-const projectRoot = __dirname;
-const monorepoRoot = path.resolve(projectRoot, "../..");
+/** @type {import('expo/metro-config').MetroConfig} */
+const config = getDefaultConfig(__dirname);
 
-const config = getDefaultConfig(projectRoot);
+config.transformer.babelTransformerPath =
+  require.resolve("react-native-svg-transformer/expo");
 
-// Watch the monorepo root so Metro can resolve hoisted packages
-config.watchFolders = [monorepoRoot];
+// Remove svg from assetExts and add to sourceExts so the transformer handles them
+// Exclude test/spec files from the bundle — they live inside app/ but are not routes
+config.resolver.blockList = /.*\.(spec|test)\.(ts|tsx|js|jsx)$/;
 
-// Ensure Metro resolves from both the app and the hoisted root node_modules
-config.resolver.nodeModulesPaths = [
-  path.resolve(projectRoot, "node_modules"),
-  path.resolve(monorepoRoot, "node_modules"),
-];
-
-// Exclude test files from the bundle
-config.resolver.blockList = [/.*\.(spec|test)\.[jt]sx?$/];
-
-const originalResolveRequest = config.resolver.resolveRequest;
-
-config.resolver.resolveRequest = (context, moduleName, platform) => {
-  if (platform === "web" && moduleName === "react-native-pager-view") {
-    return {
-      filePath: path.resolve(
-        projectRoot,
-        "web-stubs/react-native-pager-view.js",
-      ),
-      type: "sourceFile",
-    };
-  }
-  if (originalResolveRequest) {
-    return originalResolveRequest(context, moduleName, platform);
-  }
-  return context.resolveRequest(context, moduleName, platform);
-};
+config.resolver.assetExts = config.resolver.assetExts.filter(
+  (ext) => ext !== "svg",
+);
+config.resolver.sourceExts.push("svg");
 
 module.exports = config;

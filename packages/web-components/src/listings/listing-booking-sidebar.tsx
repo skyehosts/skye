@@ -4,20 +4,27 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Collapse from '@mui/material/Collapse';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { formatShortDateRange } from '@repo/common';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { differenceInCalendarDays, format, isValid, parse } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerPopup } from './listing-date-picker-popup';
+import { GuestCounterRows } from './listing-guest-counter-rows';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
 import type {
   ListingBookingStateProps,
   ListingGuestRuleProps,
   ListingNightRuleProps,
 } from './listing-guest-types';
-import { formatGuestSummary, getMinNightsForDate } from './listing-guest-types';
+import {
+  buildGuestInfoText,
+  buildGuestRows,
+  formatGuestSummary,
+  getMinNightsForDate,
+} from './listing-guest-types';
 
 const DATE_FORMAT = 'dd/MM/yyyy';
 
@@ -45,6 +52,14 @@ const dateInputBaseSx = {
   cursor: 'text',
 } as const;
 
+interface ListingBookingSidebarProps
+  extends
+    ListingGuestRuleProps,
+    ListingNightRuleProps,
+    ListingBookingStateProps {
+  unavailableDates?: Set<string>;
+}
+
 export function ListingBookingSidebar({
   maxGuests,
   childrenAllowed,
@@ -53,6 +68,7 @@ export function ListingBookingSidebar({
   minNights,
   minNightsByCheckInDay,
   maxNights,
+  unavailableDates,
   dateRange,
   guests,
   dateModalOpen,
@@ -64,8 +80,16 @@ export function ListingBookingSidebar({
   handleDateSave,
   handleDateClear,
   handleGuestSave,
-}: ListingGuestRuleProps & ListingNightRuleProps & ListingBookingStateProps) {
+  handleGuestChange,
+}: ListingBookingSidebarProps) {
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
+  const guestRows = buildGuestRows(
+    maxGuests,
+    childrenAllowed,
+    infantsAllowed,
+    petsAllowed,
+  );
   const dateInputSx = {
     ...dateInputBaseSx,
     fontFamily: theme.typography.fontFamily,
@@ -237,24 +261,59 @@ export function ListingBookingSidebar({
 
                 {/* Guest selector row — hidden when date popup is open */}
                 <Box
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setGuestModalOpen(true);
-                  }}
                   sx={{
-                    p: 1.5,
-                    borderTop: '1px solid',
-                    borderColor: 'divider',
-                    cursor: 'pointer',
                     ...(dateModalOpen && { visibility: 'hidden' }),
                   }}
                 >
-                  <Typography variant="caption" sx={captionSx}>
-                    Guests
-                  </Typography>
-                  <Typography variant="body2">
-                    {formatGuestSummary(guests)}
-                  </Typography>
+                  <Box
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setGuestModalOpen(!guestModalOpen);
+                    }}
+                    sx={{
+                      p: 1.5,
+                      borderTop: '1px solid',
+                      borderColor: 'divider',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <Typography variant="caption" sx={captionSx}>
+                      Guests
+                    </Typography>
+                    <Typography variant="body2">
+                      {formatGuestSummary(guests)}
+                    </Typography>
+                  </Box>
+
+                  <Collapse in={isDesktop && guestModalOpen}>
+                    <Box
+                      onClick={(e) => e.stopPropagation()}
+                      sx={{ px: 1.5, pb: 1.5 }}
+                    >
+                      <GuestCounterRows
+                        counts={guests}
+                        rows={guestRows}
+                        onChangeKey={(key, delta) => {
+                          handleGuestChange({
+                            ...guests,
+                            [key]: guests[key] + delta,
+                          });
+                        }}
+                      />
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ display: 'block', mt: 1 }}
+                      >
+                        {buildGuestInfoText(
+                          maxGuests,
+                          petsAllowed,
+                          childrenAllowed,
+                          infantsAllowed,
+                        )}
+                      </Typography>
+                    </Box>
+                  </Collapse>
                 </Box>
               </Box>
 
@@ -267,6 +326,7 @@ export function ListingBookingSidebar({
                 initialRange={dateRange}
                 externalFrom={externalFrom}
                 externalTo={externalTo}
+                unavailableDates={unavailableDates}
                 minNights={minNights}
                 minNightsByCheckInDay={minNightsByCheckInDay}
                 maxNights={maxNights}
@@ -288,33 +348,12 @@ export function ListingBookingSidebar({
             >
               {dateRange ? 'Reserve' : 'Check availability'}
             </Button>
-
-            {dateRange && (
-              <Box
-                sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  {formatShortDateRange(dateRange.from, dateRange.to)}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    color: 'primary.main',
-                  }}
-                  onClick={() => setDateModalOpen(true)}
-                >
-                  Change dates
-                </Typography>
-              </Box>
-            )}
           </CardContent>
         </Card>
       </Box>
 
       <ListingGuestSelectorModal
-        open={guestModalOpen}
+        open={!isDesktop && guestModalOpen}
         onClose={() => setGuestModalOpen(false)}
         onSave={handleGuestSave}
         initialGuests={guests}

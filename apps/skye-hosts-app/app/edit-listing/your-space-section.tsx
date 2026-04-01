@@ -33,15 +33,6 @@ import { fetchApi } from "../services/api";
 import { borderRadius, colors, commonStyles, spacing } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
 
-function formatNightsCardText(listing: IGetListingResponseDto): string {
-  const minDisplay = listing.minNightsByCheckInDay
-    ? `${Math.min(...Object.values(listing.minNightsByCheckInDay))}–${Math.max(...Object.values(listing.minNightsByCheckInDay))}`
-    : `${listing.minNights}`;
-  return listing.maxNights
-    ? `${minDisplay}–${listing.maxNights} night stays`
-    : `${minDisplay}+ night stays`;
-}
-
 function TriStateCardPreview({
   entries,
   config,
@@ -190,32 +181,6 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
               {listing.maxGuests} guest{listing.maxGuests !== 1 ? "s" : ""}
             </Text>
           )}
-        </Pressable>
-
-        <Pressable
-          style={[commonStyles.card, { gap: spacing.sm }]}
-          onPress={() => router.push("/edit-listing/pricing")}
-        >
-          <Text style={commonStyles.itemTitle}>Pricing</Text>
-          <Text style={commonStyles.itemSubtext}>£120 per night</Text>
-          <Text style={commonStyles.itemSubtext}>£120 weekend price</Text>
-          <Text style={commonStyles.itemSubtext}>25% weekly discount</Text>
-        </Pressable>
-
-        <Pressable
-          style={[commonStyles.card, { gap: spacing.sm }]}
-          onPress={() =>
-            router.push({
-              pathname: "/edit-listing/availability",
-              params: { id: listingId },
-            })
-          }
-        >
-          <Text style={commonStyles.itemTitle}>Availability</Text>
-          <Text style={commonStyles.itemSubtext}>
-            {listing ? formatNightsCardText(listing) : "Loading..."}
-          </Text>
-          <Text style={commonStyles.itemSubtext}>Same-day advance notice</Text>
         </Pressable>
 
         <Pressable

@@ -12,9 +12,10 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@repo/web": "workspace:*",
-    "@repo/skye-hosts-api-client": "workspace:*",
     "@repo/common": "workspace:*",
+    "@repo/skye-hosts-api-client": "workspace:*",
+    "@repo/theme": "workspace:^",
+    "@repo/web": "workspace:*",
     "@repo/web-components": "workspace:*",
     "@sentry/nextjs": "^10",
     "next": "16.1.6",

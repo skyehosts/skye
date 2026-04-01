@@ -20,6 +20,7 @@ import { TypeOrmConfigService } from '../../typeorm-config.service';
 import { AccountModule } from '../account/account.module';
 import { AuthModule } from '../auth/auth.module';
 import { AvailabilityModule } from '../availability/availability.module';
+import { CalendarSyncModule } from '../calendar-sync/calendar-sync.module';
 import { UniqueByPropertyValidator } from '../common/validators';
 import { ListingImageModule } from '../listing-image/listing-image.module';
 import { NotificationModule } from '../notification/notification.module';
@@ -36,6 +37,7 @@ import { UtilityModule } from '../utility/utility.module';
     AuthModule,
     AvailabilityModule,
     BookingModule,
+    CalendarSyncModule,
     CoHostModule,
     CommonModule,
     DemoModule,

@@ -41,6 +41,21 @@ heroku logs --num 200 --app skye-hosts-{env} #Most recent lines
 heroku config --app skye-hosts-{env} #Env vars
 heroku run sh --app skye-hosts-{env} #Bash inside docker container
 
+### Prerequisite #6: PGAdmin setup
+
+Go to PGAdmin URL
+Login with credentials from /apps/web-api/.local.env:
+
+- Email: $PGADMIN_DEFAULT_ADMIN
+- Password: $PGADMIN_DEFAULT_ADMIN
+
+Then right click on servers & 'Create' -> 'Server'
+
+- Host: host.docker.internal
+- Port: $WEB_API_POSTGRES_PORT
+- Username: $WEB_API_POSTGRES_USER
+- Password: $WEB_API_POSTGRES_PASSWORD
+
 ### Add environment vars
 
 - Manually add 'Config vars' in Heroku via browser
@@ -132,13 +147,63 @@ NB when pushing, a husky script runs pnpm build which requires that your API is 
 adb push 1.jpg /sdcard/DCIM/Camera
 adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d file:///sdcard/DCIM/Camera/1.jpg
 
+## How to update app icons (skye-hosts-app)
+
+Two scripts handle icon generation — one for the main app icon and one for the Android monochrome (themed) icon, since they require different source images.
+
+### Main icon
+
+```bash
+pnpm --filter skye-hosts-app generate-icons ../../temp/app_icon.png
+```
+
+**Source image requirements:**
+
+- PNG format
+- Minimum 1024x1024 pixels
+- Square aspect ratio (1:1)
+- Non-transparent — full icon with solid background
+
+**Outputs** (written to `apps/skye-hosts-app/assets/`):
+
+| File                          | Used by                                |
+| ----------------------------- | -------------------------------------- |
+| `icon.png`                    | iOS app icon                           |
+| `android-icon-foreground.png` | Android adaptive icon foreground layer |
+| `android-icon-background.png` | Android adaptive icon background layer |
+
+### Monochrome icon (Android 13+ themed icons)
+
+```bash
+pnpm --filter skye-hosts-app generate-icons:monochrome ../../temp/app_icon_monochrome.png
+```
+
+When users enable "Themed icons" on Android 13+, the OS tints this image to match their wallpaper colour palette. It must be a silhouette so the tinting works correctly.
+
+**Source image requirements:**
+
+- PNG format
+- Minimum 1024x1024 pixels
+- Square aspect ratio (1:1)
+- **Transparent background** — logo/silhouette only (white or black shape on transparent)
+
+**Output** (written to `apps/skye-hosts-app/assets/`):
+
+| File                          | Used by                                               |
+| ----------------------------- | ----------------------------------------------------- |
+| `android-icon-monochrome.png` | Android adaptive icon monochrome layer (themed icons) |
+
+### After updating icons
+
+Rebuild via EAS. On Android, uninstall the previous build before installing to clear the cached icon. Expo generates all platform-specific sizes from these source files at build time.
+
 ## How to deploy host app to real device locally from Expo
 
 - Only needed very first time
   - npx expo install expo-dev-client
 - Then:
   - pnpm --filter=skye-hosts-app eas-build-local
-  - pnpm --filter=skye-hosts-app install-local
+  - pnpm --filter=skye-hosts-app deploy-local
   - pnpm --filter=skye-hosts-app dev
 
 ## How to get logs from real apk on real device via USB when it crashes on startup

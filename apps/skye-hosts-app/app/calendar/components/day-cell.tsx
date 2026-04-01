@@ -12,13 +12,17 @@ import { typography } from "../../theme/typography";
  * - checkIn: half-day check-in (booking starts afternoon)
  * - checkOut: half-day check-out (booking ends morning)
  * - booked: fully booked day
+ * - blocked: blocked via calendar sync or manual block
+ * - restricted: available but unbookable due to minimum nights gap
  */
 export type DayCellStatus =
   | "none"
   | "selected"
   | "checkIn"
   | "checkOut"
-  | "booked";
+  | "booked"
+  | "blocked"
+  | "restricted";
 
 interface DayCellProps {
   /** Day of the month (1-31), or null for empty grid slots */
@@ -37,6 +41,8 @@ interface DayCellProps {
   height?: number;
   /** Called with the dateString when the day is pressed */
   onPress?: (dateString: string) => void;
+  /** Called with the dateString when the day is long-pressed */
+  onLongPress?: (dateString: string) => void;
 }
 
 function DayCellInner({
@@ -48,6 +54,7 @@ function DayCellInner({
   size,
   height,
   onPress,
+  onLongPress,
 }: DayCellProps) {
   const cellHeight = height ?? size;
   if (day === null) {
@@ -60,19 +67,36 @@ function DayCellInner({
     }
   };
 
+  const handleLongPress = () => {
+    if (dateString && onLongPress) {
+      onLongPress(dateString);
+    }
+  };
+
   return (
     <Pressable
       style={[
         styles.cell,
         { width: size, height: cellHeight, opacity: isPast ? 0.8 : 1 },
-        status === "booked" && !isPast
-          ? styles.cellBooked
-          : isPast
-            ? styles.cellPast
-            : styles.cellCurrent,
+        status === "selected" && !isPast
+          ? styles.cellSelected
+          : status === "booked" && !isPast
+            ? styles.cellBooked
+            : status === "blocked" && !isPast
+              ? styles.cellBlocked
+              : status === "restricted" && !isPast
+                ? styles.cellRestricted
+                : isPast
+                  ? styles.cellPast
+                  : styles.cellCurrent,
+        status === "selected" && !isPast && styles.cellSelectedBorder,
         status === "booked" && !isPast && styles.cellBookedBorder,
+        status === "blocked" && !isPast && styles.cellBlockedBorder,
+        status === "restricted" && !isPast && styles.cellRestrictedBorder,
       ]}
       onPress={handlePress}
+      onLongPress={handleLongPress}
+      delayLongPress={400}
     >
       <View style={[styles.dayContainer, isToday && styles.todayContainer]}>
         <Text
@@ -105,13 +129,38 @@ const styles = StyleSheet.create({
   },
   cellCurrent: {
     backgroundColor: colors.calendarCellCurrent,
+    borderWidth: 1,
+    borderColor: colors.border,
   },
   cellBooked: {
     backgroundColor: colors.background,
   },
   cellBookedBorder: {
     borderWidth: 1,
-    borderColor: colors.calendarCellCurrent,
+    borderColor: colors.border,
+  },
+  cellBlocked: {
+    backgroundColor: colors.calendarCellBlocked,
+  },
+  cellBlockedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellBlockedBorder,
+    borderStyle: "dashed",
+  },
+  cellRestricted: {
+    backgroundColor: colors.calendarCellRestricted,
+  },
+  cellRestrictedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellRestrictedBorder,
+    borderStyle: "dashed",
+  },
+  cellSelected: {
+    backgroundColor: colors.calendarCellSelected,
+  },
+  cellSelectedBorder: {
+    borderWidth: 1,
+    borderColor: colors.calendarCellSelectedBorder,
   },
   dayContainer: {
     width: DAY_INNER_SIZE,

@@ -4,26 +4,20 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
 import { Appbar, SegmentedButtons } from "react-native-paper";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
-import {
-  borderRadius,
-  colors,
-  commonStyles,
-  fontWeight,
-  spacing,
-  typography,
-} from "../theme";
+import { spacing } from "../theme";
 import { ArrivalGuideSection } from "./arrival-guide-section";
+import { BookingsSection } from "./bookings-section";
 import { YourSpaceSection } from "./your-space-section";
 
-type Section = "your-space" | "arrival-guide";
+type Section = "your-space" | "arrival-guide" | "bookings";
 
 export default function EditListingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [section, setSection] = useState<Section>("your-space");
+  const [section, setSection] = useState<Section>("bookings");
   const [listingRole, setListingRole] = useState<ListingRole>("owner");
 
   useEffect(() => {
@@ -46,15 +40,6 @@ export default function EditListingScreen() {
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
         <Appbar.Content title="Listing editor" />
-        <Appbar.Action
-          icon="cog"
-          onPress={() =>
-            router.push({
-              pathname: "/edit-listing/preferences",
-              params: { id },
-            })
-          }
-        />
       </Appbar.Header>
 
       <ScrollView
@@ -65,6 +50,7 @@ export default function EditListingScreen() {
           value={section}
           onValueChange={(value) => setSection(value as Section)}
           buttons={[
+            { value: "bookings", label: "Bookings" },
             { value: "your-space", label: "Your space" },
             { value: "arrival-guide", label: "Arrival guide" },
           ]}
@@ -73,24 +59,8 @@ export default function EditListingScreen() {
 
         {section === "your-space" && <YourSpaceSection listingId={id} />}
         {section === "arrival-guide" && <ArrivalGuideSection listingId={id} />}
-
-        {canManageCoHosts && (
-          <View style={styles.coHostSection}>
-            <Pressable
-              style={styles.coHostCard}
-              onPress={() =>
-                router.push({
-                  pathname: "/co-host/manage",
-                  params: { listingId: id },
-                })
-              }
-            >
-              <Text style={commonStyles.itemTitle}>Co-Hosts</Text>
-              <Text style={styles.coHostCardSubtext}>
-                Manage who has access to this listing
-              </Text>
-            </Pressable>
-          </View>
+        {section === "bookings" && (
+          <BookingsSection listingId={id} canManageCoHosts={canManageCoHosts} />
         )}
       </ScrollView>
     </ScreenContainer>
@@ -103,20 +73,5 @@ const styles = StyleSheet.create({
   },
   segmentedButtons: {
     marginBottom: spacing.lg,
-  },
-  coHostSection: {
-    marginTop: spacing.lg,
-  },
-  coHostCard: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-    backgroundColor: colors.background,
-  },
-  coHostCardSubtext: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
   },
 });

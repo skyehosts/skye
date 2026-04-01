@@ -1,6 +1,8 @@
 'use client';
 
 import Box from '@mui/material/Box';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { ListingBookingSidebar } from '@repo/web-components/listings/listing-booking-sidebar';
 import type {
   BookingSearchParams,
@@ -11,15 +13,18 @@ import type {
 import { serializeBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
 import { useListingBookingState } from '@repo/web-components/listings/use-listing-booking-state';
+import { useListingUnavailability } from '@repo/web-components/listings/use-listing-unavailability';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 interface BookingParamsSyncProps
   extends ListingGuestRuleProps, ListingNightRuleProps {
+  listingId: number;
   initialBookingParams: BookingSearchParams;
 }
 
 export function BookingParamsSync({
+  listingId,
   initialBookingParams,
   maxGuests,
   childrenAllowed,
@@ -41,6 +46,11 @@ export function BookingParamsSync({
     },
     [router, pathname],
   );
+
+  const { unavailableDates } = useListingUnavailability(listingId);
+
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
 
   const bookingState = useListingBookingState({
     initialDateRange: initialBookingParams.dateRange,
@@ -69,6 +79,8 @@ export function BookingParamsSync({
           {...guestRuleProps}
           {...nightRuleProps}
           {...bookingState}
+          dateModalOpen={isDesktop && bookingState.dateModalOpen}
+          unavailableDates={unavailableDates}
         />
       </Box>
 
@@ -77,6 +89,8 @@ export function BookingParamsSync({
         {...guestRuleProps}
         {...nightRuleProps}
         {...bookingState}
+        dateModalOpen={!isDesktop && bookingState.dateModalOpen}
+        unavailableDates={unavailableDates}
       />
     </>
   );

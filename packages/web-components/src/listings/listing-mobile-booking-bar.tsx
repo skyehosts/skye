@@ -16,6 +16,14 @@ import type {
 } from './listing-guest-types';
 import { formatGuestSummary } from './listing-guest-types';
 
+interface ListingMobileBookingBarProps
+  extends
+    ListingGuestRuleProps,
+    ListingNightRuleProps,
+    ListingBookingStateProps {
+  unavailableDates?: Set<string>;
+}
+
 export function ListingMobileBookingBar({
   maxGuests,
   childrenAllowed,
@@ -24,6 +32,7 @@ export function ListingMobileBookingBar({
   minNights,
   minNightsByCheckInDay,
   maxNights,
+  unavailableDates,
   dateRange,
   guests,
   dateModalOpen,
@@ -33,11 +42,12 @@ export function ListingMobileBookingBar({
   confirmModalOpen,
   setConfirmModalOpen,
   handleDateSave,
+  handleDateClear,
   handleGuestSave,
-}: ListingGuestRuleProps & ListingNightRuleProps & ListingBookingStateProps) {
+  handleGuestChange: _handleGuestChange,
+}: ListingMobileBookingBarProps) {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
   const ctaLinkSx = {
     textDecoration: 'underline',
     cursor: 'pointer',
@@ -135,20 +145,20 @@ export function ListingMobileBookingBar({
         )}
       </Box>
 
-      {isMobile && (
-        <ListingDatePickerModal
-          open={dateModalOpen}
-          onClose={() => setDateModalOpen(false)}
-          onSave={handleDateSave}
-          initialRange={dateRange}
-          minNights={minNights}
-          minNightsByCheckInDay={minNightsByCheckInDay}
-          maxNights={maxNights}
-        />
-      )}
+      <ListingDatePickerModal
+        open={dateModalOpen}
+        onClose={() => setDateModalOpen(false)}
+        onSave={handleDateSave}
+        onClear={handleDateClear}
+        initialRange={dateRange}
+        unavailableDates={unavailableDates}
+        minNights={minNights}
+        minNightsByCheckInDay={minNightsByCheckInDay}
+        maxNights={maxNights}
+      />
 
       <ListingGuestSelectorModal
-        open={guestModalOpen}
+        open={!isDesktop && guestModalOpen}
         onClose={() => setGuestModalOpen(false)}
         onSave={handleGuestSave}
         initialGuests={guests}

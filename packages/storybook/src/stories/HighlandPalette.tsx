@@ -13,7 +13,7 @@ import {
   successGreen,
   warmStone,
   whiskyGold,
-} from "@repo/common";
+} from "@repo/theme";
 
 const ACCENT_SWATCHES = [
   { label: "Heather Purple", colour: heatherPurple },

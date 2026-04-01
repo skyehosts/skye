@@ -14,6 +14,7 @@ import { fetchApi } from "../../services/api";
 import {
   colors,
   commonStyles,
+  fontWeight,
   lineHeight,
   spacing,
   typography,
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   },
   highlight: {
     color: colors.textPrimary,
-    fontWeight: "600",
+    fontWeight: fontWeight.semibold,
   },
   resendRow: {
     flexDirection: "row",

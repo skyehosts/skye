@@ -11,6 +11,7 @@ import { createHash, randomBytes } from 'crypto';
 import { DataSource } from 'typeorm';
 import { Account } from '../../account/entities';
 import { Booking } from '../../booking/entities';
+import { CalendarBlock, CalendarSync } from '../../calendar-sync/entities';
 import { CoHostInvite, ListingUserRole } from '../../co-host/entities';
 import { Demo } from '../../demo/entities';
 import { Listing } from '../../listing/entities';
@@ -47,6 +48,8 @@ export class E2eSeedService {
       TemplateTrigger,
       MessageTemplate,
       Message,
+      CalendarBlock,
+      CalendarSync,
       Booking,
       CoHostInvite,
       ListingUserRole,

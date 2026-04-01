@@ -21,6 +21,65 @@ export interface ListingGuestRuleProps {
   petsAllowed: boolean;
 }
 
+export interface GuestRow {
+  key: keyof GuestCounts;
+  label: string;
+  subtitle: string;
+  getMax: (counts: GuestCounts) => number;
+  getMin: () => number;
+}
+
+export function buildGuestRows(
+  maxGuests: number,
+  childrenAllowed: boolean,
+  infantsAllowed: boolean,
+  petsAllowed: boolean,
+): GuestRow[] {
+  return [
+    {
+      key: 'adults',
+      label: 'Adults',
+      subtitle: 'Age 13+',
+      getMax: (c) => maxGuests - c.children,
+      getMin: () => 1,
+    },
+    {
+      key: 'children',
+      label: 'Children',
+      subtitle: 'Ages 2–12',
+      getMax: (c) => (childrenAllowed ? maxGuests - c.adults : 0),
+      getMin: () => 0,
+    },
+    {
+      key: 'infants',
+      label: 'Infants',
+      subtitle: 'Under 2',
+      getMax: () => (infantsAllowed ? 5 : 0),
+      getMin: () => 0,
+    },
+    {
+      key: 'pets',
+      label: 'Pets',
+      subtitle: 'Service animals always welcome',
+      getMax: () => (petsAllowed ? 5 : 0),
+      getMin: () => 0,
+    },
+  ];
+}
+
+export function buildGuestInfoText(
+  maxGuests: number,
+  petsAllowed: boolean,
+  childrenAllowed: boolean,
+  infantsAllowed: boolean,
+): string {
+  let text = `This place has a maximum of ${maxGuests} guests, not including infants.`;
+  if (!petsAllowed) text += " Pets aren't allowed.";
+  if (!childrenAllowed) text += ' No children.';
+  if (!infantsAllowed) text += ' No infants.';
+  return text;
+}
+
 import type { IMinNightsByCheckInDay } from '@repo/skye-hosts-api-client';
 
 export type { IMinNightsByCheckInDay } from '@repo/skye-hosts-api-client';
@@ -100,7 +159,7 @@ export function formatGeneralConstraintMessage(
   return null;
 }
 
-export function buildNightRestrictedMatcher(
+function buildNightRestrictedMatcher(
   from: Date | null,
   effectiveMinNights: number,
   maxNights: number | null,
@@ -120,11 +179,67 @@ export function buildNightDisabledMatcher(
   from: Date | null,
   effectiveMinNights: number,
   maxNights: number | null,
+  unavailableDates?: Set<string>,
 ) {
-  return [
+  const matchers: (
+    | { before: Date }
+    | { before: Date; after: Date }
+    | { after: Date }
+    | ((date: Date) => boolean)
+  )[] = [
     { before: new Date() },
     ...buildNightRestrictedMatcher(from, effectiveMinNights, maxNights),
   ];
+
+  if (unavailableDates && unavailableDates.size > 0) {
+    if (from) {
+      // When selecting checkout: find the first unavailable date after check-in
+      // and disable everything beyond that point to prevent spanning over blocks.
+      // The first blocked date itself IS allowed as a checkout date (same-day
+      // turnover: current guest checks out, next guest checks in).
+      const firstBlockedAfterFrom = findFirstUnavailableAfter(
+        from,
+        unavailableDates,
+      );
+      if (firstBlockedAfterFrom) {
+        matchers.push({ after: firstBlockedAfterFrom });
+        // Disable individual unavailable dates between check-in and the
+        // boundary, but NOT the boundary itself (valid for checkout).
+        const boundaryKey = format(firstBlockedAfterFrom, 'yyyy-MM-dd');
+        matchers.push((date: Date) => {
+          const key = format(date, 'yyyy-MM-dd');
+          return unavailableDates.has(key) && key !== boundaryKey;
+        });
+      } else {
+        matchers.push((date: Date) => {
+          const key = format(date, 'yyyy-MM-dd');
+          return unavailableDates.has(key);
+        });
+      }
+    } else {
+      // When selecting check-in: disable all unavailable dates
+      matchers.push((date: Date) => {
+        const key = format(date, 'yyyy-MM-dd');
+        return unavailableDates.has(key);
+      });
+    }
+  }
+
+  return matchers;
+}
+
+function findFirstUnavailableAfter(
+  from: Date,
+  unavailableDates: Set<string>,
+): Date | null {
+  // Scan up to 730 days ahead (2 years)
+  for (let i = 1; i <= 730; i++) {
+    const d = addDays(from, i);
+    if (unavailableDates.has(format(d, 'yyyy-MM-dd'))) {
+      return d;
+    }
+  }
+  return null;
 }
 
 export interface ListingBookingStateProps {
@@ -139,6 +254,7 @@ export interface ListingBookingStateProps {
   handleDateSave: (range: { from: Date; to: Date }) => void;
   handleDateClear: () => void;
   handleGuestSave: (guests: GuestCounts) => void;
+  handleGuestChange: (guests: GuestCounts) => void;
 }
 
 export interface BookingSearchParams {

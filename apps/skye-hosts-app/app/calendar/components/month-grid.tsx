@@ -1,5 +1,9 @@
-import type { IListingBookingItemDto } from "@repo/skye-hosts-api-client";
-import React, { useMemo } from "react";
+import type {
+  CalendarSyncPlatform,
+  ICalendarBlockDto,
+  IListingBookingItemDto,
+} from "@repo/skye-hosts-api-client";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
@@ -7,11 +11,17 @@ import { spacing } from "../../theme/spacing";
 import { typography } from "../../theme/typography";
 import {
   type BookingSegment,
+  type ExternalBlockSegment,
   getBookingSegmentsForMonth,
+  getExternalBlockSegmentsForMonth,
 } from "../utils/booking-segments";
 import { formatDateString } from "../utils/format-date-string";
+import { BlockedDateTooltip } from "./blocked-date-tooltip";
 import { BookingBar } from "./booking-bar";
+import { type BlockedDateInfo, MONTH_LABEL_HEIGHT } from "./calendar-list";
 import { DayCell, type DayCellStatus } from "./day-cell";
+import { ExternalBookingBar } from "./external-booking-bar";
+import { RestrictedDateTooltip } from "./restricted-date-tooltip";
 
 export interface MonthData {
   /** Unique key e.g. "2026-03" */
@@ -36,9 +46,16 @@ interface MonthGridProps {
   cellGap: number;
   todayString: string;
   bookings?: IListingBookingItemDto[];
+  blocks?: ICalendarBlockDto[];
+  platformBySyncId?: Map<number, CalendarSyncPlatform>;
   bookedDates?: Set<string>;
+  blockedDateInfo?: Map<string, BlockedDateInfo[]>;
+  restrictedDates?: Set<string>;
+  minNights?: number;
   onDayPress?: (dateString: string) => void;
-  getDayStatus?: (dateString: string) => DayCellStatus;
+  getDayStatus?: (dateString: string) => DayCellStatus | undefined;
+  onReloadData?: () => void;
+  onLongPress?: (dateString: string) => void;
 }
 
 function MonthGridInner({
@@ -48,10 +65,30 @@ function MonthGridInner({
   cellGap,
   todayString,
   bookings,
+  blocks,
+  platformBySyncId,
   bookedDates,
+  blockedDateInfo,
+  restrictedDates,
+  minNights: minNightsProp,
   onDayPress,
   getDayStatus,
+  onReloadData,
+  onLongPress,
 }: MonthGridProps) {
+  const [tooltipState, setTooltipState] = useState<{
+    dateString: string;
+    infos: BlockedDateInfo[];
+    x: number;
+    y: number;
+  } | null>(null);
+  const [restrictedTooltip, setRestrictedTooltip] = useState<{
+    dateString: string;
+    x: number;
+    y: number;
+  } | null>(null);
+
+  const containerRef = useRef<View>(null);
   const segmentsByWeek = useMemo(() => {
     if (!bookings?.length) return new Map<number, BookingSegment[]>();
     const segs = getBookingSegmentsForMonth(bookings, data);
@@ -64,8 +101,60 @@ function MonthGridInner({
     return map;
   }, [bookings, data]);
 
+  const externalSegmentsByWeek = useMemo(() => {
+    if (!blocks?.length || !platformBySyncId)
+      return new Map<number, ExternalBlockSegment[]>();
+    const segs = getExternalBlockSegmentsForMonth(
+      blocks,
+      data,
+      platformBySyncId,
+    );
+    const map = new Map<number, ExternalBlockSegment[]>();
+    for (const seg of segs) {
+      const arr = map.get(seg.weekIndex);
+      if (arr) arr.push(seg);
+      else map.set(seg.weekIndex, [seg]);
+    }
+    return map;
+  }, [blocks, platformBySyncId, data]);
+
+  const measureTooltipPosition = useCallback(
+    (
+      dayIndex: number,
+      weekIndex: number,
+      callback: (pos: { x: number; y: number }) => void,
+    ) => {
+      const x = dayIndex * (cellSize + cellGap) + spacing.md;
+      containerRef.current?.measureInWindow((_cx, cy) => {
+        const yOffset = MONTH_LABEL_HEIGHT + weekIndex * (cellHeight + cellGap);
+        callback({ x, y: cy + yOffset + cellHeight });
+      });
+    },
+    [cellSize, cellGap, cellHeight],
+  );
+
+  const handleDayPress = useCallback(
+    (dateString: string, dayIndex: number, weekIndex: number) => {
+      const infos = blockedDateInfo?.get(dateString);
+      if (infos?.length) {
+        measureTooltipPosition(dayIndex, weekIndex, ({ x, y }) =>
+          setTooltipState({ dateString, infos, x, y }),
+        );
+        return;
+      }
+      if (restrictedDates?.has(dateString)) {
+        measureTooltipPosition(dayIndex, weekIndex, ({ x, y }) =>
+          setRestrictedTooltip({ dateString, x, y }),
+        );
+        return;
+      }
+      onDayPress?.(dateString);
+    },
+    [blockedDateInfo, restrictedDates, measureTooltipPosition, onDayPress],
+  );
+
   return (
-    <View style={styles.container}>
+    <View style={styles.container} ref={containerRef}>
       <Text style={styles.monthLabel}>{data.label}</Text>
       <View style={{ rowGap: cellGap }}>
         {data.weeks.map((week, weekIndex) => (
@@ -80,7 +169,13 @@ function MonthGridInner({
                   : undefined;
               const status: DayCellStatus = dateString
                 ? (getDayStatus?.(dateString) ??
-                  (bookedDates?.has(dateString) ? "booked" : "none"))
+                  (bookedDates?.has(dateString)
+                    ? "booked"
+                    : blockedDateInfo?.has(dateString)
+                      ? "blocked"
+                      : restrictedDates?.has(dateString)
+                        ? "restricted"
+                        : "none"))
                 : "none";
               return (
                 <DayCell
@@ -92,7 +187,25 @@ function MonthGridInner({
                   status={status}
                   size={cellSize}
                   height={cellHeight}
-                  onPress={onDayPress}
+                  onPress={(ds) => handleDayPress(ds, dayIndex, weekIndex)}
+                  onLongPress={onLongPress}
+                />
+              );
+            })}
+            {(externalSegmentsByWeek.get(weekIndex) ?? []).map((seg) => {
+              const endDay = week[seg.endDayIndex];
+              const segEndDate =
+                endDay !== null
+                  ? formatDateString(data.year, data.month, endDay)
+                  : todayString;
+              return (
+                <ExternalBookingBar
+                  key={`ext-${seg.blockId}-${seg.weekIndex}`}
+                  segment={seg}
+                  cellSize={cellSize}
+                  cellHeight={cellHeight}
+                  cellGap={cellGap}
+                  isPast={segEndDate < todayString}
                 />
               );
             })}
@@ -116,6 +229,23 @@ function MonthGridInner({
           </View>
         ))}
       </View>
+      {tooltipState && (
+        <BlockedDateTooltip
+          infos={tooltipState.infos}
+          dateString={tooltipState.dateString}
+          position={{ x: tooltipState.x, y: tooltipState.y }}
+          onClose={() => setTooltipState(null)}
+          onReloadData={onReloadData}
+        />
+      )}
+      {restrictedTooltip && (
+        <RestrictedDateTooltip
+          dateString={restrictedTooltip.dateString}
+          minNights={minNightsProp ?? 1}
+          position={{ x: restrictedTooltip.x, y: restrictedTooltip.y }}
+          onClose={() => setRestrictedTooltip(null)}
+        />
+      )}
     </View>
   );
 }

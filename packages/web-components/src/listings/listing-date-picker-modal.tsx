@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
-import { useTheme } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 import { differenceInCalendarDays, isBefore, isSameDay } from 'date-fns';
 import { useEffect, useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -13,12 +13,11 @@ import 'react-day-picker/style.css';
 import {
   DatePickerHeaderText,
   dayPickerThemeSx,
-  restrictedDayStyle,
+  useHoverRange,
 } from './listing-date-picker-styles';
 import type { ListingNightRuleProps } from './listing-guest-types';
 import {
   buildNightDisabledMatcher,
-  buildNightRestrictedMatcher,
   formatGeneralConstraintMessage,
   getMinNightsForDate,
   isNightCountValid,
@@ -29,23 +28,27 @@ interface ListingDatePickerModalProps extends ListingNightRuleProps {
   open: boolean;
   onClose: () => void;
   onSave: (range: { from: Date; to: Date }) => void;
+  onClear: () => void;
   initialRange?: { from: Date; to: Date } | null;
+  unavailableDates?: Set<string>;
 }
 
 export function ListingDatePickerModal({
   open,
   onClose,
   onSave,
+  onClear,
   initialRange,
+  unavailableDates,
   minNights,
   minNightsByCheckInDay,
   maxNights,
 }: ListingDatePickerModalProps) {
-  const theme = useTheme();
   const [from, setFrom] = useState<Date | null>(initialRange?.from ?? null);
   const [to, setTo] = useState<Date | null>(initialRange?.to ?? null);
   const [month, setMonth] = useState<Date>(initialRange?.from ?? new Date());
   const [selectingPhase, setSelectingPhase] = useState<'from' | 'to'>('from');
+  const hoverRangeProps = useHoverRange(from, to);
 
   useEffect(() => {
     if (open) {
@@ -66,18 +69,16 @@ export function ListingDatePickerModal({
     maxNights,
   );
 
-  const restrictedMatcher =
-    selectingPhase === 'to'
-      ? buildNightRestrictedMatcher(from, effectiveMinNights, maxNights)
-      : [];
-
   function handleDayClick(day: Date) {
     if (selectingPhase === 'from') {
       setFrom(day);
       setTo(null);
       setSelectingPhase('to');
     } else {
-      if (isSameDay(day, from!)) return;
+      if (isSameDay(day, from!)) {
+        setFrom(new Date(from!.getTime()));
+        return;
+      }
       if (isBefore(day, from!)) {
         setFrom(day);
         setTo(null);
@@ -95,12 +96,19 @@ export function ListingDatePickerModal({
   const canSave = hasRange;
 
   const selected: DateRange | undefined =
-    from && to ? { from, to } : from ? { from, to: undefined } : undefined;
+    from && to ? { from, to } : from ? { from, to: from } : undefined;
 
   const title =
     selectingPhase === 'from'
       ? 'Select check-in date'
       : 'Select check-out date';
+
+  function handleClear() {
+    setFrom(null);
+    setTo(null);
+    setSelectingPhase('from');
+    onClear();
+  }
 
   function handleSave() {
     if (canSave) {
@@ -124,16 +132,19 @@ export function ListingDatePickerModal({
           <DayPicker
             mode="range"
             selected={selected}
+            onSelect={() => {}}
             onDayClick={handleDayClick}
+            {...hoverRangeProps}
             disabled={
               selectingPhase === 'to'
-                ? buildNightDisabledMatcher(from, effectiveMinNights, maxNights)
-                : { before: new Date() }
+                ? buildNightDisabledMatcher(
+                    from,
+                    effectiveMinNights,
+                    maxNights,
+                    unavailableDates,
+                  )
+                : buildNightDisabledMatcher(null, 1, null, unavailableDates)
             }
-            modifiers={{ restricted: restrictedMatcher }}
-            modifiersStyles={{
-              restricted: restrictedDayStyle(theme),
-            }}
             numberOfMonths={1}
             month={month}
             onMonthChange={setMonth}
@@ -141,12 +152,29 @@ export function ListingDatePickerModal({
         </Box>
       </DialogContent>
       <Box sx={listingModalStyles.bottomBar}>
-        <Button variant="text" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="contained" disabled={!canSave} onClick={handleSave}>
-          Save
-        </Button>
+        {hasFrom ? (
+          <Typography
+            variant="body2"
+            onClick={handleClear}
+            sx={{
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              color: 'primary.main',
+            }}
+          >
+            Clear dates
+          </Typography>
+        ) : (
+          <Box />
+        )}
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="text" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="contained" disabled={!canSave} onClick={handleSave}>
+            Save
+          </Button>
+        </Box>
       </Box>
     </Dialog>
   );

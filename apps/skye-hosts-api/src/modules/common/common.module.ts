@@ -30,7 +30,10 @@ import { LoggerService, UtilityService } from './providers';
     },
     {
       provide: APP_INTERCEPTOR,
-      useClass: RequestLoggerInterceptor,
+      useFactory: (configService: ConfigService) => {
+        return new RequestLoggerInterceptor(configService);
+      },
+      inject: [ConfigService],
     },
     {
       provide: APP_INTERCEPTOR,

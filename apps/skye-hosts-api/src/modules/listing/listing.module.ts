@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccountModule } from '../account/account.module';
+import { CalendarSyncModule } from '../calendar-sync/calendar-sync.module';
 import { CoHostModule } from '../co-host/co-host.module';
 import { CommonModule } from '../common/common.module';
 import { ListingImage } from '../listing-image/entities';
@@ -22,6 +23,7 @@ import { ListingService } from './providers';
   // ListingImage registered here to avoid circular dep (ListingImageModule imports ListingModule)
   imports: [
     AccountModule,
+    CalendarSyncModule,
     CommonModule,
     CoHostModule,
     TypeOrmModule.forFeature([Listing, ListingImage]),

@@ -1,21 +1,11 @@
-- api endpoint /listing-image/1 will return "originalUrl":"https://undefined/listings/1/original/64a1c4da-0d65-47b4-861b-88fc805b91dc" when                         
-  AWS_CLOUDFRONT_IMAGES_DOMAIN is undefined.
-- This caused a provlematic user experience in app. The loading spinner was stuck overlayed on image forever. Expected behaviour is spinner stops and error message displayed. (It can be the app-wide generic message)
-- 
-
- Do three things: Firstly: Notice that usage of env vars from ConfigSrvice differs. Some (1) Update api to throw an     
-  exception if any of the env vars are undefined. Present approach options to me to decide on best (2) The mobile app has a bug whereby, the loading spinner is   
-  still overlayed on the photo and stuck (spinning forever). Investigate why the app did not display a error message.  
-
-====
-Next
-====
-- config.service.ts useage is inconsistent
-- API should throw exceptions if envs are undefined
-- Make Request & Response logging env toggleabl
-- Once verified image upload failure captured in app sentry
-  - add heroku env var AWS_S3_IMAGES_BUCKET and check working
-- Why image upload not working in Prod
+===
+MVP
+===
+- Decide & implement if public booking possible via signup during booking flow.
+- Test graceful failure error displayed when uploading listing image in App
+  - redeploy app
+  - unset AWS_CLOUDFRONT_IMAGES_DOMAIN
+  - test if image upload failure gracefully shows error
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
     - Publish app to google play (Beta)
@@ -24,12 +14,12 @@ Next
       - ## App Store URLs
       - ## Native Rebuild Required
   - Get Expo pipeline (GH) deployed to real device
-- Profile photo
-- Review system
+- Finishing off Availability
+  - Advance notice
+  - Same-day advance notice
+  - Available / Unavailable by default
+  - Drag to set available/unavailable
 
-===
-MVP
-===
 - Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)
@@ -83,7 +73,6 @@ Host App
   - Notification
 - Login / Sign - up separation in app.?
 - deploy to device succesfully via eas / gha
-- Test scheduled messages arriving after booking
 - Notifications (Messages from guest)
 - Today page
 - Calendar page
@@ -121,12 +110,65 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In apps/skye-hosts-api only
-- Ensure that everytime this.logger.error is called, it also captures it in sentry
-- Update Claude.md to include this coding pattern for API
-- Update Claude.md to include the coding pattern you did previously for mobile app as well.
-- Review all logger.debug calls in api and check if they should be .error
-- Update Claude.md to make a generaly statement about how we are adverse to silent failures, any unexpected errors should be reported.
+- In hosts app on Availability page
+- Add a new list item with:
+  - title: [You devicd]
+  - Description: [You decide]
+  - Tap behaviour:
+    - Opens a modal
+- Modal contains:
+  - A react-native-paper switch component to set:
+    - Dates unavailable by default or Dates available by default
+    - Default selected option is 'available by default' (Which is set to true when listing created)
+  - If available bny default is set to true, an additional field is displays:
+  - Availability window
+    - Description: How far in advance can guests book?
+    - Options: 3 months, 6 months, 9 months, 12 months.
+  - Re-use existing modals but only if appropriate
+  - Values should be saved to listing.entity.ts
+- Scrutinise my approach
+- If more optimal approaches, recommend them
+- Any non-trivial decisions, ask me
+- Review any existing behaviour that this may affect with regards to Calendars, bookings, availability, ical Import/export etc and update accordingly.
+- Note: Current state may include an implicit assumption that days are available unless blocked however, this assumption is now dependent on Dates available by default being set to true
+
+
+No, I want to change the plan again
+
+Key assumptions:
+  - Practically all hosts will already be using AirBNB and they will have Import Calendar sync enabled
+  - In most cases, hosts will have their AirBnB calendar set to 'unavailable by default' selected due to the seasonal nature of their BNB
+  - AirBnB will normally be their master system that receives most bookings and it's ok for Skye Hosts to use that as master reference
+Decisions:
+  - No definition of open seasons via date picker
+  - Do not give hosts the choice to select 'Unavailable by default' or 'Available by default' The system will always use 'Available by default' implicitly
+  - Hosts will have the ability to block dates (or undo the block) on the Calendar listing page by dragging their thumb to select multiple days. This should open a slider from the bottom to make the toggle.
+  - iCal export will always include Skye Hosts bookings
+Choices:
+  - iCal export may or may not include bSkye Hosts blocked dates
+- Risks:
+  - Host's calendar will always be open, on a rolling basis, given seasonal nature this may not be ideal but if AirBnB calendar is set to 'unavailable by default' and iCal import enabled, this should prevent issues whereby rolling future dates are inadvertently opened
+  - If iCal export includes Skye Hosts blocked dates, and if iCal export URL added to Air BNB at a latter time it may have unintended conseuqnces of blocking dates off in AirBnB calenar. 
+  - Clarify for hosts. We need to increase clarity nad present ghints in laymans terms for hosts who are non-technical to ensure that they understand how the interplay between Skye Hosts and AirBnb works
+    - Most importantly:
+      - Dates are opened by default
+      - We recommend their AirBnB is set to 'unavailable by default' to preveent rolling open dates
+      - iCal export mchoice
+      - etc
+- Goals:
+  - Keep complexity low
+  - Keep mental load low
+  - Opinionated, easy to understand system
+  - Ensure proper guidance provided to hosts
+- Scope of implementation
+  - Ability to block or undo a block on one or many dates on the listing calendar page in hosts app.
+  - Selecting multiple cells can be done via a thumb drag
+  - Scan for any existing implementations, particuarily around iCal import/export, booking, listing date pickers on guest website that may require changes due to this plan
+  - Add doc to docs/architecture explaining how this work.
+  - Any work you consider beneficial beyond this initial delivery, identify it so i can save it for later.
+- Scrutinise my plan, challenge assumptions, decisions from the context of complexity, user experience of a Highlands host, Maintenance.
+- Any opportunities for imporvement, recommend them
+- Any big decisions, ask
 
 ==================
 Re-useable prompts
@@ -134,7 +176,13 @@ Re-useable prompts
 Review unstaged files as see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
 
-===========================
+==================
+Things to test
+==================
+- iCal export
+- iCal booking.com
+
+==========================
 Notes about copying AirBNB
 ==========================
 You cannot copy:

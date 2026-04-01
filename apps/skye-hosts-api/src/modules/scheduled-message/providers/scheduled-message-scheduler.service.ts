@@ -9,6 +9,7 @@ import { AwsQueueNames } from '../../queue/types';
 
 const BATCH_SIZE = 50;
 const STUCK_JOB_TIMEOUT_MINUTES = 5;
+const VERBOSE_LOGGING = !!process.env.SCHEDULED_MESSAGE_VERBOSE_LOGGING;
 
 @Injectable()
 export class ScheduledMessageSchedulerService implements OnModuleInit {
@@ -32,12 +33,13 @@ export class ScheduledMessageSchedulerService implements OnModuleInit {
       start: true,
     });
     this.schedulerRegistry.addCronJob('scheduled-message-poll', job);
-    this.logger.debug(`Scheduled message poller registered (${expression})`);
+    if (VERBOSE_LOGGING)
+      this.logger.debug(`Scheduled message poller registered (${expression})`);
   }
 
   /** Production: every hour. Local: every 30 seconds. */
   async pollAndDispatch(): Promise<void> {
-    this.logger.debug('Scheduled message poll started');
+    if (VERBOSE_LOGGING) this.logger.debug('Scheduled message poll started');
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -65,7 +67,8 @@ export class ScheduledMessageSchedulerService implements OnModuleInit {
 
       if (rows.length === 0) {
         await queryRunner.rollbackTransaction();
-        this.logger.debug('No pending scheduled messages due');
+        if (VERBOSE_LOGGING)
+          this.logger.debug('No pending scheduled messages due');
         return;
       }
 
@@ -108,8 +111,9 @@ export class ScheduledMessageSchedulerService implements OnModuleInit {
       }
     }
 
-    this.logger.debug(
-      `Dispatched ${dispatched}/${idsToDispatch.length} scheduled messages to SQS`,
-    );
+    if (VERBOSE_LOGGING)
+      this.logger.debug(
+        `Dispatched ${dispatched}/${idsToDispatch.length} scheduled messages to SQS`,
+      );
   }
 }

@@ -1,4 +1,8 @@
-import type { IListingBookingItemDto } from "@repo/skye-hosts-api-client";
+import type {
+  CalendarSyncPlatform,
+  ICalendarBlockDto,
+  IListingBookingItemDto,
+} from "@repo/skye-hosts-api-client";
 import type { MonthData } from "../components/month-grid";
 import { formatDateString, parseDateString } from "./format-date-string";
 
@@ -129,6 +133,154 @@ export function getBookingSegmentsForMonth(
         endDayIndex: lastPos?.dayIndex ?? 6,
         isCheckIn: isCheckInInMonth && segStartDay === checkInParsed.day,
         isCheckOut: isCheckOutInMonth && endDay === checkOutParsed.day,
+      });
+    }
+  }
+
+  return segments;
+}
+
+/**
+ * Determines if an imported calendar block represents an actual guest booking
+ * (vs a host-blocked "Not available" period).
+ * Airbnb uses "Reserved" for bookings, Booking.com uses "Reserved" or similar.
+ */
+export function isExternalBooking(summary: string | null): boolean {
+  if (!summary) return false;
+  const lower = summary.toLowerCase();
+  return lower === "reserved" || lower.startsWith("reserved");
+}
+
+export interface ExternalBlockSegment {
+  blockId: number;
+  weekIndex: number;
+  startDayIndex: number;
+  endDayIndex: number;
+  isStart: boolean;
+  isEnd: boolean;
+  platform: CalendarSyncPlatform | null;
+  summary: string | null;
+  startDate: string;
+  endDate: string;
+}
+
+/**
+ * Subtract one day from a YYYY-MM-DD string.
+ * Used because CalendarBlock.endDate is exclusive (iCal DTEND semantics).
+ */
+function previousDay(dateStr: string): string {
+  const parsed = parseDateString(dateStr);
+  const d = new Date(parsed.year, parsed.month, parsed.day - 1);
+  return formatDateString(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/**
+ * Build external block bar segments for a given month.
+ * Only includes imported blocks (source === 'import'), not manual blocks.
+ */
+export function getExternalBlockSegmentsForMonth(
+  blocks: ICalendarBlockDto[],
+  monthData: MonthData,
+  platformBySyncId: Map<number, CalendarSyncPlatform>,
+): ExternalBlockSegment[] {
+  const daysInMonth = new Date(
+    monthData.year,
+    monthData.month + 1,
+    0,
+  ).getDate();
+  const monthStart = formatDateString(monthData.year, monthData.month, 1);
+  const monthEnd = formatDateString(
+    monthData.year,
+    monthData.month,
+    daysInMonth,
+  );
+  const dayPositions = buildDayPositionMap(monthData);
+
+  const segments: ExternalBlockSegment[] = [];
+
+  for (const block of blocks) {
+    if (block.source !== "import") continue;
+    if (!isExternalBooking(block.summary)) continue;
+
+    // endDate is exclusive (iCal DTEND), so the last occupied night is
+    // endDate - 1.  But for the visual bar we use endDate itself as the
+    // checkout date (the bar should penetrate partially into it, just like
+    // regular booking bars use checkOutDate).
+    const lastOccupiedDay = previousDay(block.endDate);
+    const checkoutDay = block.endDate; // the day the guest leaves
+
+    // Skip blocks that don't overlap this month
+    if (lastOccupiedDay < monthStart || block.startDate > monthEnd) continue;
+
+    // Clamp to this month — use checkoutDay for the end so the bar
+    // visually reaches into the checkout date cell.
+    const clampedStart =
+      block.startDate < monthStart ? monthStart : block.startDate;
+    const clampedEnd = checkoutDay > monthEnd ? monthEnd : checkoutDay;
+
+    const startParsed = parseDateString(clampedStart);
+    const endParsed = parseDateString(clampedEnd);
+
+    const blockStartParsed = parseDateString(block.startDate);
+    const blockEndParsed = parseDateString(checkoutDay);
+    const startDay = startParsed.day;
+    const endDay = endParsed.day;
+
+    const isStartInMonth =
+      monthData.month === blockStartParsed.month &&
+      monthData.year === blockStartParsed.year;
+    const isEndInMonth =
+      monthData.month === blockEndParsed.month &&
+      monthData.year === blockEndParsed.year;
+
+    const platform =
+      block.calendarSyncId !== null
+        ? (platformBySyncId.get(block.calendarSyncId) ?? null)
+        : null;
+
+    const commonFields = {
+      blockId: block.id,
+      platform,
+      summary: block.summary,
+      startDate: block.startDate,
+      endDate: block.endDate,
+    };
+
+    let currentWeekIndex = -1;
+    let segStartDayIndex = 0;
+    let segStartDay = 0;
+
+    for (let day = startDay; day <= endDay; day++) {
+      const pos = dayPositions.get(day);
+      if (!pos) continue;
+
+      if (pos.weekIndex !== currentWeekIndex) {
+        if (currentWeekIndex !== -1) {
+          const prevPos = dayPositions.get(day - 1);
+          segments.push({
+            ...commonFields,
+            weekIndex: currentWeekIndex,
+            startDayIndex: segStartDayIndex,
+            endDayIndex: prevPos?.dayIndex ?? 6,
+            isStart: isStartInMonth && segStartDay === blockStartParsed.day,
+            isEnd: false,
+          });
+        }
+        currentWeekIndex = pos.weekIndex;
+        segStartDayIndex = pos.dayIndex;
+        segStartDay = day;
+      }
+    }
+
+    if (currentWeekIndex !== -1) {
+      const lastPos = dayPositions.get(endDay);
+      segments.push({
+        ...commonFields,
+        weekIndex: currentWeekIndex,
+        startDayIndex: segStartDayIndex,
+        endDayIndex: lastPos?.dayIndex ?? 6,
+        isStart: isStartInMonth && segStartDay === blockStartParsed.day,
+        isEnd: isEndInMonth && endDay === blockEndParsed.day,
       });
     }
   }

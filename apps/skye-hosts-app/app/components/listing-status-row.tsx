@@ -1,6 +1,5 @@
 import type { ListingStatus } from "../../../../packages/skye-hosts-api-client/src";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { colors, commonStyles, spacing } from "../theme";
 
 interface ListingStatusRowProps {
@@ -27,7 +26,7 @@ export function ListingStatusRow({ status, onPress }: ListingStatusRowProps) {
           <Text style={commonStyles.itemSubtext}>{label}</Text>
         </View>
       </View>
-      <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
+      <Text style={commonStyles.menuItemAction}>Edit</Text>
     </Pressable>
   );
 }

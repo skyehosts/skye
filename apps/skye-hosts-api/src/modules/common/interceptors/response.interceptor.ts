@@ -23,13 +23,15 @@ export class ResponseInterceptor<T> implements NestInterceptor<
   private readonly logger = new Logger(ResponseInterceptor.name);
   private readonly responseMeta: IApiResponseMeta;
 
+  private readonly logResponses: boolean;
+
   constructor(
     private configService: ConfigService,
     private reflector: Reflector,
   ) {
-    this.responseMeta = getEnvironmentVarsForHttpResponse(
-      this.configService.getAll(),
-    );
+    const config = this.configService.getAll();
+    this.responseMeta = getEnvironmentVarsForHttpResponse(config);
+    this.logResponses = config.logResponses;
   }
   intercept(
     context: ExecutionContext,
@@ -38,6 +40,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<
     const request = context.switchToHttp().getRequest();
     return next.handle().pipe(
       tap((payload: T) => {
+        if (!this.logResponses) return;
         const logPayload = Array.isArray(payload)
           ? { items: payload.slice(0, 2), totalCount: payload.length }
           : payload;

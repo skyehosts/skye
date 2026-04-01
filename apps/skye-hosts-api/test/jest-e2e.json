@@ -20,6 +20,7 @@
     "^@/generated/(.*)$": "<rootDir>/src/generated/$1",
     "^@/guards/(.*)$": "<rootDir>/src/guards/$1",
     "^@/interceptors/(.*)$": "<rootDir>/src/interceptors/$1",
-    "^@/utils/(.*)$": "<rootDir>/src/utils/$1"
+    "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^src/(.*)$": "<rootDir>/src/$1"
   }
 }
