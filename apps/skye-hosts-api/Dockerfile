@@ -25,6 +25,7 @@ COPY --chown=node:node packages/skye-hosts-api-client/ ./packages/skye-hosts-api
 COPY --chown=node:node packages/eslint-config/ ./packages/eslint-config/
 COPY --chown=node:node packages/typescript-config/ ./packages/typescript-config/
 COPY --chown=node:node packages/web/package.json ./packages/web/package.json
+COPY --chown=node:node packages/theme/package.json ./packages/theme/package.json
 COPY --chown=node:node packages/web-components/package.json ./packages/web-components/package.json
 
 # Install all dependencies
