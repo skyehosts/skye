@@ -7,15 +7,8 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import {
-  Appbar,
-  Banner,
-  Button,
-  Dialog,
-  Icon,
-  Portal,
-  Text,
-} from "react-native-paper";
+import { Appbar, Button, Dialog, Icon, Portal, Text } from "react-native-paper";
+import { InfoBox } from "../components/info-box";
 import type {
   ICalendarSyncResponseDto,
   IGetCalendarSyncsResponseDto,
@@ -146,46 +139,28 @@ export default function CalendarSyncScreen() {
         <ActivityIndicator style={commonStyles.sectionLoader} />
       ) : (
         <ScrollView contentContainerStyle={styles.content}>
-          <View style={styles.infoBanner}>
-            <Icon
-              source="information-outline"
-              size={20}
-              color={colors.primary}
-            />
-            <Text style={styles.infoText}>
-              Keep your calendars in sync across platforms to avoid double
-              bookings. Changes may take up to 3 hours to appear on other
-              platforms.
-            </Text>
-          </View>
+          <InfoBox variant="info">
+            Keep your calendars in sync across platforms to avoid double
+            bookings. Changes may take up to 3 hours to appear on other
+            platforms.
+          </InfoBox>
 
-          <View style={styles.infoBanner}>
-            <Icon
-              source="calendar-blank-outline"
-              size={20}
-              color={colors.primary}
-            />
-            <Text style={styles.infoText}>
-              Your Skye Hosts calendar is open by default. We recommend setting
-              your Airbnb calendar to 'unavailable by default' so only your open
-              season dates are available across both platforms. Bookings made on
-              Skye Hosts are shared with connected calendars automatically.
-              Manual blocks you create here stay on Skye Hosts only.
-            </Text>
-          </View>
+          <InfoBox variant="info" icon="calendar-blank-outline">
+            Your Skye Hosts calendar is open by default. We recommend setting
+            your Airbnb calendar to {"\u2018"}unavailable by default{"\u2019"}{" "}
+            so only your open season dates are available across both platforms.
+            Bookings made on Skye Hosts are shared with connected calendars
+            automatically. Manual blocks you create here stay on Skye Hosts
+            only.
+          </InfoBox>
 
           {syncs.length > 0 &&
             getAggregateSyncDirection(syncs) === "one-way" && (
-              <Banner
-                visible
-                icon="alert-outline"
-                style={styles.warningBanner}
-                actions={[]}
-              >
+              <InfoBox variant="warning">
                 Set up 2-way sync for best protection against double-bookings.
                 Syncing only one direction may still result in overlapping
                 reservations.
-              </Banner>
+              </InfoBox>
             )}
 
           {syncs.length === 0 && (
@@ -388,22 +363,6 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.lg,
     gap: spacing.md,
-  },
-  infoBanner: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    padding: spacing.md,
-    backgroundColor: colors.inputBackground,
-    borderRadius: borderRadius.md,
-  },
-  infoText: {
-    flex: 1,
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-  },
-  warningBanner: {
-    backgroundColor: colors.warningBackground,
-    borderRadius: borderRadius.md,
   },
   emptyState: {
     alignItems: "center",

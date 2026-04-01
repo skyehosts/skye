@@ -30,6 +30,7 @@ import type {
 } from "@repo/skye-hosts-api-client";
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { AppSnackbar } from "../components/app-snackbar";
+import { InfoBox } from "../components/info-box";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
@@ -431,23 +432,16 @@ export default function CalendarSyncFormScreen() {
                     Copy link
                   </Button>
                 </View>
-                <View style={styles.exportCallout}>
-                  <Icon
-                    source="information-outline"
-                    size={18}
-                    color={colors.warning}
-                  />
-                  <Text style={styles.exportCalloutText}>
-                    Copy the above link and paste it into {platformLabel}'s
-                    calendar import settings.{" "}
-                    <Text
-                      style={styles.exportCalloutLink}
-                      onPress={() => setExportHelpVisible(true)}
-                    >
-                      See how
-                    </Text>
+                <InfoBox variant="info">
+                  Copy the above link and paste it into {platformLabel}
+                  {"\u2019"}s calendar import settings.{" "}
+                  <Text
+                    style={styles.exportCalloutLink}
+                    onPress={() => setExportHelpVisible(true)}
+                  >
+                    See how
                   </Text>
-                </View>
+                </InfoBox>
               </>
             )}
         </View>
@@ -550,19 +544,6 @@ const styles = StyleSheet.create({
   },
   copyButton: {
     alignSelf: "flex-start",
-  },
-  exportCallout: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.sm,
-    backgroundColor: colors.warningBackground,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
-  },
-  exportCalloutText: {
-    flex: 1,
-    fontSize: typography.sm,
-    color: colors.textPrimary,
   },
   exportCalloutLink: {
     color: colors.primary,

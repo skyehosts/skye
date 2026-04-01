@@ -10,6 +10,7 @@ export const warmStone = '#C8BFAE';
 export const driftwoodSand = '#E7E1D6';
 export const seaGlassTeal = '#4F8C8D';
 export const seaGlassTealPale = '#7DA9AA';
+export const seaGlassTealLight = '#E8F4F4';
 
 /** Functional UI colours */
 export const successGreen = '#3F9C5A';
@@ -17,6 +18,7 @@ export const successGreenLight = '#EAF7EC';
 export const whiskyGold = '#E9B949';
 export const rowanBerry = '#B5473A';
 export const rowanBerryLight = '#D4837A';
+export const rowanBerryPale = '#FDECEA';
 export const autumnBracken = '#FF9500';
 export const autumnBrackenLight = '#FFF3E0';
 export const calendarBlockedPink = '#F5E0DE';

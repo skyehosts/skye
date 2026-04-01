@@ -2,6 +2,7 @@ import type { ICalendarSyncDto } from "@repo/skye-hosts-api-client";
 import { useCallback, useRef, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Button, Icon, Portal } from "react-native-paper";
+import { InfoBox } from "./info-box";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import {
   PLATFORM_LABELS,
@@ -127,12 +128,9 @@ export function CalendarSyncSummaryCard({
             </View>
           ))}
           {getAggregateSyncDirection(syncs) === "one-way" && (
-            <View style={styles.syncConnectedRow}>
-              <Icon source="alert-outline" size={16} color={colors.warning} />
-              <Text style={styles.oneWayHint}>
-                Enable import and export for full protection
-              </Text>
-            </View>
+            <InfoBox variant="warning">
+              Enable import and export for full protection
+            </InfoBox>
           )}
         </>
       )}
@@ -187,10 +185,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.sm,
     paddingLeft: spacing.lg,
-  },
-  oneWayHint: {
-    fontSize: typography.sm,
-    color: colors.warning,
   },
   errorText: {
     fontSize: typography.sm,

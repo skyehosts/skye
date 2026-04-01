@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { Appbar, Button } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
+import { InfoBox } from "../components/info-box";
 import { ImageGrid } from "../components/image-grid";
 import { ScreenContainer } from "../components/screen-container";
 import { useListingImages } from "../hooks/use-listing-images";
@@ -118,10 +119,10 @@ export default function EditPhotosScreen() {
               </Text>
             )}
 
-            <Text style={styles.hint}>
+            <InfoBox variant="info" icon="gesture-swipe">
               Long press and drag to reorder. The first photo is your cover
               image, and the first 5 are featured on your listing page.
-            </Text>
+            </InfoBox>
           </>
         )}
       </ScrollView>
@@ -192,12 +193,6 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
     textAlign: "center",
-  },
-  hint: {
-    fontSize: typography.sm,
-    color: colors.textSecondary,
-    textAlign: "center",
-    fontStyle: "italic",
   },
   previewBackdrop: {
     flex: 1,

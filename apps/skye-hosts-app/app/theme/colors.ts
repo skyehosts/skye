@@ -22,7 +22,9 @@ import {
   heatherPurple,
   highlandMossGreen,
   rowanBerryLight,
+  rowanBerryPale,
   seaGlassTeal,
+  seaGlassTealLight,
   seaGlassTealPale,
   successGreen,
   successGreenLight,
@@ -82,4 +84,6 @@ export const colors = {
   calendarCellSelected: calendarSelectedBlue,
   calendarCellSelectedBorder: calendarSelectedBlueBorder,
   warningBackground: autumnBrackenLight,
+  infoBackground: seaGlassTealLight,
+  errorBackground: rowanBerryPale,
 } as const;

@@ -3,6 +3,7 @@ import { format, parseISO } from "date-fns";
 import { useEffect, useRef } from "react";
 import { Animated, Pressable, StyleSheet, Text, View } from "react-native";
 import { Button, Portal } from "react-native-paper";
+import { InfoBox } from "../../components/info-box";
 import { borderRadius } from "../../theme/border-radius";
 import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
@@ -128,13 +129,13 @@ export function DateBlockSheet({
         </View>
 
         {!hasUnblockedDates && (
-          <Text style={styles.hint}>
+          <InfoBox variant="info">
             {hasManualBlocks
               ? "Only your manually blocked dates can be unblocked here. Dates imported from Airbnb must be unblocked on that platform \u2014 changes will sync automatically within a few hours, or tap the sync icon above and then \u2018Import now\u2019 for immediate effect."
               : hasBookedDates
                 ? "These dates already have a booking."
                 : "These dates are blocked on Airbnb and have been automatically imported into your calendar. To unblock them, update your availability on Airbnb \u2014 changes will sync within a few hours, or tap the sync icon above and then \u2018Import now\u2019 for immediate effect."}
-          </Text>
+          </InfoBox>
         )}
 
         <Button mode="text" onPress={onDismiss} disabled={loading}>
@@ -187,14 +188,5 @@ const styles = StyleSheet.create({
   },
   actionButton: {
     borderRadius: borderRadius.sm,
-  },
-  hint: {
-    fontSize: typography.sm,
-    color: colors.textPrimary,
-    backgroundColor: colors.calendarCellRestricted,
-    padding: spacing.sm,
-    borderRadius: borderRadius.sm,
-    marginBottom: spacing.sm,
-    overflow: "hidden",
   },
 });
