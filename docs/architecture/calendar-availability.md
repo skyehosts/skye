@@ -46,6 +46,12 @@ Example: Manual block Oct 1–31, host unblocks Oct 10–20:
 - Create Oct 1–10 block
 - Create Oct 20–31 block
 
+### Blocks can overlap bookings (by design)
+
+The system allows manual blocks to be created on date ranges that include existing bookings (both Skye Hosts and imported Airbnb bookings). This is intentional — if a host blocks a wide range and a booking within that range is later cancelled, the block is already in place to keep those dates unavailable. Without this, cancellation would silently re-open dates the host intended to keep blocked.
+
+The bottom sheet accounts for bookings when deciding which actions to show: booked dates (excluding check-out days, which allow same-day check-in) are treated as occupied. The "Block these dates" button only appears when genuinely free dates exist in the selection. If the entire selection is booked, the sheet shows "These dates already have a booking."
+
 ### Manual blocks are Skye-only
 
 Manual blocks are **not exported** via iCal. The iCal export only includes:

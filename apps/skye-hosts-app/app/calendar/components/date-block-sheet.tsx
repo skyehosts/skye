@@ -19,6 +19,8 @@ interface DateBlockSheetProps {
   hasManualBlocks: boolean;
   /** Whether the selected range contains any unblocked dates */
   hasUnblockedDates: boolean;
+  /** Whether the selected range contains any booked dates */
+  hasBookedDates: boolean;
   loading: boolean;
   onBlock: () => void;
   onUnblock: () => void;
@@ -48,6 +50,7 @@ export function DateBlockSheet({
   endDate,
   hasManualBlocks,
   hasUnblockedDates,
+  hasBookedDates,
   loading,
   onBlock,
   onUnblock,
@@ -78,6 +81,7 @@ export function DateBlockSheet({
     endDate,
     hasManualBlocks,
     hasUnblockedDates,
+    hasBookedDates,
     loading,
   });
 
@@ -126,8 +130,10 @@ export function DateBlockSheet({
         {!hasUnblockedDates && (
           <Text style={styles.hint}>
             {hasManualBlocks
-              ? "Only manually blocked dates can be unblocked here. Dates imported from Airbnb or other platforms must be unblocked there."
-              : "These dates are blocked by an imported calendar (e.g. Airbnb). To unblock them, update availability on that platform."}
+              ? "Only your manually blocked dates can be unblocked here. Dates imported from Airbnb must be unblocked on that platform \u2014 changes will sync automatically within a few hours, or tap the sync icon above and then \u2018Import now\u2019 for immediate effect."
+              : hasBookedDates
+                ? "These dates already have a booking."
+                : "These dates are blocked on Airbnb and have been automatically imported into your calendar. To unblock them, update your availability on Airbnb \u2014 changes will sync within a few hours, or tap the sync icon above and then \u2018Import now\u2019 for immediate effect."}
           </Text>
         )}
 

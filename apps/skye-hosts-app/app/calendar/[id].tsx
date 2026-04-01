@@ -99,44 +99,59 @@ export default function CalendarDetailScreen() {
     return map;
   }, [syncs]);
 
-  // Check if the selected range has manual blocks or unblocked dates
-  const { hasManualBlocks, hasUnblockedDates } = useMemo(() => {
+  // Check if the selected range has manual blocks, bookings, or unblocked dates
+  const { hasManualBlocks, hasUnblockedDates, hasBookedDates } = useMemo(() => {
     if (!sheetStartDate || !sheetEndDate)
-      return { hasManualBlocks: false, hasUnblockedDates: false };
+      return {
+        hasManualBlocks: false,
+        hasUnblockedDates: false,
+        hasBookedDates: false,
+      };
 
     let foundManualBlock = false;
     let foundUnblocked = false;
+    let foundBooking = false;
 
-    // Build a set of all blocked dates (any source) in the selection range
-    const blockedDatesInRange = new Set<string>();
+    // Build a set of all occupied dates (blocks + bookings) in the selection range
+    const occupiedDatesInRange = new Set<string>();
+
+    /** Clamp an overlapping range to the sheet window and add dates to a set */
+    const addOverlap = (start: string, end: string) => {
+      const clamped0 = start > sheetStartDate ? start : sheetStartDate;
+      const clamped1 = end < sheetEndDate ? end : sheetEndDate;
+      const cur = new Date(clamped0 + "T00:00:00");
+      const stop = new Date(clamped1 + "T00:00:00");
+      while (cur < stop) {
+        occupiedDatesInRange.add(cur.toISOString().slice(0, 10));
+        cur.setDate(cur.getDate() + 1);
+      }
+    };
 
     for (const block of blocks) {
-      // Check if block overlaps with selection
       if (block.startDate < sheetEndDate && block.endDate > sheetStartDate) {
         if (block.source === "manual") foundManualBlock = true;
-
-        // Expand the overlapping portion
-        const overlapStart =
-          block.startDate > sheetStartDate ? block.startDate : sheetStartDate;
-        const overlapEnd =
-          block.endDate < sheetEndDate ? block.endDate : sheetEndDate;
-
-        const cur = new Date(overlapStart + "T00:00:00");
-        const end = new Date(overlapEnd + "T00:00:00");
-        while (cur < end) {
-          blockedDatesInRange.add(cur.toISOString().slice(0, 10));
-          cur.setDate(cur.getDate() + 1);
-        }
+        addOverlap(block.startDate, block.endDate);
       }
     }
 
-    // Check if any date in range is unblocked
+    // Check-out day is excluded (same-day check-in/check-out allowed)
+    for (const booking of bookings) {
+      if (
+        booking.checkInDate < sheetEndDate &&
+        booking.checkOutDate > sheetStartDate
+      ) {
+        foundBooking = true;
+        addOverlap(booking.checkInDate, booking.checkOutDate);
+      }
+    }
+
+    // Check if any date in range is free (not blocked and not booked)
     const rangeStart = new Date(sheetStartDate + "T00:00:00");
     const rangeEnd = new Date(sheetEndDate + "T00:00:00");
     const cur = new Date(rangeStart);
     while (cur < rangeEnd) {
       const ds = cur.toISOString().slice(0, 10);
-      if (!blockedDatesInRange.has(ds)) {
+      if (!occupiedDatesInRange.has(ds)) {
         foundUnblocked = true;
         break;
       }
@@ -148,15 +163,18 @@ export default function CalendarDetailScreen() {
       sheetEndDate,
       foundManualBlock,
       foundUnblocked,
+      foundBooking,
       blocksCount: blocks.length,
-      blockedDatesInRangeCount: blockedDatesInRange.size,
+      bookingsCount: bookings.length,
+      occupiedDatesInRangeCount: occupiedDatesInRange.size,
     });
 
     return {
       hasManualBlocks: foundManualBlock,
       hasUnblockedDates: foundUnblocked,
+      hasBookedDates: foundBooking,
     };
-  }, [blocks, sheetStartDate, sheetEndDate]);
+  }, [blocks, bookings, sheetStartDate, sheetEndDate]);
 
   const handleSelectionComplete = useCallback(
     (startDate: string, endDate: string) => {
@@ -256,6 +274,7 @@ export default function CalendarDetailScreen() {
         endDate={sheetEndDate}
         hasManualBlocks={hasManualBlocks}
         hasUnblockedDates={hasUnblockedDates}
+        hasBookedDates={hasBookedDates}
         loading={sheetLoading}
         onBlock={handleBlock}
         onUnblock={handleUnblock}

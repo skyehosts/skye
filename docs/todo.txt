@@ -1,6 +1,7 @@
 ===
 MVP
 ===
+- Should I be able to block sep 3-4 given air bnb booking on  sep 2-4
 - Info card style on calendar sycn could use some life
 - Decide & implement if public booking possible via signup during booking flow.
 - Test graceful failure error displayed when uploading listing image in App
