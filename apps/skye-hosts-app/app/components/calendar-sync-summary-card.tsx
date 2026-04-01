@@ -1,7 +1,7 @@
 import type { ICalendarSyncDto } from "@repo/skye-hosts-api-client";
 import { useCallback, useRef, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
-import { Button, Icon, Portal, Text } from "react-native-paper";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Button, Icon, Portal } from "react-native-paper";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import {
   PLATFORM_LABELS,
