@@ -10,4 +10,4 @@ export {
   warmStone,
   whiskyGold,
   white,
-} from '@repo/common';
+} from '@repo/theme';

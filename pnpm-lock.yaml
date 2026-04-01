@@ -393,6 +393,9 @@ importers:
       '@repo/skye-hosts-api-client':
         specifier: workspace:*
         version: link:../../packages/skye-hosts-api-client
+      '@repo/theme':
+        specifier: workspace:^
+        version: link:../../packages/theme
       '@repo/web':
         specifier: workspace:^
         version: link:../../packages/web
@@ -523,6 +526,9 @@ importers:
       '@repo/skye-hosts-api-client':
         specifier: workspace:*
         version: link:../../packages/skye-hosts-api-client
+      '@repo/theme':
+        specifier: workspace:^
+        version: link:../../packages/theme
       '@repo/web':
         specifier: workspace:*
         version: link:../../packages/web
@@ -688,6 +694,9 @@ importers:
       '@repo/common':
         specifier: workspace:^
         version: link:../common
+      '@repo/theme':
+        specifier: workspace:^
+        version: link:../theme
       '@repo/web-components':
         specifier: workspace:*
         version: link:../web-components
@@ -746,6 +755,18 @@ importers:
       vite:
         specifier: ^6.3.5
         version: 6.4.1(@types/node@24.10.13)(lightningcss@1.31.1)(terser@5.46.0)(yaml@2.8.2)
+
+  packages/theme:
+    devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
 
   packages/typescript-config: {}
 

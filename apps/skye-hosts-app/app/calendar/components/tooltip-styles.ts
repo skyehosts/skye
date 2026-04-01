@@ -1,7 +1,9 @@
 import { StyleSheet } from "react-native";
+import { borderRadius } from "../../theme/border-radius";
 import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
+import { typography } from "../../theme/typography";
 
 export {
   TOOLTIP_MAX_WIDTH,
@@ -27,7 +29,7 @@ export const tooltipStyles = StyleSheet.create({
   tooltip: {
     position: "absolute",
     backgroundColor: "#fff",
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     shadowColor: "#000",
@@ -39,7 +41,7 @@ export const tooltipStyles = StyleSheet.create({
     zIndex: 10000,
   },
   title: {
-    fontSize: 14,
+    fontSize: typography.sm,
     fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
     marginBottom: 2,

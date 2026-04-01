@@ -1,7 +1,13 @@
 import React, { useCallback, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import MapView, { Marker, type Region } from "react-native-maps";
-import { borderRadius, colors, spacing } from "../theme";
+import {
+  borderRadius,
+  colors,
+  fontWeight,
+  spacing,
+  typography,
+} from "../theme";
 import { createLogger } from "../services/logger";
 
 const logger = createLogger("LocationPinPicker");
@@ -59,7 +65,11 @@ const errorStyles = StyleSheet.create({
     borderColor: colors.border,
     marginTop: spacing.md,
   },
-  title: { fontSize: 16, fontWeight: "bold", marginBottom: spacing.sm },
+  title: {
+    fontSize: typography.md,
+    fontWeight: fontWeight.bold,
+    marginBottom: spacing.sm,
+  },
   detail: {
     fontSize: 12,
     color: colors.textSecondary,

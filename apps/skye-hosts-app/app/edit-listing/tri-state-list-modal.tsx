@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ActionBar } from "../components/action-bar";
 import { AppSnackbar } from "../components/app-snackbar";
 import { fetchApi } from "../services/api";
-import { colors, commonStyles, spacing } from "../theme";
+import { borderRadius, colors, commonStyles, spacing } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
 
 type TriStateValues = Record<string, TriStateValue>;
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     margin: spacing.lg,
     padding: spacing.lg,
-    borderRadius: 12,
+    borderRadius: borderRadius.md,
     gap: spacing.md,
     maxHeight: "88%",
   },

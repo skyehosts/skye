@@ -31,7 +31,7 @@ import {
   warmStone,
   whiskyGold,
   white,
-} from "@repo/common";
+} from "@repo/theme";
 
 /** Core brand */
 export const colors = {
