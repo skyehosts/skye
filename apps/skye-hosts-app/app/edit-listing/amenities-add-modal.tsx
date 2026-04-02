@@ -137,7 +137,11 @@ export function AmenitiesAddModal({
                 style={styles.amenityRow}
                 onPress={() => handleToggle(item.id)}
               >
-                <Icon source={item.icon} size={22} color={colors.icon} />
+                <Icon
+                  source={item.icon}
+                  size={22}
+                  color={colors.iconDecorative}
+                />
                 <Text style={styles.amenityText}>{item.title}</Text>
                 {isSelected ? (
                   <Icon

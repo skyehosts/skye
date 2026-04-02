@@ -59,7 +59,7 @@ export default function BookingSettingsScreen() {
                   <Icon
                     source={option.icon}
                     size={24}
-                    color={isSelected ? colors.primary : colors.icon}
+                    color={isSelected ? colors.primary : colors.iconDecorative}
                   />
                 </View>
                 <Text style={styles.cardDescription}>{option.description}</Text>

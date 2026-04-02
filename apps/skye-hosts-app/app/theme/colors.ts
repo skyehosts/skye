@@ -89,7 +89,7 @@ export const colors = {
   calendarCellCurrent: white,
   calendarTextPast: grey400,
   calendarBarPast: seaGlassTealPale,
-  calendarBar: seaGlassTeal,
+  calendarBar: deepSkyeBlue,
   calendarCellBlocked: calendarBlockedPink,
   calendarCellBlockedBorder: rowanBerryLight,
   calendarBarBookingCom: brandBookingCom,

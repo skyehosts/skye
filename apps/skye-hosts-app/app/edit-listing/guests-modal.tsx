@@ -76,16 +76,20 @@ export function GuestsModal({
         <View style={styles.stepper}>
           <IconButton
             icon="minus"
-            mode="contained"
+            mode="outlined"
             size={22}
+            iconColor={colors.primary}
+            style={{ borderColor: colors.primary }}
             disabled={maxGuests <= 1}
             onPress={() => setMaxGuests((v) => Math.max(1, v - 1))}
           />
           <Text style={styles.count}>{maxGuests}</Text>
           <IconButton
             icon="plus"
-            mode="contained"
+            mode="outlined"
             size={22}
+            iconColor={colors.primary}
+            style={{ borderColor: colors.primary }}
             onPress={() => setMaxGuests((v) => v + 1)}
           />
         </View>
@@ -97,7 +101,7 @@ export function GuestsModal({
             Cancel
           </Button>
           <Button
-            mode="contained"
+            mode="contained-tonal"
             onPress={handleSave}
             loading={saving}
             disabled={saving}

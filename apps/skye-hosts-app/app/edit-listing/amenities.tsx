@@ -149,7 +149,7 @@ export default function EditAmenitiesScreen() {
                   <Icon
                     source={meta.icon}
                     size={24}
-                    color={colors.textPrimary}
+                    color={colors.iconDecorative}
                   />
                   <Text style={styles.amenityText}>{meta.title}</Text>
                 </View>

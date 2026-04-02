@@ -23,18 +23,20 @@ export function NumberStepper({
       <View style={styles.counter}>
         <IconButton
           icon="minus"
-          mode="contained"
+          mode="outlined"
           size={18}
-          iconColor={colors.icon}
+          iconColor={colors.primary}
+          style={{ borderColor: colors.primary }}
           disabled={value <= min}
           onPress={() => onChange(Math.max(min, value - 1))}
         />
         <Text style={styles.count}>{value}</Text>
         <IconButton
           icon="plus"
-          mode="contained"
+          mode="outlined"
           size={18}
-          iconColor={colors.icon}
+          iconColor={colors.primary}
+          style={{ borderColor: colors.primary }}
           disabled={max !== undefined && value >= max}
           onPress={() => onChange(value + 1)}
         />
