@@ -18,6 +18,7 @@ import {
   type GeocodedLocation,
 } from "../utils/geocode-postcode";
 import { captureException } from "../services/error-reporting";
+import { env } from "../services/env";
 import { useCreateListing } from "./context";
 
 interface LocationFormValues {
@@ -58,11 +59,16 @@ export default function LocationScreen() {
 
   const handleGeocode = useCallback(
     async (pc: string) => {
+      console.debug("[location] handleGeocode called with:", pc);
       setIsGeocoding(true);
       setGeocodeError("");
 
       try {
         const loc = await geocodePostcode(pc);
+        console.debug(
+          "[location] geocodePostcode returned:",
+          JSON.stringify(loc),
+        );
         setGeocodedLocation(loc);
         setPinLocation(loc);
         setDraftField("latitude", loc.latitude);
@@ -176,19 +182,29 @@ export default function LocationScreen() {
 
         {geocodedLocation && !isGeocoding && (
           <View style={styles.mapArea}>
-            <Text style={commonStyles.mapLabel}>
-              Drag the pin to your exact property location
-            </Text>
-            <LocationPinPicker
-              initialLatitude={geocodedLocation.latitude}
-              initialLongitude={geocodedLocation.longitude}
-              onLocationChange={handleLocationChange}
-            />
-            {pinLocation && (
-              <Text style={commonStyles.coordsText}>
-                Pin placed at {pinLocation.latitude.toFixed(5)},{" "}
-                {pinLocation.longitude.toFixed(5)}
+            {env.bypassGeocoding ? (
+              <Text style={commonStyles.subheading}>
+                Map bypassed (local dev) — stub location saved:{"\n"}
+                {geocodedLocation.latitude.toFixed(5)},{" "}
+                {geocodedLocation.longitude.toFixed(5)}
               </Text>
+            ) : (
+              <>
+                <Text style={commonStyles.mapLabel}>
+                  Drag the pin to your exact property location
+                </Text>
+                <LocationPinPicker
+                  initialLatitude={geocodedLocation.latitude}
+                  initialLongitude={geocodedLocation.longitude}
+                  onLocationChange={handleLocationChange}
+                />
+                {pinLocation && (
+                  <Text style={commonStyles.coordsText}>
+                    Pin placed at {pinLocation.latitude.toFixed(5)},{" "}
+                    {pinLocation.longitude.toFixed(5)}
+                  </Text>
+                )}
+              </>
             )}
           </View>
         )}

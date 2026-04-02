@@ -15,14 +15,17 @@ const STUB_LOCATION: GeocodedLocation = {
 export async function geocodePostcode(
   postcode: string,
 ): Promise<GeocodedLocation> {
-  console.debug("[geocode] bypassGeocoding =", env.bypassGeocoding);
-  if (env.bypassGeocoding) {
+  console.debug("[geocode] geocodePostcode called with postcode:", postcode);
+  const bypass = env.bypassGeocoding;
+  console.debug("[geocode] bypassGeocoding =", bypass);
+  if (bypass) {
     console.debug(
-      "[geocode] Bypassing Google geocoding, returning stub location",
+      "[geocode] Bypass active — returning stub location:",
+      JSON.stringify(STUB_LOCATION),
     );
     return STUB_LOCATION;
   }
-  console.debug("[geocode] Calling Google Geocoding API");
+  console.debug("[geocode] Bypass NOT active — calling Google Geocoding API");
 
   const apiKey = env.googleMapsApiKey;
   if (!apiKey) {

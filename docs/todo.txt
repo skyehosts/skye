@@ -1,7 +1,7 @@
 ===
 MVP
 ===
--ability to delete listing draft
+- ability to delete listing draft
 - set Lat/Lng overide on create listling when env toggled
 - Icons in App need some love, perhaps purple
 - Decide & implement if public booking possible via signup during booking flow.
@@ -108,65 +108,7 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-- In hosts app on Availability page
-- Add a new list item with:
-  - title: [You devicd]
-  - Description: [You decide]
-  - Tap behaviour:
-    - Opens a modal
-- Modal contains:
-  - A react-native-paper switch component to set:
-    - Dates unavailable by default or Dates available by default
-    - Default selected option is 'available by default' (Which is set to true when listing created)
-  - If available bny default is set to true, an additional field is displays:
-  - Availability window
-    - Description: How far in advance can guests book?
-    - Options: 3 months, 6 months, 9 months, 12 months.
-  - Re-use existing modals but only if appropriate
-  - Values should be saved to listing.entity.ts
-- Scrutinise my approach
-- If more optimal approaches, recommend them
-- Any non-trivial decisions, ask me
-- Review any existing behaviour that this may affect with regards to Calendars, bookings, availability, ical Import/export etc and update accordingly.
-- Note: Current state may include an implicit assumption that days are available unless blocked however, this assumption is now dependent on Dates available by default being set to true
 
-
-No, I want to change the plan again
-
-Key assumptions:
-  - Practically all hosts will already be using AirBNB and they will have Import Calendar sync enabled
-  - In most cases, hosts will have their AirBnB calendar set to 'unavailable by default' selected due to the seasonal nature of their BNB
-  - AirBnB will normally be their master system that receives most bookings and it's ok for Skye Hosts to use that as master reference
-Decisions:
-  - No definition of open seasons via date picker
-  - Do not give hosts the choice to select 'Unavailable by default' or 'Available by default' The system will always use 'Available by default' implicitly
-  - Hosts will have the ability to block dates (or undo the block) on the Calendar listing page by dragging their thumb to select multiple days. This should open a slider from the bottom to make the toggle.
-  - iCal export will always include Skye Hosts bookings
-Choices:
-  - iCal export may or may not include bSkye Hosts blocked dates
-- Risks:
-  - Host's calendar will always be open, on a rolling basis, given seasonal nature this may not be ideal but if AirBnB calendar is set to 'unavailable by default' and iCal import enabled, this should prevent issues whereby rolling future dates are inadvertently opened
-  - If iCal export includes Skye Hosts blocked dates, and if iCal export URL added to Air BNB at a latter time it may have unintended conseuqnces of blocking dates off in AirBnB calenar. 
-  - Clarify for hosts. We need to increase clarity nad present ghints in laymans terms for hosts who are non-technical to ensure that they understand how the interplay between Skye Hosts and AirBnb works
-    - Most importantly:
-      - Dates are opened by default
-      - We recommend their AirBnB is set to 'unavailable by default' to preveent rolling open dates
-      - iCal export mchoice
-      - etc
-- Goals:
-  - Keep complexity low
-  - Keep mental load low
-  - Opinionated, easy to understand system
-  - Ensure proper guidance provided to hosts
-- Scope of implementation
-  - Ability to block or undo a block on one or many dates on the listing calendar page in hosts app.
-  - Selecting multiple cells can be done via a thumb drag
-  - Scan for any existing implementations, particuarily around iCal import/export, booking, listing date pickers on guest website that may require changes due to this plan
-  - Add doc to docs/architecture explaining how this work.
-  - Any work you consider beneficial beyond this initial delivery, identify it so i can save it for later.
-- Scrutinise my plan, challenge assumptions, decisions from the context of complexity, user experience of a Highlands host, Maintenance.
-- Any opportunities for imporvement, recommend them
-- Any big decisions, ask
 
 ==================
 Re-useable prompts

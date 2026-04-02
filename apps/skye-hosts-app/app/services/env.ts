@@ -2,7 +2,9 @@ import Constants from "expo-constants";
 
 const extra = Constants.expoConfig?.extra ?? {};
 
+console.debug("[env] Constants.expoConfig exists:", !!Constants.expoConfig);
 console.debug("[env] extra keys:", Object.keys(extra));
+console.debug("[env] full extra:", JSON.stringify(extra));
 console.debug(
   "[env] BYPASS_GEOCODING raw value:",
   JSON.stringify(extra["BYPASS_GEOCODING"]),
@@ -36,6 +38,16 @@ export const env = {
     return requireEnv("GOOGLE_MAPS_API_KEY");
   },
   get bypassGeocoding() {
-    return extra["BYPASS_GEOCODING"] === "true";
+    const raw = extra["BYPASS_GEOCODING"];
+    const result = raw === "true";
+    console.debug(
+      "[env] bypassGeocoding getter — raw:",
+      JSON.stringify(raw),
+      "type:",
+      typeof raw,
+      "result:",
+      result,
+    );
+    return result;
   },
 };
