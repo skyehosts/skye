@@ -47,7 +47,9 @@ export function InfoBox({ variant, icon, children }: InfoBoxProps) {
       style={[styles.container, { backgroundColor: config.bg }]}
       accessibilityRole={variant !== "info" ? "alert" : undefined}
     >
-      <Icon source={icon ?? config.icon} size={20} color={config.iconColor} />
+      <View style={styles.iconWrapper}>
+        <Icon source={icon ?? config.icon} size={24} color={config.iconColor} />
+      </View>
       <Text style={[styles.text, { color: config.textColor }]}>{children}</Text>
     </View>
   );
@@ -56,9 +58,13 @@ export function InfoBox({ variant, icon, children }: InfoBoxProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: "row",
-    gap: spacing.sm,
+    alignItems: "center",
+    gap: spacing.md,
     padding: spacing.md,
     borderRadius: borderRadius.md,
+  },
+  iconWrapper: {
+    alignSelf: "center",
   },
   text: {
     flex: 1,

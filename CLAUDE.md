@@ -237,6 +237,7 @@ Every icon colour has a specific use-case. Do not mix them.
 - Never use `textPrimary` for selected icon states — use `primary` (deepSkyeBlue).
 - Button-embedded icons (via react-native-paper `<Button icon={...}>`) inherit colour from the button variant — do not override.
 - Info-box backgrounds must pair with their icon colour: `heatherPurpleLight` for info, `autumnBrackenLight` for warning, `rowanBerryPale` for error.
+- Info boxes should use their default variant icon unless a custom icon meaningfully improves guidance (e.g. `gesture-swipe` to hint at a swipe interaction). Don't override the icon just for decoration.
 
 ## Guide for: Styling in skye-hosts-app
 

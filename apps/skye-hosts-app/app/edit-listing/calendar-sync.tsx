@@ -145,7 +145,7 @@ export default function CalendarSyncScreen() {
             platforms.
           </InfoBox>
 
-          <InfoBox variant="info" icon="calendar-blank-outline">
+          <InfoBox variant="info">
             Your Skye Hosts calendar is open by default. We recommend setting
             your Airbnb calendar to {"\u2018"}unavailable by default{"\u2019"}{" "}
             so only your open season dates are available across both platforms.
