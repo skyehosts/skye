@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     paddingRight: spacing.md,
   },
   link: {
-    color: colors.textPrimary,
+    color: colors.primary,
     textDecorationLine: "underline",
   },
   errorText: {

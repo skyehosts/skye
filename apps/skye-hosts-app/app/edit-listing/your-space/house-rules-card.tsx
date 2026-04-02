@@ -39,7 +39,7 @@ export function HouseRulesCard({ listingId, listing }: HouseRulesCardProps) {
               <Ionicons
                 name={rule.icon as keyof typeof Ionicons.glyphMap}
                 size={16}
-                color={colors.icon}
+                color={colors.iconDecorative}
               />
               <Text style={commonStyles.itemSubtext}>{rule.title}</Text>
             </View>

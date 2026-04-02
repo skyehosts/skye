@@ -76,7 +76,7 @@ export function GuestsModal({
         <View style={styles.stepper}>
           <IconButton
             icon="minus"
-            mode="outlined"
+            mode="contained"
             size={22}
             disabled={maxGuests <= 1}
             onPress={() => setMaxGuests((v) => Math.max(1, v - 1))}
@@ -84,7 +84,7 @@ export function GuestsModal({
           <Text style={styles.count}>{maxGuests}</Text>
           <IconButton
             icon="plus"
-            mode="outlined"
+            mode="contained"
             size={22}
             onPress={() => setMaxGuests((v) => v + 1)}
           />

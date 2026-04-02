@@ -172,7 +172,7 @@ export default function EditLocationScreen() {
                 error={!!errors.postCode}
               />
               <Button
-                mode="outlined"
+                mode="contained"
                 onPress={handleLocate}
                 disabled={!postCode.trim() || isGeocoding}
                 style={commonStyles.locateButton}

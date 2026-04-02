@@ -108,10 +108,12 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
-In the hosts app, there are info, warning and error boxes that each have icon and text.
-
-
-
+- The following situations have the wrong colors used:
+- 'Locate' button should be unfilled variant.
+- Number stepper, is using purple
+- On the 'Make it stand out', the selectable pills both inactive/active colors
+- Add amenities
+- Safety considerations  & safety devices radios buttons colors aren't right
 ==================
 Re-useable prompts
 ==================

@@ -165,7 +165,7 @@ export default function CalendarSyncScreen() {
 
           {syncs.length === 0 && (
             <View style={styles.emptyState}>
-              <Icon source="sync-off" size={48} color={colors.icon} />
+              <Icon source="sync-off" size={48} color={colors.iconDecorative} />
               <Text style={commonStyles.emptyText}>No calendars connected</Text>
               <Text style={commonStyles.emptySubtext}>
                 Connect your AirBnB or other platform calendars to automatically
