@@ -162,8 +162,8 @@ export const commonStyles = StyleSheet.create({
   },
 
   chipSelected: {
-    backgroundColor: colors.textPrimary,
-    borderColor: colors.textPrimary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
 
   chipTextSelected: {
