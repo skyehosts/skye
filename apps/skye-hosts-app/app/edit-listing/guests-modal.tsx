@@ -4,8 +4,9 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Button, IconButton, Modal, Portal } from "react-native-paper";
+import { IconButton, Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { ActionBar } from "../components/action-bar";
 import { AppSnackbar } from "../components/app-snackbar";
 import { fetchApi } from "../services/api";
 import {
@@ -94,21 +95,12 @@ export function GuestsModal({
           />
         </View>
 
-        <View style={commonStyles.divider} />
-
-        <View style={commonStyles.row}>
-          <Button mode="text" onPress={onDismiss} disabled={saving}>
-            Cancel
-          </Button>
-          <Button
-            mode="contained-tonal"
-            onPress={handleSave}
-            loading={saving}
-            disabled={saving}
-          >
-            Save
-          </Button>
-        </View>
+        <ActionBar
+          onCancel={onDismiss}
+          onSave={handleSave}
+          loading={saving}
+          showDivider
+        />
       </Modal>
       <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </Portal>

@@ -35,18 +35,18 @@ Single source of truth for all design tokens consumed by frontend apps (React Na
 
 See `CLAUDE.md` → "Icon & colour conventions" for the full decision table. Summary:
 
-| Category                      | Colour                      | Token                  |
-| ----------------------------- | --------------------------- | ---------------------- |
-| Decorative / non-interactive  | `seaGlassTeal` (#4F8C8D)    | `colors.iconDecorative`|
-| Clickable / interactive icons | `deepSkyeBlue` (#1F3F4A)    | `colors.icon`          |
-| Selected state (cards)        | `deepSkyeBlue` (#1F3F4A)    | `colors.primary`       |
-| Active bottom tab             | `deepSkyeBlue` (#1F3F4A)    | `colors.primary`       |
-| Inactive bottom tab           | `grey600` (#666666)         | `colors.iconInactive`  |
-| Modal close buttons           | `grey600` (#666666)         | `colors.iconMuted`     |
-| Info icons                    | `heatherPurple` (#8B6FAF)   | `colors.heatherPurple` |
-| Warning icons                 | `autumnBracken` (#FF9500)   | `colors.warning`       |
-| Error icons                   | `rowanBerryLight` (#D4837A) | `colors.danger`        |
-| Icons on dark bg              | `warmStone` (#C8BFAE)       | `colors.iconOnDark`    |
+| Category                      | Colour                      | Token                   |
+| ----------------------------- | --------------------------- | ----------------------- |
+| Decorative / non-interactive  | `seaGlassTeal` (#4F8C8D)    | `colors.iconDecorative` |
+| Clickable / interactive icons | `deepSkyeBlue` (#1F3F4A)    | `colors.icon`           |
+| Selected state (cards)        | `deepSkyeBlue` (#1F3F4A)    | `colors.primary`        |
+| Active bottom tab             | `deepSkyeBlue` (#1F3F4A)    | `colors.primary`        |
+| Inactive bottom tab           | `grey600` (#666666)         | `colors.iconInactive`   |
+| Modal close buttons           | `grey600` (#666666)         | `colors.iconMuted`      |
+| Info icons                    | `heatherPurple` (#8B6FAF)   | `colors.heatherPurple`  |
+| Warning icons                 | `autumnBracken` (#FF9500)   | `colors.warning`        |
+| Error icons                   | `rowanBerryLight` (#D4837A) | `colors.danger`         |
+| Icons on dark bg              | `warmStone` (#C8BFAE)       | `colors.iconOnDark`     |
 
 **Key distinction**: `colors.icon` (deepSkyeBlue) is for interactive/clickable icons. `colors.iconDecorative` (seaGlassTeal) is for non-interactive decorative icons (amenity lists, step card icons, empty state illustrations). Never use `textSecondary` or `textPrimary` for icon colours.
 

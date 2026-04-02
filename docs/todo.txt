@@ -3,9 +3,6 @@ MVP
 ===
 - Consistent colors in app sorted
   - Should radio buttons use deepSkyeBlue unfilled, then filled as selected?
-    - Listing editor (root buttons at top)
-    - Safgety consideration modal 
-    - Safety devices modal
     - Header icons (E.G Amenities page) edit pencil and +, should be deepSkyeBlue? (Maybe not as back button grey)
     - Guests modal 'save' should be same as 'Next' in listing creator no?
     - 'Sign out' should be a darker red
