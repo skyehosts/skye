@@ -1,7 +1,11 @@
 ===
 MVP
 ===
+-ability to delete listing draft
+- set Lat/Lng overide on create listling when env toggled
+- Icons in App need some love, perhaps purple
 - Decide & implement if public booking possible via signup during booking flow.
+- eas build pipe failed
 - Test graceful failure error displayed when uploading listing image in App
   - redeploy app
   - unset AWS_CLOUDFRONT_IMAGES_DOMAIN
@@ -14,12 +18,6 @@ MVP
       - ## App Store URLs
       - ## Native Rebuild Required
   - Get Expo pipeline (GH) deployed to real device
-- Finishing off Availability
-  - Advance notice
-  - Same-day advance notice
-  - Available / Unavailable by default
-  - Drag to set available/unavailable
-
 - Add 'Local laws' AirBnB equivlant to listing creator
 - App: Edit listing
   - (Your space, remaining components)

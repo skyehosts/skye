@@ -142,7 +142,7 @@ function CalendarListingCard({
         </View>
         <Text style={styles.location}>{listing.postCode}</Text>
       </View>
-      <Icon source="chevron-right" size={24} color={colors.textSecondary} />
+      <Icon source="chevron-right" size={24} color={colors.icon} />
     </Pressable>
   );
 }

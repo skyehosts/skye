@@ -31,6 +31,8 @@ declare module "@mui/material/styles" {
       successGreen: string;
       rowanBerry: string;
       rowanBerryLight: string;
+      iconDefault: string;
+      iconOnDark: string;
     };
   }
   interface PaletteOptions {
@@ -61,6 +63,8 @@ declare module "@mui/material/styles" {
       successGreen?: string;
       rowanBerry?: string;
       rowanBerryLight?: string;
+      iconDefault?: string;
+      iconOnDark?: string;
     };
   }
 }

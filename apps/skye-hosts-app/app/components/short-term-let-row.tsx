@@ -17,7 +17,7 @@ export function ShortTermLetRow({ onPress }: ShortTermLetRowProps) {
           It is required to confirm you have a short-term let license.
         </Text>
       </View>
-      <Ionicons name="chevron-forward" size={18} color={colors.textSecondary} />
+      <Ionicons name="chevron-forward" size={18} color={colors.icon} />
     </Pressable>
   );
 }

@@ -40,7 +40,7 @@ export function SelectionCardGrid({ items, selectedIds, onToggle }: Props) {
             <Icon
               source={item.icon}
               size={32}
-              color={isSelected ? colors.textPrimary : colors.textSecondary}
+              color={isSelected ? colors.primary : colors.icon}
             />
             <Text
               style={[styles.cardTitle, isSelected && styles.cardTitleSelected]}

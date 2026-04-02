@@ -119,7 +119,7 @@ export function CalendarSyncSummaryCard({
                       <Icon
                         source="information-outline"
                         size={20}
-                        color={colors.textSecondary}
+                        color={colors.icon}
                       />
                     </View>
                   </Pressable>

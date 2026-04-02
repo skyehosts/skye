@@ -137,11 +137,7 @@ export function AmenitiesAddModal({
                 style={styles.amenityRow}
                 onPress={() => handleToggle(item.id)}
               >
-                <Icon
-                  source={item.icon}
-                  size={22}
-                  color={colors.textSecondary}
-                />
+                <Icon source={item.icon} size={22} color={colors.icon} />
                 <Text style={styles.amenityText}>{item.title}</Text>
                 {isSelected ? (
                   <Icon
@@ -153,7 +149,7 @@ export function AmenitiesAddModal({
                   <Icon
                     source="plus-circle-outline"
                     size={22}
-                    color={colors.textSecondary}
+                    color={colors.icon}
                   />
                 )}
               </Pressable>

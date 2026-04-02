@@ -20,7 +20,10 @@ import {
   grey600,
   grey900,
   heatherPurple,
+  heatherPurpleLight,
   highlandMossGreen,
+  iconDefault,
+  iconOnDark,
   rowanBerryLight,
   rowanBerryPale,
   seaGlassTeal,
@@ -35,24 +38,33 @@ import {
 
 /** Core brand */
 export const colors = {
-  /** Deep Skye Blue — primary brand colour */
+  /** CTAs, contained buttons, selected-state icons in selection cards */
   primary: deepSkyeBlue,
-  /** Highland Moss Green — secondary brand colour */
+  /** Secondary brand accent */
   secondary: highlandMossGreen,
 
-  /** Accent: Heather Purple */
+  /** Info-variant icons (ⓘ info boxes, help-circle icons) */
   heatherPurple,
-  /** Accent: Warm Stone */
+  /** Icon colour on dark backgrounds */
   warmStone,
   /** Accent: Driftwood Sand */
   driftwoodSand,
-  /** Accent: Sea Glass Teal */
+  /** Default decorative/nav icon colour — chevrons, menu icons, empty states, unselected cards */
   seaGlassTeal,
 
   /** Functional: Success Green */
   success: successGreen,
   /** Functional: Deal Highlight / Whisky Gold */
   dealHighlight: whiskyGold,
+
+  /** Decorative/nav icons on light backgrounds (= seaGlassTeal) */
+  icon: iconDefault,
+  /** Icons on dark backgrounds (= warmStone) */
+  iconOnDark: iconOnDark,
+  /** Modal close/dismiss buttons only — intentionally muted */
+  iconMuted: grey600,
+  /** Inactive bottom tab bar icons */
+  iconInactive: grey600,
 
   /* ── Existing UI tokens ────────────────────────────────────── */
   background: white,
@@ -84,6 +96,6 @@ export const colors = {
   calendarCellSelected: calendarSelectedBlue,
   calendarCellSelectedBorder: calendarSelectedBlueBorder,
   warningBackground: autumnBrackenLight,
-  infoBackground: seaGlassTealLight,
+  infoBackground: heatherPurpleLight,
   errorBackground: rowanBerryPale,
 } as const;

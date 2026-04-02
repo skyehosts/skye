@@ -211,6 +211,29 @@ export default async function DemoPage() {
 - Any bespoke, non-trivial components created should be added to packages/ui and and then referenced in storybook
 - When a component in packages/ui is updated, it's reference should also be updated in storybook (where appropriate)
 
+## Guide for: Icon & colour conventions
+
+Every icon colour has a specific use-case. Do not mix them.
+
+| Use-case                  | Token (`colors.___`) | Palette value               | When to use                                                                                           |
+| ------------------------- | -------------------- | --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Decorative / nav icons    | `icon`               | `seaGlassTeal` (#4F8C8D)    | Chevrons, menu icons, empty states, unselected selection card icons, add-photo, amenity icons         |
+| Selected / active state   | `primary`            | `deepSkyeBlue` (#1F3F4A)    | Selected selection-card icon, active bottom tab (via `seaGlassTeal` directly), contained button icons |
+| Active bottom tab         | `seaGlassTeal`       | `seaGlassTeal` (#4F8C8D)    | Bottom navigation bar active icon                                                                     |
+| Inactive bottom tab       | `iconInactive`       | `grey600` (#666666)         | Bottom navigation bar inactive icon                                                                   |
+| Modal close / dismiss     | `iconMuted`          | `grey600` (#666666)         | Close (×) buttons on modals/sheets — intentionally muted                                              |
+| Info icons                | `heatherPurple`      | `heatherPurple` (#8B6FAF)   | Info-box info variant, help-circle-outline tooltips                                                   |
+| Warning icons             | `warning`            | `autumnBracken` (#FF9500)   | Info-box warning variant, alert-outline                                                               |
+| Error / danger icons      | `danger`             | `rowanBerryLight` (#D4837A) | Info-box error variant, delete/remove actions                                                         |
+| Icons on dark backgrounds | `iconOnDark`         | `warmStone` (#C8BFAE)       | Any icon rendered on a dark background                                                                |
+
+**Rules:**
+
+- Never use `textSecondary` for icon colours — use `icon` (teal) for decorative, `iconMuted` for dismiss.
+- Never use `textPrimary` for selected icon states — use `primary` (deepSkyeBlue).
+- Button-embedded icons (via react-native-paper `<Button icon={...}>`) inherit colour from the button variant — do not override.
+- Info-box backgrounds must pair with their icon colour: `heatherPurpleLight` for info, `autumnBrackenLight` for warning, `rowanBerryPale` for error.
+
 ## Guide for: Styling in skye-hosts-app
 
 - **Never hardcode colors, spacing, or font sizes** — always import tokens from `app/theme/`.

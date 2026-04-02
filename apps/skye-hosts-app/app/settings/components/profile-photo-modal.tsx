@@ -68,11 +68,7 @@ export function ProfilePhotoModal({
           <Image source={{ uri: currentPhotoUrl }} style={styles.photo} />
         ) : (
           <View style={styles.placeholder}>
-            <Ionicons
-              name="person-outline"
-              size={48}
-              color={colors.textSecondary}
-            />
+            <Ionicons name="person-outline" size={48} color={colors.icon} />
           </View>
         )}
       </View>

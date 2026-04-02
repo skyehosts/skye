@@ -217,11 +217,7 @@ export default function HouseRulesScreen() {
                 </Text>
               )}
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={colors.textSecondary}
-            />
+            <Ionicons name="chevron-forward" size={18} color={colors.icon} />
           </View>
         </Pressable>
       </View>

@@ -98,9 +98,7 @@ export default function SpaceTypeScreen() {
                   <Icon
                     source={ICON_MAP[item.id] ?? "help-circle-outline"}
                     size={32}
-                    color={
-                      isSelected ? colors.textPrimary : colors.textSecondary
-                    }
+                    color={isSelected ? colors.primary : colors.icon}
                   />
                 </Pressable>
               );

@@ -15,7 +15,7 @@ const variantConfig: Record<
   info: {
     bg: colors.infoBackground,
     icon: "information-outline",
-    iconColor: colors.primary,
+    iconColor: colors.heatherPurple,
     textColor: colors.textSecondary,
   },
   warning: {

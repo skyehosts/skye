@@ -7,9 +7,23 @@ export interface GeocodedLocation {
   longitude: number;
 }
 
+const STUB_LOCATION: GeocodedLocation = {
+  latitude: 57.2737,
+  longitude: -6.2155,
+};
+
 export async function geocodePostcode(
   postcode: string,
 ): Promise<GeocodedLocation> {
+  console.debug("[geocode] bypassGeocoding =", env.bypassGeocoding);
+  if (env.bypassGeocoding) {
+    console.debug(
+      "[geocode] Bypassing Google geocoding, returning stub location",
+    );
+    return STUB_LOCATION;
+  }
+  console.debug("[geocode] Calling Google Geocoding API");
+
   const apiKey = env.googleMapsApiKey;
   if (!apiKey) {
     throw new Error("Google Maps API key not configured");

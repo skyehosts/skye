@@ -15,14 +15,12 @@ export function MenuItem({ icon, label, onPress, danger }: MenuItemProps) {
       <Icon
         source={icon}
         size={22}
-        color={danger ? colors.danger : colors.textSecondary}
+        color={danger ? colors.danger : colors.icon}
       />
       <Text style={[styles.menuItemText, danger && styles.menuItemTextDanger]}>
         {label}
       </Text>
-      {!danger && (
-        <Icon source="chevron-right" size={22} color={colors.textSecondary} />
-      )}
+      {!danger && <Icon source="chevron-right" size={22} color={colors.icon} />}
     </TouchableOpacity>
   );
 }

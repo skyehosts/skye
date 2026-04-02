@@ -208,7 +208,7 @@ export default function CheckoutInstructionsScreen() {
                     <Ionicons
                       name="chevron-forward"
                       size={18}
-                      color={colors.textSecondary}
+                      color={colors.icon}
                     />
                   </Pressable>
                 </View>

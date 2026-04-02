@@ -165,7 +165,7 @@ export default function CalendarSyncScreen() {
 
           {syncs.length === 0 && (
             <View style={styles.emptyState}>
-              <Icon source="sync-off" size={48} color={colors.textSecondary} />
+              <Icon source="sync-off" size={48} color={colors.icon} />
               <Text style={commonStyles.emptyText}>No calendars connected</Text>
               <Text style={commonStyles.emptySubtext}>
                 Connect your AirBnB or other platform calendars to automatically
@@ -197,11 +197,7 @@ export default function CalendarSyncScreen() {
                     {PLATFORM_LABELS[sync.platform] ?? sync.platform}
                   </Text>
                 </View>
-                <Icon
-                  source="chevron-right"
-                  size={20}
-                  color={colors.textSecondary}
-                />
+                <Icon source="chevron-right" size={20} color={colors.icon} />
               </View>
 
               <View style={styles.syncDetails}>
@@ -260,7 +256,7 @@ export default function CalendarSyncScreen() {
                         <Icon
                           source="information-outline"
                           size={20}
-                          color={colors.textSecondary}
+                          color={colors.icon}
                         />
                       </View>
                     </Pressable>
@@ -291,7 +287,7 @@ export default function CalendarSyncScreen() {
             <Icon
               source="help-circle-outline"
               size={16}
-              color={colors.primary}
+              color={colors.heatherPurple}
             />
             <Text style={styles.helpLinkText}>
               How does calendar sync work?

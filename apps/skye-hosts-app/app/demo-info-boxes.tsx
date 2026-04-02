@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Appbar, Text } from "react-native-paper";
 import { InfoBox } from "./components/info-box";
 import { ScreenContainer } from "./components/screen-container";
-import { commonStyles, spacing, typography } from "./theme";
+import { commonStyles, spacing } from "./theme";
 
 export default function DemoInfoBoxesScreen() {
   const router = useRouter();

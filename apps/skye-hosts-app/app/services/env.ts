@@ -2,6 +2,14 @@ import Constants from "expo-constants";
 
 const extra = Constants.expoConfig?.extra ?? {};
 
+console.debug("[env] extra keys:", Object.keys(extra));
+console.debug(
+  "[env] BYPASS_GEOCODING raw value:",
+  JSON.stringify(extra["BYPASS_GEOCODING"]),
+  "type:",
+  typeof extra["BYPASS_GEOCODING"],
+);
+
 function requireEnv(name: string): string {
   const value = extra[name] as string | undefined;
   // We allow them to be null,0,'' beacuse sometime in local dev we don't want to set them (like Sentry DSN for example)
@@ -26,5 +34,8 @@ export const env = {
   },
   get googleMapsApiKey() {
     return requireEnv("GOOGLE_MAPS_API_KEY");
+  },
+  get bypassGeocoding() {
+    return extra["BYPASS_GEOCODING"] === "true";
   },
 };

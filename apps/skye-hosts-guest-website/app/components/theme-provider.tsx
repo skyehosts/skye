@@ -8,6 +8,8 @@ import {
   driftwoodSand,
   heatherPurple,
   highlandMossGreen,
+  iconDefault,
+  iconOnDark,
   rowanBerry,
   rowanBerryLight,
   seaGlassTeal,
@@ -35,6 +37,8 @@ const highlandPalette: PaletteOptions = {
     successGreen,
     rowanBerry,
     rowanBerryLight,
+    iconDefault,
+    iconOnDark,
   },
 };
 

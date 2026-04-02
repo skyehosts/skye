@@ -335,7 +335,7 @@ export default function CalendarSyncFormScreen() {
               <Icon
                 source="help-circle-outline"
                 size={20}
-                color={colors.primary}
+                color={colors.heatherPurple}
               />
             </Pressable>
           </View>
@@ -392,7 +392,7 @@ export default function CalendarSyncFormScreen() {
               <Icon
                 source="help-circle-outline"
                 size={20}
-                color={colors.primary}
+                color={colors.heatherPurple}
               />
             </Pressable>
           </View>

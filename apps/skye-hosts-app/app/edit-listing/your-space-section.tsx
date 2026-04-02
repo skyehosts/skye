@@ -249,11 +249,7 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
                 if (!meta) return null;
                 return (
                   <View key={id} style={styles.amenityRow}>
-                    <Icon
-                      source={meta.icon}
-                      size={18}
-                      color={colors.textSecondary}
-                    />
+                    <Icon source={meta.icon} size={18} color={colors.icon} />
                     <Text style={commonStyles.itemSubtext}>{meta.title}</Text>
                   </View>
                 );

@@ -3,6 +3,8 @@ export {
   driftwoodSand,
   heatherPurple,
   highlandMossGreen,
+  iconDefault,
+  iconOnDark,
   rowanBerry,
   rowanBerryLight,
   seaGlassTeal,
