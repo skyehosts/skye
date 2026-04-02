@@ -8,4 +8,5 @@ High-level documentation of key features and systems. These docs focus on critic
 | ------------------------------------------------------ | ---------------------------------------------------------------------------------- |
 | [calendar-availability.md](./calendar-availability.md) | Calendar availability model, manual blocking, drag-to-select                       |
 | [calendar-sync.md](./calendar-sync.md)                 | External calendar sync (import/export, auto-disable, orphaned blocks)              |
+| [listing-deletion.md](./listing-deletion.md)           | Listing deletion flow, FK constraint order, confirmation UI                        |
 | [theme-tokens.md](./theme-tokens.md)                   | Shared design tokens package (`@repo/theme`) — spacing, border-radius, font-weight |

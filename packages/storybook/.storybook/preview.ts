@@ -1,6 +1,8 @@
 import type { Preview } from "@storybook/react";
+import { highlandThemeDecorator } from "../src/decorators/highland-theme-decorator";
 
 const preview: Preview = {
+  decorators: [highlandThemeDecorator],
   parameters: {
     controls: {
       matchers: {

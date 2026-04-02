@@ -1,6 +1,7 @@
 ===
 MVP
 ===
+- Remove photo should be danger?
 - Consistent colors in app sorted
   - Add dexamples to demo page
   - Update Claude.md and any relevant comments to reflect our desired color scheme

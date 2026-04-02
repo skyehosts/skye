@@ -52,9 +52,21 @@ See `CLAUDE.md` → "Icon & colour conventions" for the full decision table. Sum
 
 In web apps, `iconDefault` and `iconOnDark` are available via MUI's `custom` palette (e.g. `sx={{ color: 'custom.iconDefault' }}`).
 
+## Web theme: Highland component overrides (guest website)
+
+The guest website's `AppThemeProvider` (`apps/skye-hosts-guest-website/app/components/theme-provider.tsx`) extends the shared `createAppTheme` with Highland-specific MUI component overrides:
+
+- **MUI palette overrides**: `error.main` → `rowanBerryLight`, `warning.main` → `autumnBracken`, `success.main` → `successGreen` — so `color="error"` etc. use Highland colours throughout all MUI components.
+- **MUI Alert severity colours**: `standardInfo` → heatherPurple icon + heatherPurpleLight bg, `standardWarning` → autumnBracken + autumnBrackenLight, `standardError` → rowanBerryLight + rowanBerryPale, `standardSuccess` → successGreen + successGreenLight. Matches the React Native app's `InfoBox` component colour language.
+- **MUI Link**: `color` and `textDecorationColor` → `deepSkyeBlue`, matching the app's link styling.
+
+These overrides live in the guest website only (not in the shared `createAppTheme`), because `skye-glamping-website` will skin a different colour theme over the same base.
+
+The storybook decorator (`packages/storybook/src/decorators/highland-theme-decorator.tsx`) mirrors these overrides so stories render with Highland colours.
+
 ## Consumption
 
 - **skye-hosts-app**: re-exports via `app/theme/*.ts` → consumed through `app/theme/index.ts`
-- **skye-hosts-guest-website**: `app/theme/palette.ts` re-exports selected colours from `@repo/theme`
-- **storybook**: imports palette directly for the Highland Palette showcase
+- **skye-hosts-guest-website**: `app/theme/palette.ts` re-exports selected colours from `@repo/theme`; `theme-provider.tsx` adds Highland MUI component overrides
+- **storybook**: Highland theme decorator wraps all stories; HighlandAlerts story demonstrates themed Alerts and Links
 - **Future apps**: add `"@repo/theme": "workspace:*"` and import directly

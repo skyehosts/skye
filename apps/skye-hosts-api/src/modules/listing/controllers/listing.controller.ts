@@ -1,8 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Header,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -12,6 +15,7 @@ import type { IGetListingUnavailabilityResponseDto } from '@repo/skye-hosts-api-
 import { CalendarSyncService } from '../../calendar-sync/providers';
 import {
   AuthenticatedUser,
+  AuthoriseRole,
   IgnoreBearerAuthentication,
 } from '../../common/decorators';
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
@@ -95,5 +99,15 @@ export class ListingController {
     @AuthenticatedUser() authenticatedUser: IJwtClaims,
   ): Promise<GetListingResponseDto> {
     return this.listingService.update(Number(id), authenticatedUser.sub, body);
+  }
+
+  @Delete(':id')
+  @AuthoriseRole('host')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async onDeleteListing(
+    @Param('id', ParseIntPipe) id: number,
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+  ): Promise<void> {
+    await this.listingService.delete(id, authenticatedUser.sub);
   }
 }

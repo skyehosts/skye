@@ -17,7 +17,8 @@
     "./use-auth": "./src/auth/use-auth.ts",
     "./format-short-date-range": "./src/utils/format-short-date-range.ts",
     "./app-theme-provider": "./src/theme/app-theme-provider.tsx",
-    "./create-app-theme": "./src/theme/create-app-theme.ts"
+    "./create-app-theme": "./src/theme/create-app-theme.ts",
+    "./highland-theme": "./src/theme/highland-theme.ts"
   },
   "scripts": {
     "clean": "rm -rf dist",
