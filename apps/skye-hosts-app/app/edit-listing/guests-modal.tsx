@@ -66,7 +66,7 @@ export function GuestsModal({
         <View style={commonStyles.row}>
           <Text style={commonStyles.modalTitle}>Edit guests</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 

@@ -61,9 +61,14 @@ export default function MoreScreen() {
       {__DEV__ && (
         <View style={commonStyles.menuSection}>
           <MenuItem
+            icon="palette-outline"
+            label="Style Guide"
+            onPress={() => router.push("/style-guide")}
+          />
+          <MenuItem
             icon="flask-outline"
-            label="Demo"
-            onPress={() => router.push("/demo-info-boxes")}
+            label="Demo Form"
+            onPress={() => router.push("/demo-form")}
           />
         </View>
       )}

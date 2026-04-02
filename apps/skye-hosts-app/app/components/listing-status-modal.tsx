@@ -71,7 +71,7 @@ export function ListingStatusModal({
         <View style={commonStyles.row}>
           <Text style={commonStyles.modalTitle}>Change listing status</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 

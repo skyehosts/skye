@@ -38,7 +38,7 @@ export function TemplateTokenPicker({
         <View style={styles.header}>
           <Text style={styles.title}>Add details</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={24} color={colors.textPrimary} />
+            <Ionicons name="close" size={24} color={colors.iconMuted} />
           </Pressable>
         </View>
         <Text style={styles.subtitle}>

@@ -2,15 +2,11 @@
 MVP
 ===
 - Consistent colors in app sorted
-  - Should radio buttons use deepSkyeBlue unfilled, then filled as selected?
-    - Header icons (E.G Amenities page) edit pencil and +, should be deepSkyeBlue? (Maybe not as back button grey)
-    - Guests modal 'save' should be same as 'Next' in listing creator no?
-    - 'Sign out' should be a darker red
-  - Any modal or page that has only one button on it should use filled style?
   - Add dexamples to demo page
   - Update Claude.md and any relevant comments to reflect our desired color scheme
 - Consistent colors in website sorted
 - Buttons consistency in app & web?
+- acessbiility features should have icons
 - Days above calendar not centered
 - Delete listing functionality
 - Decide & implement if public booking possible via signup during booking flow.

@@ -197,7 +197,7 @@ export default function CheckoutInstructionsScreen() {
                     <Ionicons
                       name={opt.icon as keyof typeof Ionicons.glyphMap}
                       size={22}
-                      color={colors.textPrimary}
+                      color={colors.icon}
                     />
                     <View style={styles.rowText}>
                       <Text style={commonStyles.itemTitle}>{opt.title}</Text>
@@ -256,7 +256,7 @@ export default function CheckoutInstructionsScreen() {
           <View style={commonStyles.row}>
             <Text style={commonStyles.modalTitle}>Add instruction</Text>
             <Pressable onPress={() => setAddModalVisible(false)} hitSlop={8}>
-              <Ionicons name="close" size={22} color={colors.textSecondary} />
+              <Ionicons name="close" size={22} color={colors.iconMuted} />
             </Pressable>
           </View>
 

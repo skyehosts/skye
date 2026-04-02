@@ -213,6 +213,8 @@ export default async function DemoPage() {
 
 ## Guide for: Icon & colour conventions
 
+Canonical reference: `apps/skye-hosts-app/app/style-guide.tsx` — live examples of every color pattern (buttons, icons, cards, chips, links, info boxes, steppers). Accessible from the Menu page in dev builds.
+
 Every icon colour has a specific use-case. Do not mix them.
 
 | Use-case                      | Token (`colors.___`) | Palette value                 | When to use                                                                                                                 |
@@ -274,11 +276,11 @@ Every icon colour has a specific use-case. Do not mix them.
 - Should send HTTP requests to apps/skye-hosts-api (Not Nextjs API routes)
 - Always use `applyServerErrors` from `@repo/ui/forms/apply-server-errors` in the catch block to map API validation errors onto fields. See canonical examples:
   - Web: `packages/ui/src/auth/sign-up-form.tsx`
-  - Native (host app): `apps/skye-hosts-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
+  - Native (host app): `apps/skye-hosts-app/app/demo-form.tsx` — full demo form posting to `POST /demo/form`
 
 #### React Native form pattern (skye-hosts-app)
 
-Canonical reference: `apps/skye-hosts-app/app/demo.tsx`. Every form with text inputs MUST follow this pattern:
+Canonical reference: `apps/skye-hosts-app/app/demo-form.tsx`. Every form with text inputs MUST follow this pattern:
 
 1. **`useForm` + `Controller`** — wrap every text input in `<Controller control={control} name="fieldName" rules={{...}} render={...} />`. Never use `setValue`/`watch`/`register` for text fields — always use `Controller`.
 2. **`rules` on Controller** — add frontend validation (required, pattern, minLength, etc.) directly on the `Controller` `rules` prop. Use `pattern` with regex for emails: `{ value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Enter a valid email address" }`.
