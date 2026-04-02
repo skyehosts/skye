@@ -59,7 +59,11 @@ export default function CreateListingIntroScreen() {
                   <Text style={styles.stepDescription}>{step.description}</Text>
                 </View>
                 <View style={styles.iconContainer}>
-                  <Icon source={step.icon} size={40} color={colors.icon} />
+                  <Icon
+                    source={step.icon}
+                    size={40}
+                    color={colors.iconDecorative}
+                  />
                 </View>
               </View>
             </Card>

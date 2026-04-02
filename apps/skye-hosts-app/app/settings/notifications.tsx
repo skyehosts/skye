@@ -276,8 +276,7 @@ const styles = StyleSheet.create({
   },
   editLink: {
     fontSize: typography.sm,
-    color: colors.textPrimary,
-    fontWeight: fontWeight.semibold,
+    color: colors.primary,
     textDecorationLine: "underline",
     marginLeft: spacing.md,
   },

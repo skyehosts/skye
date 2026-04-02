@@ -6,9 +6,10 @@
  *   deepSkyeBlue    — primary buttons, contained CTAs, selected-state icons
  *   highlandMossGreen — secondary brand accent
  *
- * ICONS (decorative / navigation)
- *   seaGlassTeal    — default icon colour on light backgrounds (chevrons,
- *                     menu icons, empty states, unselected selection cards)
+ * ICONS
+ *   deepSkyeBlue    — interactive/clickable icons (chevrons in pressable rows,
+ *                     menu icons, add-photo, any icon inside Pressable/TouchableOpacity)
+ *   seaGlassTeal    — purely decorative non-clickable icons (rare)
  *   warmStone       — icon colour on dark backgrounds
  *   grey600         — modal close/dismiss buttons only (muted affordance)
  *   grey500 / grey600 — inactive tab bar icons
@@ -21,12 +22,13 @@
  *   successGreen       — success icons
  *
  * RESERVED — do NOT use for general icons:
- *   deepSkyeBlue  — CTAs / links / selected states only
  *   rowanBerry    — favourites / save actions (web)
  */
 
 /** Core brand — CTAs, contained buttons, selected-state icons */
 export const deepSkyeBlue = "#1F3F4A";
+/** Light variant of deepSkyeBlue — selected card backgrounds */
+export const deepSkyeBlueLight = "#E0EDF0";
 /** Secondary brand accent */
 export const highlandMossGreen = "#5F7F4B";
 

@@ -1,9 +1,9 @@
 import { CommonActions } from "@react-navigation/native";
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { BottomNavigation, Icon } from "react-native-paper";
 import { useUnreadMessages } from "../contexts/unread-messages-context";
-import { colors, commonStyles } from "../theme";
+import { colors, commonStyles, fontWeight } from "../theme";
 
 export default function TabsLayout() {
   const { hasUnread } = useUnreadMessages();
@@ -14,8 +14,9 @@ export default function TabsLayout() {
         <BottomNavigation.Bar
           navigationState={state}
           safeAreaInsets={insets}
-          activeColor={colors.seaGlassTeal}
+          activeColor={colors.primary}
           inactiveColor={colors.iconInactive}
+          activeIndicatorStyle={{ backgroundColor: "transparent" }}
           style={{ backgroundColor: colors.background }}
           onTabPress={({ route, preventDefault }) => {
             const event = navigation.emit({
@@ -36,9 +37,23 @@ export default function TabsLayout() {
             descriptors[route.key].options.tabBarIcon?.({
               focused,
               color,
-              size: 24,
+              size: 28,
             }) ?? null
           }
+          renderLabel={({ route, focused, color }) => (
+            <Text
+              style={{
+                fontSize: 12,
+                color,
+                fontWeight: focused ? fontWeight.semibold : fontWeight.normal,
+                textAlign: "center",
+              }}
+            >
+              {(descriptors[route.key].options.tabBarLabel as string) ??
+                descriptors[route.key].options.title ??
+                route.name}
+            </Text>
+          )}
           getLabelText={({ route }) =>
             (descriptors[route.key].options.tabBarLabel as string) ??
             descriptors[route.key].options.title ??

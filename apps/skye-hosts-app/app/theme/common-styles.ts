@@ -106,8 +106,9 @@ export const commonStyles = StyleSheet.create({
   },
 
   cardSelected: {
-    borderColor: colors.textPrimary,
+    borderColor: colors.primary,
     borderWidth: 2,
+    backgroundColor: colors.primaryLight,
   },
 
   cardTitle: {

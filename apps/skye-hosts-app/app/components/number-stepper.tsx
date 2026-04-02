@@ -23,7 +23,7 @@ export function NumberStepper({
       <View style={styles.counter}>
         <IconButton
           icon="minus"
-          mode="outlined"
+          mode="contained"
           size={18}
           iconColor={colors.icon}
           disabled={value <= min}
@@ -32,7 +32,7 @@ export function NumberStepper({
         <Text style={styles.count}>{value}</Text>
         <IconButton
           icon="plus"
-          mode="outlined"
+          mode="contained"
           size={18}
           iconColor={colors.icon}
           disabled={max !== undefined && value >= max}

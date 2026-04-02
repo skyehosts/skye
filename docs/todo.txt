@@ -1,9 +1,9 @@
 ===
 MVP
 ===
-- ability to delete listing draft
-- set Lat/Lng overide on create listling when env toggled
-- Icons in App need some love, perhaps purple
+- Consistent colors in app sortedd
+- Consistent colors in website sorted
+- Buttons consistency in app & web?
 - Decide & implement if public booking possible via signup during booking flow.
 - eas build pipe failed
 - Test graceful failure error displayed when uploading listing image in App
@@ -108,6 +108,8 @@ Long term TODOs
 ===============
 Pending Prompts
 ===============
+In the hosts app, there are info, warning and error boxes that each have icon and text.
+
 
 
 ==================

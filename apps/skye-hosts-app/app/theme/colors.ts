@@ -10,6 +10,7 @@ import {
   calendarSelectedBlue,
   calendarSelectedBlueBorder,
   deepSkyeBlue,
+  deepSkyeBlueLight,
   driftwoodSand,
   grey100,
   grey200,
@@ -22,7 +23,6 @@ import {
   heatherPurple,
   heatherPurpleLight,
   highlandMossGreen,
-  iconDefault,
   iconOnDark,
   rowanBerryLight,
   rowanBerryPale,
@@ -40,6 +40,8 @@ import {
 export const colors = {
   /** CTAs, contained buttons, selected-state icons in selection cards */
   primary: deepSkyeBlue,
+  /** Light background for selected states (e.g. selected listing journey cards) */
+  primaryLight: deepSkyeBlueLight,
   /** Secondary brand accent */
   secondary: highlandMossGreen,
 
@@ -57,8 +59,10 @@ export const colors = {
   /** Functional: Deal Highlight / Whisky Gold */
   dealHighlight: whiskyGold,
 
-  /** Decorative/nav icons on light backgrounds (= seaGlassTeal) */
-  icon: iconDefault,
+  /** Interactive/clickable icons on light backgrounds (= deepSkyeBlue) */
+  icon: deepSkyeBlue,
+  /** Purely decorative, non-clickable icons (= seaGlassTeal) */
+  iconDecorative: seaGlassTeal,
   /** Icons on dark backgrounds (= warmStone) */
   iconOnDark: iconOnDark,
   /** Modal close/dismiss buttons only — intentionally muted */
