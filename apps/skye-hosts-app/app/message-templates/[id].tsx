@@ -180,11 +180,11 @@ export default function MessageTemplateFormScreen() {
       });
       router.replace({
         pathname: "/message-templates",
-        params: { flash: "Template deleted" },
+        params: { flash: "Scheduled message deleted" },
       });
     } catch (e) {
       captureException(e);
-      setServerError("Failed to delete template. Please try again.");
+      setServerError("Failed to delete scheduled message. Please try again.");
       setIsDeleting(false);
     }
   };
@@ -196,7 +196,9 @@ export default function MessageTemplateFormScreen() {
       <ScreenContainer>
         <Appbar.Header>
           <Appbar.BackAction onPress={() => router.back()} />
-          <Appbar.Content title={isNew ? "New template" : "Edit template"} />
+          <Appbar.Content
+            title={isNew ? "New scheduled message" : "Edit scheduled message"}
+          />
         </Appbar.Header>
         <View style={styles.centered}>
           <ActivityIndicator size="large" />
@@ -209,7 +211,9 @@ export default function MessageTemplateFormScreen() {
     <ScreenContainer>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title={isNew ? "New template" : "Edit template"} />
+        <Appbar.Content
+          title={isNew ? "New scheduled message" : "Edit scheduled message"}
+        />
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={commonStyles.contentScroll}>
@@ -222,7 +226,7 @@ export default function MessageTemplateFormScreen() {
             render={({ field }) => (
               <TextInput
                 mode="outlined"
-                label="Template name"
+                label="Name"
                 value={field.value}
                 onChangeText={field.onChange}
                 error={!!errors.name}
@@ -287,7 +291,7 @@ export default function MessageTemplateFormScreen() {
             Listings
           </Text>
           <Text style={styles.sectionSubtitle}>
-            Which listings should use this template?
+            Which listings should use this scheduled message?
           </Text>
           {listings.length === 0 && (
             <Text style={styles.emptyHint}>No listings found.</Text>
@@ -362,7 +366,7 @@ export default function MessageTemplateFormScreen() {
           disabled={isBusy}
           style={styles.saveButton}
         >
-          {isNew ? "Create template" : "Save changes"}
+          {isNew ? "Create scheduled message" : "Save changes"}
         </Button>
 
         {!isNew && (
@@ -374,7 +378,7 @@ export default function MessageTemplateFormScreen() {
             disabled={isBusy}
             style={styles.deleteButton}
           >
-            Delete template
+            Delete scheduled message
           </Button>
         )}
       </ScrollView>
