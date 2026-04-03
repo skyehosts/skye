@@ -191,7 +191,7 @@ export default function LocationScreen() {
               </Text>
             ) : (
               <>
-                <InfoBox variant="info">
+                <InfoBox variant="info" icon="gesture-swipe">
                   Drag the pin to your exact property location
                 </InfoBox>
                 <LocationPinPicker

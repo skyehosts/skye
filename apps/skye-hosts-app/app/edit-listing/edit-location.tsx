@@ -201,7 +201,7 @@ export default function EditLocationScreen() {
 
           {geocodedLocation && !isGeocoding && (
             <View style={styles.mapArea}>
-              <InfoBox variant="info">
+              <InfoBox variant="info" icon="gesture-swipe">
                 Drag the pin to your exact property location
               </InfoBox>
               <LocationPinPicker

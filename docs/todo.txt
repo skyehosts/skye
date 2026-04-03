@@ -2,10 +2,6 @@
 ===
 MVP
 ===
-- test validation on checking/check ot dates out must be before in
-- test check out instructions maybe shouldn't require a value in text box?
-- test "drag the pin to your" needs more prominence
-- test edit description list items should use 'edit' not arroe
 - bug: adding cal w only import, then hit back not taken to calendar page
 - long press instructions on calendar page?
 - "enable import and for full pro -> enable export for protection against double bookings?

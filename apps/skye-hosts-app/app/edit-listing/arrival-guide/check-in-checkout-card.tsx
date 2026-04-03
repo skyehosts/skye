@@ -10,7 +10,6 @@ import { AppSnackbar } from "../../components/app-snackbar";
 import { DropdownField } from "../../components/dropdown-field";
 import { ActionBar } from "../../components/action-bar";
 import {
-  DEFAULT_TIME,
   TIME_OPTIONS,
   TimeRangePicker,
 } from "../../components/time-range-picker";
@@ -36,15 +35,15 @@ export function CheckInCheckoutCard({
   const [modalVisible, setModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const [checkInStart, setCheckInStart] = useState<string>(DEFAULT_TIME);
-  const [checkInEnd, setCheckInEnd] = useState<string>(DEFAULT_TIME);
-  const [checkOut, setCheckOut] = useState<string>(DEFAULT_TIME);
+  const [checkInStart, setCheckInStart] = useState<string>("15:00");
+  const [checkInEnd, setCheckInEnd] = useState<string>("21:00");
+  const [checkOut, setCheckOut] = useState<string>("11:00");
 
   useEffect(() => {
     if (modalVisible) {
-      setCheckInStart(checkInTimeStart ?? DEFAULT_TIME);
-      setCheckInEnd(checkInTimeEnd ?? DEFAULT_TIME);
-      setCheckOut(checkOutTime ?? DEFAULT_TIME);
+      setCheckInStart(checkInTimeStart ?? "15:00");
+      setCheckInEnd(checkInTimeEnd ?? "21:00");
+      setCheckOut(checkOutTime ?? "11:00");
     }
   }, [modalVisible, checkInTimeStart, checkInTimeEnd, checkOutTime]);
 
