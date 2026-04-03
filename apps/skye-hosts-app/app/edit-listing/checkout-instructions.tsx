@@ -85,7 +85,7 @@ export default function CheckoutInstructionsScreen() {
         IUpdateListingRequestDto
       >(
         `/listing/${id}`,
-        { [editingOption.field]: value || null } as IUpdateListingRequestDto,
+        { [editingOption.field]: value } as IUpdateListingRequestDto,
         {
           method: "PATCH",
         },
@@ -132,7 +132,7 @@ export default function CheckoutInstructionsScreen() {
       >(
         `/listing/${id}`,
         {
-          [selectedAddOption.field]: addText || null,
+          [selectedAddOption.field]: addText,
         } as IUpdateListingRequestDto,
         {
           method: "PATCH",
@@ -201,9 +201,14 @@ export default function CheckoutInstructionsScreen() {
                     />
                     <View style={styles.rowText}>
                       <Text style={commonStyles.itemTitle}>{opt.title}</Text>
-                      <Text style={commonStyles.itemSubtext} numberOfLines={2}>
-                        {listing?.[opt.field as CheckoutField]}
-                      </Text>
+                      {listing?.[opt.field as CheckoutField] ? (
+                        <Text
+                          style={commonStyles.itemSubtext}
+                          numberOfLines={2}
+                        >
+                          {listing[opt.field as CheckoutField]}
+                        </Text>
+                      ) : null}
                     </View>
                     <Ionicons
                       name="chevron-forward"
@@ -321,7 +326,7 @@ export default function CheckoutInstructionsScreen() {
                 onCancel={() => setAddModalVisible(false)}
                 onSave={handleAddSave}
                 loading={saving}
-                saveDisabled={!addText.trim()}
+                saveDisabled={false}
               />
             </View>
           )}

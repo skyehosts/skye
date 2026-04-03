@@ -14,6 +14,7 @@ import {
 import { useForm } from "react-hook-form";
 import { Appbar, Button, HelperText, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
+import { InfoBox } from "../components/info-box";
 import { LocationPinPicker } from "../components/location-pin-picker";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
@@ -200,9 +201,9 @@ export default function EditLocationScreen() {
 
           {geocodedLocation && !isGeocoding && (
             <View style={styles.mapArea}>
-              <Text style={commonStyles.mapLabel}>
+              <InfoBox variant="info">
                 Drag the pin to your exact property location
-              </Text>
+              </InfoBox>
               <LocationPinPicker
                 initialLatitude={geocodedLocation.latitude}
                 initialLongitude={geocodedLocation.longitude}

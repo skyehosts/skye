@@ -10,6 +10,7 @@ import {
 } from "react-native-paper";
 import { WizardAppBar } from "./wizard-app-bar";
 import { ScreenContainer } from "../components/screen-container";
+import { InfoBox } from "../components/info-box";
 import { LocationPinPicker } from "../components/location-pin-picker";
 import { commonStyles, spacing } from "../theme";
 import {
@@ -190,9 +191,9 @@ export default function LocationScreen() {
               </Text>
             ) : (
               <>
-                <Text style={commonStyles.mapLabel}>
+                <InfoBox variant="info">
                   Drag the pin to your exact property location
-                </Text>
+                </InfoBox>
                 <LocationPinPicker
                   initialLatitude={geocodedLocation.latitude}
                   initialLongitude={geocodedLocation.longitude}

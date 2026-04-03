@@ -13,7 +13,6 @@ import {
   View,
 } from "react-native";
 import { Appbar } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
 import { AppSnackbar } from "../components/app-snackbar";
 import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
@@ -156,11 +155,7 @@ export default function EditDescriptionScreen() {
                         {hasValue ? value : "Add details"}
                       </Text>
                     </View>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={18}
-                      color={colors.icon}
-                    />
+                    <Text style={commonStyles.menuItemAction}>Edit</Text>
                   </Pressable>
                 </View>
               );

@@ -2,9 +2,9 @@ import type {
   IGetListingResponseDto,
   IUpdateListingRequestDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
-import { useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Modal, Portal } from "react-native-paper";
+import { HelperText, Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { DropdownField } from "../../components/dropdown-field";
@@ -47,6 +47,16 @@ export function CheckInCheckoutCard({
       setCheckOut(checkOutTime ?? DEFAULT_TIME);
     }
   }, [modalVisible, checkInTimeStart, checkInTimeEnd, checkOutTime]);
+
+  const validationError = useMemo(() => {
+    if (checkInEnd <= checkInStart) {
+      return "Check-in end time must be after start time";
+    }
+    if (checkOut >= checkInStart) {
+      return "Checkout time must be before check-in start time";
+    }
+    return "";
+  }, [checkInStart, checkInEnd, checkOut]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -129,10 +139,15 @@ export function CheckInCheckoutCard({
             onChange={setCheckOut}
           />
 
+          <HelperText type="error" visible={!!validationError}>
+            {validationError}
+          </HelperText>
+
           <ActionBar
             onCancel={() => setModalVisible(false)}
             onSave={handleSave}
             loading={saving}
+            saveDisabled={!!validationError}
           />
         </Modal>
       </Portal>

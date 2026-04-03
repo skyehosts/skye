@@ -1,6 +1,16 @@
+
 ===
 MVP
 ===
+- test validation on checking/check ot dates out must be before in
+- test check out instructions maybe shouldn't require a value in text box?
+- test "drag the pin to your" needs more prominence
+- test edit description list items should use 'edit' not arroe
+- bug: adding cal w only import, then hit back not taken to calendar page
+- long press instructions on calendar page?
+- "enable import and for full pro -> enable export for protection against double bookings?
+- Message template add details..comment out non implemented?
+verify your pin form should be high cause slide up soft keyboard is obscuring it
 - Remove photo should be danger?
 - Consistent colors in app sorted
   - Add dexamples to demo page
@@ -122,16 +132,17 @@ Pending Prompts
 - For each problematic situation, compare against the common pattern within the app for this particular type of component and the situation in which its used
 - For each situation, provide a choice and a recommendation to change colors.
 - The goal here is to ensure that for situations such as 1. Clickable call to actions, 2. Non-clickable stuff (e.g informative icons), accent icons etc that we are consistently using the same colors to avoid confusing user. 
+
 ==================
 Re-useable prompts
 ==================
-Review plan and see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. Avoid override hacks if possible, but we don't
-want to regress any other styles, if overrides aren't hacky and are most viable, then we can use that. If any
+Review plan and see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
 
 ==================
 Things to test
 ==================
+- test long listing name
 - iCal export
 - iCal booking.com
 

@@ -21,9 +21,14 @@ import {
   Max,
   MaxLength,
   Min,
+  Validate,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
+import {
+  CheckInEndAfterStart,
+  CheckoutBeforeCheckIn,
+} from '../validators/check-in-checkout-time.validator';
 
 class MinNightsByCheckInDayDto implements IMinNightsByCheckInDay {
   @IsNumber()
@@ -177,11 +182,13 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsString()
   @MaxLength(5)
+  @Validate(CheckInEndAfterStart)
   checkInTimeEnd?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(5)
+  @Validate(CheckoutBeforeCheckIn)
   checkOutTime?: string | null;
 
   @IsOptional()
