@@ -420,6 +420,7 @@ export interface IAccessibilityFeatureConfig {
   id: ListingAccessibilityFeatureId;
   title: string;
   description: string;
+  icon: string;
 }
 
 export enum ListingSafetyConsiderationId {
@@ -437,6 +438,7 @@ export interface ITriStateItemConfig<T extends string = string> {
   id: T;
   title: string;
   description: string;
+  icon: string;
 }
 
 export enum ListingSafetyDeviceId {
@@ -453,24 +455,28 @@ export const SAFETY_DEVICES_CONFIG: ITriStateItemConfig<ListingSafetyDeviceId>[]
       title: 'Exterior security camera present',
       description:
         "This property has one or more exterior cameras that record or transmit video, images or audio. You must disclose them if they're turned off. Note: Security cameras that monitor indoor spaces or outdoor areas where greater privacy is expected, such as a shower, are not allowed.",
+      icon: 'cctv',
     },
     {
       id: ListingSafetyDeviceId.CarbonMonoxideAlarm,
       title: 'Carbon monoxide alarm',
       description:
         'A device that alerts if it detects unsafe levels of carbon monoxide (Check your local laws, which may require a working carbon monoxide detector in your listing)',
+      icon: 'molecule-co',
     },
     {
       id: ListingSafetyDeviceId.SmokeAlarm,
       title: 'Smoke alarm',
       description:
         'A device that alerts when it detects smoke (Check your local laws, which may require a working smoke detector in your listing)',
+      icon: 'smoke-detector-variant',
     },
     {
       id: ListingSafetyDeviceId.NoiseDecibelMonitor,
       title: 'Noise decibel monitor present',
       description:
         'This property has one or more devices that can monitor noise levels.',
+      icon: 'ear-hearing',
     },
   ];
 
@@ -480,36 +486,42 @@ export const SAFETY_CONSIDERATIONS_CONFIG: ITriStateItemConfig<ListingSafetyCons
       id: ListingSafetyConsiderationId.NotForChildren2To12,
       title: 'Not a good fit for children 2–12',
       description: 'This property has features that may not be safe for kids.',
+      icon: 'human-child',
     },
     {
       id: ListingSafetyConsiderationId.NotForInfantsUnder2,
       title: 'Not a good fit for infants under 2',
       description:
         'This property has features that may not be safe for babies or toddlers this age.',
+      icon: 'baby-carriage',
     },
     {
       id: ListingSafetyConsiderationId.PoolNoGate,
       title: "Pool or hot tub doesn't have a gate or lock",
       description:
         'Guests have access to an unsecured swimming pool or hot tub. Check your local laws for specific requirements.',
+      icon: 'pool',
     },
     {
       id: ListingSafetyConsiderationId.NearbyWater,
       title: 'Nearby water, like a lake or river',
       description:
         'Guests have unrestricted access to a body of water, like an ocean, pond, creek or wetlands, directly on or next to the property.',
+      icon: 'waves',
     },
     {
       id: ListingSafetyConsiderationId.ClimbingStructure,
       title: 'Climbing or play structure(s) on the property',
       description:
         'Guests will have access to structures like a playset, slide, swings or climbing ropes.',
+      icon: 'slide',
     },
     {
       id: ListingSafetyConsiderationId.HeightsWithoutRails,
       title: 'There are heights without rails or protection',
       description:
         'Guests have access to an area higher than 30 inches without protective barriers.',
+      icon: 'elevation-rise',
     },
   ];
 
@@ -519,23 +531,27 @@ export const ACCESSIBILITY_FEATURES_CONFIG: IAccessibilityFeatureConfig[] = [
     title: 'Disabled parking spot',
     description:
       "There's a private parking place at least 11 feet (3.35 metres) wide. Or, there is a public parking place designated for a person with disabilities that has clear signage or markings.",
+    icon: 'wheelchair-accessibility',
   },
   {
     id: ListingAccessibilityFeatureId.LitPath,
     title: 'Lit path to the guest entrance',
     description:
       'The pavement or path that leads to the guest entrance is well lit at night.',
+    icon: 'outdoor-lamp',
   },
   {
     id: ListingAccessibilityFeatureId.StepFreeAccess,
     title: 'Step-free access',
     description:
       "There are no steps, stairs or curbs on the entire path from a guest's arrival to the listing entrance. Any door thresholds or pathway obstacles must be less than 2 inches (5cm) high.",
+    icon: 'slope-uphill',
   },
   {
     id: ListingAccessibilityFeatureId.WideEntrance,
     title: 'Guest entrance wider than 32 inches (81cm)',
     description: 'The guest entrance is at least 32 inches (81 cm) wide.',
+    icon: 'door-open',
   },
 ];
 

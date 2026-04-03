@@ -40,19 +40,28 @@ function TriStateCardPreview({
   entries: string[];
   config: readonly ITriStateItemConfig[];
 }) {
-  const saved = entries.filter((e) => e.includes(":"));
-  if (saved.length === 0) {
+  const yesEntries = entries
+    .filter((e) => e.endsWith(":yes"))
+    .map((e) => e.split(":")[0]);
+  if (yesEntries.length === 0) {
     return <Text style={commonStyles.itemSubtext}>Add details</Text>;
   }
-  const firstId = saved[0].split(":")[0];
-  const firstConfig = config.find((c) => c.id === firstId);
   return (
     <View style={styles.amenityPreview}>
-      {firstConfig && (
-        <Text style={commonStyles.itemSubtext}>{firstConfig.title}</Text>
-      )}
-      {saved.length > 1 && (
-        <Text style={commonStyles.itemSubtext}>+ {saved.length - 1} more</Text>
+      {yesEntries.slice(0, 3).map((id) => {
+        const item = config.find((c) => c.id === id);
+        if (!item) return null;
+        return (
+          <View key={id} style={styles.amenityRow}>
+            <Icon source={item.icon} size={18} color={colors.iconDecorative} />
+            <Text style={commonStyles.itemSubtext}>{item.title}</Text>
+          </View>
+        );
+      })}
+      {yesEntries.length > 3 && (
+        <Text style={commonStyles.itemSubtext}>
+          + {yesEntries.length - 3} more
+        </Text>
       )}
     </View>
   );
@@ -282,20 +291,27 @@ export function YourSpaceSection({ listingId }: YourSpaceSectionProps) {
           {listing &&
             (listing.accessibilityFeatures?.length > 0 ? (
               <View style={styles.amenityPreview}>
-                {listing.accessibilityFeatures.slice(0, 2).map((id) => {
+                {listing.accessibilityFeatures.slice(0, 3).map((id) => {
                   const feature = ACCESSIBILITY_FEATURES_CONFIG.find(
                     (f) => f.id === id,
                   );
                   if (!feature) return null;
                   return (
-                    <Text key={id} style={commonStyles.itemSubtext}>
-                      {feature.title}
-                    </Text>
+                    <View key={id} style={styles.amenityRow}>
+                      <Icon
+                        source={feature.icon}
+                        size={18}
+                        color={colors.iconDecorative}
+                      />
+                      <Text style={commonStyles.itemSubtext}>
+                        {feature.title}
+                      </Text>
+                    </View>
                   );
                 })}
-                {listing.accessibilityFeatures.length > 2 && (
+                {listing.accessibilityFeatures.length > 3 && (
                   <Text style={commonStyles.itemSubtext}>
-                    + {listing.accessibilityFeatures.length - 2} more
+                    + {listing.accessibilityFeatures.length - 3} more
                   </Text>
                 )}
               </View>
