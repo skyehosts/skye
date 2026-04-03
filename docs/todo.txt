@@ -1,9 +1,18 @@
+- Remove the switch to enable/disable an import, if the import url field is not null you can assume it's enabled otherwise its disabled
+- Update all relevant backend / scheduled iCal import logic to accomodate this change
 
 ===
 MVP
 ===
-- bug: adding cal w only import, then hit back not taken to calendar page
-- long press instructions on calendar page?
+- bug: Calendar page, tapping on an air bnb booking, the popover thing that says 'Booked on Airbnb' is  too far away (vertially) from the bookig bar that was clicked
+  - Also sometimes when you tap on booking bar next side of screen, the popup goes too far away horizontal.
+  - Whilst ensuring that the popover never extends beyond the bounds of viewport,
+  - Try to improve position of popup in all circumstances
+  - Ideally if it also had an arrow or something connected to the booking bar to emphasis which booking bar it is referring to but not necessary if this adds too much complexity or fragility
+  - it should be closer, it also needs to visually standout a bit more to contrast against rest of page, propose a solution.
+  - scrutinise my plan
+  - any big decisions, ask
+- test separate import/export calendar sync modals
 - "enable import and for full pro -> enable export for protection against double bookings?
 - Message template add details..comment out non implemented?
 verify your pin form should be high cause slide up soft keyboard is obscuring it
