@@ -20,6 +20,7 @@ services:
   pgadmin:
     container_name: skye-hosts-pgadmin
     image: dpage/pgadmin4
+    restart: unless-stopped
     ports:
       - "18080:80"
     volumes:
