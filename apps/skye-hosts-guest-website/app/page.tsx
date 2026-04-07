@@ -1,8 +1,8 @@
-import Box from '@mui/material/Box';
 import {
   type IGetHomepageListingsResponseDto,
   slugify,
 } from '@repo/skye-hosts-api-client';
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { HomepageListingsGrid } from '@repo/web-components/listings/homepage-listings-grid';
 import Link from 'next/link';
 
@@ -15,7 +15,7 @@ export default async function Home() {
     await fetchApi<IGetHomepageListingsResponseDto>('/listing/homepage');
 
   return (
-    <Box component="main" sx={{ py: 4 }}>
+    <PageContainer>
       <HomepageListingsGrid
         listings={data.listings}
         linkWrapper={(listing, children) => (
@@ -24,6 +24,6 @@ export default async function Home() {
           </Link>
         )}
       />
-    </Box>
+    </PageContainer>
   );
 }

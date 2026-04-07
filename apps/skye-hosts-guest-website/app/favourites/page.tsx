@@ -1,5 +1,4 @@
 import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import {
   fetchApi,
@@ -7,6 +6,7 @@ import {
   slugify,
   type IGetFavouritesResponseDto,
 } from '@repo/skye-hosts-api-client';
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { ListingThumbnail } from '@repo/web-components/listings/listing-thumbnail';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -31,10 +31,7 @@ export default async function FavouritesPage() {
   );
 
   return (
-    <Container
-      maxWidth={false}
-      sx={{ maxWidth: 1120, py: 4, px: { xs: 2, md: 3 } }}
-    >
+    <PageContainer>
       <Typography variant="h4" component="h1" sx={{ mb: 3, fontWeight: 600 }}>
         My Favourites
       </Typography>
@@ -82,6 +79,6 @@ export default async function FavouritesPage() {
           ))}
         </Box>
       )}
-    </Container>
+    </PageContainer>
   );
 }

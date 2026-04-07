@@ -1,3 +1,4 @@
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { auth } from '../../auth';
@@ -10,10 +11,10 @@ export default async function EmailSubscriptionsPage() {
   }
 
   return (
-    <main>
+    <PageContainer>
       <Suspense>
         <ChangeEmailSubscriptionsWrapper />
       </Suspense>
-    </main>
+    </PageContainer>
   );
 }

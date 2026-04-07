@@ -1,3 +1,4 @@
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { auth } from '../../auth';
@@ -10,11 +11,11 @@ export default async function DeleteAccountPage() {
   }
 
   return (
-    <main>
+    <PageContainer>
       <h1>Delete account</h1>
       <Suspense>
         <DeleteAccountFormWrapper />
       </Suspense>
-    </main>
+    </PageContainer>
   );
 }
