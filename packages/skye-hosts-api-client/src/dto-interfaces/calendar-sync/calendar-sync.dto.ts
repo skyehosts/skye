@@ -8,8 +8,9 @@ export interface ICalendarSyncDto {
   listingId: number;
   platform: CalendarSyncPlatform;
   label: string | null;
-  importUrl: string | null;
+  importUrl: string;
   exportUrl: string;
+  lastExportedAt: string | null;
   lastImportAt: string | null;
   lastImportStatus: CalendarSyncImportStatus | null;
   lastImportError: string | null;

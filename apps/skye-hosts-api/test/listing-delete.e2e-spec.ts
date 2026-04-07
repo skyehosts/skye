@@ -91,6 +91,7 @@ describe('Listing Delete (e2e)', () => {
     await dataSource.getRepository(CalendarSync).insert({
       listingId: listingToDeleteId,
       platform: 'airbnb',
+      importUrl: 'https://example.com/airbnb-delete.ics',
       exportToken: 'test-export-token-delete',
     });
 

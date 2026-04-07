@@ -73,14 +73,14 @@ export class CalendarSyncService {
     data: {
       platform: string;
       label?: string;
-      importUrl?: string;
+      importUrl: string;
     },
   ): Promise<CalendarSync> {
     const sync = this.calendarSyncRepo.create({
       listingId,
       platform: data.platform as CalendarSync['platform'],
       label: data.label ?? null,
-      importUrl: data.importUrl ?? null,
+      importUrl: data.importUrl,
       exportToken: randomUUID(),
     });
     return this.calendarSyncRepo.save(sync);
@@ -90,7 +90,7 @@ export class CalendarSyncService {
     id: number,
     data: {
       label?: string;
-      importUrl?: string | null;
+      importUrl?: string;
     },
   ): Promise<CalendarSync> {
     const sync = await this.calendarSyncRepo.findOne({ where: { id } });
@@ -236,6 +236,7 @@ export class CalendarSyncService {
       label: sync.label,
       importUrl: sync.importUrl,
       exportUrl: this.buildExportUrl(sync.exportToken),
+      lastExportedAt: sync.lastExportedAt?.toISOString() ?? null,
       lastImportAt: sync.lastImportAt?.toISOString() ?? null,
       lastImportStatus: sync.lastImportStatus,
       lastImportError: sync.lastImportError,

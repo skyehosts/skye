@@ -26,11 +26,14 @@ export class CalendarSync {
   @Column({ type: 'character varying', nullable: true })
   label: string | null;
 
-  @Column({ type: 'text', nullable: true })
-  importUrl: string | null;
+  @Column({ type: 'text' })
+  importUrl: string;
 
   @Column({ type: 'character varying', unique: true })
   exportToken: string;
+
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  lastExportedAt: Date | null;
 
   @Column({ type: 'timestamp with time zone', nullable: true })
   lastImportAt: Date | null;

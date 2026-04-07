@@ -129,6 +129,7 @@ describe('ListingService', () => {
     });
 
     it('should throw ForbiddenException when permission is denied', async () => {
+      listingRepo.findOne.mockResolvedValue({ id: listingId });
       listingAccessService.hasPermission.mockResolvedValue(false);
 
       await expect(service.delete(listingId, accountId)).rejects.toThrow(

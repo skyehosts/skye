@@ -431,6 +431,8 @@ export class ListingService {
   }
 
   async delete(listingId: number, accountId: number): Promise<void> {
+    await this.findOneOrFail(listingId);
+
     const hasPermission = await this.listingAccessService.hasPermission(
       accountId,
       listingId,
@@ -442,8 +444,6 @@ export class ListingService {
         'You do not have permission to delete this listing',
       );
     }
-
-    await this.findOneOrFail(listingId);
 
     const futureBookingCount = await this.listingRepo.manager.count(Booking, {
       where: {

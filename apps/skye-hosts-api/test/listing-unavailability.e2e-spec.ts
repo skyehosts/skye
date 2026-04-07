@@ -127,10 +127,10 @@ describe('Listing Unavailability (e2e)', () => {
         .expect(200);
 
       const ranges = res.body.payload.unavailableDates;
-      // Seeded booking: 2026-04-01 to 2026-04-03
+      // Seeded booking: 2027-04-01 to 2027-04-03
       const hasSeededBooking = ranges.some(
         (r: { startDate: string; endDate: string }) =>
-          r.startDate <= '2026-04-01' && r.endDate >= '2026-04-03',
+          r.startDate <= '2027-04-01' && r.endDate >= '2027-04-03',
       );
       expect(hasSeededBooking).toBe(true);
     });

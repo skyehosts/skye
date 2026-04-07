@@ -8,5 +8,5 @@ export class UpdateCalendarSyncRequestDto implements IUpdateCalendarSyncRequestD
 
   @IsOptional()
   @IsUrl()
-  importUrl?: string | null;
+  importUrl?: string;
 }

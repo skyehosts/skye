@@ -5,12 +5,8 @@
 MVP
 ===
 - optimise and test removeal of enable/disable on calender sync
-  - 'Export to AirBnB' info box is pointless in create mode
-  - There is a grey info box on edit airbnb sync page
   - Back button issue is fucked
-  - Displaying 'Active' against Import/Export is stupid
-- pgadmin container fadesa way but db remains?
-- test icons added to edit listing page
+  - Double check the health indicator works off import too
 - bug: Calendar page, tapping on an air bnb booking, the popover thing that says 'Booked on Airbnb' is  too far away (vertially) from the bookig bar that was clicked
   - Also sometimes when you tap on booking bar next side of screen, the popup goes too far away horizontal.
   - Whilst ensuring that the popover never extends beyond the bounds of viewport,

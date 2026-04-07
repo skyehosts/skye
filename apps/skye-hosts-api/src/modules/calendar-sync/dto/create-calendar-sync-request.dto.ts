@@ -10,7 +10,6 @@ export class CreateCalendarSyncRequestDto implements ICreateCalendarSyncRequestD
   @IsString()
   label?: string;
 
-  @IsOptional()
   @IsUrl()
-  importUrl?: string;
+  importUrl: string;
 }

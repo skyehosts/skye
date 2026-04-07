@@ -1,5 +1,5 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Pressable,
@@ -8,44 +8,26 @@ import {
   View,
 } from "react-native";
 import { Appbar, Button, Dialog, Icon, Portal, Text } from "react-native-paper";
-import * as Clipboard from "expo-clipboard";
 import { InfoBox } from "../components/info-box";
 import type {
   ICalendarSyncDto,
   ICalendarSyncResponseDto,
   IGetCalendarSyncsResponseDto,
 } from "@repo/skye-hosts-api-client";
-import { tooltipStyles } from "../calendar/components/tooltip-styles";
-import { clampTooltipLeft } from "../utils/tooltip";
 import { AppSnackbar } from "../components/app-snackbar";
+import { CalendarSyncColumns } from "../components/calendar-sync-columns";
+import { SyncHealthDot } from "../components/sync-health-dot";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
 import { fontWeight } from "../theme/font-weight";
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { handleApiError } from "../utils/form-error-handler";
-import {
-  PLATFORM_LABELS,
-  getAggregateSyncDirection,
-  getSyncHealthColor,
-  isAutoDisabled,
-} from "../utils/sync-status";
+import { getSyncHealthColor } from "../utils/sync-status";
 import {
   PLATFORM_EXPORT_HELP,
   getPlatformLabel,
 } from "../utils/calendar-sync-constants";
-
-function formatRelativeTime(dateStr: string | null): string {
-  if (!dateStr) return "Never";
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60_000);
-  if (minutes < 1) return "Just now";
-  if (minutes < 60) return `${minutes}m ago`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  return `${days}d ago`;
-}
 
 export default function CalendarSyncScreen() {
   const router = useRouter();
@@ -64,18 +46,6 @@ export default function CalendarSyncScreen() {
   const [exportHelpSync, setExportHelpSync] = useState<ICalendarSyncDto | null>(
     null,
   );
-  const [infoTooltip, setInfoTooltip] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
-  const infoIconRef = useRef<View>(null);
-
-  const showInfoTooltip = useCallback(() => {
-    infoIconRef.current?.measureInWindow((x, y, _w, h) => {
-      setInfoTooltip({ x, y: y + h + 4 });
-    });
-  }, []);
-
   const showSnackbar = useCallback(
     (message: string, type: "error" | "success" = "error") => {
       setSnackbar({ message, type });
@@ -111,12 +81,6 @@ export default function CalendarSyncScreen() {
       loadSyncs();
     }, [loadSyncs]),
   );
-
-  const handleCopyExportUrl = async (sync: ICalendarSyncDto) => {
-    await Clipboard.setStringAsync(sync.exportUrl);
-    setExportHelpSync(sync);
-    showSnackbar("Export link copied to clipboard", "success");
-  };
 
   const handleTriggerImport = async (syncId: number) => {
     try {
@@ -167,14 +131,6 @@ export default function CalendarSyncScreen() {
             only.
           </InfoBox>
 
-          {syncs.length > 0 &&
-            getAggregateSyncDirection(syncs) === "one-way" && (
-              <InfoBox variant="warning">
-                Add import URLs to all connected calendars for full 2-way sync.
-                Exporting only may still result in overlapping reservations.
-              </InfoBox>
-            )}
-
           {syncs.length === 0 && (
             <View style={styles.emptyState}>
               <Icon source="sync-off" size={48} color={colors.iconDecorative} />
@@ -199,89 +155,20 @@ export default function CalendarSyncScreen() {
             >
               <View style={commonStyles.row}>
                 <View style={styles.syncHeader}>
-                  <View
-                    style={[
-                      styles.statusDot,
-                      { backgroundColor: getSyncHealthColor(sync) },
-                    ]}
-                  />
+                  <SyncHealthDot color={getSyncHealthColor(sync)} />
                   <Text style={commonStyles.itemTitle}>
-                    {PLATFORM_LABELS[sync.platform] ?? sync.platform}
+                    {getPlatformLabel(sync.platform)}
                   </Text>
                 </View>
                 <Icon source="chevron-right" size={20} color={colors.icon} />
               </View>
 
-              <View style={styles.syncDetails}>
-                {sync.importUrl && (
-                  <Text style={commonStyles.itemSubtext}>
-                    Import: {isAutoDisabled(sync) ? "Paused" : "Active"}
-                    {sync.lastImportAt &&
-                      !isAutoDisabled(sync) &&
-                      ` — Last synced ${formatRelativeTime(sync.lastImportAt)}`}
-                  </Text>
-                )}
-                <Text style={commonStyles.itemSubtext}>Export: Active</Text>
-                {!sync.importUrl && (
-                  <View style={styles.syncDetailRow}>
-                    <Icon
-                      source="alert-outline"
-                      size={16}
-                      color={colors.warning}
-                    />
-                    <Text style={styles.oneWayHint}>
-                      Add an import URL for full protection
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {sync.lastImportStatus === "error" && sync.lastImportError && (
-                <Text style={styles.errorText} numberOfLines={2}>
-                  Error: {sync.lastImportError}
-                </Text>
-              )}
-
-              {isAutoDisabled(sync) && (
-                <Text style={styles.disabledText}>
-                  Import paused after repeated failures. Edit to update URL and
-                  re-enable.
-                </Text>
-              )}
-
-              <View style={styles.syncActions}>
-                <Button
-                  mode="outlined"
-                  compact
-                  onPress={() => handleCopyExportUrl(sync)}
-                  icon="content-copy"
-                >
-                  Copy export link
-                </Button>
-                {sync.importUrl && !isAutoDisabled(sync) && (
-                  <>
-                    <Button
-                      mode="outlined"
-                      compact
-                      onPress={() => handleTriggerImport(sync.id)}
-                      loading={syncingId === sync.id}
-                      disabled={syncingId === sync.id}
-                      icon="download"
-                    >
-                      Import now
-                    </Button>
-                    <Pressable onPress={showInfoTooltip}>
-                      <View ref={infoIconRef}>
-                        <Icon
-                          source="information-outline"
-                          size={20}
-                          color={colors.icon}
-                        />
-                      </View>
-                    </Pressable>
-                  </>
-                )}
-              </View>
+              <CalendarSyncColumns
+                sync={sync}
+                onTriggerImport={handleTriggerImport}
+                syncingId={syncingId}
+                onShowExportHelp={(s) => setExportHelpSync(s)}
+              />
             </Pressable>
           ))}
 
@@ -357,30 +244,6 @@ export default function CalendarSyncScreen() {
         </Dialog>
       </Portal>
 
-      {infoTooltip && (
-        <Portal>
-          <Pressable
-            style={tooltipStyles.backdrop}
-            onPress={() => setInfoTooltip(null)}
-          >
-            <View
-              style={[
-                tooltipStyles.tooltip,
-                {
-                  left: clampTooltipLeft(infoTooltip.x),
-                  top: infoTooltip.y,
-                },
-              ]}
-            >
-              <Text style={tooltipStyles.text}>
-                Pulls the latest calendar from the connected platform. Export
-                updates happen automatically and cannot be triggered manually.
-              </Text>
-            </View>
-          </Pressable>
-        </Portal>
-      )}
-
       <AppSnackbar
         message={snackbar?.message ?? ""}
         onDismiss={() => setSnackbar(null)}
@@ -407,37 +270,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-  },
-  statusDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-  },
-  syncDetails: {
-    gap: spacing.xs,
-  },
-  syncDetailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-  },
-  oneWayHint: {
-    fontSize: typography.sm,
-    color: colors.warning,
-  },
-  errorText: {
-    fontSize: typography.sm,
-    color: colors.danger,
-  },
-  disabledText: {
-    fontSize: typography.sm,
-    color: colors.warning,
-  },
-  syncActions: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    flexWrap: "wrap",
   },
   addButton: {
     marginTop: spacing.sm,

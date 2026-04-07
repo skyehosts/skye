@@ -95,6 +95,50 @@ describe('Calendar Sync (e2e)', () => {
         })
         .expect(400);
     });
+
+    it('should reject creation when importUrl is missing', async () => {
+      await request(app.getHttpServer())
+        .post(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({
+          platform: 'airbnb',
+          label: 'No URL',
+        })
+        .expect(400);
+    });
+  });
+
+  describe('GET /calendar-sync/export/:token.ics (public export)', () => {
+    it('should return iCal feed and record lastExportedAt', async () => {
+      const listRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`);
+      const sync = listRes.body.payload.syncs[0];
+      expect(sync.lastExportedAt).toBeNull();
+
+      const token = sync.exportUrl.split('/').pop().replace('.ics', '');
+
+      const res = await request(app.getHttpServer())
+        .get(`/calendar-sync/export/${token}.ics`)
+        .expect(200);
+
+      expect(res.text).toContain('BEGIN:VCALENDAR');
+      expect(res.text).toContain('END:VCALENDAR');
+
+      const afterRes = await request(app.getHttpServer())
+        .get(`/calendar-sync/listing/${listingId}`)
+        .set('Authorization', `Bearer ${hostToken}`);
+      const updated = afterRes.body.payload.syncs.find(
+        (s: { id: number }) => s.id === sync.id,
+      );
+      expect(updated.lastExportedAt).not.toBeNull();
+    });
+
+    it('should return 404 for unknown export token', async () => {
+      await request(app.getHttpServer())
+        .get('/calendar-sync/export/nonexistent-token.ics')
+        .expect(404);
+    });
   });
 
   describe('GET /calendar-sync/listing/:listingId (list syncs)', () => {
@@ -378,9 +422,9 @@ describe('Calendar Sync (e2e)', () => {
         .get(`/calendar-sync/export/${tokenMatch[1]}.ics`)
         .expect(200);
 
-      // The seeded booking is 2026-04-01 to 2026-04-03
-      expect(res.text).toContain('DTSTART;VALUE=DATE:20260401');
-      expect(res.text).toContain('DTEND;VALUE=DATE:20260403');
+      // The seeded booking is 2027-04-01 to 2027-04-03
+      expect(res.text).toContain('DTSTART;VALUE=DATE:20270401');
+      expect(res.text).toContain('DTEND;VALUE=DATE:20270403');
       expect(res.text).toContain('SUMMARY:Reserved');
     });
 
@@ -447,6 +491,7 @@ describe('Calendar Sync (e2e)', () => {
         .send({
           platform: 'booking_com',
           label: 'Booking.com Calendar',
+          importUrl: 'https://admin.booking.com/calendar/abc.ics',
         })
         .expect(201);
 
@@ -477,7 +522,10 @@ describe('Calendar Sync (e2e)', () => {
       const syncRes = await request(app.getHttpServer())
         .post(`/calendar-sync/listing/${listingId}`)
         .set('Authorization', `Bearer ${hostToken}`)
-        .send({ platform: 'airbnb' })
+        .send({
+          platform: 'airbnb',
+          importUrl: 'https://www.airbnb.com/calendar/ical/orphan.ics',
+        })
         .expect(201);
       const syncId = syncRes.body.payload.sync.id;
 
@@ -522,7 +570,10 @@ describe('Calendar Sync (e2e)', () => {
       const syncRes = await request(app.getHttpServer())
         .post(`/calendar-sync/listing/${listingId}`)
         .set('Authorization', `Bearer ${hostToken}`)
-        .send({ platform: 'booking_com' })
+        .send({
+          platform: 'booking_com',
+          importUrl: 'https://admin.booking.com/calendar/orphan2.ics',
+        })
         .expect(201);
       const syncId = syncRes.body.payload.sync.id;
 
@@ -578,6 +629,7 @@ describe('Calendar Sync (e2e)', () => {
         .send({
           platform: 'airbnb',
           label: 'Guest attempt',
+          importUrl: 'https://www.airbnb.com/calendar/ical/guest.ics',
         })
         .expect(403);
     });

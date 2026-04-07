@@ -67,8 +67,8 @@ describe('Booking (e2e)', () => {
 
       expect(res.body.payload.id).toBe(bookingId);
       expect(res.body.payload.status).toBe('confirmed');
-      expect(res.body.payload.checkInDate).toBe('2026-04-01');
-      expect(res.body.payload.checkOutDate).toBe('2026-04-03');
+      expect(res.body.payload.checkInDate).toBe('2027-04-01');
+      expect(res.body.payload.checkOutDate).toBe('2027-04-03');
     });
 
     it('should return the booking for the host of the listing', async () => {
@@ -105,8 +105,8 @@ describe('Booking (e2e)', () => {
 
       const bookings = res.body.payload.bookings;
       expect(bookings.length).toBeGreaterThanOrEqual(1);
-      expect(bookings[0].checkInDate).toBe('2026-04-01');
-      expect(bookings[0].checkOutDate).toBe('2026-04-03');
+      expect(bookings[0].checkInDate).toBe('2027-04-01');
+      expect(bookings[0].checkOutDate).toBe('2027-04-03');
     });
 
     it('should return 403 when a guest requests the listing bookings', async () => {

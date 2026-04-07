@@ -133,7 +133,7 @@ export default function CalendarSyncFormScreen() {
         await fetchApi<ICalendarSyncResponseDto>(
           `/calendar-sync/${syncId}`,
           {
-            importUrl: data.importUrl || null,
+            importUrl: data.importUrl,
           },
           { method: "PATCH" },
         );
@@ -143,7 +143,7 @@ export default function CalendarSyncFormScreen() {
           `/calendar-sync/listing/${id}`,
           {
             platform: data.platform,
-            importUrl: data.importUrl || undefined,
+            importUrl: data.importUrl,
           },
         );
 
@@ -152,16 +152,14 @@ export default function CalendarSyncFormScreen() {
         // listing screen reflects the updated sync health on first load
         // rather than showing an "unknown" (grey) status until the next
         // focus.
-        if (data.importUrl) {
-          try {
-            await fetchApi<ICalendarSyncResponseDto>(
-              `/calendar-sync/${result.sync.id}/trigger-import`,
-              {},
-              { method: "POST" },
-            );
-          } catch {
-            // Non-critical — import will happen on next poll
-          }
+        try {
+          await fetchApi<ICalendarSyncResponseDto>(
+            `/calendar-sync/${result.sync.id}/trigger-import`,
+            {},
+            { method: "POST" },
+          );
+        } catch {
+          // Non-critical — import will happen on next poll
         }
 
         dismissWithFlash(
@@ -293,6 +291,7 @@ export default function CalendarSyncFormScreen() {
             control={control}
             name="importUrl"
             rules={{
+              required: "Import URL is required",
               pattern: {
                 value: /^https?:\/\/.+/,
                 message: "Enter a valid URL starting with http:// or https://",
