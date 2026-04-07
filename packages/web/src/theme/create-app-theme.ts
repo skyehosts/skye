@@ -198,6 +198,14 @@ export function createAppTheme({
           root: { fontStyle: "normal" },
         },
       },
+      MuiFormHelperText: {
+        styleOverrides: {
+          root: {
+            marginLeft: 0,
+            marginRight: 0,
+          },
+        },
+      },
     },
   });
 }
