@@ -95,7 +95,6 @@ export class CalendarImportService {
         );
 
         if (sync.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-          sync.isImportEnabled = false;
           this.logger.error(
             `Auto-disabled import for sync ${sync.id} after ${MAX_CONSECUTIVE_FAILURES} consecutive permanent failures`,
           );
@@ -124,7 +123,6 @@ export class CalendarImportService {
       lastImportError: sync.lastImportError,
       lastImportEventCount: sync.lastImportEventCount,
       consecutiveFailures: sync.consecutiveFailures,
-      isImportEnabled: sync.isImportEnabled,
     });
 
     return sync;

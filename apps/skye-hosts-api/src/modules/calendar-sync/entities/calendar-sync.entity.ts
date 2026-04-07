@@ -47,12 +47,6 @@ export class CalendarSync {
   @Column({ type: 'integer', default: 0 })
   consecutiveFailures: number;
 
-  @Column({ type: 'boolean', default: true })
-  isImportEnabled: boolean;
-
-  @Column({ type: 'boolean', default: true })
-  isExportEnabled: boolean;
-
   @CreateDateColumn({ type: 'timestamp with time zone' })
   createdAt: Date;
 

@@ -25,7 +25,7 @@ export class CalendarExportService {
       where: { exportToken },
     });
 
-    if (!sync || !sync.isExportEnabled) {
+    if (!sync) {
       return null;
     }
 

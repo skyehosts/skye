@@ -63,7 +63,6 @@ describe('CalendarExportService', () => {
     id: 1,
     listingId: 10,
     exportToken: 'test-token-123',
-    isExportEnabled: true,
   };
 
   const mockListing = {
@@ -75,17 +74,6 @@ describe('CalendarExportService', () => {
     calendarSyncRepo.findOne.mockResolvedValue(null);
 
     const result = await service.generateIcal('nonexistent');
-
-    expect(result).toBeNull();
-  });
-
-  it('should return null when export is disabled', async () => {
-    calendarSyncRepo.findOne.mockResolvedValue({
-      ...mockSync,
-      isExportEnabled: false,
-    });
-
-    const result = await service.generateIcal('test-token-123');
 
     expect(result).toBeNull();
   });

@@ -3,7 +3,7 @@ import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as Sentry from '@sentry/nestjs';
 import { CronJob } from 'cron';
-import { IsNull, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, Not, Repository } from 'typeorm';
 import { CalendarSync } from '../entities';
 import { CalendarImportService } from './calendar-import.service';
 
@@ -53,7 +53,7 @@ export class CalendarImportSchedulerService implements OnModuleInit {
         const page = await this.calendarSyncRepo.find({
           where: {
             importUrl: Not(IsNull()),
-            isImportEnabled: true,
+            consecutiveFailures: LessThan(10),
           },
           order: { lastImportAt: { direction: 'ASC', nulls: 'FIRST' } },
           take: PAGE_SIZE,

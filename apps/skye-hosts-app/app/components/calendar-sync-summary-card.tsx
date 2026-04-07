@@ -79,14 +79,13 @@ export function CalendarSyncSummaryCard({
               <View style={styles.syncDetails}>
                 {sync.importUrl && (
                   <Text style={commonStyles.itemSubtext}>
-                    Import: {sync.isImportEnabled ? "On" : "Paused"}
+                    Import: {isAutoDisabled(sync) ? "Paused" : "Active"}
                     {sync.lastImportAt &&
+                      !isAutoDisabled(sync) &&
                       ` — Last synced ${formatRelativeTime(sync.lastImportAt)}`}
                   </Text>
                 )}
-                <Text style={commonStyles.itemSubtext}>
-                  Export: {sync.isExportEnabled ? "On" : "Off"}
-                </Text>
+                <Text style={commonStyles.itemSubtext}>Export: Active</Text>
               </View>
 
               {sync.lastImportStatus === "error" && sync.lastImportError && (
@@ -102,7 +101,7 @@ export function CalendarSyncSummaryCard({
                 </Text>
               )}
 
-              {onTriggerImport && sync.importUrl && sync.isImportEnabled && (
+              {onTriggerImport && sync.importUrl && !isAutoDisabled(sync) && (
                 <View style={styles.syncActions}>
                   <Button
                     mode="outlined"
@@ -129,7 +128,7 @@ export function CalendarSyncSummaryCard({
           ))}
           {getAggregateSyncDirection(syncs) === "one-way" && (
             <InfoBox variant="warning">
-              Enable import and export for full protection
+              Add import URLs for full 2-way protection
             </InfoBox>
           )}
         </>

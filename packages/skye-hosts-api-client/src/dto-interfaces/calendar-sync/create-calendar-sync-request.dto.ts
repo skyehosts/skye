@@ -4,6 +4,4 @@ export interface ICreateCalendarSyncRequestDto {
   platform: CalendarSyncPlatform;
   label?: string;
   importUrl?: string;
-  isImportEnabled?: boolean;
-  isExportEnabled?: boolean;
 }

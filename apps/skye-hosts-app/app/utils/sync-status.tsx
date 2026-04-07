@@ -11,7 +11,7 @@ const AUTO_DISABLE_THRESHOLD = 10;
 export type SyncHealth = "healthy" | "stale" | "error" | "unknown";
 
 export function getSyncHealth(sync: ICalendarSyncDto): SyncHealth {
-  if (!sync.isImportEnabled && sync.importUrl) return "error";
+  if (isAutoDisabled(sync)) return "error";
   if (sync.lastImportStatus === "error") return "error";
   if (!sync.lastImportAt) return "unknown";
   const hoursSinceSync =
@@ -21,11 +21,7 @@ export function getSyncHealth(sync: ICalendarSyncDto): SyncHealth {
 }
 
 export function isAutoDisabled(sync: ICalendarSyncDto): boolean {
-  return (
-    !sync.isImportEnabled &&
-    !!sync.importUrl &&
-    sync.consecutiveFailures >= AUTO_DISABLE_THRESHOLD
-  );
+  return !!sync.importUrl && sync.consecutiveFailures >= AUTO_DISABLE_THRESHOLD;
 }
 
 const healthColorMap: Record<SyncHealth, string> = {
@@ -50,11 +46,11 @@ export type SyncDirectionStatus = "two-way" | "one-way" | "none";
 export function getSyncDirection(
   sync: ICalendarSyncDto,
 ): "two-way" | "one-way" | "none" {
-  const hasImport = !!sync.importUrl && sync.isImportEnabled;
-  const hasExport = sync.isExportEnabled;
-  if (hasImport && hasExport) return "two-way";
-  if (hasImport || hasExport) return "one-way";
-  return "none";
+  const hasImport =
+    !!sync.importUrl && sync.consecutiveFailures < AUTO_DISABLE_THRESHOLD;
+  // Export is always on
+  if (hasImport) return "two-way";
+  return "one-way";
 }
 
 export function getAggregateSyncDirection(

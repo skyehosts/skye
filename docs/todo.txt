@@ -4,6 +4,13 @@
 ===
 MVP
 ===
+- optimise and test removeal of enable/disable on calender sync
+  - 'Export to AirBnB' info box is pointless in create mode
+  - There is a grey info box on edit airbnb sync page
+  - Back button issue is fucked
+  - Displaying 'Active' against Import/Export is stupid
+- pgadmin container fadesa way but db remains?
+- test icons added to edit listing page
 - bug: Calendar page, tapping on an air bnb booking, the popover thing that says 'Booked on Airbnb' is  too far away (vertially) from the bookig bar that was clicked
   - Also sometimes when you tap on booking bar next side of screen, the popup goes too far away horizontal.
   - Whilst ensuring that the popover never extends beyond the bounds of viewport,
@@ -12,15 +19,14 @@ MVP
   - it should be closer, it also needs to visually standout a bit more to contrast against rest of page, propose a solution.
   - scrutinise my plan
   - any big decisions, ask
-- test separate import/export calendar sync modals
 - "enable import and for full pro -> enable export for protection against double bookings?
+- danger red button in app should use darker red
 - Message template add details..comment out non implemented?
 verify your pin form should be high cause slide up soft keyboard is obscuring it
 - Remove photo should be danger?
 - Consistent colors in app sorted
   - Add dexamples to demo page
   - Update Claude.md and any relevant comments to reflect our desired color scheme
-- Consistent colors in website sorted
 - Buttons consistency in app & web?
 - acessbiility features should have icons
 - Days above calendar not centered

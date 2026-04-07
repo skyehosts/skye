@@ -74,8 +74,6 @@ export class CalendarSyncService {
       platform: string;
       label?: string;
       importUrl?: string;
-      isImportEnabled?: boolean;
-      isExportEnabled?: boolean;
     },
   ): Promise<CalendarSync> {
     const sync = this.calendarSyncRepo.create({
@@ -84,8 +82,6 @@ export class CalendarSyncService {
       label: data.label ?? null,
       importUrl: data.importUrl ?? null,
       exportToken: randomUUID(),
-      isImportEnabled: data.isImportEnabled ?? true,
-      isExportEnabled: data.isExportEnabled ?? true,
     });
     return this.calendarSyncRepo.save(sync);
   }
@@ -95,8 +91,6 @@ export class CalendarSyncService {
     data: {
       label?: string;
       importUrl?: string | null;
-      isImportEnabled?: boolean;
-      isExportEnabled?: boolean;
     },
   ): Promise<CalendarSync> {
     const sync = await this.calendarSyncRepo.findOne({ where: { id } });
@@ -106,20 +100,10 @@ export class CalendarSyncService {
 
     if (data.label !== undefined) sync.label = data.label;
     if (data.importUrl !== undefined) sync.importUrl = data.importUrl;
-    if (data.isImportEnabled !== undefined)
-      sync.isImportEnabled = data.isImportEnabled;
-    if (data.isExportEnabled !== undefined)
-      sync.isExportEnabled = data.isExportEnabled;
 
-    // Re-enable import if URL was updated, sync was auto-disabled,
-    // and user did not explicitly request disabling in this same request
-    if (
-      data.importUrl &&
-      sync.consecutiveFailures >= 10 &&
-      data.isImportEnabled !== false
-    ) {
+    // Re-enable import if URL was updated and sync was auto-disabled
+    if (data.importUrl && sync.consecutiveFailures >= 10) {
       sync.consecutiveFailures = 0;
-      sync.isImportEnabled = true;
       sync.lastImportError = null;
     }
 
@@ -257,8 +241,6 @@ export class CalendarSyncService {
       lastImportError: sync.lastImportError,
       lastImportEventCount: sync.lastImportEventCount,
       consecutiveFailures: sync.consecutiveFailures,
-      isImportEnabled: sync.isImportEnabled,
-      isExportEnabled: sync.isExportEnabled,
       createdAt: sync.createdAt.toISOString(),
     };
   }

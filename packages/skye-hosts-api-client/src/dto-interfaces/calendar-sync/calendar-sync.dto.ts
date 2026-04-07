@@ -15,7 +15,5 @@ export interface ICalendarSyncDto {
   lastImportError: string | null;
   lastImportEventCount: number | null;
   consecutiveFailures: number;
-  isImportEnabled: boolean;
-  isExportEnabled: boolean;
   createdAt: string;
 }

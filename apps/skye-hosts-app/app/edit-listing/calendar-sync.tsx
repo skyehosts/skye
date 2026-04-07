@@ -8,8 +8,10 @@ import {
   View,
 } from "react-native";
 import { Appbar, Button, Dialog, Icon, Portal, Text } from "react-native-paper";
+import * as Clipboard from "expo-clipboard";
 import { InfoBox } from "../components/info-box";
 import type {
+  ICalendarSyncDto,
   ICalendarSyncResponseDto,
   IGetCalendarSyncsResponseDto,
 } from "@repo/skye-hosts-api-client";
@@ -19,17 +21,19 @@ import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
-import { borderRadius } from "../theme/border-radius";
 import { fontWeight } from "../theme/font-weight";
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { handleApiError } from "../utils/form-error-handler";
 import {
   PLATFORM_LABELS,
   getAggregateSyncDirection,
-  getSyncDirection,
   getSyncHealthColor,
   isAutoDisabled,
 } from "../utils/sync-status";
+import {
+  PLATFORM_EXPORT_HELP,
+  getPlatformLabel,
+} from "../utils/calendar-sync-constants";
 
 function formatRelativeTime(dateStr: string | null): string {
   if (!dateStr) return "Never";
@@ -57,6 +61,9 @@ export default function CalendarSyncScreen() {
   } | null>(null);
   const [syncingId, setSyncingId] = useState<number | null>(null);
   const [helpVisible, setHelpVisible] = useState(false);
+  const [exportHelpSync, setExportHelpSync] = useState<ICalendarSyncDto | null>(
+    null,
+  );
   const [infoTooltip, setInfoTooltip] = useState<{
     x: number;
     y: number;
@@ -104,6 +111,12 @@ export default function CalendarSyncScreen() {
       loadSyncs();
     }, [loadSyncs]),
   );
+
+  const handleCopyExportUrl = async (sync: ICalendarSyncDto) => {
+    await Clipboard.setStringAsync(sync.exportUrl);
+    setExportHelpSync(sync);
+    showSnackbar("Export link copied to clipboard", "success");
+  };
 
   const handleTriggerImport = async (syncId: number) => {
     try {
@@ -157,9 +170,8 @@ export default function CalendarSyncScreen() {
           {syncs.length > 0 &&
             getAggregateSyncDirection(syncs) === "one-way" && (
               <InfoBox variant="warning">
-                Set up 2-way sync for best protection against double-bookings.
-                Syncing only one direction may still result in overlapping
-                reservations.
+                Add import URLs to all connected calendars for full 2-way sync.
+                Exporting only may still result in overlapping reservations.
               </InfoBox>
             )}
 
@@ -203,15 +215,14 @@ export default function CalendarSyncScreen() {
               <View style={styles.syncDetails}>
                 {sync.importUrl && (
                   <Text style={commonStyles.itemSubtext}>
-                    Import: {sync.isImportEnabled ? "On" : "Paused"}
+                    Import: {isAutoDisabled(sync) ? "Paused" : "Active"}
                     {sync.lastImportAt &&
+                      !isAutoDisabled(sync) &&
                       ` — Last synced ${formatRelativeTime(sync.lastImportAt)}`}
                   </Text>
                 )}
-                <Text style={commonStyles.itemSubtext}>
-                  Export: {sync.isExportEnabled ? "On" : "Off"}
-                </Text>
-                {getSyncDirection(sync) === "one-way" && (
+                <Text style={commonStyles.itemSubtext}>Export: Active</Text>
+                {!sync.importUrl && (
                   <View style={styles.syncDetailRow}>
                     <Icon
                       source="alert-outline"
@@ -219,7 +230,7 @@ export default function CalendarSyncScreen() {
                       color={colors.warning}
                     />
                     <Text style={styles.oneWayHint}>
-                      Enable import and export for full protection
+                      Add an import URL for full protection
                     </Text>
                   </View>
                 )}
@@ -239,7 +250,15 @@ export default function CalendarSyncScreen() {
               )}
 
               <View style={styles.syncActions}>
-                {sync.importUrl && sync.isImportEnabled && (
+                <Button
+                  mode="outlined"
+                  compact
+                  onPress={() => handleCopyExportUrl(sync)}
+                  icon="content-copy"
+                >
+                  Copy export link
+                </Button>
+                {sync.importUrl && !isAutoDisabled(sync) && (
                   <>
                     <Button
                       mode="outlined"
@@ -307,8 +326,8 @@ export default function CalendarSyncScreen() {
               across all platforms, not just {APP_DISPLAY_NAME}.
             </Text>
             <Text style={styles.helpDialogTip}>
-              For the best protection against double bookings, enable both
-              import and export for each platform you use.
+              For the best protection against double bookings, add an import URL
+              for each platform you use.
             </Text>
             <Text style={styles.helpDialogNote}>
               In the rare event that a double booking does slip through, don't
@@ -318,6 +337,22 @@ export default function CalendarSyncScreen() {
           </Dialog.Content>
           <Dialog.Actions>
             <Button onPress={() => setHelpVisible(false)}>Got it</Button>
+          </Dialog.Actions>
+        </Dialog>
+        <Dialog
+          visible={!!exportHelpSync}
+          onDismiss={() => setExportHelpSync(null)}
+        >
+          <Dialog.Title>Paste the export link</Dialog.Title>
+          <Dialog.Content>
+            <Text>
+              {exportHelpSync
+                ? PLATFORM_EXPORT_HELP[exportHelpSync.platform]
+                : ""}
+            </Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <Button onPress={() => setExportHelpSync(null)}>Got it</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

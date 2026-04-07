@@ -58,8 +58,6 @@ describe('Calendar Sync (e2e)', () => {
           platform: 'airbnb',
           label: 'AirBnB Calendar',
           importUrl: 'https://www.airbnb.com/calendar/ical/12345.ics',
-          isImportEnabled: true,
-          isExportEnabled: true,
         })
         .expect(201);
 
@@ -72,8 +70,6 @@ describe('Calendar Sync (e2e)', () => {
       );
       expect(sync.exportUrl).toContain('/calendar-sync/export/');
       expect(sync.exportUrl).toContain('.ics');
-      expect(sync.isImportEnabled).toBe(true);
-      expect(sync.isExportEnabled).toBe(true);
       expect(Number(sync.consecutiveFailures)).toBe(0);
     });
 
@@ -451,7 +447,6 @@ describe('Calendar Sync (e2e)', () => {
         .send({
           platform: 'booking_com',
           label: 'Booking.com Calendar',
-          isExportEnabled: true,
         })
         .expect(201);
 
@@ -482,7 +477,7 @@ describe('Calendar Sync (e2e)', () => {
       const syncRes = await request(app.getHttpServer())
         .post(`/calendar-sync/listing/${listingId}`)
         .set('Authorization', `Bearer ${hostToken}`)
-        .send({ platform: 'airbnb', isExportEnabled: false })
+        .send({ platform: 'airbnb' })
         .expect(201);
       const syncId = syncRes.body.payload.sync.id;
 
@@ -527,7 +522,7 @@ describe('Calendar Sync (e2e)', () => {
       const syncRes = await request(app.getHttpServer())
         .post(`/calendar-sync/listing/${listingId}`)
         .set('Authorization', `Bearer ${hostToken}`)
-        .send({ platform: 'booking_com', isExportEnabled: false })
+        .send({ platform: 'booking_com' })
         .expect(201);
       const syncId = syncRes.body.payload.sync.id;
 

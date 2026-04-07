@@ -92,8 +92,6 @@ describe('Listing Delete (e2e)', () => {
       listingId: listingToDeleteId,
       platform: 'airbnb',
       exportToken: 'test-export-token-delete',
-      isImportEnabled: false,
-      isExportEnabled: true,
     });
 
     await dataSource.getRepository(CalendarBlock).insert({

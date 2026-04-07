@@ -13,25 +13,32 @@ Both directions must be configured for full two-way protection. One direction al
 
 ## Key entities
 
-- `CalendarSync` — one record per listing+platform connection. Stores `importUrl`, `exportToken`, enabled flags, failure counter, last sync status.
+- `CalendarSync` — one record per listing+platform connection. Stores `importUrl`, `exportToken`, failure counter, last sync status.
 - `CalendarBlock` — a blocked date range. `source = 'import'` (from external calendar) or `'manual'` (host blocked directly). `calendarSyncId` is nullable — becomes `null` when the parent sync is deleted but blocks were retained.
+
+## Enable/disable model
+
+There are no explicit enable/disable toggles. State is inferred:
+
+- **Import**: enabled if `importUrl` is set AND `consecutiveFailures < 10`. Clearing the URL disables import. Reaching 10 consecutive failures auto-pauses it.
+- **Export**: always enabled for any existing sync. The export URL is an unguessable UUID token — hosts opt in by pasting it into the external platform.
 
 ## Import flow
 
-1. `CalendarImportSchedulerService` cron (every 3h prod, 60s local) queries all syncs where `isImportEnabled = true` and `importUrl IS NOT NULL`.
+1. `CalendarImportSchedulerService` cron (every 3h prod, 60s local) queries all syncs where `importUrl IS NOT NULL` and `consecutiveFailures < 10`.
 2. For each, `CalendarImportService.importSingleSync()` fetches the iCal URL, parses it via `IcalParserService`, then reconciles blocks (insert/update/delete) inside a transaction.
 3. On success: `consecutiveFailures` resets to 0.
 4. On failure: see **Auto-disable** below.
 
 ## Export flow
 
-Each `CalendarSync` has an `exportToken` (UUID) generated on creation. The export endpoint is public and returns an iCal feed of Skye bookings for that listing. When `isExportEnabled = false`, the endpoint returns 404.
+Each `CalendarSync` has an `exportToken` (UUID) generated on creation. The export endpoint is public and returns an iCal feed of Skye bookings for that listing.
 
 The host must manually paste the export URL into their external platform — Skye cannot push to it directly.
 
 ## Auto-disable (import)
 
-After repeated permanent import failures the sync is auto-disabled to avoid repeatedly hitting a dead URL.
+After repeated permanent import failures the sync is auto-paused to avoid repeatedly hitting a dead URL.
 
 ### Error categorisation
 
@@ -41,11 +48,11 @@ Not all failures are equal. Errors are classified before deciding whether to inc
 
 **Transient** (counter unchanged): 5xx server errors, 429 rate-limited, `AbortError` (10s timeout), `TypeError` (network-level: ECONNREFUSED, ENOTFOUND). These indicate infrastructure issues, not a bad URL.
 
-At **10 consecutive permanent failures** `isImportEnabled` is set to `false`. A single successful import resets the counter to 0.
+At **10 consecutive permanent failures** the scheduler stops picking up the sync (since `consecutiveFailures >= 10`). A single successful import resets the counter to 0.
 
 ### Re-enabling after auto-disable
 
-When the host edits the sync and saves a new `importUrl`, the service detects `consecutiveFailures >= 10` and automatically resets the counter to 0 and sets `isImportEnabled = true` — unless the host explicitly toggled import off.
+When the host edits the sync and saves a new `importUrl`, the service detects `consecutiveFailures >= 10` and automatically resets the counter to 0 and clears `lastImportError`.
 
 The listing card surfaces: _"Import paused after repeated failures. Edit to update URL and re-enable."_
 

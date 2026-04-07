@@ -423,7 +423,6 @@ describe('CalendarSyncService', () => {
   describe('updateSync', () => {
     function makeExistingSync(
       overrides: Partial<{
-        isImportEnabled: boolean;
         consecutiveFailures: number;
         importUrl: string | null;
         lastImportError: string | null;
@@ -432,18 +431,15 @@ describe('CalendarSyncService', () => {
       return {
         id: 1,
         importUrl: null,
-        isImportEnabled: true,
-        isExportEnabled: true,
         consecutiveFailures: 0,
         lastImportError: null,
         ...overrides,
       };
     }
 
-    it('should reset failures and re-enable import when URL updated and sync was auto-disabled', async () => {
+    it('should reset failures when URL updated and sync was auto-disabled', async () => {
       const existing = makeExistingSync({
         consecutiveFailures: 10,
-        isImportEnabled: false,
         lastImportError: 'HTTP 404: Not Found',
       });
       syncRepo.findOne.mockResolvedValue(existing);
@@ -454,25 +450,7 @@ describe('CalendarSyncService', () => {
       });
 
       expect(existing.consecutiveFailures).toBe(0);
-      expect(existing.isImportEnabled).toBe(true);
       expect(existing.lastImportError).toBeNull();
-    });
-
-    it('should not re-enable import when user explicitly passes isImportEnabled: false', async () => {
-      const existing = makeExistingSync({
-        consecutiveFailures: 10,
-        isImportEnabled: false,
-      });
-      syncRepo.findOne.mockResolvedValue(existing);
-      syncRepo.save.mockImplementation((s) => Promise.resolve(s));
-
-      await service.updateSync(1, {
-        importUrl: 'https://example.com/new.ics',
-        isImportEnabled: false,
-      });
-
-      expect(existing.consecutiveFailures).toBe(10); // unchanged
-      expect(existing.isImportEnabled).toBe(false);
     });
 
     it('should not reset failures when URL is updated but failures are below threshold', async () => {
@@ -490,15 +468,13 @@ describe('CalendarSyncService', () => {
     it('should not reset failures when importUrl is not provided even with failures at threshold', async () => {
       const existing = makeExistingSync({
         consecutiveFailures: 10,
-        isImportEnabled: false,
       });
       syncRepo.findOne.mockResolvedValue(existing);
       syncRepo.save.mockImplementation((s) => Promise.resolve(s));
 
-      await service.updateSync(1, { isExportEnabled: true });
+      await service.updateSync(1, { label: 'test' });
 
       expect(existing.consecutiveFailures).toBe(10); // unchanged
-      expect(existing.isImportEnabled).toBe(false); // unchanged
     });
   });
 });

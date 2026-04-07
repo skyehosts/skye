@@ -1,5 +1,5 @@
 import type { ICreateCalendarSyncRequestDto } from '@repo/skye-hosts-api-client';
-import { IsBoolean, IsIn, IsOptional, IsString, IsUrl } from 'class-validator';
+import { IsIn, IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateCalendarSyncRequestDto implements ICreateCalendarSyncRequestDto {
   @IsString()
@@ -13,12 +13,4 @@ export class CreateCalendarSyncRequestDto implements ICreateCalendarSyncRequestD
   @IsOptional()
   @IsUrl()
   importUrl?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isImportEnabled?: boolean;
-
-  @IsOptional()
-  @IsBoolean()
-  isExportEnabled?: boolean;
 }

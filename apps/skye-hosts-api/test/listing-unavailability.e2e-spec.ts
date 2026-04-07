@@ -49,8 +49,6 @@ describe('Listing Unavailability (e2e)', () => {
         platform: 'airbnb',
         importUrl: 'https://example.com/airbnb.ics',
         exportToken: 'e2e-test-export-token',
-        isImportEnabled: true,
-        isExportEnabled: true,
       }),
     );
 

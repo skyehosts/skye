@@ -40,8 +40,6 @@ function makeSync(overrides: Partial<CalendarSync> = {}): CalendarSync {
     id: 99,
     listingId: 10,
     importUrl: 'https://example.com/cal.ics',
-    isImportEnabled: true,
-    isExportEnabled: true,
     consecutiveFailures: 0,
     lastImportStatus: null,
     lastImportError: null,
@@ -224,35 +222,33 @@ describe('CalendarImportService', () => {
       expect(sync.consecutiveFailures).toBe(5);
     });
 
-    it('should auto-disable after 10 consecutive permanent failures', async () => {
+    it('should log auto-disable after 10 consecutive permanent failures', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 404,
         statusText: 'Not Found',
       });
-      const sync = makeSync({ consecutiveFailures: 9, isImportEnabled: true });
+      const sync = makeSync({ consecutiveFailures: 9 });
 
       await service.importSingleSync(sync);
 
       expect(sync.consecutiveFailures).toBe(10);
-      expect(sync.isImportEnabled).toBe(false);
       expect(Sentry.captureMessage).toHaveBeenCalledWith(
         expect.stringContaining('auto-disabled'),
         'warning',
       );
     });
 
-    it('should not auto-disable on transient errors even at high failure counts', async () => {
+    it('should not increment failures on transient errors even at high failure counts', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 503,
         statusText: 'Service Unavailable',
       });
-      const sync = makeSync({ consecutiveFailures: 9, isImportEnabled: true });
+      const sync = makeSync({ consecutiveFailures: 9 });
 
       await service.importSingleSync(sync);
 
-      expect(sync.isImportEnabled).toBe(true);
       expect(sync.consecutiveFailures).toBe(9);
     });
 
