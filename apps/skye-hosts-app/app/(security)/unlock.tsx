@@ -21,7 +21,7 @@ import { ensureValidToken } from "../services/session.service";
 import { commonStyles, spacing } from "../theme";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const logoTall = require("../../assets/logo-tall.png");
+const logoTall = require("../../assets/logo-square.png");
 
 export default function UnlockScreen() {
   const { unlock } = useAuth();

@@ -29,6 +29,7 @@ import {
   TextInput,
 } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
+import { DangerButton } from "../components/danger-button";
 import { ScreenContainer } from "../components/screen-container";
 import { TemplateTokenPicker } from "../components/template-token-picker";
 import { fetchApi } from "../services/api";
@@ -370,16 +371,15 @@ export default function MessageTemplateFormScreen() {
         </Button>
 
         {!isNew && (
-          <Button
-            mode="text"
-            textColor={colors.danger}
+          <DangerButton
+            variant="secondary"
             onPress={onDelete}
             loading={isDeleting}
             disabled={isBusy}
             style={styles.deleteButton}
           >
             Delete scheduled message
-          </Button>
+          </DangerButton>
         )}
       </ScrollView>
 

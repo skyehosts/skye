@@ -7,9 +7,7 @@ MVP: Host app
 ----------------
 High complexity
 ----------------
-- optimise and test removeal of enable/disable on calender sync
-  - Back button issue is fucked
-  - Double check the health indicator works off import too
+- App splash screen
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
     - Publish app to google play (Beta)
@@ -35,10 +33,12 @@ High complexity
 - Payments
 - SKYE_ENVIRONMENT doesn't make much sense in context of app. as it has local, preview, production etc expo dists...
   - It's used by sentry, its passed it in as sentry env... also look at eas.json.
+- Queue policy needs review (retry speed etc)
+- Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
+  - Decide address upload or stripe verification (account vs name match)
 --------------
 Low complexity
 --------------
-- eas build pipe failed
 - set or verify your pin form should be high cause slide up soft keyboard is obscuring it
 - danger red button in app should use darker red
 - "enable import and for full pro -> enable export for protection against double bookings?
@@ -65,51 +65,19 @@ High complexity
 Low complexity
 --------------
 - Buttons consistency in app & web?
-=======
-General
-=======
-- flex-grow on <main not working>
-- Shift stripe to skyehosts email & update secrets
-- expo build working on real device?
-- env plan: Pipeline green, deployed agian
-  - ignore test-results
-- Update pre-push to on qa branch only do aws-infra gate
-- Update deploy-prod, to only deploy cdk if there's been a change
-- add sentry dsn to expo vars for deployed app?
-
-=============
-Admin website
-=============
-
-==================
-Aws infrastructure
-==================
-- Queue
-  - Queue policy needs review (retry speed etc)
-  - DLQ tested as working
-
-========
-Host App
-========
-- Listing title, vertical height is too long
-- Test
-  - Notification
-- Login / Sign - up separation in app.?
-- deploy to device succesfully via eas / gha
-- Notifications (Messages from guest)
-- Today page
-- Calendar page
-- If you already signed up and reinstalled app, could you gain access
-- Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
-  - Decide address upload or stripe verification (account vs name match)
-
-=============
-Guest website
-=============
-- Check that sentry error 'def' capture dby sentry (isr)
 
 ===============
-Long term TODOs
+Pending Prompts
+===============
+
+==================
+Re-useable prompts
+==================
+Review plan and see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
+opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
+
+===============
+Post-MVP
 ===============
 - Test face auth (IOS) biometrics, as it uses face not fingerprint apparently.
 - docs/user-todos/universal-links-setup.md
@@ -130,30 +98,13 @@ Long term TODOs
   an email param to phoneVerifyOtp to link the invite email to the new account. Without this, the acceptInvite email check will fail for phone-only signups. Want me
   to add that?
 
-===============
-Pending Prompts
-===============
-- The following situations have the wrong colors used:
-- 'Locate' button should be unfilled variant.
-- Number stepper, is using purple
-- On the 'Make it stand out', the selectable pills both inactive/active colors
-- Safety considerations  & safety devices radios buttons
-- For each problematic situation, compare against the common pattern within the app for this particular type of component and the situation in which its used
-- For each situation, provide a choice and a recommendation to change colors.
-- The goal here is to ensure that for situations such as 1. Clickable call to actions, 2. Non-clickable stuff (e.g informative icons), accent icons etc that we are consistently using the same colors to avoid confusing user. 
-
-==================
-Re-useable prompts
-==================
-Review plan and see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
-opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
-
-==================
-Things to test
-==================
+==============
+Untested list:
+==============
 - test long listing name
 - iCal export
 - iCal booking.com
+- Calendar sync health indicator (filled circle), all scenarios
 
 ==========================
 Notes about copying AirBNB

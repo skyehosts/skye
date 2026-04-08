@@ -52,10 +52,25 @@ export default function StyleGuideScreen() {
           <Text style={styles.guideLabel}>Tertiary / dismiss (Cancel)</Text>
         </View>
         <View style={styles.guideRow}>
+          <Button
+            mode="contained"
+            buttonColor={colors.danger}
+            textColor={colors.background}
+            onPress={() => {}}
+          >
+            Delete listing
+          </Button>
+          <Text style={styles.guideLabel}>
+            Primary danger (sole destructive CTA)
+          </Text>
+        </View>
+        <View style={styles.guideRow}>
           <Button mode="text" textColor={colors.danger} onPress={() => {}}>
             Delete
           </Button>
-          <Text style={styles.guideLabel}>Danger action (Delete, Remove)</Text>
+          <Text style={styles.guideLabel}>
+            Secondary danger (Remove, Revoke, inline delete)
+          </Text>
         </View>
 
         {/* ── Icons ────────────────────────────────────── */}

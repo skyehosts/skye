@@ -29,6 +29,7 @@ import type {
 } from "@repo/skye-hosts-api-client";
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { AppSnackbar } from "../components/app-snackbar";
+import { DangerButton } from "../components/danger-button";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
@@ -388,14 +389,13 @@ export default function CalendarSyncFormScreen() {
         </Button>
 
         {isEditing && (
-          <Button
-            mode="text"
-            textColor={colors.danger}
+          <DangerButton
+            variant="secondary"
             onPress={handleDelete}
             icon="delete-outline"
           >
             Remove this calendar sync
-          </Button>
+          </DangerButton>
         )}
       </ScrollView>
 

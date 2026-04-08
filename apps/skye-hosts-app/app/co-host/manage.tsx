@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { Appbar, Button, Chip, Text } from "react-native-paper";
+import { DangerButton } from "../components/danger-button";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import {
@@ -172,14 +173,13 @@ export default function ManageCoHostsScreen() {
                       {CO_HOST_ROLE_LABELS[coHost.role] ?? coHost.role}
                     </Chip>
                   </View>
-                  <Button
-                    mode="text"
-                    textColor={colors.danger}
+                  <DangerButton
+                    variant="secondary"
                     onPress={() => onRemoveCoHost(coHost)}
                     compact
                   >
                     Remove
-                  </Button>
+                  </DangerButton>
                 </View>
               ))
             )}
@@ -223,14 +223,13 @@ export default function ManageCoHostsScreen() {
                     </View>
                   </View>
                   {invite.status === "pending" && (
-                    <Button
-                      mode="text"
-                      textColor={colors.danger}
+                    <DangerButton
+                      variant="secondary"
                       onPress={() => onRevokeInvite(invite)}
                       compact
                     >
                       Revoke
-                    </Button>
+                    </DangerButton>
                   )}
                 </View>
               ))

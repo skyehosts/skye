@@ -99,9 +99,9 @@ export default function MoreScreen() {
             Cancel
           </Button>
           <Button
-            mode="contained"
+            mode="outlined"
             onPress={signOut}
-            buttonColor={colors.danger}
+            textColor={colors.danger}
             style={styles.modalButton}
           >
             Sign out

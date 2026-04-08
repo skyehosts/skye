@@ -4,6 +4,7 @@ import "../sentry";
 import * as Sentry from "@sentry/react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { PaperProvider } from "react-native-paper";
 import { AuthProvider, useAuth } from "./contexts/auth-context";
 import { SocketProvider } from "./contexts/socket-context";
@@ -30,15 +31,17 @@ function AppContent() {
 
 function RootLayout() {
   return (
-    <PaperProvider theme={theme}>
-      <AuthProvider>
-        <SocketProvider>
-          <UnreadMessagesProvider>
-            <AppContent />
-          </UnreadMessagesProvider>
-        </SocketProvider>
-      </AuthProvider>
-    </PaperProvider>
+    <KeyboardProvider>
+      <PaperProvider theme={theme}>
+        <AuthProvider>
+          <SocketProvider>
+            <UnreadMessagesProvider>
+              <AppContent />
+            </UnreadMessagesProvider>
+          </SocketProvider>
+        </AuthProvider>
+      </PaperProvider>
+    </KeyboardProvider>
   );
 }
 

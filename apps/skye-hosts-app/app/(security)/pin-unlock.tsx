@@ -12,7 +12,7 @@ import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const logoTall = require("../../assets/logo-tall.png");
+const logoTall = require("../../assets/logo-square.png");
 import {
   getRemainingAttempts,
   isPinLocked,
@@ -74,7 +74,7 @@ export default function PinUnlockScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer avoidKeyboard>
       <View style={commonStyles.securityContainer}>
         <Image
           source={logoTall}

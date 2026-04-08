@@ -23,7 +23,7 @@ export function AppSnackbar({
         style={
           type === "success"
             ? { backgroundColor: colors.success }
-            : { backgroundColor: colors.danger }
+            : { backgroundColor: colors.dangerBackground }
         }
         action={{ label: "Dismiss", onPress: onDismiss }}
       >

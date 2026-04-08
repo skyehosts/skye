@@ -2,19 +2,14 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, View } from "react-native";
-import {
-  Appbar,
-  Button,
-  HelperText,
-  Text,
-  TextInput,
-} from "react-native-paper";
+import { Appbar, HelperText, Text, TextInput } from "react-native-paper";
 import { AppModal } from "../components/app-modal";
 import { AppSnackbar } from "../components/app-snackbar";
+import { DangerButton } from "../components/danger-button";
 import { InfoBox } from "../components/info-box";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
-import { colors, commonStyles, spacing } from "../theme";
+import { commonStyles, spacing } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
 
 interface DeleteFormValues {
@@ -61,15 +56,13 @@ export default function ListingSettingsScreen() {
           data including bookings, calendar syncs, and photos will be removed.
         </InfoBox>
 
-        <Button
-          mode="contained"
-          buttonColor={colors.danger}
-          textColor={colors.background}
+        <DangerButton
+          variant="primary"
           onPress={() => setDeleteModalVisible(true)}
           style={styles.deleteButton}
         >
           Delete listing
-        </Button>
+        </DangerButton>
       </View>
 
       <AppModal
@@ -111,16 +104,14 @@ export default function ListingSettingsScreen() {
           )}
         />
 
-        <Button
-          mode="contained"
-          buttonColor={colors.danger}
-          textColor={colors.background}
+        <DangerButton
+          variant="primary"
           onPress={handleSubmit(onDelete)}
           loading={isSubmitting}
           disabled={isSubmitting}
         >
           {isSubmitting ? "Deleting..." : "Delete listing"}
-        </Button>
+        </DangerButton>
       </AppModal>
 
       <AppSnackbar

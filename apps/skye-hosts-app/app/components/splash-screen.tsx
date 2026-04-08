@@ -2,7 +2,7 @@ import { Image, StyleSheet, View, useWindowDimensions } from "react-native";
 import { colors } from "../theme";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const logoTall = require("../../assets/logo-tall.png");
+const logoTall = require("../../assets/logo-square.png");
 
 export function SplashScreen() {
   const { width } = useWindowDimensions();
