@@ -30,6 +30,7 @@ const config: ExpoConfig = {
     LOG_LEVEL: process.env.LOG_LEVEL,
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     BYPASS_GEOCODING: process.env.BYPASS_GEOCODING,
+    SHOW_DEV_MENU: process.env.SHOW_DEV_MENU,
   },
   runtimeVersion: {
     policy: "appVersion",

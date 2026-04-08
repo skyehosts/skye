@@ -8,7 +8,8 @@
       "distribution": "internal",
       "env": {
         "SKYE_ENVIRONMENT": "local",
-        "API_URL": "https://api.skyehosts.co.uk"
+        "API_URL": "https://api.skyehosts.co.uk",
+        "SHOW_DEV_MENU": "true"
       }
     },
     "preview": {
@@ -17,7 +18,8 @@
       "env": {
         "SKYE_ENVIRONMENT": "production",
         "API_URL": "https://api.skyehosts.co.uk",
-        "LOG_LEVEL": "debug"
+        "LOG_LEVEL": "debug",
+        "SHOW_DEV_MENU": "true"
       }
     },
     "beta": {

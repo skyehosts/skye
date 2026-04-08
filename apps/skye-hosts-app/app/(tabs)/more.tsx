@@ -6,6 +6,7 @@ import { AppModal } from "../components/app-modal";
 import { MenuItem } from "../components/menu-item";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
+import { env } from "../services/env";
 import {
   colors,
   commonStyles,
@@ -58,7 +59,7 @@ export default function MoreScreen() {
         />
       </View>
 
-      {__DEV__ && (
+      {(__DEV__ || env.showDevMenu) && (
         <View style={commonStyles.menuSection}>
           <MenuItem
             icon="palette-outline"

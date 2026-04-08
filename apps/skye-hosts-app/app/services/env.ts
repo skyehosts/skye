@@ -37,6 +37,9 @@ export const env = {
   get googleMapsApiKey() {
     return requireEnv("GOOGLE_MAPS_API_KEY");
   },
+  get showDevMenu() {
+    return extra["SHOW_DEV_MENU"] === "true";
+  },
   get bypassGeocoding() {
     const raw = extra["BYPASS_GEOCODING"];
     const result = raw === "true";

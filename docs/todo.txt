@@ -1,6 +1,9 @@
-- Remove the switch to enable/disable an import, if the import url field is not null you can assume it's enabled otherwise its disabled
-- Update all relevant backend / scheduled iCal import logic to accomodate this change
-
+=============
+In-Progress
+=============
+- set or verify your pin form should be high cause slide up soft keyboard is obscuring it
+- Keyboard not displaying on emulator
+- logo-wide.png replace with HH
 =============
 MVP: Host app
 =============
@@ -39,7 +42,6 @@ High complexity
 --------------
 Low complexity
 --------------
-- set or verify your pin form should be high cause slide up soft keyboard is obscuring it
 - danger red button in app should use darker red
 - "enable import and for full pro -> enable export for protection against double bookings?
 - Remove photo should be danger?
