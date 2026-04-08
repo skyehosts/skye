@@ -1,49 +1,31 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
-import { Portal } from "react-native-paper";
-import {
-  formatTooltipDate,
-  tooltipStyles,
-  clampTooltipLeft,
-} from "./tooltip-styles";
+import { Text } from "react-native";
+import { PositionedTooltip, type TooltipAnchor } from "./positioned-tooltip";
+import { formatTooltipDate, tooltipStyles } from "./tooltip-styles";
 
 interface RestrictedDateTooltipProps {
   dateString: string;
   minNights: number;
-  position: { x: number; y: number };
+  anchor: TooltipAnchor;
   onClose: () => void;
 }
 
 function RestrictedDateTooltipInner({
   dateString,
   minNights,
-  position,
+  anchor,
   onClose,
 }: RestrictedDateTooltipProps) {
   return (
-    <Portal>
-      <Pressable style={tooltipStyles.backdrop} onPress={onClose}>
-        <View
-          style={[
-            tooltipStyles.tooltip,
-            {
-              left: clampTooltipLeft(position.x),
-              top: position.y - 10,
-            },
-          ]}
-        >
-          <Text style={tooltipStyles.date}>
-            {formatTooltipDate(dateString)}
-          </Text>
-          <Text style={tooltipStyles.title}>Minimum nights gap</Text>
-          <Text style={[tooltipStyles.text, { marginTop: 2 }]}>
-            This date can&apos;t be booked as a check-in because it&apos;s fewer
-            than {minNights} night{minNights !== 1 ? "s" : ""} before the next
-            booking or block.
-          </Text>
-        </View>
-      </Pressable>
-    </Portal>
+    <PositionedTooltip anchor={anchor} onClose={onClose}>
+      <Text style={tooltipStyles.date}>{formatTooltipDate(dateString)}</Text>
+      <Text style={tooltipStyles.title}>Minimum nights gap</Text>
+      <Text style={[tooltipStyles.text, { marginTop: 2 }]}>
+        This date can&apos;t be booked as a check-in because it&apos;s fewer
+        than {minNights} night{minNights !== 1 ? "s" : ""} before the next
+        booking or block.
+      </Text>
+    </PositionedTooltip>
   );
 }
 
