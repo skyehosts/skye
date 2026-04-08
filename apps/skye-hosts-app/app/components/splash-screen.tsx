@@ -6,15 +6,15 @@ const logoTall = require("../../assets/logo-square.png");
 
 export function SplashScreen() {
   const { width } = useWindowDimensions();
-  // Tablets are typically 768px+; use 55% width for tablets, 85% for phones
+  // Tablets are typically 768px+; use conservative widths and cap to avoid overflow
   const isTablet = width >= 768;
-  const logoWidth = isTablet ? width * 0.55 : width * 0.85;
+  const logoWidth = Math.min(isTablet ? width * 0.4 : width * 0.7, 420);
 
   return (
     <View style={styles.container}>
       <Image
         source={logoTall}
-        style={[styles.logo, { width: logoWidth }]}
+        style={{ width: logoWidth, height: logoWidth }}
         resizeMode="contain"
       />
     </View>
@@ -27,8 +27,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     alignItems: "center",
     justifyContent: "center",
-  },
-  logo: {
-    aspectRatio: 1,
   },
 });

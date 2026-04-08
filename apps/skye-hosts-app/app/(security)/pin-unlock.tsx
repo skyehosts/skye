@@ -78,7 +78,7 @@ export default function PinUnlockScreen() {
       <View style={commonStyles.securityContainer}>
         <Image
           source={logoTall}
-          style={[styles.logo, { width: logoWidth }]}
+          style={[styles.logo, { width: logoWidth, height: logoWidth }]}
           resizeMode="contain"
         />
         <Text style={commonStyles.securityTitle}>Welcome back</Text>
@@ -122,7 +122,6 @@ export default function PinUnlockScreen() {
 
 const styles = StyleSheet.create({
   logo: {
-    aspectRatio: 1,
     marginBottom: spacing.xl,
   },
   inputWrapper: {
