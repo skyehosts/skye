@@ -40,7 +40,7 @@ Per-direction health is collapsed to one of four buckets, then the combined sync
   - import has never run (first cron hasn't landed)
   - export has never been fetched but we're still inside the 24h grace period
 
-The key design rule: *absence of data is not the same as a problem.* A brand-new sync whose import already ran but whose external platform hasn't polled yet must show green — grey would falsely imply the host needs to act. Grey is reserved for the aggregate case with zero configured syncs (`getAggregateSyncHealthColor([])`).
+The key design rule: _absence of data is not the same as a problem._ A brand-new sync whose import already ran but whose external platform hasn't polled yet must show green — grey would falsely imply the host needs to act. Grey is reserved for the aggregate case with zero configured syncs (`getAggregateSyncHealthColor([])`).
 
 The `unknown` bucket still exists in the `SyncHealth` union for that empty-aggregate case, but neither `getImportHealth` nor `getExportHealth` returns it — they fall through to `healthy` when there's no data and no active warning condition.
 

@@ -172,7 +172,7 @@ export default function CalendarSyncFormScreen() {
   };
 
   const dismissWithFlash = (flash: string) => {
-    router.navigate({
+    router.dismissTo({
       pathname: "/edit-listing/calendar-sync",
       params: { id, flash },
     });
