@@ -65,7 +65,7 @@ export function createHighlandTheme(fonts: { body: string; heading: string }) {
       primary: { main: deepSkyeBlue },
       secondary: { main: highlandMossGreen },
       success: { main: successGreen },
-      error: { main: rowanBerryLight },
+      error: { main: rowanBerry, light: rowanBerryLight },
       warning: { main: autumnBracken },
       background: { default: white, paper: white },
       brand: { primary: deepSkyeBlue, accent: seaGlassTeal },

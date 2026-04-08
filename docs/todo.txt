@@ -3,7 +3,9 @@ In-Progress
 =============
 - set or verify your pin form should be high cause slide up soft keyboard is obscuring it
 - Keyboard not displaying on emulator
+  - Test if works on real device
 - logo-wide.png replace with HH
+
 =============
 MVP: Host app
 =============
@@ -42,10 +44,8 @@ High complexity
 --------------
 Low complexity
 --------------
-- danger red button in app should use darker red
 - "enable import and for full pro -> enable export for protection against double bookings?
 - Remove photo should be danger?
-- Days above calendar not centered
 - Message template add details..comment out non implemented?
 - bug: Calendar page, tapping on an air bnb booking, the popover thing that says 'Booked on Airbnb' is too far away (vertially) from the bookig bar that was clicked
   - Also sometimes when you tap on booking bar next side of screen, the popup goes too far away horizontal.
@@ -71,7 +71,12 @@ Low complexity
 ===============
 Pending Prompts
 ===============
+in host app on calendar page, the days of the week near the top should be centered against each day cell. Currently they are left aligned 
 
+in packages/storybook can you add one for button component, and ensure it is capable of displaying all types of buttons current in use in                       
+  skye-hosts-guest-website. My goal is to configure buttons to ensure they match the button variants/styles from host-app. Doesnt need to be 1:1 but should be    
+  approximate match. Scrutinise my plan, any major decisions ask
+  
 ==================
 Re-useable prompts
 ==================
