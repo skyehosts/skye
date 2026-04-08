@@ -458,7 +458,12 @@ export function CalendarList({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <View style={[styles.weekdayRow, { paddingHorizontal: spacing.md }]}>
+      <View
+        style={[
+          styles.weekdayRow,
+          { paddingHorizontal: spacing.md, gap: CELL_GAP },
+        ]}
+      >
         {WEEKDAY_LABELS.map((label) => (
           <View key={label} style={[styles.weekdayCell, { width: CELL_SIZE }]}>
             <Text style={styles.weekdayText}>{label}</Text>
