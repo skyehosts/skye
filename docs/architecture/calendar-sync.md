@@ -14,7 +14,7 @@ Two sync directions exist per platform connection:
 ## Key entities
 
 - `CalendarSync` — one record per listing+platform connection. Stores `importUrl` (NOT NULL), `exportToken`, failure counter, last import status, and `lastExportedAt` (timestamp of the last time the external platform fetched the iCal feed — see [Export tracking](#export-tracking)).
-- `CalendarBlock` — a blocked date range. `source = 'import'` (from external calendar) or `'manual'` (host blocked directly). `calendarSyncId` is nullable — becomes `null` when the parent sync is deleted but blocks were retained.
+- `CalendarBlock` — a blocked date range. `source = 'import'` (from external calendar) or `'manual'` (host blocked directly). `calendarSyncId` is nullable: it is `null` for manual blocks (no parent sync), and always set for imported blocks (deleting a sync cascades its imported blocks — see [Sync deletion](#sync-deletion)).
 
 ## Enable/disable model
 
@@ -94,15 +94,13 @@ When the host edits the sync and saves a new `importUrl`, the service detects `c
 
 The listing card surfaces: _"Import paused after repeated failures. Edit to update URL and re-enable."_
 
-## Orphaned blocks
+## Sync deletion
 
-When a host deletes a sync and chooses **"Remove sync only"** (not dates), `CalendarSync` is deleted but `CalendarBlock` records persist with `calendarSyncId = null`. These are orphaned imported blocks.
+`DELETE /calendar-sync/:id` removes the `CalendarSync` row **and** all `CalendarBlock` rows belonging to it, in a single transaction. There is no "keep data" branch — the previous version offered one, but it produced orphaned imported blocks (no parent sync, so no platform identity, no styling, no individual delete affordance) that confused hosts more than they helped.
 
-The calendar tooltip detects this state (`source = 'import'` AND `calendarSyncId = null`) and shows a **"Remove block"** button, allowing the host to clear them individually. Active imported blocks (live sync) instead show guidance to cancel on the external platform.
+If a host wants their data back after deletion, they re-add the sync. The next iCal fetch repopulates everything from the source of truth.
 
-### Re-import after "delete sync only"
-
-If a host re-creates a sync for the same iCal URL, `reconcileBlocks()` scopes to the new `calendarSyncId` — orphaned blocks are invisible to it, which would cause duplicate blocks for the same dates. To prevent this, `adoptOrphanedBlocks()` runs before reconciliation: it re-assigns any orphaned blocks whose `externalUid` matches an incoming event to the new sync ID. Reconciliation then finds them as existing records and updates rather than duplicating. Orphaned blocks with no matching UID are left alone (host can clear manually).
+The frontend confirm modal (`apps/skye-hosts-app/app/edit-listing/calendar-sync-form.tsx`) shows the count of imported dates that will be removed (using `lastImportEventCount`) and reassures the host that re-adding the calendar will restore them.
 
 ## Sentry tagging
 

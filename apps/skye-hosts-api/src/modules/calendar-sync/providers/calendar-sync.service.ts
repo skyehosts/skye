@@ -110,13 +110,10 @@ export class CalendarSyncService {
     return this.calendarSyncRepo.save(sync);
   }
 
-  async deleteSync(id: number, removeBlocks: boolean): Promise<void> {
-    await this.dataSource.transaction(async (manager) => {
-      if (removeBlocks) {
-        await manager.delete(CalendarBlock, { calendarSyncId: id });
-      }
-      await manager.delete(CalendarSync, { id });
-    });
+  async deleteSync(id: number): Promise<void> {
+    // Imported blocks are removed automatically by the FK ON DELETE CASCADE
+    // (calendar_block.calendarSyncId → calendar_sync.id).
+    await this.calendarSyncRepo.delete({ id });
   }
 
   async getBlocksForListing(listingId: number): Promise<CalendarBlock[]> {

@@ -5,6 +5,10 @@ In-Progress
 - Keyboard not displaying on emulator
   - Test if works on real device
 - logo-wide.png replace with HH
+- Test the removal of sync only deletion. (i.E data always deleted too)
+  - The external booking bars remain and there's no way to remove them?
+  - The external booking bars are colored grey with a dot replacing the AirBnB icon.
+  - Can we simplify this by removing the option to remove sync but retain data?
 
 =============
 MVP: Host app
@@ -12,7 +16,6 @@ MVP: Host app
 ----------------
 High complexity
 ----------------
-- App splash screen
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
     - Publish app to google play (Beta)
@@ -41,9 +44,13 @@ High complexity
 - Queue policy needs review (retry speed etc)
 - Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
   - Decide address upload or stripe verification (account vs name match)
+
 --------------
 Low complexity
 --------------
+- tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
+- Why am I seeing double blocks in screenshot on calendar page? Perhaps regression from enable toggle remove
+- why is booking bar in calendar, grey now ?
 - "enable import and for full pro -> enable export for protection against double bookings?
 - Remove photo should be danger?
 - Message template add details..comment out non implemented?
@@ -71,11 +78,6 @@ Low complexity
 ===============
 Pending Prompts
 ===============
-in host app on calendar page, the days of the week near the top should be centered against each day cell. Currently they are left aligned 
-
-in packages/storybook can you add one for button component, and ensure it is capable of displaying all types of buttons current in use in                       
-  skye-hosts-guest-website. My goal is to configure buttons to ensure they match the button variants/styles from host-app. Doesnt need to be 1:1 but should be    
-  approximate match. Scrutinise my plan, any major decisions ask
   
 ==================
 Re-useable prompts

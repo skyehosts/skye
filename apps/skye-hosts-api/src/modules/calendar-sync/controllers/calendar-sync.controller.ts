@@ -8,11 +8,9 @@ import {
   Logger,
   NotFoundException,
   Param,
-  ParseBoolPipe,
   ParseIntPipe,
   Patch,
   Post,
-  Query,
   Res,
 } from '@nestjs/common';
 import type {
@@ -113,8 +111,6 @@ export class CalendarSyncController {
   @AuthoriseRole('host')
   async deleteSync(
     @Param('id', ParseIntPipe) id: number,
-    @Query('removeBlocks', new ParseBoolPipe({ optional: true }))
-    removeBlocks: boolean | undefined,
     @AuthenticatedUser() user: IJwtClaims,
   ): Promise<{ deleted: boolean }> {
     const existing = await this.calendarSyncService.getSyncById(id);
@@ -126,10 +122,8 @@ export class CalendarSyncController {
       ListingPermission.EDIT_CALENDAR,
     );
 
-    await this.calendarSyncService.deleteSync(id, removeBlocks ?? false);
-    this.logger.debug(
-      `Deleted sync ${id} (removeBlocks=${removeBlocks ?? false})`,
-    );
+    await this.calendarSyncService.deleteSync(id);
+    this.logger.debug(`Deleted sync ${id}`);
     return { deleted: true };
   }
 

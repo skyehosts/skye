@@ -1,8 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -69,6 +68,8 @@ export default function CalendarSyncFormScreen() {
   const [serverError, setServerError] = useState("");
   const [helpVisible, setHelpVisible] = useState(false);
   const [exportHelpVisible, setExportHelpVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     control,
@@ -179,35 +180,18 @@ export default function CalendarSyncFormScreen() {
     });
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      "Remove calendar sync",
-      "Do you also want to remove the blocked dates that were imported from this calendar?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove sync only",
-          onPress: () => deleteSync(false),
-        },
-        {
-          text: "Remove sync and dates",
-          style: "destructive",
-          onPress: () => deleteSync(true),
-        },
-      ],
-    );
-  };
-
-  const deleteSync = async (removeBlocks: boolean) => {
+  const confirmDelete = async () => {
+    setDeleting(true);
     try {
-      await fetchApi(
-        `/calendar-sync/${syncId}?removeBlocks=${removeBlocks}`,
-        undefined,
-        { method: "DELETE" },
-      );
+      await fetchApi(`/calendar-sync/${syncId}`, undefined, {
+        method: "DELETE",
+      });
+      setDeleteVisible(false);
       dismissWithFlash("Sync deleted");
     } catch (e) {
       handleApiError(e, (msg) => setSnackbar({ message: msg, type: "error" }));
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -391,7 +375,7 @@ export default function CalendarSyncFormScreen() {
         {isEditing && (
           <DangerButton
             variant="secondary"
-            onPress={handleDelete}
+            onPress={() => setDeleteVisible(true)}
             icon="delete-outline"
           >
             Remove this calendar sync
@@ -421,6 +405,43 @@ export default function CalendarSyncFormScreen() {
             <Button onPress={() => setExportHelpVisible(false)}>Got it</Button>
           </Dialog.Actions>
         </Dialog>
+        {existingSync && (
+          <Dialog
+            visible={deleteVisible}
+            onDismiss={() => !deleting && setDeleteVisible(false)}
+            dismissable={!deleting}
+          >
+            <Dialog.Title>
+              Remove {getPlatformLabel(existingSync.platform)} sync?
+            </Dialog.Title>
+            <Dialog.Content>
+              <Text>
+                {(existingSync.lastImportEventCount ?? 0) > 0
+                  ? `This will remove the sync and ${existingSync.lastImportEventCount} imported ${existingSync.lastImportEventCount === 1 ? "date" : "dates"}.`
+                  : "This will remove the sync."}
+                {"\n\n"}
+                You can re-add this calendar at any time — your dates will be
+                re-imported from {getPlatformLabel(existingSync.platform)}.
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button
+                onPress={() => setDeleteVisible(false)}
+                disabled={deleting}
+              >
+                Cancel
+              </Button>
+              <DangerButton
+                variant="secondary"
+                onPress={confirmDelete}
+                loading={deleting}
+                disabled={deleting}
+              >
+                Remove sync
+              </DangerButton>
+            </Dialog.Actions>
+          </Dialog>
+        )}
       </Portal>
 
       <AppSnackbar
