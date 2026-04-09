@@ -64,7 +64,9 @@ export const calendarSelectedBlueBorder = "#93C5FD";
 /** Neutral / UI colours */
 export const white = "#FFFFFF";
 export const black = "#000000";
-/** Primary text */
+/** Primary text / section headings */
+export const grey950 = "#222222";
+/** Secondary text */
 export const grey900 = "#333333";
 /** Secondary text, modal close/dismiss icons */
 export const grey600 = "#666666";

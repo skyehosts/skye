@@ -31,6 +31,7 @@ declare module "@mui/material/styles" {
       successGreen: string;
       rowanBerry: string;
       rowanBerryLight: string;
+      grey950: string;
       iconDefault: string;
       iconOnDark: string;
     };
@@ -63,6 +64,7 @@ declare module "@mui/material/styles" {
       successGreen?: string;
       rowanBerry?: string;
       rowanBerryLight?: string;
+      grey950?: string;
       iconDefault?: string;
       iconOnDark?: string;
     };

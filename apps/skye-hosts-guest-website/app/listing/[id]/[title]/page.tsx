@@ -5,6 +5,7 @@ import {
   type IGetListingResponseDto,
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
+import { ListingDescriptionSection } from '@repo/web-components/listings/listing-description-section';
 import { parseBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
@@ -107,6 +108,12 @@ export default async function ListingPage({
               name: listing.hostName,
               avatarUrl: listing.hostProfilePhotoUrl ?? undefined,
             }}
+          />
+          <ListingDescriptionSection
+            description={listing.description}
+            descriptionLong={listing.descriptionLong}
+            guestAccess={listing.guestAccess}
+            otherDetailsToNote={listing.otherDetailsToNote}
           />
           <ListingLocationSection
             approximateLatitude={listing.approximateLatitude}

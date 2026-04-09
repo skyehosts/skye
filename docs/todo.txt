@@ -1,21 +1,19 @@
+flora
+multi
+pqq
+
 =============
 In-Progress
 =============
-- set or verify your pin form should be high cause slide up soft keyboard is obscuring it
-- Keyboard not displaying on emulator
-  - Test if works on real device
 - logo-wide.png replace with HH
-- Test the removal of sync only deletion. (i.E data always deleted too)
-  - The external booking bars remain and there's no way to remove them?
-  - The external booking bars are colored grey with a dot replacing the AirBnB icon.
-  - Can we simplify this by removing the option to remove sync but retain data?
 
 =============
 MVP: Host app
 =============
 ----------------
-High complexity
+High prescence
 ----------------
+- Beds/bedroom granularity like airbnb
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
     - Publish app to google play (Beta)
@@ -46,11 +44,11 @@ High complexity
   - Decide address upload or stripe verification (account vs name match)
 
 --------------
-Low complexity
+Low prescence
 --------------
+- On Edit details page there is a list item for 'Interaction with guests' freetext, I think this is duplicate. The radio is prefferd elsewhere
+- How to view images on desktop, should open in lightbox? MVP
 - tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
-- Why am I seeing double blocks in screenshot on calendar page? Perhaps regression from enable toggle remove
-- why is booking bar in calendar, grey now ?
 - "enable import and for full pro -> enable export for protection against double bookings?
 - Remove photo should be danger?
 - Message template add details..comment out non implemented?
@@ -67,18 +65,33 @@ Low complexity
 MVP: Guest website
 ==================
 ----------------
-High complexity
+High prescence
 ----------------
+- Show more modal on listing detail page, scrollbar shows on mobile when not needed
 - Decide & implement if public booking possible via signup during booking flow.
 --------------
-Low complexity
+Low prescence
 --------------
 - Buttons consistency in app & web?
 
 ===============
 Pending Prompts
 ===============
-  
+- In guest website, on listing/:id/:slug page, undearth 'Hosted by' box
+- Display the following information from listing.entity
+  - description
+  - descriptionLong (Does this correspond to 'Your property' card title on 'Edit description' page in hots app)
+  - guestAccess
+  - otherDetailsToNote
+- Each field should be vertically separated with each having an appropriately named heading (You decide best)
+- Only 450 chars (including spaces) should be displayed collectively across all fields, add three dots at end. If total character count exceeds this, display a 'Show more' button
+- When 'Show more' button is clicked, a modal is opened displaying the full text
+- Scrutinise my plan
+- Any recommendations for improvements, make them
+- Focus on customer experience from the guest's perspective with regards to copy
+- Any major decisions ask, particularily around how we display the modal and if we should use / what npm package we should use if any.
+- Consider all responsive breakpoints
+
 ==================
 Re-useable prompts
 ==================

@@ -25,6 +25,8 @@
     "./listings/edit-listing-form": "./src/listings/edit-listing-form.tsx",
     "./listings/host-listings-table": "./src/listings/host-listings-table.tsx",
     "./listings/listing-location-section": "./src/listings/listing-location-section.tsx",
+    "./listings/listing-description-section": "./src/listings/listing-description-section.tsx",
+    "./listings/listing-description-modal": "./src/listings/listing-description-modal.tsx",
     "./listings/listing-map-modal": "./src/listings/listing-map-modal.tsx",
     "./listings/listing-booking-sidebar": "./src/listings/listing-booking-sidebar.tsx",
     "./listings/listing-date-picker-modal": "./src/listings/listing-date-picker-modal.tsx",
