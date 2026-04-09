@@ -9,8 +9,8 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
   const theme = useMemo(
     () =>
       createHighlandTheme({
-        body: '"Open Sans", sans-serif',
-        heading: '"Montserrat", sans-serif',
+        body: 'var(--font-open-sans), sans-serif',
+        heading: 'var(--font-montserrat), sans-serif',
       }),
     [],
   );

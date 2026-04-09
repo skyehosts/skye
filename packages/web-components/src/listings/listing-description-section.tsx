@@ -90,15 +90,15 @@ export function ListingDescriptionSection({
   return (
     <Box
       sx={{
-        py: 2,
+        py: 4,
         borderBottom: 1,
         borderColor: 'divider',
         textAlign: { xs: 'center', md: 'left' },
       }}
     >
       <Typography
-        variant="body1"
-        sx={{ fontWeight: 700, color: 'custom.grey950', mb: 1 }}
+        variant="h6"
+        sx={{ fontWeight: 600, color: 'custom.grey950', mb: 1, fontSize: 22 }}
       >
         About this place
       </Typography>

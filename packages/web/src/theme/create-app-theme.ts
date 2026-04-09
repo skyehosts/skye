@@ -103,10 +103,9 @@ export function createAppTheme({
   fontHeading,
   palette,
 }: AppThemeOptions) {
-  const base = createTheme();
-  const { up } = base.breakpoints;
+  const { up } = createTheme().breakpoints;
 
-  return createTheme(base, {
+  return createTheme({
     palette: {
       ...defaultPalette,
       ...palette,
@@ -198,6 +197,11 @@ export function createAppTheme({
       MuiTypography: {
         styleOverrides: {
           root: { fontStyle: "normal" },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: { textTransform: "none" as const },
         },
       },
       MuiFormHelperText: {

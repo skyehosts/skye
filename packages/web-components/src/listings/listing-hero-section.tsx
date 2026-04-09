@@ -69,7 +69,8 @@ export function ListingHeroSection({
           variant="h4"
           component="h1"
           sx={{
-            fontWeight: 700,
+            fontWeight: 600,
+            fontSize: 26,
             display: { xs: 'block', md: 'none' },
             color: 'custom.grey950',
           }}
@@ -121,7 +122,7 @@ export function ListingHeroSection({
               />
               <Typography
                 variant="body1"
-                sx={{ fontWeight: 700, color: 'custom.grey950' }}
+                sx={{ fontWeight: 600, color: 'custom.grey950' }}
               >
                 Hosted by {hostInfo.name}
               </Typography>

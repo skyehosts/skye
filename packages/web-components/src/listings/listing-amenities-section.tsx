@@ -53,29 +53,26 @@ export function ListingAmenitiesSection({
   return (
     <Box
       sx={{
-        py: 2,
+        py: 4,
         borderBottom: 1,
         borderColor: 'divider',
         textAlign: { xs: 'center', md: 'left' },
       }}
     >
       <Typography
-        variant="body1"
-        sx={{ fontWeight: 700, color: 'custom.grey950', mb: 1 }}
+        variant="h6"
+        sx={{ fontWeight: 600, color: 'custom.grey950', mb: 1, fontSize: 22 }}
       >
         What this place offers
       </Typography>
 
-      <Stack spacing={0}>
+      <Stack spacing={1.5}>
         {previewAmenities.map((amenity) => (
           <Box
             key={amenity.id}
             sx={{
               justifyContent: { xs: 'center', md: 'flex-start' },
               display: 'flex',
-              borderBottom: 1,
-              borderColor: 'divider',
-              py: 1.5,
             }}
           >
             <AmenityRow icon={amenity.icon} title={amenity.title} />
