@@ -107,7 +107,6 @@ export class ListingService {
       description: dto.description,
       descriptionLong: '',
       guestAccess: '',
-      interactionWithGuests: '',
       otherDetailsToNote: '',
       typeId: dto.typeId,
       spaceType: dto.spaceType,
@@ -318,8 +317,6 @@ export class ListingService {
     if (dto.descriptionLong !== undefined)
       listing.descriptionLong = dto.descriptionLong;
     if (dto.guestAccess !== undefined) listing.guestAccess = dto.guestAccess;
-    if (dto.interactionWithGuests !== undefined)
-      listing.interactionWithGuests = dto.interactionWithGuests;
     if (dto.otherDetailsToNote !== undefined)
       listing.otherDetailsToNote = dto.otherDetailsToNote;
     if (dto.typeId !== undefined) listing.typeId = dto.typeId;
@@ -506,7 +503,6 @@ export class ListingService {
       description: listing.description,
       descriptionLong: listing.descriptionLong,
       guestAccess: listing.guestAccess,
-      interactionWithGuests: listing.interactionWithGuests,
       otherDetailsToNote: listing.otherDetailsToNote,
       typeId: listing.typeId,
       spaceType: listing.spaceType,

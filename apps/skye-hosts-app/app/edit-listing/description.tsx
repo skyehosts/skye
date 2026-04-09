@@ -24,7 +24,6 @@ type DescriptionField =
   | "description"
   | "descriptionLong"
   | "guestAccess"
-  | "interactionWithGuests"
   | "otherDetailsToNote";
 
 interface FieldConfig {
@@ -53,13 +52,6 @@ const FIELDS: FieldConfig[] = [
   {
     key: "guestAccess",
     title: "Guest access",
-    maxLength: 500,
-    optional: true,
-    truncateLines: 4,
-  },
-  {
-    key: "interactionWithGuests",
-    title: "Interaction with guests",
     maxLength: 500,
     optional: true,
     truncateLines: 4,

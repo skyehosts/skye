@@ -35,9 +35,6 @@ export class Listing {
   guestAccess: string;
 
   @Column({ type: 'character varying', default: '' })
-  interactionWithGuests: string;
-
-  @Column({ type: 'character varying', default: '' })
   otherDetailsToNote: string;
 
   @Column({ type: 'character varying' })

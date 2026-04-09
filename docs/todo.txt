@@ -6,6 +6,7 @@ pqq
 In-Progress
 =============
 - logo-wide.png replace with HH
+- On Edit details page there is a list item for 'Interaction with guests' freetext, I think this is duplicate. The radio is prefferd elsewhere
 
 ===============
 Pending Prompts
@@ -13,14 +14,20 @@ Pending Prompts
 - In guest website, on listing/:id/:slug page, undearth 'What this place offers' box
 - Add another section (Copy same visual separator as other existing sections)
 - Title: Things to know
-- Content:
+- Content (Mobile breakpoint):
   - A vertical list, each list item has:
     - Icon on left
     - Title: bold text (Right of icon)
     - Description (3 lines) (Under title)
     - Right chevron / arrow right aligned.
-- Tap behiavour:
-  - Opens a modal that displays further information about the list item.
+  - Tap behiavour:
+    - Opens a modal that displays further information about the list item.
+- Content (> Tablet breakpoint)
+  - A single 3 column row. 100% width span, columsn equally spaced apart
+  - Icon at top
+  - Title under icon
+  - 3 lines of info udner title
+  - Learn more link below info, on click opens same modal as mobile
 - Scrutinise my plan
 - Re-use existing modal components where possible
 - Make things re-useable where possible, e.g displaying amenities icons etc.
@@ -67,7 +74,6 @@ High prescence
 --------------
 Low prescence
 --------------
-- On Edit details page there is a list item for 'Interaction with guests' freetext, I think this is duplicate. The radio is prefferd elsewhere
 - How to view images on desktop, should open in lightbox? MVP
 - tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
 - "enable import and for full pro -> enable export for protection against double bookings?
@@ -85,9 +91,10 @@ Low prescence
 ==================
 MVP: Guest website
 ==================
-----------------
+---------------
 High prescence
-----------------
+--------------
+- Monserrat looks too modern should be traditional, what font is used in app
 - Message hots button on listing detail page?
 - Show more modal on listing detail page, scrollbar shows on mobile when not needed
 - Decide & implement if public booking possible via signup during booking flow.

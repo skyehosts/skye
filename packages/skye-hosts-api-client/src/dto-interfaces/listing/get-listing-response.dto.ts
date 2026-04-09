@@ -19,7 +19,6 @@ export interface IGetListingResponseDto {
   description: string;
   descriptionLong: string;
   guestAccess: string;
-  interactionWithGuests: string;
   otherDetailsToNote: string;
   typeId: ListingTypeId;
   spaceType: ListingSpaceType;

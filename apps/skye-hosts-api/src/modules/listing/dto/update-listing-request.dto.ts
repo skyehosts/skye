@@ -91,11 +91,6 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsString()
   @MaxLength(500)
-  interactionWithGuests?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
   otherDetailsToNote?: string;
 
   @IsOptional()
