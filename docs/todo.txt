@@ -7,6 +7,27 @@ In-Progress
 =============
 - logo-wide.png replace with HH
 
+===============
+Pending Prompts
+===============
+- In guest website, on listing/:id/:slug page, undearth 'What this place offers' box
+- Add another section (Copy same visual separator as other existing sections)
+- Title: Things to know
+- Content:
+  - A vertical list, each list item has:
+    - Icon on left
+    - Title: bold text (Right of icon)
+    - Description (3 lines) (Under title)
+    - Right chevron / arrow right aligned.
+- Tap behiavour:
+  - Opens a modal that displays further information about the list item.
+- Scrutinise my plan
+- Re-use existing modal components where possible
+- Make things re-useable where possible, e.g displaying amenities icons etc.
+- Keep in mind these icons are displayed in host app, can you use those or is there a problem cause of different libraries?
+- Any major decisions ask, particuoarlily around sourcing icon images
+- If you see any opportunities to improve my plan, recommend them
+
 =============
 MVP: Host app
 =============
@@ -67,30 +88,17 @@ MVP: Guest website
 ----------------
 High prescence
 ----------------
+- Message hots button on listing detail page?
 - Show more modal on listing detail page, scrollbar shows on mobile when not needed
 - Decide & implement if public booking possible via signup during booking flow.
 --------------
 Low prescence
 --------------
+- Things to know section (listing detail)
+  - Cancellation policy
+  - House rules
+  - Safety and property
 - Buttons consistency in app & web?
-
-===============
-Pending Prompts
-===============
-- In guest website, on listing/:id/:slug page, undearth 'Hosted by' box
-- Display the following information from listing.entity
-  - description
-  - descriptionLong (Does this correspond to 'Your property' card title on 'Edit description' page in hots app)
-  - guestAccess
-  - otherDetailsToNote
-- Each field should be vertically separated with each having an appropriately named heading (You decide best)
-- Only 450 chars (including spaces) should be displayed collectively across all fields, add three dots at end. If total character count exceeds this, display a 'Show more' button
-- When 'Show more' button is clicked, a modal is opened displaying the full text
-- Scrutinise my plan
-- Any recommendations for improvements, make them
-- Focus on customer experience from the guest's perspective with regards to copy
-- Any major decisions ask, particularily around how we display the modal and if we should use / what npm package we should use if any.
-- Consider all responsive breakpoints
 
 ==================
 Re-useable prompts

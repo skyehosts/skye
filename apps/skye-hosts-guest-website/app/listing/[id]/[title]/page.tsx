@@ -2,9 +2,11 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import {
   fetchApi,
+  type IGetAmenitiesResponseDto,
   type IGetListingResponseDto,
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
+import { ListingAmenitiesSection } from '@repo/web-components/listings/listing-amenities-section';
 import { ListingDescriptionSection } from '@repo/web-components/listings/listing-description-section';
 import { parseBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
@@ -40,7 +42,10 @@ export default async function ListingPage({
 }: ListingPageProps) {
   const { id, title } = await params;
   const resolvedSearchParams = await searchParams;
-  const listing = await fetchApi<IGetListingResponseDto>(`/listing/${id}`);
+  const [listing, amenitiesData] = await Promise.all([
+    fetchApi<IGetListingResponseDto>(`/listing/${id}`),
+    fetchApi<IGetAmenitiesResponseDto>('/listing/amenities'),
+  ]);
   const session = await auth();
   const guestId = session?.user?.id ? Number(session.user.id) : null;
   const initialBookingParams = parseBookingSearchParams(resolvedSearchParams);
@@ -114,6 +119,10 @@ export default async function ListingPage({
             descriptionLong={listing.descriptionLong}
             guestAccess={listing.guestAccess}
             otherDetailsToNote={listing.otherDetailsToNote}
+          />
+          <ListingAmenitiesSection
+            amenityIds={listing.amenities}
+            categories={amenitiesData.categories}
           />
           <ListingLocationSection
             approximateLatitude={listing.approximateLatitude}
