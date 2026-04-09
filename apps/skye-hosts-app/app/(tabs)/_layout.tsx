@@ -16,7 +16,7 @@ export default function TabsLayout() {
           safeAreaInsets={insets}
           activeColor={colors.primary}
           inactiveColor={colors.iconInactive}
-          activeIndicatorStyle={{ backgroundColor: "transparent" }}
+          activeIndicatorStyle={{ backgroundColor: colors.primaryLight }}
           style={{ backgroundColor: colors.background }}
           onTabPress={({ route, preventDefault }) => {
             const event = navigation.emit({
