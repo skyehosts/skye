@@ -96,11 +96,14 @@ export default function CancellationPolicyScreen() {
             style={commonStyles.flex}
             contentContainerStyle={styles.scrollContent}
           >
+            {/* These options currently apply to all stays. The section is
+                separated to allow adding a distinct long-term cancellation
+                policy in future. */}
             <View style={styles.section}>
-              <Text style={commonStyles.itemTitle}>Short-term stays</Text>
+              <Text style={commonStyles.itemTitle}>Standard cancellation</Text>
               <Text style={styles.bodyText}>
-                Applies to stays under 28 nights. All standard stay policies
-                include a 24-hour free cancellation period.
+                All policies include a 24-hour free cancellation period after
+                booking.
               </Text>
             </View>
 

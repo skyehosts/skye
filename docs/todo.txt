@@ -54,12 +54,10 @@ High prescence
 -------------
 Low prescence
 -------------
-- splash screen on app startup shows small then a larger version after
 - Co-Host permission level
   - Add disabled to bottom 2 options and add 'coming soon'
 - cancellation policy
   - shot-term stays wording, should update wording to apply to stays also including > 28 days as confusing
-
 - tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
 - "enable import and for full pro -> enable export for protection against double bookings?
 - Message template add details..comment out non implemented?
