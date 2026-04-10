@@ -5,22 +5,12 @@ pqq
 =============
 In-Progress
 =============
-- logo-wide.png replace with High
-- In hosts app, please update the following the use Lora font.
+- Bug screenshot 1: Calendar sync
 
 ===============
 Pending Prompts
 ===============
 - Checkout instructions page, already selected items should have 'Edit' not chevron right.
-- Bug screenshot 1: Calendar sync
-- In guest website
-  - Ensure heading-panel component stretches 100% width of screen (It shouldn't be constrained by max width container parent)
-  - On all pages, the header & footer shuold span 100% width of page but the inner content should be centered and limited to max width of about 1800px;
-    - For footer ensure the background color spans 100% widht of page
-  - On homepage (/listings)
-    - it is currently set to max-width: 1120px but this should be 1800px as well.
-    - Ensure this 1800px is a re-useable style so other pages can use this max-width in future if needed.
-    -  Ensure the edges of inner content within this container is aligned with edges of inner header/footer content
 
 =============
 MVP: Host app

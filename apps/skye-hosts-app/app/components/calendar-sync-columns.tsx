@@ -1,6 +1,6 @@
 import type { ICalendarSyncDto } from "@repo/skye-hosts-api-client";
 import { useCallback, useRef, useState } from "react";
-import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Button, Icon, Portal, Text } from "react-native-paper";
 import { tooltipStyles } from "../calendar/components/tooltip-styles";
 import { colors, spacing, typography } from "../theme";
@@ -13,8 +13,6 @@ import {
 } from "../utils/sync-status";
 import { getPlatformLabel } from "../utils/calendar-sync-constants";
 import { InfoBox } from "./info-box";
-
-const STACK_BREAKPOINT = 360;
 
 interface CalendarSyncColumnsProps {
   sync: ICalendarSyncDto;
@@ -29,9 +27,6 @@ export function CalendarSyncColumns({
   syncingId,
   onShowExportHelp,
 }: CalendarSyncColumnsProps) {
-  const { width } = useWindowDimensions();
-  const stack = width < STACK_BREAKPOINT;
-
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -91,11 +86,11 @@ export function CalendarSyncColumns({
           re-enable.
         </Text>
       )}
-      <View style={[styles.row, stack && styles.rowStacked]}>
-        {/* Import column */}
-        <View style={styles.column}>
-          <Text style={styles.heading}>Import</Text>
-          <Text style={styles.value}>
+      {/* Import section */}
+      <View style={styles.section}>
+        <Text style={styles.heading}>Import</Text>
+        <View style={styles.importRow}>
+          <Text style={[styles.value, styles.flex]}>
             {sync.lastImportAt
               ? `Imported ${formatRelativeTime(sync.lastImportAt)}`
               : `${platformLabel} hasn${"\u2019"}t synced yet`}
@@ -126,58 +121,55 @@ export function CalendarSyncColumns({
             </View>
           )}
         </View>
+      </View>
 
-        {/* Divider */}
-        {!stack && <View style={styles.divider} />}
+      <View style={styles.divider} />
 
-        {/* Export column */}
-        <View style={styles.column}>
-          <Text style={styles.heading}>Export</Text>
-          <View style={styles.exportValueRow}>
-            <Text
-              style={[
-                styles.value,
-                exportState === "overdue" && styles.valueWarning,
-              ]}
-            >
-              {exportValueText}
-            </Text>
-            <Pressable
-              onPress={() => showTooltipFor(exportAnchor, exportTooltipText)}
-            >
-              <View ref={exportAnchor}>
-                <Icon
-                  source={
-                    exportState === "overdue"
-                      ? "alert-outline"
-                      : "information-outline"
-                  }
-                  size={18}
-                  color={
-                    exportState === "overdue" ? colors.warning : colors.icon
-                  }
-                />
-              </View>
-            </Pressable>
-          </View>
-          {exportState === "overdue" && (
-            <View style={styles.warningWrapper}>
-              <InfoBox variant="warning">
-                Tap this card to open the sync, copy the export link, and paste
-                it into {platformLabel}
-                {"\u2019"}s calendar import settings.{" "}
-                {onShowExportHelp && (
-                  <Text
-                    style={styles.helpLink}
-                    onPress={() => onShowExportHelp(sync)}
-                  >
-                    See how
-                  </Text>
-                )}
-              </InfoBox>
+      {/* Export section */}
+      <View style={styles.section}>
+        <Text style={styles.heading}>Export</Text>
+        <View style={styles.exportValueRow}>
+          <Text
+            style={[
+              styles.value,
+              exportState === "overdue" && styles.valueWarning,
+            ]}
+          >
+            {exportValueText}
+          </Text>
+          <Pressable
+            onPress={() => showTooltipFor(exportAnchor, exportTooltipText)}
+          >
+            <View ref={exportAnchor}>
+              <Icon
+                source={
+                  exportState === "overdue"
+                    ? "alert-outline"
+                    : "information-outline"
+                }
+                size={18}
+                color={exportState === "overdue" ? colors.warning : colors.icon}
+              />
             </View>
-          )}
+          </Pressable>
         </View>
+        {exportState === "overdue" && (
+          <View style={styles.warningWrapper}>
+            <InfoBox variant="warning">
+              Tap this card to open the sync, copy the export link, and paste it
+              into {platformLabel}
+              {"\u2019"}s calendar import settings.{" "}
+              {onShowExportHelp && (
+                <Text
+                  style={styles.helpLink}
+                  onPress={() => onShowExportHelp(sync)}
+                >
+                  See how
+                </Text>
+              )}
+            </InfoBox>
+          </View>
+        )}
       </View>
       {tooltip && (
         <Portal>
@@ -215,34 +207,23 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.warning,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    gap: spacing.md,
-  },
-  rowStacked: {
-    flexDirection: "column",
-  },
-  column: {
-    flex: 1,
+  section: {
     gap: spacing.xs,
-    alignItems: "center",
+    paddingVertical: spacing.sm,
   },
   divider: {
-    width: StyleSheet.hairlineWidth,
+    height: StyleSheet.hairlineWidth,
     backgroundColor: colors.textSecondary,
     opacity: 0.3,
   },
   heading: {
     fontSize: typography.sm,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
-    textAlign: "center",
   },
   value: {
     fontSize: typography.sm,
     color: colors.textSecondary,
-    textAlign: "center",
   },
   valueWarning: {
     color: colors.warning,
@@ -253,11 +234,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.xs,
   },
+  importRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  flex: {
+    flex: 1,
+  },
   importActions: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    marginTop: spacing.xs,
   },
   warningWrapper: {
     width: "100%",
