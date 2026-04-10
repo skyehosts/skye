@@ -4,7 +4,7 @@ import Icon from '@mdi/react';
 import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { mdiAmenityIconMap, mdiFallbackIcon } from './mdi-amenity-icon-map';
+import { mdiFallbackIcon, mdiIconMap } from './mdi-amenity-icon-map';
 
 export interface AmenityIconProps {
   name: string;
@@ -15,7 +15,7 @@ export interface AmenityIconProps {
 export function AmenityIcon({ name, size = 28, color }: AmenityIconProps) {
   const theme = useTheme();
   const resolvedColor = color ?? theme.palette.custom.seaGlassTeal;
-  const path = mdiAmenityIconMap[name] ?? mdiFallbackIcon;
+  const path = mdiIconMap[name] ?? mdiFallbackIcon;
   return <Icon path={path} size={`${size}px`} color={resolvedColor} />;
 }
 

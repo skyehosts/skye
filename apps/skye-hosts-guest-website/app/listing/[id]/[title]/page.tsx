@@ -12,6 +12,7 @@ import { parseBookingSearchParams } from '@repo/web-components/listings/listing-
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
+import { ListingThingsToKnowSection } from '@repo/web-components/listings/listing-things-to-know-section';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { auth } from '../../../auth';
@@ -124,6 +125,7 @@ export default async function ListingPage({
             amenityIds={listing.amenities}
             categories={amenitiesData.categories}
           />
+          <ListingThingsToKnowSection listing={listing} />
           <ListingLocationSection
             approximateLatitude={listing.approximateLatitude}
             approximateLongitude={listing.approximateLongitude}

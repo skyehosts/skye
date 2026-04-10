@@ -11,29 +11,6 @@ In-Progress
 ===============
 Pending Prompts
 ===============
-- In guest website, on listing/:id/:slug page, undearth 'What this place offers' box
-- Add another section (Copy same visual separator as other existing sections)
-- Title: Things to know
-- Content (Mobile breakpoint):
-  - A vertical list, each list item has:
-    - Icon on left
-    - Title: bold text (Right of icon)
-    - Description (3 lines) (Under title)
-    - Right chevron / arrow right aligned.
-  - Tap behiavour:
-    - Opens a modal that displays further information about the list item.
-- Content (> Tablet breakpoint)
-  - A single 3 column row. 100% width span, columsn equally spaced apart
-  - Icon at top
-  - Title under icon
-  - 3 lines of info udner title
-  - Learn more link below info, on click opens same modal as mobile
-- Scrutinise my plan
-- Re-use existing modal components where possible
-- Make things re-useable where possible, e.g displaying amenities icons etc.
-- Keep in mind these icons are displayed in host app, can you use those or is there a problem cause of different libraries?
-- Any major decisions ask, particuoarlily around sourcing icon images
-- If you see any opportunities to improve my plan, recommend them
 
 =============
 MVP: Host app
@@ -41,6 +18,7 @@ MVP: Host app
 ----------------
 High prescence
 ----------------
+- "self check-in with lockbox" field
 - Beds/bedroom granularity like airbnb
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
   - Resend: Deep link solve.
@@ -110,7 +88,7 @@ Low prescence
 ==================
 Re-useable prompts
 ==================
-Review plan and see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
+Review unstaged files and see if there are any opportunities for improvement with regards to maintainability, DRY adherence and code simplification. If any
 opportunities identified, present a plan to me for approval. Once granted, apply the changes as a minimal unified diff, without rewriting the entire file
 
 ===============
