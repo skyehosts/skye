@@ -125,8 +125,7 @@ export function ListingHeroSection({
               <Typography
                 variant="body1"
                 sx={(theme) => ({
-                  fontFamily: (theme.typography.h1 as { fontFamily?: string })
-                    .fontFamily,
+                  fontFamily: theme.typography.fontFamilyHeading,
                   fontWeight: 600,
                   color: 'custom.grey950',
                 })}

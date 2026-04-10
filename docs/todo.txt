@@ -6,7 +6,7 @@ pqq
 In-Progress
 =============
 - logo-wide.png replace with High
-
+- In hosts app, please update the following the use Lora font.
 
 ===============
 Pending Prompts
@@ -62,6 +62,7 @@ High prescence
 --------------
 Low prescence
 --------------
+- Splash screen flashes with wrong image (gable end)
 - How to view images on desktop, should open in lightbox? MVP
 - tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
 - "enable import and for full pro -> enable export for protection against double bookings?
@@ -82,11 +83,11 @@ MVP: Guest website
 ---------------
 High prescence
 --------------
-- Monserrat looks too modern should be traditional, what font is used in app
 - Message hots button on listing detail page?
 - Show more modal on listing detail page, scrollbar shows on mobile when not needed
 - Decide & implement if public booking possible via signup during booking flow.
 - Cancel booking flow
+
 --------------
 Low prescence
 --------------

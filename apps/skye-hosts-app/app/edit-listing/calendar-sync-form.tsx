@@ -31,7 +31,13 @@ import { AppSnackbar } from "../components/app-snackbar";
 import { DangerButton } from "../components/danger-button";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
-import { colors, commonStyles, spacing, typography } from "../theme";
+import {
+  colors,
+  commonStyles,
+  fontFamily,
+  spacing,
+  typography,
+} from "../theme";
 import { borderRadius } from "../theme/border-radius";
 import { fontWeight } from "../theme/font-weight";
 import { captureException } from "../services/error-reporting";
@@ -467,8 +473,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   sectionTitle: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
   },
   sectionDescription: {

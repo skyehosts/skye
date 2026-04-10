@@ -26,7 +26,6 @@ import { fetchApi } from "../services/api";
 import {
   colors,
   commonStyles,
-  fontWeight,
   lineHeight,
   spacing,
   typography,
@@ -176,7 +175,7 @@ export default function NotificationsSettingsScreen() {
           EVENT_TYPES.map((event) => (
             <View key={event.eventType} style={styles.item}>
               <View style={styles.itemText}>
-                <Text style={styles.itemTitle}>{event.title}</Text>
+                <Text style={commonStyles.itemTitle}>{event.title}</Text>
                 <Text style={styles.itemDescription}>{event.description}</Text>
               </View>
               <Pressable onPress={() => setEditingEvent(event)}>
@@ -262,11 +261,6 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-  },
-  itemTitle: {
-    fontSize: typography.md,
-    color: colors.textPrimary,
-    fontWeight: fontWeight.semibold,
   },
   itemDescription: {
     fontSize: typography.sm,

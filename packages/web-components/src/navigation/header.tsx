@@ -40,12 +40,12 @@ export interface HeaderProps extends HeaderLogoProps {
 }
 
 export interface HeaderLogoProps {
-  /** Path to the wide logo (shown on md+ screens) */
-  logoWideSrc: string;
-  /** Path to the square logo (shown on xs screens) */
+  /** Path to the square logo */
   logoSquareSrc: string;
   /** Alt text for the logo */
   logoAlt?: string;
+  /** App display name shown beside the logo */
+  displayName?: string;
 }
 
 const navLinkSx = (
@@ -58,7 +58,7 @@ const navLinkSx = (
       ? theme.palette.header.linkTextHover
       : theme.palette.header.linkText,
     fontSize: '1rem',
-    fontFamily: (theme.typography.h1 as { fontFamily?: string }).fontFamily,
+    fontFamily: theme.typography.fontFamilyHeading,
     fontWeight: 500,
     px: 1.5,
     position: 'relative',
@@ -85,9 +85,9 @@ export function Header({
   isLoading = false,
   onLogout,
   logoHref = '/',
-  logoWideSrc,
   logoSquareSrc,
   logoAlt = 'Logo',
+  displayName,
   links = [],
   authLinks = {
     login: { label: 'Log in', href: '/login' },
@@ -135,18 +135,6 @@ export function Header({
             mr: 3,
           }}
         >
-          {/* Wide logo: hidden below 480px */}
-          <Box
-            component="img"
-            src={logoWideSrc}
-            alt={logoAlt}
-            sx={{
-              height: 55,
-              width: 'auto',
-              display: { xs: 'none', sm: 'block' },
-            }}
-          />
-          {/* Square logo: shown below 480px */}
           <Box
             component="img"
             src={logoSquareSrc}
@@ -154,9 +142,27 @@ export function Header({
             sx={{
               height: 55,
               width: 55,
-              display: { xs: 'block', sm: 'none' },
+              my: '5px',
             }}
           />
+          {displayName && (
+            <Typography
+              sx={(theme) => ({
+                ml: 2,
+                display: { xs: 'none' },
+                '@media (min-width: 360px)': {
+                  display: 'block',
+                },
+                fontFamily: theme.typography.fontFamilyHeading,
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'secondary.main',
+                whiteSpace: 'nowrap',
+              })}
+            >
+              {displayName}
+            </Typography>
+          )}
         </Link>
 
         {/* Desktop navigation links (left-aligned) */}
@@ -274,9 +280,7 @@ export function Header({
                     slotProps={{
                       primary: {
                         sx: (theme: import('@mui/material/styles').Theme) => ({
-                          fontFamily: (
-                            theme.typography.h1 as { fontFamily?: string }
-                          ).fontFamily,
+                          fontFamily: theme.typography.fontFamilyHeading,
                         }),
                       },
                     }}
@@ -305,9 +309,7 @@ export function Header({
                           sx: (
                             theme: import('@mui/material/styles').Theme,
                           ) => ({
-                            fontFamily: (
-                              theme.typography.h1 as { fontFamily?: string }
-                            ).fontFamily,
+                            fontFamily: theme.typography.fontFamilyHeading,
                           }),
                         },
                       }}

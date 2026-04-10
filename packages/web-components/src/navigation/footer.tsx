@@ -48,8 +48,7 @@ export function Footer({
           <Typography
             variant="subtitle1"
             sx={(theme) => ({
-              fontFamily: (theme.typography.h1 as { fontFamily?: string })
-                .fontFamily,
+              fontFamily: theme.typography.fontFamilyHeading,
               fontWeight: 700,
               mb: 1.5,
             })}

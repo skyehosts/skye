@@ -6,7 +6,7 @@ import type {
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { colors } from "../../theme/colors";
-import { fontWeight } from "../../theme/font-weight";
+import { fontFamily } from "../../theme/fonts";
 import { spacing } from "../../theme/spacing";
 import { typography } from "../../theme/typography";
 import {
@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   monthLabel: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.lg,
-    fontWeight: fontWeight.semibold,
     color: colors.primary,
     paddingVertical: spacing.md,
   },

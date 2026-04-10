@@ -15,9 +15,10 @@ export function HeadingPanel({ title, component = 'h1' }: HeadingPanelProps) {
     <Box
       sx={{
         pt: { xs: '40px', md: '55px' },
-        pb: '38px',
+        pb: { xs: '40px', md: '55px' },
         mb: '40px',
         textAlign: 'center',
+        borderTop: 1,
         borderBottom: 1,
         borderColor: 'divider',
         width: '100vw',

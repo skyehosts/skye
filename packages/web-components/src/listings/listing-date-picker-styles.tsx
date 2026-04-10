@@ -28,6 +28,9 @@ export const dayPickerThemeSx = (theme: Theme) => ({
     '--rdp-selected-border': `2px solid ${theme.palette.primary.main}`,
     fontFamily: theme.typography.fontFamily,
   },
+  '& .rdp-month_caption': {
+    fontFamily: theme.typography.fontFamilyHeading,
+  },
   '& .rdp-day_button': {
     borderRadius: '50%',
     border: '2px solid transparent',

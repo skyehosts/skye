@@ -13,7 +13,14 @@ import {
 import { InfoBox } from "./components/info-box";
 import { NumberStepper } from "./components/number-stepper";
 import { ScreenContainer } from "./components/screen-container";
-import { colors, commonStyles, fontWeight, spacing, typography } from "./theme";
+import {
+  colors,
+  commonStyles,
+  fontFamily,
+  fontWeight,
+  spacing,
+  typography,
+} from "./theme";
 
 export default function StyleGuideScreen() {
   const router = useRouter();
@@ -29,6 +36,110 @@ export default function StyleGuideScreen() {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.content}>
+        {/* ── Typography ──────────────────────────────── */}
+        <Text style={commonStyles.sectionTitle}>
+          Typography — Lora (Headings)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.heading,
+            fontSize: typography.xxl,
+            color: colors.textPrimary,
+          }}
+        >
+          Lora Bold (xxl)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.headingSemibold,
+            fontSize: typography.xl,
+            color: colors.textPrimary,
+          }}
+        >
+          Lora SemiBold (xl)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.headingSemibold,
+            fontSize: typography.lg,
+            color: colors.textPrimary,
+          }}
+        >
+          Lora SemiBold (lg)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.headingRegular,
+            fontSize: typography.md,
+            color: colors.textPrimary,
+          }}
+        >
+          Lora Regular (md)
+        </Text>
+
+        <View style={styles.divider} />
+        <Text style={commonStyles.sectionTitle}>
+          Typography — Open Sans (Body)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.bodyBold,
+            fontSize: typography.lg,
+            color: colors.textPrimary,
+          }}
+        >
+          Open Sans Bold (lg)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.bodySemibold,
+            fontSize: typography.md,
+            color: colors.textPrimary,
+          }}
+        >
+          Open Sans SemiBold (md)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.bodyMedium,
+            fontSize: typography.md,
+            color: colors.textPrimary,
+          }}
+        >
+          Open Sans Medium (md)
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: typography.md,
+            color: colors.textSecondary,
+          }}
+        >
+          Open Sans Regular (md) — Body text
+        </Text>
+        <Text
+          style={{
+            fontFamily: fontFamily.body,
+            fontSize: typography.sm,
+            color: colors.textSecondary,
+          }}
+        >
+          Open Sans Regular (sm) — Captions
+        </Text>
+
+        <View style={styles.divider} />
+        <Text style={commonStyles.sectionTitle}>Common Styles Preview</Text>
+        <Text style={commonStyles.heading}>commonStyles.heading</Text>
+        <Text style={commonStyles.subheading}>commonStyles.subheading</Text>
+        <Text style={commonStyles.bodyText}>
+          commonStyles.bodyText — The quick brown fox jumps over the lazy dog.
+        </Text>
+        <Text style={commonStyles.cardTitle}>commonStyles.cardTitle</Text>
+        <Text style={commonStyles.itemTitle}>commonStyles.itemTitle</Text>
+        <Text style={commonStyles.modalTitle}>commonStyles.modalTitle</Text>
+
+        <View style={styles.divider} />
+
         {/* ── Buttons ──────────────────────────────────── */}
         <Text style={commonStyles.sectionTitle}>Buttons</Text>
         <View style={styles.guideRow}>

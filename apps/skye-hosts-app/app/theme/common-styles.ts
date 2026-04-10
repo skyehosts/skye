@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native";
 import { borderRadius } from "./border-radius";
 import { colors } from "./colors";
-import { fontWeight } from "./font-weight";
+import { fontFamily } from "./fonts";
 import { lineHeight } from "./line-height";
 import { spacing } from "./spacing";
 import { typography } from "./typography";
@@ -45,13 +45,14 @@ export const commonStyles = StyleSheet.create({
   /* ── Typography ─────────────────────────────────── */
 
   heading: {
+    fontFamily: fontFamily.heading,
     fontSize: typography.xl,
-    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
 
   subheading: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.textSecondary,
     lineHeight: lineHeight.md,
@@ -59,17 +60,19 @@ export const commonStyles = StyleSheet.create({
   },
 
   sectionTitle: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.lg,
-    fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
   },
 
   sectionSubtext: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.textSecondary,
   },
 
   bodyText: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.textSecondary,
     lineHeight: lineHeight.md,
@@ -78,18 +81,20 @@ export const commonStyles = StyleSheet.create({
   /* ── Feedback states ────────────────────────────── */
 
   errorText: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.danger,
     textAlign: "center",
   },
 
   emptyText: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.lg,
-    fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
   },
 
   emptySubtext: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.textSecondary,
     textAlign: "center",
@@ -112,8 +117,8 @@ export const commonStyles = StyleSheet.create({
   },
 
   cardTitle: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
     color: colors.textSecondary,
   },
 
@@ -124,17 +129,19 @@ export const commonStyles = StyleSheet.create({
   /* ── Edit-section list cards ─────────────────────── */
 
   itemTitle: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
   },
 
   itemSubtext: {
+    fontFamily: fontFamily.body,
     fontSize: typography.sm,
     color: colors.textSecondary,
   },
 
   cardSubtext: {
+    fontFamily: fontFamily.body,
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginTop: spacing.xs,
@@ -197,6 +204,7 @@ export const commonStyles = StyleSheet.create({
   },
 
   menuItemAction: {
+    fontFamily: fontFamily.bodyMedium,
     fontSize: typography.sm,
     color: colors.primary,
     textDecorationLine: "underline",
@@ -220,8 +228,8 @@ export const commonStyles = StyleSheet.create({
   },
 
   modalTitle: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.lg,
-    fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
   },
 
@@ -245,6 +253,7 @@ export const commonStyles = StyleSheet.create({
   },
 
   switchLabel: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.textPrimary,
   },
@@ -303,13 +312,14 @@ export const commonStyles = StyleSheet.create({
   },
 
   securityTitle: {
+    fontFamily: fontFamily.heading,
     fontSize: typography.xl,
-    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
     marginBottom: spacing.sm,
   },
 
   securitySubtitle: {
+    fontFamily: fontFamily.body,
     fontSize: typography.md,
     color: colors.textSecondary,
     marginBottom: spacing.xl,
@@ -340,11 +350,13 @@ export const commonStyles = StyleSheet.create({
   },
 
   locationLoadingText: {
+    fontFamily: fontFamily.body,
     fontSize: typography.sm,
     color: colors.textSecondary,
   },
 
   locationErrorText: {
+    fontFamily: fontFamily.body,
     color: colors.danger,
     fontSize: typography.sm,
     marginTop: spacing.sm,
@@ -355,12 +367,14 @@ export const commonStyles = StyleSheet.create({
   },
 
   mapLabel: {
+    fontFamily: fontFamily.body,
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginBottom: spacing.xs,
   },
 
   coordsText: {
+    fontFamily: fontFamily.body,
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginTop: spacing.sm,

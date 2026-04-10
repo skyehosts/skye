@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-paper";
-import { colors, spacing, typography } from "../theme";
+import { colors, fontFamily, spacing, typography } from "../theme";
 
 export interface MenuItemProps {
   icon: string;
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border,
   },
   menuItemText: {
+    fontFamily: fontFamily.headingSemibold,
     flex: 1,
     fontSize: typography.md,
     color: colors.textPrimary,

@@ -21,6 +21,7 @@ import { fetchApi } from "../services/api";
 import {
   colors,
   commonStyles,
+  fontFamily,
   fontWeight,
   spacing,
   typography,
@@ -286,12 +287,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   nameText: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.md,
     color: colors.textPrimary,
     flex: 1,
   },
   nameTextUnread: {
-    fontWeight: fontWeight.bold,
+    fontFamily: fontFamily.heading,
   },
   timeText: {
     fontSize: typography.sm,
