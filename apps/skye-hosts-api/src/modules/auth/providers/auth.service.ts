@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import type {
@@ -41,6 +42,7 @@ const REFRESH_TOKEN_EXPIRY_DAYS = 30;
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   private readonly jwtSecret: string;
 
   constructor(
@@ -260,6 +262,7 @@ export class AuthService {
 
   async phoneLookup(phoneNumber: string): Promise<boolean> {
     const account = await this.accountService.findByPhoneNumber(phoneNumber);
+    this.logger.debug(`phoneLookup "${phoneNumber}" → ${!!account}`);
     return !!account;
   }
 
@@ -278,6 +281,9 @@ export class AuthService {
     }
 
     let account = await this.accountService.findByPhoneNumber(phoneNumber);
+    this.logger.debug(
+      `phoneVerifyOtp "${phoneNumber}" → ${account ? `existing id=${account.id}` : 'new account'}`,
+    );
     if (!account) {
       if (!name) {
         throw new BadRequestException('Name is required for new accounts');

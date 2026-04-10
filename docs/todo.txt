@@ -2,10 +2,9 @@ flora
 multi
 pqq
 
-=============
+===========
 In-Progress
-=============
-- Bug screenshot 1: Calendar sync
+===========
 
 ===============
 Pending Prompts
@@ -18,6 +17,9 @@ MVP: Host app
 --------------
 High prescence
 --------------
+- Menu -> Earnings
+- Menu -> Payments
+- How to view images on desktop, should open in lightbox? MVP
 - Highland Hosts setup
   - Requires: F&H or Sando IT
 - Cancellation policy - full policy modal
@@ -49,14 +51,17 @@ High prescence
 - Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
   - Decide address upload or stripe verification (account vs name match)
 
---------------
+-------------
 Low prescence
---------------
-- Splash screen flashes with wrong image (gable end)
-- How to view images on desktop, should open in lightbox? MVP
+-------------
+- splash screen on app startup shows small then a larger version after
+- Co-Host permission level
+  - Add disabled to bottom 2 options and add 'coming soon'
+- cancellation policy
+  - shot-term stays wording, should update wording to apply to stays also including > 28 days as confusing
+
 - tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
 - "enable import and for full pro -> enable export for protection against double bookings?
-- Remove photo should be danger?
 - Message template add details..comment out non implemented?
 - bug: Calendar page, tapping on an air bnb booking, the popover thing that says 'Booked on Airbnb' is too far away (vertially) from the bookig bar that was clicked
   - Also sometimes when you tap on booking bar next side of screen, the popup goes too far away horizontal.
@@ -73,7 +78,8 @@ MVP: Guest website
 ---------------
 High prescence
 --------------
-- Message hots button on listing detail page?
+- Instant Booking flow / as it pertains to opening confirm and pay modal and login/register
+- Request to book Message hots button on listing detail page?
 - Show more modal on listing detail page, scrollbar shows on mobile when not needed
 - Decide & implement if public booking possible via signup during booking flow.
 - Cancel booking flow
@@ -85,6 +91,7 @@ Low prescence
 ===============
 Post-MVP
 ===============
+- iCal sync between skye-glamping and highland-hosts for Croft8
 - Test face auth (IOS) biometrics, as it uses face not fingerprint apparently.
 - docs/user-todos/universal-links-setup.md
   - ## Apple (iOS Universal Links)

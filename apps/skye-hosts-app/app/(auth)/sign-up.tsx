@@ -4,11 +4,12 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
+import { AuthLogo } from "../components/auth-logo";
 import { ScreenContainer } from "../components/screen-container";
 import { phoneLookup, requestOtp } from "../services/auth.service";
-import { APP_DISPLAY_NAME } from "@repo/common";
 import { colors, commonStyles, spacing } from "../theme";
 import { handleFormError } from "../utils/form-error-handler";
+import { validateUkPhone } from "../utils/phone-validation";
 
 interface SignUpFormValues {
   name: string;
@@ -72,9 +73,8 @@ export default function SignUpScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <View style={styles.content}>
-          <Text variant="headlineMedium" style={styles.title}>
-            {APP_DISPLAY_NAME}
-          </Text>
+          <AuthLogo />
+
           <Text variant="bodyLarge" style={styles.subtitle}>
             {showNameField
               ? "One more thing — what's your name?"
@@ -87,9 +87,7 @@ export default function SignUpScreen() {
               name="phoneNumber"
               rules={{
                 required: "Please enter your mobile number",
-                validate: (v) =>
-                  v.replace(/\s/g, "").length >= 10 ||
-                  "Please enter a valid mobile number",
+                validate: validateUkPhone,
               }}
               render={({ field }) => (
                 <TextInput
@@ -157,7 +155,7 @@ export default function SignUpScreen() {
               onPress={onPhoneContinue}
               loading={isSubmitting}
               disabled={
-                isSubmitting || phoneNumber.replace(/\s/g, "").length < 10
+                isSubmitting || phoneNumber.replace(/[\s\-()]/g, "").length < 10
               }
             >
               Continue
@@ -191,10 +189,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: spacing.lg,
-  },
-  title: {
-    textAlign: "center",
-    marginBottom: spacing.sm,
   },
   subtitle: {
     color: colors.textSecondary,

@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import { borderRadius } from "./border-radius";
 import { colors } from "./colors";
 import { fontFamily } from "./fonts";
+import { fontWeight } from "./font-weight";
 import { lineHeight } from "./line-height";
 import { spacing } from "./spacing";
 import { typography } from "./typography";
@@ -393,5 +394,21 @@ export const commonStyles = StyleSheet.create({
     backgroundColor: colors.danger,
     borderWidth: 1.5,
     borderColor: colors.background,
+  },
+
+  /* ── Help links ──────────────────────────────────── */
+
+  helpLink: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    alignSelf: "center",
+    paddingVertical: spacing.sm,
+  },
+
+  helpLinkText: {
+    fontSize: typography.sm,
+    color: colors.primary,
+    fontWeight: fontWeight.semibold,
   },
 });

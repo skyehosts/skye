@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Twilio } from 'twilio';
+import { formatUkPhoneNumber } from '../utils/format-uk-phone-number';
 
 const TEST_OTP_CODE = '000000';
 
@@ -26,7 +27,7 @@ export class TwilioService {
   }
 
   async sendVerification(phoneNumber: string): Promise<void> {
-    const formattedNumber = this.formatUkNumber(phoneNumber);
+    const formattedNumber = formatUkPhoneNumber(phoneNumber);
 
     if (this.isBypassMode) {
       this.logger.debug(
@@ -46,7 +47,7 @@ export class TwilioService {
   }
 
   async checkVerification(phoneNumber: string, code: string): Promise<boolean> {
-    const formattedNumber = this.formatUkNumber(phoneNumber);
+    const formattedNumber = formatUkPhoneNumber(phoneNumber);
 
     if (this.isBypassMode) {
       this.logger.debug(
@@ -113,16 +114,5 @@ export class TwilioService {
       if (err?.status === 404) return false;
       throw err;
     }
-  }
-
-  private formatUkNumber(phoneNumber: string): string {
-    const digits = phoneNumber.replace(/\s+/g, '');
-    if (digits.startsWith('+44')) {
-      return digits;
-    }
-    if (digits.startsWith('0')) {
-      return `+44${digits.slice(1)}`;
-    }
-    return `+44${digits}`;
   }
 }
