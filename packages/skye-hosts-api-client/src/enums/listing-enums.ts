@@ -555,6 +555,55 @@ export const ACCESSIBILITY_FEATURES_CONFIG: IAccessibilityFeatureConfig[] = [
   },
 ];
 
+export enum CancellationPolicyShortTermId {
+  FiveDays = '5_days',
+  FourteenDays = '14_days',
+  ThirtyDays = '30_days',
+}
+
+export const CANCELLATION_POLICY_SHORT_TERM_IDS: CancellationPolicyShortTermId[] =
+  Object.values(CancellationPolicyShortTermId);
+
+export const CANCELLATION_POLICY_SHORT_TERM_LABELS: Record<
+  CancellationPolicyShortTermId,
+  string
+> = {
+  [CancellationPolicyShortTermId.FiveDays]: '5 days',
+  [CancellationPolicyShortTermId.FourteenDays]: '14 days',
+  [CancellationPolicyShortTermId.ThirtyDays]: '30 days',
+};
+
+export const CANCELLATION_POLICY_SHORT_TERM_OPTIONS: {
+  id: CancellationPolicyShortTermId;
+  title: string;
+  refundDetails: string[];
+}[] = [
+  {
+    id: CancellationPolicyShortTermId.FiveDays,
+    title: '5 days',
+    refundDetails: [
+      'Full refund at least 5 days before check-in',
+      'Partial refund within 5 days of check-in',
+    ],
+  },
+  {
+    id: CancellationPolicyShortTermId.FourteenDays,
+    title: '14 days',
+    refundDetails: [
+      'Full refund at least 14 days before check-in',
+      'Partial refund 7–14 days before check-in',
+    ],
+  },
+  {
+    id: CancellationPolicyShortTermId.ThirtyDays,
+    title: '30 days',
+    refundDetails: [
+      'Full refund at least 30 days before check-in',
+      'Partial refund 7–30 days before check-in',
+    ],
+  },
+];
+
 export type HouseRuleDataType = 'boolean' | 'doubleTime' | 'string';
 
 export interface IHouseRuleConfig {

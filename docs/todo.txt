@@ -6,11 +6,49 @@ pqq
 In-Progress
 =============
 - logo-wide.png replace with HH
-- On Edit details page there is a list item for 'Interaction with guests' freetext, I think this is duplicate. The radio is prefferd elsewhere
+- Cancellation policy
+- Why after I deleted the calendar sync and data, does guest website still show dates unavailable
 
 ===============
 Pending Prompts
 ===============
+- In guest website on listing/:id/:slug page
+- In the 'Things to know' section, there is an item with 'Lorem ipsum;
+- Replace this item with Cancellation policy information, that is saved in DB for this listing
+- Display the following content:
+  - If a date is selected in either the listing date picker modal (mobile) or popup (desktop) 
+  - Then display: 
+    - "(Free cancellation before 19 April. Cancel before check-in on 20 April for a partial refund." (Interpolate with actual selected dates)
+    - Then a new line: "Learn more" Which when clicked, opens a new Cancellation policy modal
+  - If no date selected, display: "Add your trip dates to get the cancellation details for this stay."
+    - Then a new line 'Add dates' text link that when clicked opens either the datepicker modal or popup depending on current responsive breakpoint
+- Cancellation modal content:
+  - Box at top with 2 columns and 2rows
+  - First row:
+    - Column 1:
+      Before (bold)  /n
+      12 May /n
+      15:00
+    - Column 2:
+      Full refund (bold)/n
+      Get back 100% of what you paid.
+  - Second row:
+    - Column 1:
+      Before (bold)  /n
+      13 May /n
+      15:00
+    - Column 2:
+      Partial refund (bold)/n
+      Get back every night but the first one. No refund of the first night or the service fee.
+- Undearth go back to a single column 
+- "Time shown is based on the location of the listing."
+- Refund eligibility (bold)
+- View full policy (link)
+  - Goes to new page /cancellation-policies, which has same style/layout as terms and privacy poliocy pages
+  - Put 'todo' on this page.
+- Scrutinise my plan
+- Any opportunities for improvement, recommend them
+- ANy major decisions ask
 
 =============
 MVP: Host app
@@ -18,6 +56,7 @@ MVP: Host app
 ----------------
 High prescence
 ----------------
+- Cancellation policy - full policy modal
 - "self check-in with lockbox" field
 - Beds/bedroom granularity like airbnb
 - Co - host test invite and listing access [Blocked awaiting dnb thing]
@@ -30,7 +69,6 @@ High prescence
 - App: Edit listing
   - (Your space, remaining components)
     - Instant book
-    - Cancellation policy
   - (Arrival guide remaining components)
   - Understanding why some data not colecting during creation, only edit... -> Plan
   - Draft or Publish after creation?
@@ -49,9 +87,12 @@ High prescence
 - Security: Confirm peoples identity or address, otherwise anyone could hots a prop and collect money?
   - Decide address upload or stripe verification (account vs name match)
 
+
 --------------
 Low prescence
 --------------
+- Checkout instructions page, already selected items should have 'Edit' not chevron right.
+- Bug screenshot 1: Calendar sync
 - How to view images on desktop, should open in lightbox? MVP
 - tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
 - "enable import and for full pro -> enable export for protection against double bookings?
@@ -81,8 +122,6 @@ Low prescence
 --------------
 - Things to know section (listing detail)
   - Cancellation policy
-  - House rules
-  - Safety and property
 - Buttons consistency in app & web?
 
 ==================

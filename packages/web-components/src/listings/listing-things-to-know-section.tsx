@@ -10,18 +10,26 @@ import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import {
+  CANCELLATION_POLICY_SHORT_TERM_LABELS,
   SAFETY_CONSIDERATIONS_CONFIG,
   SAFETY_DEVICES_CONFIG,
   type IGetListingResponseDto,
 } from '@repo/skye-hosts-api-client';
 import { useState } from 'react';
 import { AmenityIcon } from './amenity-icon';
+import {
+  formatCancellationDate,
+  getCancellationCutoffs,
+} from './cancellation-policy-utils';
+import { ListingCancellationPolicyModal } from './listing-cancellation-policy-modal';
 import { ListingHouseRulesModal } from './listing-house-rules-modal';
 import { ListingSafetyModal } from './listing-safety-modal';
 import { parseTriStateYesItems } from './listing-things-to-know-styles';
 
 export interface ListingThingsToKnowSectionProps {
   listing: IGetListingResponseDto;
+  checkInDate?: Date | null;
+  onAddDates?: () => void;
 }
 
 interface ThingsToKnowCard {
@@ -29,6 +37,7 @@ interface ThingsToKnowCard {
   icon: string;
   title: string;
   lines: string[];
+  linkText?: string;
   onOpen: () => void;
 }
 
@@ -61,6 +70,35 @@ function buildSafetyPreview(listing: IGetListingResponseDto): string[] {
   return [...devices, ...considerations].slice(0, 3).map((i) => i.label);
 }
 
+function buildCancellationPreview(
+  listing: IGetListingResponseDto,
+  checkInDate: Date | null,
+): { lines: string[]; linkText: string } {
+  if (!checkInDate) {
+    return {
+      lines: [
+        'Add your trip dates to get the cancellation details for this stay.',
+      ],
+      linkText: 'Add dates',
+    };
+  }
+
+  const cutoffs = getCancellationCutoffs(
+    listing.cancellationPolicyShortTerm,
+    checkInDate,
+    listing.checkInTimeStart,
+  );
+  const freeDate = formatCancellationDate(cutoffs.freeCancellationDate);
+  const partialDate = formatCancellationDate(cutoffs.partialRefundDate);
+
+  return {
+    lines: [
+      `Free cancellation before ${freeDate}. Cancel before check-in on ${partialDate} for a partial refund.`,
+    ],
+    linkText: 'Learn more',
+  };
+}
+
 function MobileCard({ card }: { card: ThingsToKnowCard }) {
   return (
     <ButtonBase
@@ -79,7 +117,7 @@ function MobileCard({ card }: { card: ThingsToKnowCard }) {
       <Box sx={{ mr: 2, mt: 0.5 }}>
         <AmenityIcon name={card.icon} size={24} />
       </Box>
-      <Box sx={{ flex: 1, minWidth: 0 }}>
+      <Box sx={{ flex: 1, minWidth: 0, mt: 0.5 }}>
         <Typography variant="body1" sx={{ fontWeight: 600, mb: 0.5 }}>
           {card.title}
         </Typography>
@@ -123,7 +161,7 @@ function DesktopCard({ card }: { card: ThingsToKnowCard }) {
         sx={{ mt: 1, fontWeight: 600, cursor: 'pointer' }}
         underline="always"
       >
-        Learn more
+        {card.linkText ?? 'Learn more'}
       </Link>
     </Box>
   );
@@ -131,14 +169,31 @@ function DesktopCard({ card }: { card: ThingsToKnowCard }) {
 
 export function ListingThingsToKnowSection({
   listing,
+  checkInDate: checkInDateProp,
+  onAddDates,
 }: ListingThingsToKnowSectionProps) {
   const [houseRulesOpen, setHouseRulesOpen] = useState(false);
   const [safetyOpen, setSafetyOpen] = useState(false);
+  const [cancellationOpen, setCancellationOpen] = useState(false);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'), { noSsr: true });
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const checkInDate = checkInDateProp ?? null;
 
   const houseRulesLines = buildHouseRulesPreview(listing);
   const safetyLines = buildSafetyPreview(listing);
+  const cancellationPreview = buildCancellationPreview(listing, checkInDate);
+
+  const policyLabel =
+    CANCELLATION_POLICY_SHORT_TERM_LABELS[listing.cancellationPolicyShortTerm];
+
+  const handleCancellationOpen = () => {
+    if (checkInDate) {
+      setCancellationOpen(true);
+    } else {
+      onAddDates?.();
+    }
+  };
 
   const cards: ThingsToKnowCard[] = [
     {
@@ -159,15 +214,12 @@ export function ListingThingsToKnowSection({
       onOpen: () => setSafetyOpen(true),
     },
     {
-      id: 'placeholder',
-      icon: 'information-outline',
-      title: 'Lorem ipsum',
-      lines: [
-        'Dolor sit amet',
-        'Consectetur adipiscing',
-        'Elit sed do eiusmod',
-      ],
-      onOpen: () => {},
+      id: 'cancellation-policy',
+      icon: 'cancel',
+      title: `Cancellation policy · ${policyLabel}`,
+      lines: cancellationPreview.lines,
+      linkText: cancellationPreview.linkText,
+      onOpen: handleCancellationOpen,
     },
   ];
 
@@ -217,6 +269,17 @@ export function ListingThingsToKnowSection({
         safetyConsiderations={listing.safetyConsiderations}
         fullScreen={isMobile}
       />
+
+      {checkInDate && (
+        <ListingCancellationPolicyModal
+          open={cancellationOpen}
+          onClose={() => setCancellationOpen(false)}
+          policy={listing.cancellationPolicyShortTerm}
+          checkInDate={checkInDate}
+          checkInTimeStart={listing.checkInTimeStart}
+          fullScreen={isMobile}
+        />
+      )}
     </Box>
   );
 }

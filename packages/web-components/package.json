@@ -31,6 +31,8 @@
     "./listings/listing-map-modal": "./src/listings/listing-map-modal.tsx",
     "./listings/listing-amenities-modal": "./src/listings/listing-amenities-modal.tsx",
     "./listings/listing-amenities-section": "./src/listings/listing-amenities-section.tsx",
+    "./listings/cancellation-policy-utils": "./src/listings/cancellation-policy-utils.ts",
+    "./listings/listing-cancellation-policy-modal": "./src/listings/listing-cancellation-policy-modal.tsx",
     "./listings/listing-things-to-know-section": "./src/listings/listing-things-to-know-section.tsx",
     "./listings/listing-booking-sidebar": "./src/listings/listing-booking-sidebar.tsx",
     "./listings/listing-date-picker-modal": "./src/listings/listing-date-picker-modal.tsx",

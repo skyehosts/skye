@@ -6,6 +6,7 @@ High-level documentation of key features and systems. These docs focus on critic
 
 | File                                                           | Feature                                                                            |
 | -------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| [cancellation-policy.md](./cancellation-policy.md)             | Cancellation policy — short-term enum, selection cards, PATCH save                 |
 | [calendar-availability.md](./calendar-availability.md)         | Calendar availability model, manual blocking, drag-to-select                       |
 | [calendar-sync.md](./calendar-sync.md)                         | External calendar sync (import/export, auto-disable, orphaned blocks)              |
 | [listing-amenities-display.md](./listing-amenities-display.md) | Guest website amenities section — icon mapping, data flow, modal                   |

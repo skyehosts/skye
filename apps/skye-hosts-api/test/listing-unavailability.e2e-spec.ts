@@ -192,14 +192,6 @@ describe('Listing Unavailability (e2e)', () => {
       }
     });
 
-    it('should set Cache-Control header', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/listing/${listingId}/unavailability`)
-        .expect(200);
-
-      expect(res.headers['cache-control']).toBe('public, max-age=300');
-    });
-
     it('should return empty array for listing with no bookings or blocks', async () => {
       const res = await request(app.getHttpServer())
         .get(`/listing/999999/unavailability`)

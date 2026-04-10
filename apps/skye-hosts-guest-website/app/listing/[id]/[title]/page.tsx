@@ -12,13 +12,14 @@ import { parseBookingSearchParams } from '@repo/web-components/listings/listing-
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
-import { ListingThingsToKnowSection } from '@repo/web-components/listings/listing-things-to-know-section';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
 import { BookingParamsSync } from './BookingParamsSync';
 import { ListingHeroWithFavourite } from './ListingHeroWithFavourite';
+import { ListingThingsToKnowWithDates } from './ListingThingsToKnowWithDates';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
@@ -125,7 +126,9 @@ export default async function ListingPage({
             amenityIds={listing.amenities}
             categories={amenitiesData.categories}
           />
-          <ListingThingsToKnowSection listing={listing} />
+          <Suspense>
+            <ListingThingsToKnowWithDates listing={listing} />
+          </Suspense>
           <ListingLocationSection
             approximateLatitude={listing.approximateLatitude}
             approximateLongitude={listing.approximateLongitude}

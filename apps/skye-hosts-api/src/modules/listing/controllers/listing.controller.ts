@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Header,
   HttpCode,
   HttpStatus,
   Param,
@@ -66,7 +65,6 @@ export class ListingController {
 
   @Get(':id/unavailability')
   @IgnoreBearerAuthentication()
-  @Header('Cache-Control', 'public, max-age=300')
   async onGetUnavailability(
     @Param('id', ParseIntPipe) id: number,
   ): Promise<IGetListingUnavailabilityResponseDto> {

@@ -2,6 +2,7 @@
 
 ## General guide
 
+- **This project is pre-production.** There is no live data or live users. Destructive DB changes (non-nullable columns, dropping data, deleting rows) are fine — no need to treat them as risky.
 - Always run pnpm lint and pnpm build after making changes and fix issues if present.
 - Then run pnpm format
 - After you do things, if there are steps I need to take like adding env vars etc, create a new file in /docs/user-todos/x.md

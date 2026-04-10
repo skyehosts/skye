@@ -15,7 +15,7 @@ import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-m
 import { useListingBookingState } from '@repo/web-components/listings/use-listing-booking-state';
 import { useListingUnavailability } from '@repo/web-components/listings/use-listing-unavailability';
 import { usePathname, useRouter } from 'next/navigation';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 interface BookingParamsSyncProps
   extends ListingGuestRuleProps, ListingNightRuleProps {
@@ -57,6 +57,13 @@ export function BookingParamsSync({
     initialGuests: initialBookingParams.guests,
     onBookingChange,
   });
+
+  // Listen for 'open-date-picker' events from sibling components
+  useEffect(() => {
+    const handler = () => bookingState.setDateModalOpen(true);
+    window.addEventListener('open-date-picker', handler);
+    return () => window.removeEventListener('open-date-picker', handler);
+  }, [bookingState.setDateModalOpen]);
 
   const guestRuleProps: ListingGuestRuleProps = {
     maxGuests,

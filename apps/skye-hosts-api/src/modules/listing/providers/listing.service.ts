@@ -399,6 +399,8 @@ export class ListingService {
     if (dto.status !== undefined) listing.status = dto.status;
     if (dto.shortTermLetLicenseConfirmed !== undefined)
       listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
+    if (dto.cancellationPolicyShortTerm !== undefined)
+      listing.cancellationPolicyShortTerm = dto.cancellationPolicyShortTerm;
     if (dto.latitude !== undefined && dto.longitude !== undefined) {
       listing.latitude = dto.latitude;
       listing.longitude = dto.longitude;
@@ -565,6 +567,7 @@ export class ListingService {
       images: allImages.map((img) => this.toImageDto(img)),
       status: listing.status,
       shortTermLetLicenseConfirmed: listing.shortTermLetLicenseConfirmed,
+      cancellationPolicyShortTerm: listing.cancellationPolicyShortTerm,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
     };

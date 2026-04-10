@@ -3,6 +3,7 @@ import type {
   IUpdateListingRequestDto,
 } from '@repo/skye-hosts-api-client';
 import {
+  CANCELLATION_POLICY_SHORT_TERM_IDS,
   HostInteractionId,
   LISTING_SPACE_TYPES,
   LISTING_STATUSES,
@@ -337,4 +338,8 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @Min(-180)
   @Max(180)
   longitude?: number;
+
+  @IsOptional()
+  @IsIn(CANCELLATION_POLICY_SHORT_TERM_IDS)
+  cancellationPolicyShortTerm?: IUpdateListingRequestDto['cancellationPolicyShortTerm'];
 }

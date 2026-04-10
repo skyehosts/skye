@@ -1,4 +1,5 @@
 import type {
+  CancellationPolicyShortTermId,
   HostInteractionId,
   IGetListingResponseDto,
   IListingImageDto,
@@ -77,6 +78,7 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   maxNights: number | null;
   status: ListingStatus;
   shortTermLetLicenseConfirmed: boolean;
+  cancellationPolicyShortTerm: CancellationPolicyShortTermId;
   createdAt: Date;
   updatedAt: Date;
 }
