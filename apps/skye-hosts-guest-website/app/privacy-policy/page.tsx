@@ -1,11 +1,12 @@
 import { Typography } from '@mui/material';
 import { HeadingPanel } from '@repo/web-components/layout/heading-panel';
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { PrincipalColumn } from '@repo/web-components/layout/principal-column';
 import { TextSection } from '@repo/web-components/layout/text-section';
 
 export default function PrivacyPolicyPage() {
   return (
-    <>
+    <PageContainer disableTopPadding>
       <HeadingPanel title="Privacy Policy" />
       <PrincipalColumn>
         <Typography variant="body1" component="div">
@@ -27,6 +28,6 @@ export default function PrivacyPolicyPage() {
           </TextSection>
         </Typography>
       </PrincipalColumn>
-    </>
+    </PageContainer>
   );
 }

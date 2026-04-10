@@ -1,8 +1,7 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -16,7 +15,6 @@ import {
   Icon,
   Portal,
   SegmentedButtons,
-  Switch,
   Text,
   TextInput,
 } from "react-native-paper";
@@ -30,7 +28,7 @@ import type {
 } from "@repo/skye-hosts-api-client";
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { AppSnackbar } from "../components/app-snackbar";
-import { InfoBox } from "../components/info-box";
+import { DangerButton } from "../components/danger-button";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { colors, commonStyles, spacing, typography } from "../theme";
@@ -38,54 +36,16 @@ import { borderRadius } from "../theme/border-radius";
 import { fontWeight } from "../theme/font-weight";
 import { captureException } from "../services/error-reporting";
 import { handleApiError, handleFormError } from "../utils/form-error-handler";
+import {
+  PLATFORM_OPTIONS,
+  PLATFORM_HELP,
+  PLATFORM_EXPORT_HELP,
+  getPlatformLabel,
+} from "../utils/calendar-sync-constants";
 
 interface FormData {
   platform: CalendarSyncPlatform;
   importUrl: string;
-  isImportEnabled: boolean;
-  isExportEnabled: boolean;
-}
-
-const PLATFORM_OPTIONS = [
-  { value: "airbnb" as const, label: "AirBnB" },
-  { value: "booking_com" as const, label: "Booking.com" },
-  { value: "other" as const, label: "Other" },
-];
-
-const PLATFORM_HELP: Record<CalendarSyncPlatform, string> = {
-  airbnb:
-    "To find your calendar link in AirBnB: open your listing → tap Calendar → Availability Settings → scroll to 'Export Calendar' → copy the link.",
-  booking_com:
-    "To find your calendar link in Booking.com: open your property → Calendar & Pricing → Sync Calendars → copy the export link.",
-  other:
-    "Check your booking platform for a calendar export link (sometimes called an iCal or .ics link).",
-};
-
-const PLATFORM_EXPORT_HELP: Record<CalendarSyncPlatform, string> = {
-  airbnb:
-    "To complete the sync, paste the export link into AirBnB:\n\n" +
-    "1. Open the AirBnB app\n" +
-    "2. Go to your listing\n" +
-    "3. Tap Calendar\n" +
-    "4. Tap Availability Settings\n" +
-    "5. Scroll to 'Import Calendar'\n" +
-    "6. Paste the link you copied and tap Submit",
-  booking_com:
-    "To complete the sync, paste the export link into Booking.com:\n\n" +
-    "1. Log into Booking.com (extranet)\n" +
-    "2. Go to Calendar & Pricing\n" +
-    "3. Tap Sync Calendars\n" +
-    "4. Under 'Import calendar', paste the link you copied\n" +
-    "5. Name it (e.g. 'Skye Hosts') and save",
-  other:
-    "To complete the sync, import this link into your booking platform.\n\n" +
-    "Look for an 'Import Calendar' or 'Subscribe to iCal' option in your platform's calendar settings, then paste the link you copied.",
-};
-
-function getPlatformLabel(platform: CalendarSyncPlatform): string {
-  return (
-    PLATFORM_OPTIONS.find((o) => o.value === platform)?.label ?? "External"
-  );
 }
 
 export default function CalendarSyncFormScreen() {
@@ -94,10 +54,7 @@ export default function CalendarSyncFormScreen() {
     id: string;
     syncId?: string;
   }>();
-  const [createdSyncId, setCreatedSyncId] = useState<number | null>(null);
-  const effectiveSyncId =
-    syncId ?? (createdSyncId ? String(createdSyncId) : undefined);
-  const isEditing = !!effectiveSyncId;
+  const isEditing = !!syncId;
 
   const [existingSync, setExistingSync] = useState<ICalendarSyncDto | null>(
     null,
@@ -111,6 +68,8 @@ export default function CalendarSyncFormScreen() {
   const [serverError, setServerError] = useState("");
   const [helpVisible, setHelpVisible] = useState(false);
   const [exportHelpVisible, setExportHelpVisible] = useState(false);
+  const [deleteVisible, setDeleteVisible] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const {
     control,
@@ -122,8 +81,6 @@ export default function CalendarSyncFormScreen() {
     defaultValues: {
       platform: "airbnb",
       importUrl: "",
-      isImportEnabled: true,
-      isExportEnabled: true,
     },
   });
 
@@ -145,8 +102,6 @@ export default function CalendarSyncFormScreen() {
             reset({
               platform: sync.platform,
               importUrl: sync.importUrl ?? "",
-              isImportEnabled: sync.isImportEnabled,
-              isExportEnabled: sync.isExportEnabled,
             });
           }
         }
@@ -178,11 +133,9 @@ export default function CalendarSyncFormScreen() {
 
       if (isEditing) {
         await fetchApi<ICalendarSyncResponseDto>(
-          `/calendar-sync/${effectiveSyncId}`,
+          `/calendar-sync/${syncId}`,
           {
-            importUrl: data.importUrl || null,
-            isImportEnabled: data.isImportEnabled,
-            isExportEnabled: data.isExportEnabled,
+            importUrl: data.importUrl,
           },
           { method: "PATCH" },
         );
@@ -192,37 +145,28 @@ export default function CalendarSyncFormScreen() {
           `/calendar-sync/listing/${id}`,
           {
             platform: data.platform,
-            importUrl: data.importUrl || undefined,
-            isImportEnabled: data.isImportEnabled,
-            isExportEnabled: data.isExportEnabled,
+            importUrl: data.importUrl,
           },
         );
 
         // Trigger an immediate import so dates appear on the calendar
-        // without waiting for the next scheduled poll.
-        if (data.importUrl && data.isImportEnabled) {
-          try {
-            await fetchApi<ICalendarSyncResponseDto>(
-              `/calendar-sync/${result.sync.id}/trigger-import`,
-              {},
-              { method: "POST" },
-            );
-          } catch {
-            // Non-critical — import will happen on next poll
-          }
+        // without waiting for the next scheduled poll. Await it so the
+        // listing screen reflects the updated sync health on first load
+        // rather than showing an "unknown" (grey) status until the next
+        // focus.
+        try {
+          await fetchApi<ICalendarSyncResponseDto>(
+            `/calendar-sync/${result.sync.id}/trigger-import`,
+            {},
+            { method: "POST" },
+          );
+        } catch {
+          // Non-critical — import will happen on next poll
         }
 
-        if (data.isExportEnabled) {
-          // Stay on form so host sees the export URL + paste instructions
-          setExistingSync(result.sync);
-          setCreatedSyncId(result.sync.id);
-          setSnackbar({
-            message: `Calendar added — copy the export link above and paste it into ${platformLabel}`,
-            type: "success",
-          });
-        } else {
-          dismissWithFlash("Sync created successfully");
-        }
+        dismissWithFlash(
+          `${platformLabel} calendar added — copy the export link to complete 2-way sync`,
+        );
       }
     } catch (e) {
       handleFormError(e, control.setError as never, setServerError);
@@ -230,41 +174,24 @@ export default function CalendarSyncFormScreen() {
   };
 
   const dismissWithFlash = (flash: string) => {
-    router.navigate({
+    router.dismissTo({
       pathname: "/edit-listing/calendar-sync",
       params: { id, flash },
     });
   };
 
-  const handleDelete = () => {
-    Alert.alert(
-      "Remove calendar sync",
-      "Do you also want to remove the blocked dates that were imported from this calendar?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove sync only",
-          onPress: () => deleteSync(false),
-        },
-        {
-          text: "Remove sync and dates",
-          style: "destructive",
-          onPress: () => deleteSync(true),
-        },
-      ],
-    );
-  };
-
-  const deleteSync = async (removeBlocks: boolean) => {
+  const confirmDelete = async () => {
+    setDeleting(true);
     try {
-      await fetchApi(
-        `/calendar-sync/${effectiveSyncId}?removeBlocks=${removeBlocks}`,
-        undefined,
-        { method: "DELETE" },
-      );
+      await fetchApi(`/calendar-sync/${syncId}`, undefined, {
+        method: "DELETE",
+      });
+      setDeleteVisible(false);
       dismissWithFlash("Sync deleted");
     } catch (e) {
       handleApiError(e, (msg) => setSnackbar({ message: msg, type: "error" }));
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -335,7 +262,7 @@ export default function CalendarSyncFormScreen() {
               <Icon
                 source="help-circle-outline"
                 size={20}
-                color={colors.primary}
+                color={colors.heatherPurple}
               />
             </Pressable>
           </View>
@@ -349,6 +276,7 @@ export default function CalendarSyncFormScreen() {
             control={control}
             name="importUrl"
             rules={{
+              required: "Import URL is required",
               pattern: {
                 value: /^https?:\/\/.+/,
                 message: "Enter a valid URL starting with http:// or https://",
@@ -371,17 +299,6 @@ export default function CalendarSyncFormScreen() {
           {errors.importUrl && (
             <HelperText type="error">{errors.importUrl.message}</HelperText>
           )}
-
-          <Controller
-            control={control}
-            name="isImportEnabled"
-            render={({ field: { value, onChange } }) => (
-              <View style={commonStyles.switchRow}>
-                <Text style={commonStyles.switchLabel}>Enable import</Text>
-                <Switch value={value} onValueChange={onChange} />
-              </View>
-            )}
-          />
         </View>
 
         {/* Export section */}
@@ -392,7 +309,7 @@ export default function CalendarSyncFormScreen() {
               <Icon
                 source="help-circle-outline"
                 size={20}
-                color={colors.primary}
+                color={colors.heatherPurple}
               />
             </Pressable>
           </View>
@@ -402,48 +319,43 @@ export default function CalendarSyncFormScreen() {
             bookings.
           </Text>
 
-          <Controller
-            control={control}
-            name="isExportEnabled"
-            render={({ field: { value, onChange } }) => (
-              <View style={commonStyles.switchRow}>
-                <Text style={commonStyles.switchLabel}>Enable export</Text>
-                <Switch value={value} onValueChange={onChange} />
+          {isEditing && existingSync?.exportUrl && (
+            <View style={styles.exportCard}>
+              <View style={styles.exportCardHeader}>
+                <Icon
+                  source="information-outline"
+                  size={24}
+                  color={colors.heatherPurple}
+                />
+                <Text style={styles.exportCardHeading}>
+                  Share this link with {platformLabel}
+                </Text>
               </View>
-            )}
-          />
-
-          {isEditing &&
-            existingSync?.exportUrl &&
-            existingSync.isExportEnabled && (
-              <>
-                <View style={styles.exportUrlBox}>
-                  <Text style={styles.exportUrlLabel}>Your export link:</Text>
-                  <Text style={styles.exportUrl} numberOfLines={2} selectable>
-                    {existingSync.exportUrl}
-                  </Text>
-                  <Button
-                    mode="outlined"
-                    compact
-                    onPress={handleCopyExportUrl}
-                    icon="content-copy"
-                    style={styles.copyButton}
-                  >
-                    Copy link
-                  </Button>
-                </View>
-                <InfoBox variant="info">
-                  Copy the above link and paste it into {platformLabel}
-                  {"\u2019"}s calendar import settings.{" "}
-                  <Text
-                    style={styles.exportCalloutLink}
-                    onPress={() => setExportHelpVisible(true)}
-                  >
-                    See how
-                  </Text>
-                </InfoBox>
-              </>
-            )}
+              <Text style={styles.exportUrl} numberOfLines={2} selectable>
+                {existingSync.exportUrl}
+              </Text>
+              <Button
+                mode="outlined"
+                compact
+                onPress={handleCopyExportUrl}
+                icon="content-copy"
+                style={styles.exportCardCopyButton}
+              >
+                Copy link
+              </Button>
+              <Text style={styles.exportCardBody}>
+                Paste it into {platformLabel}
+                {"\u2019"}s calendar import settings so bookings on{" "}
+                {APP_DISPLAY_NAME} block those dates automatically.{" "}
+                <Text
+                  style={styles.exportCalloutLink}
+                  onPress={() => setExportHelpVisible(true)}
+                >
+                  See how
+                </Text>
+              </Text>
+            </View>
+          )}
         </View>
 
         {serverError ? (
@@ -461,14 +373,13 @@ export default function CalendarSyncFormScreen() {
         </Button>
 
         {isEditing && (
-          <Button
-            mode="text"
-            textColor={colors.danger}
-            onPress={handleDelete}
+          <DangerButton
+            variant="secondary"
+            onPress={() => setDeleteVisible(true)}
             icon="delete-outline"
           >
             Remove this calendar sync
-          </Button>
+          </DangerButton>
         )}
       </ScrollView>
 
@@ -494,6 +405,43 @@ export default function CalendarSyncFormScreen() {
             <Button onPress={() => setExportHelpVisible(false)}>Got it</Button>
           </Dialog.Actions>
         </Dialog>
+        {existingSync && (
+          <Dialog
+            visible={deleteVisible}
+            onDismiss={() => !deleting && setDeleteVisible(false)}
+            dismissable={!deleting}
+          >
+            <Dialog.Title>
+              Remove {getPlatformLabel(existingSync.platform)} sync?
+            </Dialog.Title>
+            <Dialog.Content>
+              <Text>
+                {(existingSync.lastImportEventCount ?? 0) > 0
+                  ? `This will remove the sync and ${existingSync.lastImportEventCount} imported ${existingSync.lastImportEventCount === 1 ? "date" : "dates"}.`
+                  : "This will remove the sync."}
+                {"\n\n"}
+                You can re-add this calendar at any time — your dates will be
+                re-imported from {getPlatformLabel(existingSync.platform)}.
+              </Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button
+                onPress={() => setDeleteVisible(false)}
+                disabled={deleting}
+              >
+                Cancel
+              </Button>
+              <DangerButton
+                variant="secondary"
+                onPress={confirmDelete}
+                loading={deleting}
+                disabled={deleting}
+              >
+                Remove sync
+              </DangerButton>
+            </Dialog.Actions>
+          </Dialog>
+        )}
       </Portal>
 
       <AppSnackbar
@@ -527,13 +475,19 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
   },
-  exportUrlBox: {
-    backgroundColor: colors.inputBackground,
+  exportCard: {
+    backgroundColor: colors.infoBackground,
     borderRadius: borderRadius.md,
     padding: spacing.md,
     gap: spacing.sm,
   },
-  exportUrlLabel: {
+  exportCardHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
+  exportCardHeading: {
+    flex: 1,
     fontSize: typography.sm,
     fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
@@ -542,8 +496,12 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
   },
-  copyButton: {
+  exportCardCopyButton: {
     alignSelf: "flex-start",
+  },
+  exportCardBody: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
   },
   exportCalloutLink: {
     color: colors.primary,

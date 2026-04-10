@@ -40,8 +40,6 @@ function makeSync(overrides: Partial<CalendarSync> = {}): CalendarSync {
     id: 99,
     listingId: 10,
     importUrl: 'https://example.com/cal.ics',
-    isImportEnabled: true,
-    isExportEnabled: true,
     consecutiveFailures: 0,
     lastImportStatus: null,
     lastImportError: null,
@@ -85,10 +83,9 @@ function makeSyncRepo(sync: CalendarSync | null = null) {
 }
 
 function makeBlockRepo() {
-  return {
-    count: jest.fn().mockResolvedValue(0),
-    update: jest.fn().mockResolvedValue({ affected: 0 }),
-  };
+  // CalendarImportService injects CalendarBlock repo but accesses it only via
+  // queryRunner.manager. The repo itself is unused; an empty mock satisfies DI.
+  return {};
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -123,8 +120,6 @@ describe('CalendarImportService', () => {
     // Re-wire mocks after clearAllMocks
     syncRepo.findOne.mockResolvedValue({ id: 99 });
     syncRepo.update.mockResolvedValue(undefined);
-    blockRepo.count.mockResolvedValue(0);
-    blockRepo.update.mockResolvedValue({ affected: 0 });
     dataSource.createQueryRunner.mockReturnValue(queryRunner);
     queryRunner.connect.mockResolvedValue(undefined);
     queryRunner.startTransaction.mockResolvedValue(undefined);
@@ -224,35 +219,33 @@ describe('CalendarImportService', () => {
       expect(sync.consecutiveFailures).toBe(5);
     });
 
-    it('should auto-disable after 10 consecutive permanent failures', async () => {
+    it('should log auto-disable after 10 consecutive permanent failures', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 404,
         statusText: 'Not Found',
       });
-      const sync = makeSync({ consecutiveFailures: 9, isImportEnabled: true });
+      const sync = makeSync({ consecutiveFailures: 9 });
 
       await service.importSingleSync(sync);
 
       expect(sync.consecutiveFailures).toBe(10);
-      expect(sync.isImportEnabled).toBe(false);
       expect(Sentry.captureMessage).toHaveBeenCalledWith(
         expect.stringContaining('auto-disabled'),
         'warning',
       );
     });
 
-    it('should not auto-disable on transient errors even at high failure counts', async () => {
+    it('should not increment failures on transient errors even at high failure counts', async () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 503,
         statusText: 'Service Unavailable',
       });
-      const sync = makeSync({ consecutiveFailures: 9, isImportEnabled: true });
+      const sync = makeSync({ consecutiveFailures: 9 });
 
       await service.importSingleSync(sync);
 
-      expect(sync.isImportEnabled).toBe(true);
       expect(sync.consecutiveFailures).toBe(9);
     });
 
@@ -285,54 +278,6 @@ describe('CalendarImportService', () => {
 
       expect(sync.lastImportStatus).toBe('error');
       expect(sync.lastImportError).toContain('503');
-    });
-  });
-
-  // ── adoptOrphanedBlocks ─────────────────────────────────────────────────────
-
-  describe('adoptOrphanedBlocks', () => {
-    it('should return early without querying when events list is empty', async () => {
-      await service['adoptOrphanedBlocks'](99, 10, []);
-
-      expect(blockRepo.update).not.toHaveBeenCalled();
-    });
-
-    it('should update orphaned blocks matching incoming UIDs', async () => {
-      const events = [makeEvent('uid-a'), makeEvent('uid-b')];
-
-      await service['adoptOrphanedBlocks'](99, 10, events);
-
-      expect(blockRepo.update).toHaveBeenCalled();
-      const [, partial] = blockRepo.update.mock.calls[0];
-      expect(partial).toEqual({ calendarSyncId: 99 });
-    });
-
-    it('should scope the update to the correct listingId', async () => {
-      const events = [makeEvent('uid-x')];
-
-      await service['adoptOrphanedBlocks'](99, 42, events);
-
-      const [criteria] = blockRepo.update.mock.calls[0];
-      expect(criteria).toMatchObject({ listingId: 42 });
-    });
-
-    it('should only target orphaned blocks (calendarSyncId IS NULL)', async () => {
-      const events = [makeEvent('uid-x')];
-
-      await service['adoptOrphanedBlocks'](99, 10, events);
-
-      const [criteria] = blockRepo.update.mock.calls[0];
-      // IsNull() returns a FindOperator — verify the key is present and set
-      expect(criteria).toHaveProperty('calendarSyncId');
-    });
-
-    it('should only target import-source blocks', async () => {
-      const events = [makeEvent('uid-x')];
-
-      await service['adoptOrphanedBlocks'](99, 10, events);
-
-      const [criteria] = blockRepo.update.mock.calls[0];
-      expect(criteria).toMatchObject({ source: 'import' });
     });
   });
 

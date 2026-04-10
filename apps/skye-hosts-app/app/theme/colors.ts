@@ -10,6 +10,7 @@ import {
   calendarSelectedBlue,
   calendarSelectedBlueBorder,
   deepSkyeBlue,
+  deepSkyeBlueLight,
   driftwoodSand,
   grey100,
   grey200,
@@ -20,7 +21,10 @@ import {
   grey600,
   grey900,
   heatherPurple,
+  heatherPurpleLight,
   highlandMossGreen,
+  iconOnDark,
+  rowanBerry,
   rowanBerryLight,
   rowanBerryPale,
   seaGlassTeal,
@@ -35,18 +39,20 @@ import {
 
 /** Core brand */
 export const colors = {
-  /** Deep Skye Blue — primary brand colour */
+  /** CTAs, contained buttons, selected-state icons in selection cards */
   primary: deepSkyeBlue,
-  /** Highland Moss Green — secondary brand colour */
+  /** Light background for selected states (e.g. selected listing journey cards) */
+  primaryLight: deepSkyeBlueLight,
+  /** Secondary brand accent */
   secondary: highlandMossGreen,
 
-  /** Accent: Heather Purple */
+  /** Info-variant icons (ⓘ info boxes, help-circle icons) */
   heatherPurple,
-  /** Accent: Warm Stone */
+  /** Icon colour on dark backgrounds */
   warmStone,
   /** Accent: Driftwood Sand */
   driftwoodSand,
-  /** Accent: Sea Glass Teal */
+  /** Default decorative/nav icon colour — chevrons, menu icons, empty states, unselected cards */
   seaGlassTeal,
 
   /** Functional: Success Green */
@@ -54,12 +60,25 @@ export const colors = {
   /** Functional: Deal Highlight / Whisky Gold */
   dealHighlight: whiskyGold,
 
+  /** Interactive/clickable icons on light backgrounds (= deepSkyeBlue) */
+  icon: deepSkyeBlue,
+  /** Purely decorative, non-clickable icons (= seaGlassTeal) */
+  iconDecorative: seaGlassTeal,
+  /** Icons on dark backgrounds (= warmStone) */
+  iconOnDark: iconOnDark,
+  /** Modal close/dismiss buttons only — intentionally muted */
+  iconMuted: grey600,
+  /** Inactive bottom tab bar icons */
+  iconInactive: grey600,
+
   /* ── Existing UI tokens ────────────────────────────────────── */
   background: white,
   textPrimary: grey900,
   textSecondary: grey600,
   border: grey300,
-  danger: rowanBerryLight,
+  danger: rowanBerry,
+  /** Background fill for danger surfaces (e.g. error snackbar). Foreground text/icons/borders/dots should use `danger`. */
+  dangerBackground: rowanBerryLight,
   warning: autumnBracken,
   successBackground: successGreenLight,
   inputBackground: grey100,
@@ -73,9 +92,9 @@ export const colors = {
   calendarCellCurrent: white,
   calendarTextPast: grey400,
   calendarBarPast: seaGlassTealPale,
-  calendarBar: seaGlassTeal,
+  calendarBar: deepSkyeBlue,
   calendarCellBlocked: calendarBlockedPink,
-  calendarCellBlockedBorder: rowanBerryLight,
+  calendarCellBlockedBorder: rowanBerry,
   calendarBarBookingCom: brandBookingCom,
   calendarBarAirbnb: brandAirbnb,
   calendarBarExternal: grey500,
@@ -84,6 +103,6 @@ export const colors = {
   calendarCellSelected: calendarSelectedBlue,
   calendarCellSelectedBorder: calendarSelectedBlueBorder,
   warningBackground: autumnBrackenLight,
-  infoBackground: seaGlassTealLight,
+  infoBackground: heatherPurpleLight,
   errorBackground: rowanBerryPale,
 } as const;

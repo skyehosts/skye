@@ -106,8 +106,9 @@ export const commonStyles = StyleSheet.create({
   },
 
   cardSelected: {
-    borderColor: colors.textPrimary,
+    borderColor: colors.primary,
     borderWidth: 2,
+    backgroundColor: colors.primaryLight,
   },
 
   cardTitle: {
@@ -161,8 +162,8 @@ export const commonStyles = StyleSheet.create({
   },
 
   chipSelected: {
-    backgroundColor: colors.textPrimary,
-    borderColor: colors.textPrimary,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
   },
 
   chipTextSelected: {

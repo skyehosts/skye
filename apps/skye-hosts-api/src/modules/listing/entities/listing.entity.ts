@@ -1,4 +1,5 @@
 import type {
+  CancellationPolicyShortTermId,
   HostInteractionId,
   IMinNightsByCheckInDay,
   ListingAccessibilityFeatureId,
@@ -33,9 +34,6 @@ export class Listing {
 
   @Column({ type: 'character varying', default: '' })
   guestAccess: string;
-
-  @Column({ type: 'character varying', default: '' })
-  interactionWithGuests: string;
 
   @Column({ type: 'character varying', default: '' })
   otherDetailsToNote: string;
@@ -198,6 +196,9 @@ export class Listing {
 
   @Column({ type: 'boolean', default: false })
   shortTermLetLicenseConfirmed: boolean;
+
+  @Column({ type: 'character varying', default: '5_days' })
+  cancellationPolicyShortTerm: CancellationPolicyShortTermId;
 
   @OneToMany(() => ListingImage, (image) => image.listing)
   images: ListingImage[];

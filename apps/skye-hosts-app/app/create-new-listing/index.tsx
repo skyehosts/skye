@@ -62,7 +62,7 @@ export default function CreateListingIntroScreen() {
                   <Icon
                     source={step.icon}
                     size={40}
-                    color={colors.textSecondary}
+                    color={colors.iconDecorative}
                   />
                 </View>
               </View>

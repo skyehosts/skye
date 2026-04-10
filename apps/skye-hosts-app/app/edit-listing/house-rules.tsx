@@ -126,7 +126,7 @@ export default function HouseRulesScreen() {
           <Ionicons
             name={rule.icon as keyof typeof Ionicons.glyphMap}
             size={RULE_ICON_SIZE}
-            color={colors.textPrimary}
+            color={colors.iconDecorative}
             style={styles.ruleIcon}
           />
           <View style={styles.ruleContent}>
@@ -160,7 +160,7 @@ export default function HouseRulesScreen() {
           <Ionicons
             name={rule.icon as keyof typeof Ionicons.glyphMap}
             size={RULE_ICON_SIZE}
-            color={colors.textPrimary}
+            color={colors.iconDecorative}
             style={styles.ruleIcon}
           />
           <View style={styles.ruleContent}>
@@ -199,7 +199,7 @@ export default function HouseRulesScreen() {
             <Ionicons
               name={rule.icon as keyof typeof Ionicons.glyphMap}
               size={22}
-              color={colors.textPrimary}
+              color={colors.iconDecorative}
               style={styles.ruleIcon}
             />
             <View style={styles.ruleContent}>
@@ -217,11 +217,7 @@ export default function HouseRulesScreen() {
                 </Text>
               )}
             </View>
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={colors.textSecondary}
-            />
+            <Ionicons name="chevron-forward" size={18} color={colors.icon} />
           </View>
         </Pressable>
       </View>

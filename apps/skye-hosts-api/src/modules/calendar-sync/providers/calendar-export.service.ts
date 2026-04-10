@@ -25,7 +25,7 @@ export class CalendarExportService {
       where: { exportToken },
     });
 
-    if (!sync || !sync.isExportEnabled) {
+    if (!sync) {
       return null;
     }
 
@@ -36,6 +36,10 @@ export class CalendarExportService {
     if (!listing) {
       return null;
     }
+
+    // Record that the external platform fetched the iCal — used to surface a
+    // warning to hosts when AirBnB hasn't started polling 24h after setup.
+    await this.calendarSyncRepo.update(sync.id, { lastExportedAt: new Date() });
 
     const today = new Date().toISOString().slice(0, 10);
 

@@ -127,7 +127,7 @@ export function ImageGrid({
       if (item.type === "add") {
         return (
           <Pressable style={[tileStyle, styles.addTile]} onPress={onAddMore}>
-            <Ionicons name="add" size={32} color={colors.textSecondary} />
+            <Ionicons name="add" size={32} color={colors.icon} />
             <Text style={styles.addText}>Add photos</Text>
           </Pressable>
         );

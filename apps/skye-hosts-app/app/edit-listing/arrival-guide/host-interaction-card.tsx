@@ -80,7 +80,7 @@ export function HostInteractionCard({
           <View style={commonStyles.row}>
             <Text style={commonStyles.modalTitle}>Interaction with guests</Text>
             <Pressable onPress={() => setModalVisible(false)} hitSlop={8}>
-              <Ionicons name="close" size={22} color={colors.textSecondary} />
+              <Ionicons name="close" size={22} color={colors.iconMuted} />
             </Pressable>
           </View>
 

@@ -77,7 +77,7 @@ export function AmenitiesAddModal({
         <View style={commonStyles.row}>
           <Text style={commonStyles.modalTitle}>Add amenities</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 
@@ -140,7 +140,7 @@ export function AmenitiesAddModal({
                 <Icon
                   source={item.icon}
                   size={22}
-                  color={colors.textSecondary}
+                  color={colors.iconDecorative}
                 />
                 <Text style={styles.amenityText}>{item.title}</Text>
                 {isSelected ? (
@@ -153,7 +153,7 @@ export function AmenitiesAddModal({
                   <Icon
                     source="plus-circle-outline"
                     size={22}
-                    color={colors.textSecondary}
+                    color={colors.icon}
                   />
                 )}
               </Pressable>

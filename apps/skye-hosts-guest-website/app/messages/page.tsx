@@ -1,3 +1,4 @@
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { auth } from '../auth';
@@ -10,8 +11,10 @@ export default async function MessagesPage() {
   }
 
   return (
-    <Suspense>
-      <MessagesClient />
-    </Suspense>
+    <PageContainer>
+      <Suspense>
+        <MessagesClient />
+      </Suspense>
+    </PageContainer>
   );
 }

@@ -3,6 +3,7 @@ import type {
   IUpdateListingRequestDto,
 } from '@repo/skye-hosts-api-client';
 import {
+  CANCELLATION_POLICY_SHORT_TERM_IDS,
   HostInteractionId,
   LISTING_SPACE_TYPES,
   LISTING_STATUSES,
@@ -21,9 +22,14 @@ import {
   Max,
   MaxLength,
   Min,
+  Validate,
   ValidateIf,
   ValidateNested,
 } from 'class-validator';
+import {
+  CheckInEndAfterStart,
+  CheckoutBeforeCheckIn,
+} from '../validators/check-in-checkout-time.validator';
 
 class MinNightsByCheckInDayDto implements IMinNightsByCheckInDay {
   @IsNumber()
@@ -82,11 +88,6 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsString()
   @MaxLength(500)
   guestAccess?: string;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(500)
-  interactionWithGuests?: string;
 
   @IsOptional()
   @IsString()
@@ -177,11 +178,13 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @IsOptional()
   @IsString()
   @MaxLength(5)
+  @Validate(CheckInEndAfterStart)
   checkInTimeEnd?: string | null;
 
   @IsOptional()
   @IsString()
   @MaxLength(5)
+  @Validate(CheckoutBeforeCheckIn)
   checkOutTime?: string | null;
 
   @IsOptional()
@@ -335,4 +338,8 @@ export class UpdateListingRequestDto implements IUpdateListingRequestDto {
   @Min(-180)
   @Max(180)
   longitude?: number;
+
+  @IsOptional()
+  @IsIn(CANCELLATION_POLICY_SHORT_TERM_IDS)
+  cancellationPolicyShortTerm?: IUpdateListingRequestDto['cancellationPolicyShortTerm'];
 }

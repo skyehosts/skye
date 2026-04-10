@@ -149,11 +149,15 @@ export default function ChangePinScreen() {
   };
 
   return (
-    <ScreenContainer>
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => appRouter.back()} />
-        <Appbar.Content title="Change PIN" />
-      </Appbar.Header>
+    <ScreenContainer
+      avoidKeyboard
+      header={
+        <Appbar.Header>
+          <Appbar.BackAction onPress={() => appRouter.back()} />
+          <Appbar.Content title="Change PIN" />
+        </Appbar.Header>
+      }
+    >
       <View style={commonStyles.securityContainer}>
         <Text style={commonStyles.securityTitle}>{titles[step]}</Text>
         <Text style={[commonStyles.securitySubtitle, { textAlign: "center" }]}>

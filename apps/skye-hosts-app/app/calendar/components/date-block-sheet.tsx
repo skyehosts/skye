@@ -97,7 +97,7 @@ export function DateBlockSheet({
         <View style={styles.header}>
           <Text style={styles.title}>{formatRange(startDate, endDate)}</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 

@@ -19,12 +19,10 @@ import type {
 } from "@repo/skye-hosts-api-client";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
+import { SyncHealthDot } from "../components/sync-health-dot";
 import { captureException } from "../services/error-reporting";
 import { fetchApi } from "../services/api";
-import {
-  SyncDirectionBadge,
-  getAggregateSyncDirection,
-} from "../utils/sync-status";
+import { getAggregateSyncHealthColor } from "../utils/sync-status";
 import { CalendarList } from "./components/calendar-list";
 import { DateBlockSheet } from "./components/date-block-sheet";
 
@@ -89,7 +87,7 @@ export default function CalendarDetailScreen() {
     }, [loadData]),
   );
 
-  const syncDirection = getAggregateSyncDirection(syncs);
+  const syncHealthColor = getAggregateSyncHealthColor(syncs);
 
   const platformBySyncId = useMemo(() => {
     const map = new Map<number, CalendarSyncPlatform>();
@@ -254,9 +252,7 @@ export default function CalendarDetailScreen() {
               })
             }
           />
-          <View style={styles.statusBadge}>
-            <SyncDirectionBadge direction={syncDirection} size={10} />
-          </View>
+          <SyncHealthDot color={syncHealthColor} style={styles.statusBadge} />
         </View>
       </Appbar.Header>
       <CalendarList
@@ -290,7 +286,5 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 8,
     right: 8,
-    alignItems: "center",
-    justifyContent: "center",
   },
 });

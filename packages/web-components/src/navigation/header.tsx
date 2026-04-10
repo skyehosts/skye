@@ -130,7 +130,7 @@ export function Header({
             src={logoWideSrc}
             alt={logoAlt}
             sx={{
-              height: 50,
+              height: 55,
               width: 'auto',
               display: { xs: 'none', sm: 'block' },
             }}
@@ -141,8 +141,8 @@ export function Header({
             src={logoSquareSrc}
             alt={logoAlt}
             sx={{
-              height: 50,
-              width: 50,
+              height: 55,
+              width: 55,
               display: { xs: 'block', sm: 'none' },
             }}
           />

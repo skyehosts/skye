@@ -71,7 +71,7 @@ export function ProfilePhotoModal({
             <Ionicons
               name="person-outline"
               size={48}
-              color={colors.textSecondary}
+              color={colors.iconDecorative}
             />
           </View>
         )}

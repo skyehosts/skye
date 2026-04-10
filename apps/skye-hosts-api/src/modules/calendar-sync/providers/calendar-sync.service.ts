@@ -73,19 +73,15 @@ export class CalendarSyncService {
     data: {
       platform: string;
       label?: string;
-      importUrl?: string;
-      isImportEnabled?: boolean;
-      isExportEnabled?: boolean;
+      importUrl: string;
     },
   ): Promise<CalendarSync> {
     const sync = this.calendarSyncRepo.create({
       listingId,
       platform: data.platform as CalendarSync['platform'],
       label: data.label ?? null,
-      importUrl: data.importUrl ?? null,
+      importUrl: data.importUrl,
       exportToken: randomUUID(),
-      isImportEnabled: data.isImportEnabled ?? true,
-      isExportEnabled: data.isExportEnabled ?? true,
     });
     return this.calendarSyncRepo.save(sync);
   }
@@ -94,9 +90,7 @@ export class CalendarSyncService {
     id: number,
     data: {
       label?: string;
-      importUrl?: string | null;
-      isImportEnabled?: boolean;
-      isExportEnabled?: boolean;
+      importUrl?: string;
     },
   ): Promise<CalendarSync> {
     const sync = await this.calendarSyncRepo.findOne({ where: { id } });
@@ -106,33 +100,20 @@ export class CalendarSyncService {
 
     if (data.label !== undefined) sync.label = data.label;
     if (data.importUrl !== undefined) sync.importUrl = data.importUrl;
-    if (data.isImportEnabled !== undefined)
-      sync.isImportEnabled = data.isImportEnabled;
-    if (data.isExportEnabled !== undefined)
-      sync.isExportEnabled = data.isExportEnabled;
 
-    // Re-enable import if URL was updated, sync was auto-disabled,
-    // and user did not explicitly request disabling in this same request
-    if (
-      data.importUrl &&
-      sync.consecutiveFailures >= 10 &&
-      data.isImportEnabled !== false
-    ) {
+    // Re-enable import if URL was updated and sync was auto-disabled
+    if (data.importUrl && sync.consecutiveFailures >= 10) {
       sync.consecutiveFailures = 0;
-      sync.isImportEnabled = true;
       sync.lastImportError = null;
     }
 
     return this.calendarSyncRepo.save(sync);
   }
 
-  async deleteSync(id: number, removeBlocks: boolean): Promise<void> {
-    await this.dataSource.transaction(async (manager) => {
-      if (removeBlocks) {
-        await manager.delete(CalendarBlock, { calendarSyncId: id });
-      }
-      await manager.delete(CalendarSync, { id });
-    });
+  async deleteSync(id: number): Promise<void> {
+    // Imported blocks are removed automatically by the FK ON DELETE CASCADE
+    // (calendar_block.calendarSyncId → calendar_sync.id).
+    await this.calendarSyncRepo.delete({ id });
   }
 
   async getBlocksForListing(listingId: number): Promise<CalendarBlock[]> {
@@ -252,13 +233,12 @@ export class CalendarSyncService {
       label: sync.label,
       importUrl: sync.importUrl,
       exportUrl: this.buildExportUrl(sync.exportToken),
+      lastExportedAt: sync.lastExportedAt?.toISOString() ?? null,
       lastImportAt: sync.lastImportAt?.toISOString() ?? null,
       lastImportStatus: sync.lastImportStatus,
       lastImportError: sync.lastImportError,
       lastImportEventCount: sync.lastImportEventCount,
       consecutiveFailures: sync.consecutiveFailures,
-      isImportEnabled: sync.isImportEnabled,
-      isExportEnabled: sync.isExportEnabled,
       createdAt: sync.createdAt.toISOString(),
     };
   }

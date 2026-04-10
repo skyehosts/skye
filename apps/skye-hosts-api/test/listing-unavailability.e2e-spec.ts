@@ -49,8 +49,6 @@ describe('Listing Unavailability (e2e)', () => {
         platform: 'airbnb',
         importUrl: 'https://example.com/airbnb.ics',
         exportToken: 'e2e-test-export-token',
-        isImportEnabled: true,
-        isExportEnabled: true,
       }),
     );
 
@@ -129,10 +127,10 @@ describe('Listing Unavailability (e2e)', () => {
         .expect(200);
 
       const ranges = res.body.payload.unavailableDates;
-      // Seeded booking: 2026-04-01 to 2026-04-03
+      // Seeded booking: 2027-04-01 to 2027-04-03
       const hasSeededBooking = ranges.some(
         (r: { startDate: string; endDate: string }) =>
-          r.startDate <= '2026-04-01' && r.endDate >= '2026-04-03',
+          r.startDate <= '2027-04-01' && r.endDate >= '2027-04-03',
       );
       expect(hasSeededBooking).toBe(true);
     });
@@ -192,14 +190,6 @@ describe('Listing Unavailability (e2e)', () => {
       for (let i = 1; i < ranges.length; i++) {
         expect(ranges[i].startDate >= ranges[i - 1].startDate).toBe(true);
       }
-    });
-
-    it('should set Cache-Control header', async () => {
-      const res = await request(app.getHttpServer())
-        .get(`/listing/${listingId}/unavailability`)
-        .expect(200);
-
-      expect(res.headers['cache-control']).toBe('public, max-age=300');
     });
 
     it('should return empty array for listing with no bookings or blocks', async () => {

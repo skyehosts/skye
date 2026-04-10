@@ -1,3 +1,4 @@
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import { GlampingInfoCard } from '@repo/web-components/listings/glamping-info-card';
 import {
   IDemoRequestDto,
@@ -14,7 +15,7 @@ export default async function DemoPage() {
   });
 
   return (
-    <div>
+    <PageContainer>
       <h1>Demo</h1>
       <GlampingInfoCard
         name="Woodland Retreat"
@@ -24,6 +25,6 @@ export default async function DemoPage() {
       />
       <pre>{JSON.stringify(demo, null, 2)}</pre>
       <DemoFormWrapper />
-    </div>
+    </PageContainer>
   );
 }

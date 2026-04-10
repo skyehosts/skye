@@ -6,15 +6,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListingPermission } from '@repo/skye-hosts-api-client';
-import { In, Repository } from 'typeorm';
+import { DataSource, In, MoreThan, Repository } from 'typeorm';
 import { Account } from '../../account/entities/account.entity';
+import { Booking } from '../../booking/entities';
+import { CalendarBlock, CalendarSync } from '../../calendar-sync/entities';
+import { CoHostInvite, ListingUserRole } from '../../co-host/entities';
 import { ListingAccessService } from '../../co-host/providers/listing-access.service';
 import {
   buildDerivedImageUrl,
   toListingImageDto,
 } from '../../common/utils/listing-image-url.util';
 import { ConfigService } from '../../config/providers/config.service';
+import { Favourite } from '../../favourite/entities';
 import { ListingImage } from '../../listing-image/entities';
+import {
+  MessageLog,
+  ScheduledMessage,
+  SentMessage,
+} from '../../scheduled-message/entities';
 import {
   CreateListingRequestDto,
   CreateListingResponseDto,
@@ -54,6 +63,7 @@ export class ListingService {
     private readonly listingImageRepo: Repository<ListingImage>,
     private listingAccessService: ListingAccessService,
     private configService: ConfigService,
+    private dataSource: DataSource,
   ) {
     this.cdnDomain = this.configService.getAll().awsCloudfrontImagesDomain;
   }
@@ -97,7 +107,6 @@ export class ListingService {
       description: dto.description,
       descriptionLong: '',
       guestAccess: '',
-      interactionWithGuests: '',
       otherDetailsToNote: '',
       typeId: dto.typeId,
       spaceType: dto.spaceType,
@@ -308,8 +317,6 @@ export class ListingService {
     if (dto.descriptionLong !== undefined)
       listing.descriptionLong = dto.descriptionLong;
     if (dto.guestAccess !== undefined) listing.guestAccess = dto.guestAccess;
-    if (dto.interactionWithGuests !== undefined)
-      listing.interactionWithGuests = dto.interactionWithGuests;
     if (dto.otherDetailsToNote !== undefined)
       listing.otherDetailsToNote = dto.otherDetailsToNote;
     if (dto.typeId !== undefined) listing.typeId = dto.typeId;
@@ -392,6 +399,8 @@ export class ListingService {
     if (dto.status !== undefined) listing.status = dto.status;
     if (dto.shortTermLetLicenseConfirmed !== undefined)
       listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
+    if (dto.cancellationPolicyShortTerm !== undefined)
+      listing.cancellationPolicyShortTerm = dto.cancellationPolicyShortTerm;
     if (dto.latitude !== undefined && dto.longitude !== undefined) {
       listing.latitude = dto.latitude;
       listing.longitude = dto.longitude;
@@ -420,6 +429,58 @@ export class ListingService {
     return this.toResponseDto(updated, true);
   }
 
+  async delete(listingId: number, accountId: number): Promise<void> {
+    await this.findOneOrFail(listingId);
+
+    const hasPermission = await this.listingAccessService.hasPermission(
+      accountId,
+      listingId,
+      ListingPermission.DELETE_LISTING,
+    );
+
+    if (!hasPermission) {
+      throw new ForbiddenException(
+        'You do not have permission to delete this listing',
+      );
+    }
+
+    const futureBookingCount = await this.listingRepo.manager.count(Booking, {
+      where: {
+        listingId,
+        checkOutDate: MoreThan(new Date().toISOString().slice(0, 10)),
+        status: 'confirmed',
+      },
+    });
+
+    if (futureBookingCount > 0) {
+      throw new BadRequestException(
+        'Cannot delete listing with future confirmed bookings. Please cancel them first.',
+      );
+    }
+
+    await this.dataSource.transaction(async (manager) => {
+      const scheduledMessages = await manager.find(ScheduledMessage, {
+        where: { listingId },
+        select: ['id'],
+      });
+
+      if (scheduledMessages.length > 0) {
+        const smIds = scheduledMessages.map((sm) => sm.id);
+        await manager.delete(SentMessage, { scheduledMessageId: In(smIds) });
+        await manager.delete(MessageLog, { scheduledMessageId: In(smIds) });
+      }
+
+      await manager.delete(ScheduledMessage, { listingId });
+      await manager.delete(Booking, { listingId });
+      await manager.delete(CoHostInvite, { listingId });
+      await manager.delete(ListingUserRole, { listingId });
+      await manager.delete(Favourite, { listingId });
+      await manager.delete(CalendarBlock, { listingId });
+      await manager.delete(CalendarSync, { listingId });
+      await manager.delete(Listing, { id: listingId });
+    });
+  }
+
   private toImageDto(image: ListingImage) {
     return toListingImageDto(this.cdnDomain, image);
   }
@@ -444,7 +505,6 @@ export class ListingService {
       description: listing.description,
       descriptionLong: listing.descriptionLong,
       guestAccess: listing.guestAccess,
-      interactionWithGuests: listing.interactionWithGuests,
       otherDetailsToNote: listing.otherDetailsToNote,
       typeId: listing.typeId,
       spaceType: listing.spaceType,
@@ -507,6 +567,7 @@ export class ListingService {
       images: allImages.map((img) => this.toImageDto(img)),
       status: listing.status,
       shortTermLetLicenseConfirmed: listing.shortTermLetLicenseConfirmed,
+      cancellationPolicyShortTerm: listing.cancellationPolicyShortTerm,
       createdAt: listing.createdAt,
       updatedAt: listing.updatedAt,
     };

@@ -2,15 +2,14 @@ import type {
   IGetListingResponseDto,
   IUpdateListingRequestDto,
 } from "../../../../../packages/skye-hosts-api-client/src";
-import { useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Modal, Portal } from "react-native-paper";
+import { HelperText, Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { DropdownField } from "../../components/dropdown-field";
 import { ActionBar } from "../../components/action-bar";
 import {
-  DEFAULT_TIME,
   TIME_OPTIONS,
   TimeRangePicker,
 } from "../../components/time-range-picker";
@@ -36,17 +35,27 @@ export function CheckInCheckoutCard({
   const [modalVisible, setModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);
   const [serverError, setServerError] = useState("");
-  const [checkInStart, setCheckInStart] = useState<string>(DEFAULT_TIME);
-  const [checkInEnd, setCheckInEnd] = useState<string>(DEFAULT_TIME);
-  const [checkOut, setCheckOut] = useState<string>(DEFAULT_TIME);
+  const [checkInStart, setCheckInStart] = useState<string>("15:00");
+  const [checkInEnd, setCheckInEnd] = useState<string>("21:00");
+  const [checkOut, setCheckOut] = useState<string>("11:00");
 
   useEffect(() => {
     if (modalVisible) {
-      setCheckInStart(checkInTimeStart ?? DEFAULT_TIME);
-      setCheckInEnd(checkInTimeEnd ?? DEFAULT_TIME);
-      setCheckOut(checkOutTime ?? DEFAULT_TIME);
+      setCheckInStart(checkInTimeStart ?? "15:00");
+      setCheckInEnd(checkInTimeEnd ?? "21:00");
+      setCheckOut(checkOutTime ?? "11:00");
     }
   }, [modalVisible, checkInTimeStart, checkInTimeEnd, checkOutTime]);
+
+  const validationError = useMemo(() => {
+    if (checkInEnd <= checkInStart) {
+      return "Check-in end time must be after start time";
+    }
+    if (checkOut >= checkInStart) {
+      return "Checkout time must be before check-in start time";
+    }
+    return "";
+  }, [checkInStart, checkInEnd, checkOut]);
 
   const handleSave = async () => {
     setSaving(true);
@@ -109,7 +118,7 @@ export function CheckInCheckoutCard({
               Check-in & checkout times
             </Text>
             <Pressable onPress={() => setModalVisible(false)} hitSlop={8}>
-              <Ionicons name="close" size={22} color={colors.textSecondary} />
+              <Ionicons name="close" size={22} color={colors.iconMuted} />
             </Pressable>
           </View>
 
@@ -129,10 +138,15 @@ export function CheckInCheckoutCard({
             onChange={setCheckOut}
           />
 
+          <HelperText type="error" visible={!!validationError}>
+            {validationError}
+          </HelperText>
+
           <ActionBar
             onCancel={() => setModalVisible(false)}
             onSave={handleSave}
             loading={saving}
+            saveDisabled={!!validationError}
           />
         </Modal>
       </Portal>

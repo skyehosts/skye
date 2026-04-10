@@ -6,7 +6,6 @@ import {
   Text,
   View,
 } from "react-native";
-import { Portal } from "react-native-paper";
 import type { CalendarSyncPlatform } from "@repo/skye-hosts-api-client";
 import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
@@ -15,16 +14,13 @@ import { fetchApi } from "../../services/api";
 import { captureException } from "../../services/error-reporting";
 import { getPlatformName } from "../utils/platform-helpers";
 import type { BlockedDateInfo } from "./calendar-list";
-import {
-  formatTooltipDate,
-  tooltipStyles,
-  clampTooltipLeft,
-} from "./tooltip-styles";
+import { PositionedTooltip, type TooltipAnchor } from "./positioned-tooltip";
+import { formatTooltipDate, tooltipStyles } from "./tooltip-styles";
 
 interface BlockedDateTooltipProps {
   infos: BlockedDateInfo[];
   dateString: string;
-  position: { x: number; y: number };
+  anchor: TooltipAnchor;
   onClose: () => void;
   onReloadData?: () => void;
 }
@@ -47,7 +43,7 @@ function getRemedialText(
 function BlockedDateTooltipInner({
   infos,
   dateString,
-  position,
+  anchor,
   onClose,
   onReloadData,
 }: BlockedDateTooltipProps) {
@@ -69,72 +65,41 @@ function BlockedDateTooltipInner({
   }
 
   return (
-    <Portal>
-      <Pressable style={tooltipStyles.backdrop} onPress={onClose}>
+    <PositionedTooltip anchor={anchor} onClose={onClose}>
+      <Text style={tooltipStyles.date}>{formatTooltipDate(dateString)}</Text>
+      {infos.map((info, i) => (
         <View
-          style={[
-            tooltipStyles.tooltip,
-            {
-              left: clampTooltipLeft(position.x),
-              top: position.y - 10,
-            },
-          ]}
+          key={`${info.source}-${info.blockId}-${i}`}
+          style={i > 0 ? styles.sourceRow : undefined}
         >
-          <Text style={tooltipStyles.date}>
-            {formatTooltipDate(dateString)}
-          </Text>
-          {infos.map((info, i) => (
-            <View
-              key={`${info.source}-${info.blockId}-${i}`}
-              style={i > 0 ? styles.sourceRow : undefined}
-            >
-              {info.source === "manual" ? (
-                <>
-                  <Text style={tooltipStyles.title}>Manually blocked</Text>
-                  <Pressable
-                    style={styles.removeButton}
-                    onPress={() => handleRemoveBlock(info.blockId)}
-                    disabled={removing !== null}
-                  >
-                    {removing === info.blockId ? (
-                      <ActivityIndicator size="small" color={colors.danger} />
-                    ) : (
-                      <Text style={styles.removeText}>Remove block</Text>
-                    )}
-                  </Pressable>
-                </>
-              ) : info.calendarSyncId === null ? (
-                <>
-                  <Text style={tooltipStyles.title}>
-                    Blocked on {getPlatformName(info.platform)}
-                  </Text>
-                  <Pressable
-                    style={styles.removeButton}
-                    onPress={() => handleRemoveBlock(info.blockId)}
-                    disabled={removing !== null}
-                  >
-                    {removing === info.blockId ? (
-                      <ActivityIndicator size="small" color={colors.danger} />
-                    ) : (
-                      <Text style={styles.removeText}>Remove block</Text>
-                    )}
-                  </Pressable>
-                </>
-              ) : (
-                <>
-                  <Text style={tooltipStyles.title}>
-                    Blocked on {getPlatformName(info.platform)}
-                  </Text>
-                  <Text style={styles.remedial}>
-                    {getRemedialText(info.source, info.platform)}
-                  </Text>
-                </>
-              )}
-            </View>
-          ))}
+          {info.source === "manual" ? (
+            <>
+              <Text style={tooltipStyles.title}>Manually blocked</Text>
+              <Pressable
+                style={styles.removeButton}
+                onPress={() => handleRemoveBlock(info.blockId)}
+                disabled={removing !== null}
+              >
+                {removing === info.blockId ? (
+                  <ActivityIndicator size="small" color={colors.danger} />
+                ) : (
+                  <Text style={styles.removeText}>Remove block</Text>
+                )}
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <Text style={tooltipStyles.title}>
+                Blocked on {getPlatformName(info.platform)}
+              </Text>
+              <Text style={styles.remedial}>
+                {getRemedialText(info.source, info.platform)}
+              </Text>
+            </>
+          )}
         </View>
-      </Pressable>
-    </Portal>
+      ))}
+    </PositionedTooltip>
   );
 }
 

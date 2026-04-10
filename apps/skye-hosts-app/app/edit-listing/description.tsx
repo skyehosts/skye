@@ -13,7 +13,6 @@ import {
   View,
 } from "react-native";
 import { Appbar } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
 import { AppSnackbar } from "../components/app-snackbar";
 import { FormInputModal } from "../components/form-input-modal";
 import { ScreenContainer } from "../components/screen-container";
@@ -25,7 +24,6 @@ type DescriptionField =
   | "description"
   | "descriptionLong"
   | "guestAccess"
-  | "interactionWithGuests"
   | "otherDetailsToNote";
 
 interface FieldConfig {
@@ -54,13 +52,6 @@ const FIELDS: FieldConfig[] = [
   {
     key: "guestAccess",
     title: "Guest access",
-    maxLength: 500,
-    optional: true,
-    truncateLines: 4,
-  },
-  {
-    key: "interactionWithGuests",
-    title: "Interaction with guests",
     maxLength: 500,
     optional: true,
     truncateLines: 4,
@@ -156,11 +147,7 @@ export default function EditDescriptionScreen() {
                         {hasValue ? value : "Add details"}
                       </Text>
                     </View>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={18}
-                      color={colors.textSecondary}
-                    />
+                    <Text style={commonStyles.menuItemAction}>Edit</Text>
                   </Pressable>
                 </View>
               );

@@ -1,9 +1,10 @@
-import type {
-  IGetListingResponseDto,
-  IUpdateListingRequestDto,
-  ICalendarSyncDto,
-  IGetCalendarSyncsResponseDto,
-  ListingStatus,
+import {
+  type IGetListingResponseDto,
+  type IUpdateListingRequestDto,
+  type ICalendarSyncDto,
+  type IGetCalendarSyncsResponseDto,
+  type ListingStatus,
+  CANCELLATION_POLICY_SHORT_TERM_LABELS,
 } from "../../../../packages/skye-hosts-api-client/src";
 import { router, useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
@@ -147,6 +148,26 @@ export function BookingsSection({
             })
           }
         />
+
+        {/* Cancellation policy */}
+        <Pressable
+          style={[commonStyles.card, { gap: spacing.sm }]}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/cancellation-policy",
+              params: { id: listingId },
+            })
+          }
+        >
+          <Text style={commonStyles.itemTitle}>Cancellation Policy</Text>
+          <Text style={commonStyles.itemSubtext}>
+            {listing?.cancellationPolicyShortTerm
+              ? CANCELLATION_POLICY_SHORT_TERM_LABELS[
+                  listing.cancellationPolicyShortTerm
+                ]
+              : "Add details"}
+          </Text>
+        </Pressable>
 
         {/* Co-Hosts */}
         {canManageCoHosts && (

@@ -21,7 +21,7 @@ import { ensureValidToken } from "../services/session.service";
 import { commonStyles, spacing } from "../theme";
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const logoTall = require("../../assets/logo-tall.png");
+const logoTall = require("../../assets/logo-square.png");
 
 export default function UnlockScreen() {
   const { unlock } = useAuth();
@@ -72,7 +72,7 @@ export default function UnlockScreen() {
       <View style={commonStyles.securityContainer}>
         <Image
           source={logoTall}
-          style={[styles.logo, { width: logoWidth }]}
+          style={[styles.logo, { width: logoWidth, height: logoWidth }]}
           resizeMode="contain"
         />
         <Text style={commonStyles.securityTitle}>Welcome back</Text>
@@ -100,7 +100,6 @@ export default function UnlockScreen() {
 
 const styles = StyleSheet.create({
   logo: {
-    aspectRatio: 1,
     marginBottom: spacing.xl,
   },
   button: {

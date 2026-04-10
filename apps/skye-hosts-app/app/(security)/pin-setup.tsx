@@ -53,7 +53,7 @@ export default function PinSetupScreen() {
   });
 
   return (
-    <ScreenContainer>
+    <ScreenContainer avoidKeyboard>
       <View style={commonStyles.securityContainer}>
         <Text style={commonStyles.securityTitle}>
           {step === "enter" ? "Create a PIN" : "Confirm your PIN"}

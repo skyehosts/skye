@@ -1,5 +1,6 @@
 import Container from '@mui/material/Container';
 import { fetchApi, IGetListingResponseDto } from '@repo/skye-hosts-api-client';
+import { ListingDescriptionSection } from '@repo/web-components/listings/listing-description-section';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import type { Metadata } from 'next';
 
@@ -35,6 +36,12 @@ export default async function ListingPage({ params }: ListingPageProps) {
         bathrooms={listing.bathrooms}
         postCode={listing.postCode}
         images={listing.images}
+      />
+      <ListingDescriptionSection
+        description={listing.description}
+        descriptionLong={listing.descriptionLong}
+        guestAccess={listing.guestAccess}
+        otherDetailsToNote={listing.otherDetailsToNote}
       />
     </Container>
   );

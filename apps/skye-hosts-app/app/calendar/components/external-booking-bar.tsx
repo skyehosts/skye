@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { Dimensions, Pressable, StyleSheet, Text, View } from "react-native";
-import { Portal } from "react-native-paper";
+import { Pressable, StyleSheet, Text } from "react-native";
 import type { CalendarSyncPlatform } from "@repo/skye-hosts-api-client";
 import AirbnbLogo from "../../../assets/icons/airbnb-logo.svg";
 import BookingLogo from "../../../assets/icons/booking-logo.svg";
@@ -9,11 +8,8 @@ import { fontWeight } from "../../theme/font-weight";
 import { spacing } from "../../theme/spacing";
 import type { ExternalBlockSegment } from "../utils/booking-segments";
 import { getPlatformName } from "../utils/platform-helpers";
-import {
-  tooltipStyles,
-  TOOLTIP_MAX_WIDTH,
-  TOOLTIP_MARGIN,
-} from "./tooltip-styles";
+import { PositionedTooltip } from "./positioned-tooltip";
+import { tooltipStyles } from "./tooltip-styles";
 
 interface ExternalBookingBarProps {
   segment: ExternalBlockSegment;
@@ -87,6 +83,7 @@ function ExternalBookingBarInner({
     x: number;
     y: number;
     width: number;
+    height: number;
   } | null>(null);
 
   const leftTrim = segment.isStart ? CHECK_IN_MARGIN : 0;
@@ -119,8 +116,8 @@ function ExternalBookingBarInner({
           },
         ]}
         onLayout={(e) => {
-          e.target.measureInWindow((x, y, width) => {
-            setBarLayout({ x, y, width });
+          e.target.measureInWindow((x, y, width, height) => {
+            setBarLayout({ x, y, width, height });
           });
         }}
         onPress={() => setTooltipVisible(true)}
@@ -130,38 +127,18 @@ function ExternalBookingBarInner({
         )}
       </Pressable>
       {tooltipVisible && barLayout && (
-        <Portal>
-          <Pressable
-            style={tooltipStyles.backdrop}
-            onPress={() => setTooltipVisible(false)}
-          >
-            <View
-              style={[
-                tooltipStyles.tooltip,
-                {
-                  left: Math.max(
-                    TOOLTIP_MARGIN,
-                    Math.min(
-                      barLayout.x,
-                      Dimensions.get("window").width -
-                        TOOLTIP_MAX_WIDTH -
-                        TOOLTIP_MARGIN,
-                    ),
-                  ),
-                  top: barLayout.y - 80,
-                },
-              ]}
-            >
-              <Text style={tooltipStyles.title}>
-                Booked on {getPlatformName(segment.platform)}
-              </Text>
-              <Text style={tooltipStyles.text}>
-                {formatBlockDate(segment.startDate)} –{" "}
-                {formatBlockDate(segment.endDate)}
-              </Text>
-            </View>
-          </Pressable>
-        </Portal>
+        <PositionedTooltip
+          anchor={barLayout}
+          onClose={() => setTooltipVisible(false)}
+        >
+          <Text style={tooltipStyles.title}>
+            Booked on {getPlatformName(segment.platform)}
+          </Text>
+          <Text style={tooltipStyles.text}>
+            {formatBlockDate(segment.startDate)} –{" "}
+            {formatBlockDate(segment.endDate)}
+          </Text>
+        </PositionedTooltip>
       )}
     </>
   );

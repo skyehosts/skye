@@ -34,7 +34,10 @@ export function ListingLocationSection({
   return (
     <>
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
+        <Typography
+          variant="h5"
+          sx={{ mb: 2, fontWeight: 600, color: 'custom.grey950', fontSize: 22 }}
+        >
           Where you&apos;ll be
         </Typography>
 

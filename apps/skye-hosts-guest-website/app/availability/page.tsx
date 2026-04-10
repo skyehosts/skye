@@ -1,3 +1,4 @@
+import { PageContainer } from '@repo/web-components/layout/page-container';
 import {
   IAvailabilityResponseDto,
   fetchApi,
@@ -14,9 +15,9 @@ export default async function AvailabilityPage() {
   throw 'def';
 
   return (
-    <div>
+    <PageContainer>
       <h1>Availability</h1>
       <pre>{JSON.stringify(availability, null, 2)}</pre>
-    </div>
+    </PageContainer>
   );
 }

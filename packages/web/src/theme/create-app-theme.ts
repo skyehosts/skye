@@ -31,6 +31,9 @@ declare module "@mui/material/styles" {
       successGreen: string;
       rowanBerry: string;
       rowanBerryLight: string;
+      grey950: string;
+      iconDefault: string;
+      iconOnDark: string;
     };
   }
   interface PaletteOptions {
@@ -61,6 +64,9 @@ declare module "@mui/material/styles" {
       successGreen?: string;
       rowanBerry?: string;
       rowanBerryLight?: string;
+      grey950?: string;
+      iconDefault?: string;
+      iconOnDark?: string;
     };
   }
 }
@@ -97,10 +103,9 @@ export function createAppTheme({
   fontHeading,
   palette,
 }: AppThemeOptions) {
-  const base = createTheme();
-  const { up } = base.breakpoints;
+  const { up } = createTheme().breakpoints;
 
-  return createTheme(base, {
+  return createTheme({
     palette: {
       ...defaultPalette,
       ...palette,
@@ -192,6 +197,19 @@ export function createAppTheme({
       MuiTypography: {
         styleOverrides: {
           root: { fontStyle: "normal" },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: { textTransform: "none" as const },
+        },
+      },
+      MuiFormHelperText: {
+        styleOverrides: {
+          root: {
+            marginLeft: 0,
+            marginRight: 0,
+          },
         },
       },
     },

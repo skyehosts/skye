@@ -1,4 +1,5 @@
 import type {
+  CancellationPolicyShortTermId,
   HostInteractionId,
   ListingAccessibilityFeatureId,
   ListingAmenityId,
@@ -17,7 +18,6 @@ export interface IUpdateListingRequestDto {
   description?: string;
   descriptionLong?: string;
   guestAccess?: string;
-  interactionWithGuests?: string;
   otherDetailsToNote?: string;
   typeId?: ListingTypeId;
   spaceType?: ListingSpaceType;
@@ -69,4 +69,5 @@ export interface IUpdateListingRequestDto {
   minNights?: number;
   minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
   maxNights?: number | null;
+  cancellationPolicyShortTerm?: CancellationPolicyShortTermId;
 }

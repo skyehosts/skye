@@ -122,7 +122,6 @@ export interface BlockedDateInfo {
   source: CalendarBlockSource;
   platform: CalendarSyncPlatform | null;
   blockId: number;
-  calendarSyncId: number | null;
 }
 
 interface CalendarListProps {
@@ -193,7 +192,6 @@ export function CalendarList({
             ? (platformBySyncId?.get(block.calendarSyncId) ?? null)
             : null,
         blockId: block.id,
-        calendarSyncId: block.calendarSyncId,
       };
       // endDate is exclusive per iCal DTEND semantics
       for (const d of expandDateRange(block.startDate, block.endDate, false)) {
@@ -458,7 +456,12 @@ export function CalendarList({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <View style={[styles.weekdayRow, { paddingHorizontal: spacing.md }]}>
+      <View
+        style={[
+          styles.weekdayRow,
+          { paddingHorizontal: spacing.md, gap: CELL_GAP },
+        ]}
+      >
         {WEEKDAY_LABELS.map((label) => (
           <View key={label} style={[styles.weekdayCell, { width: CELL_SIZE }]}>
             <Text style={styles.weekdayText}>{label}</Text>

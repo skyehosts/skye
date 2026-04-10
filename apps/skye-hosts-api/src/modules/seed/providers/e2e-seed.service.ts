@@ -154,8 +154,8 @@ export class E2eSeedService {
     await bookingRepo.insert({
       listingId,
       guestId: guest.id,
-      checkInDate: '2026-04-01',
-      checkOutDate: '2026-04-03',
+      checkInDate: '2027-04-01',
+      checkOutDate: '2027-04-03',
       totalPrice: 250.0,
       status: 'confirmed',
       createdAt: now,

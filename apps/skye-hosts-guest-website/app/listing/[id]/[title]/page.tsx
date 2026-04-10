@@ -2,19 +2,24 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import {
   fetchApi,
+  type IGetAmenitiesResponseDto,
   type IGetListingResponseDto,
   type IToggleFavouriteResponseDto,
 } from '@repo/skye-hosts-api-client';
+import { ListingAmenitiesSection } from '@repo/web-components/listings/listing-amenities-section';
+import { ListingDescriptionSection } from '@repo/web-components/listings/listing-description-section';
 import { parseBookingSearchParams } from '@repo/web-components/listings/listing-guest-types';
 import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-images';
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { auth } from '../../../auth';
 import { BookNowButton } from './BookNowButton';
 import { BookingParamsSync } from './BookingParamsSync';
 import { ListingHeroWithFavourite } from './ListingHeroWithFavourite';
+import { ListingThingsToKnowWithDates } from './ListingThingsToKnowWithDates';
 
 interface ListingPageProps {
   params: Promise<{ id: string; title: string }>;
@@ -39,7 +44,10 @@ export default async function ListingPage({
 }: ListingPageProps) {
   const { id, title } = await params;
   const resolvedSearchParams = await searchParams;
-  const listing = await fetchApi<IGetListingResponseDto>(`/listing/${id}`);
+  const [listing, amenitiesData] = await Promise.all([
+    fetchApi<IGetListingResponseDto>(`/listing/${id}`),
+    fetchApi<IGetAmenitiesResponseDto>('/listing/amenities'),
+  ]);
   const session = await auth();
   const guestId = session?.user?.id ? Number(session.user.id) : null;
   const initialBookingParams = parseBookingSearchParams(resolvedSearchParams);
@@ -108,6 +116,19 @@ export default async function ListingPage({
               avatarUrl: listing.hostProfilePhotoUrl ?? undefined,
             }}
           />
+          <ListingDescriptionSection
+            description={listing.description}
+            descriptionLong={listing.descriptionLong}
+            guestAccess={listing.guestAccess}
+            otherDetailsToNote={listing.otherDetailsToNote}
+          />
+          <ListingAmenitiesSection
+            amenityIds={listing.amenities}
+            categories={amenitiesData.categories}
+          />
+          <Suspense>
+            <ListingThingsToKnowWithDates listing={listing} />
+          </Suspense>
           <ListingLocationSection
             approximateLatitude={listing.approximateLatitude}
             approximateLongitude={listing.approximateLongitude}

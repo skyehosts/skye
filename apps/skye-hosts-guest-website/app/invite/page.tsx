@@ -7,6 +7,7 @@ import {
   fetchApi,
   type IGetCoHostInviteDetailsResponseDto,
 } from '@repo/skye-hosts-api-client';
+import { PageContainer } from '@repo/web-components/layout/page-container';
 
 const ROLE_LABELS: Record<string, string> = {
   full_access: 'Full Access',
@@ -27,13 +28,15 @@ export default async function InvitePage({
 
   if (!token) {
     return (
-      <Box sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h5">Invalid invite link</Typography>
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          This invite link is missing a token. Please check the link and try
-          again.
-        </Typography>
-      </Box>
+      <PageContainer>
+        <Box sx={{ py: 8, textAlign: 'center' }}>
+          <Typography variant="h5">Invalid invite link</Typography>
+          <Typography color="text.secondary" sx={{ mt: 1 }}>
+            This invite link is missing a token. Please check the link and try
+            again.
+          </Typography>
+        </Box>
+      </PageContainer>
     );
   }
 
@@ -50,54 +53,58 @@ export default async function InvitePage({
 
   if (error || !invite) {
     return (
-      <Box sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h5">Invite not found</Typography>
-        <Typography color="text.secondary" sx={{ mt: 1 }}>
-          {error}
-        </Typography>
-      </Box>
+      <PageContainer>
+        <Box sx={{ py: 8, textAlign: 'center' }}>
+          <Typography variant="h5">Invite not found</Typography>
+          <Typography color="text.secondary" sx={{ mt: 1 }}>
+            {error}
+          </Typography>
+        </Box>
+      </PageContainer>
     );
   }
 
   return (
-    <Box
-      sx={{
-        py: 8,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <Paper sx={{ p: 4, maxWidth: 480, width: '100%' }}>
-        <Typography variant="h5" gutterBottom>
-          Co-Host Invite
-        </Typography>
-
-        <Typography color="text.secondary" sx={{ mb: 3 }}>
-          {invite.inviterName} has invited you to co-host{' '}
-          <strong>{invite.listingTitle}</strong> as{' '}
-          <strong>{ROLE_LABELS[invite.role] ?? invite.role}</strong>.
-        </Typography>
-
-        {invite.status !== 'pending' && (
-          <Typography color="text.secondary" sx={{ mb: 3 }}>
-            This invite has been {invite.status}.
+    <PageContainer>
+      <Box
+        sx={{
+          py: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Paper sx={{ p: 4, maxWidth: 480, width: '100%' }}>
+          <Typography variant="h5" gutterBottom>
+            Co-Host Invite
           </Typography>
-        )}
 
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          To accept this invite, open it in the {APP_DISPLAY_NAME} app.
-        </Typography>
+          <Typography color="text.secondary" sx={{ mb: 3 }}>
+            {invite.inviterName} has invited you to co-host{' '}
+            <strong>{invite.listingTitle}</strong> as{' '}
+            <strong>{ROLE_LABELS[invite.role] ?? invite.role}</strong>.
+          </Typography>
 
-        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-          <Button variant="contained" href={APP_STORE_URL}>
-            App Store
-          </Button>
-          <Button variant="outlined" href={PLAY_STORE_URL}>
-            Google Play
-          </Button>
-        </Box>
-      </Paper>
-    </Box>
+          {invite.status !== 'pending' && (
+            <Typography color="text.secondary" sx={{ mb: 3 }}>
+              This invite has been {invite.status}.
+            </Typography>
+          )}
+
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            To accept this invite, open it in the {APP_DISPLAY_NAME} app.
+          </Typography>
+
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+            <Button variant="contained" href={APP_STORE_URL}>
+              App Store
+            </Button>
+            <Button variant="outlined" href={PLAY_STORE_URL}>
+              Google Play
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+    </PageContainer>
   );
 }

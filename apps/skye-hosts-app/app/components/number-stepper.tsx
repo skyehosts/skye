@@ -25,6 +25,8 @@ export function NumberStepper({
           icon="minus"
           mode="outlined"
           size={18}
+          iconColor={colors.primary}
+          style={{ borderColor: colors.primary }}
           disabled={value <= min}
           onPress={() => onChange(Math.max(min, value - 1))}
         />
@@ -33,6 +35,8 @@ export function NumberStepper({
           icon="plus"
           mode="outlined"
           size={18}
+          iconColor={colors.primary}
+          style={{ borderColor: colors.primary }}
           disabled={max !== undefined && value >= max}
           onPress={() => onChange(value + 1)}
         />

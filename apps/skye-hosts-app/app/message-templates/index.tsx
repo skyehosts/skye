@@ -8,12 +8,13 @@ import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import { Appbar, Button, Card, Chip } from "react-native-paper";
+import { Appbar, Button, Chip, Icon } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
@@ -56,7 +57,7 @@ export default function MessageTemplatesScreen() {
         Object.fromEntries(listingsData.listings.map((l) => [l.id, l.title])),
       );
     } catch {
-      setError("Failed to load templates. Please try again.");
+      setError("Failed to load scheduled messages. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -72,7 +73,7 @@ export default function MessageTemplatesScreen() {
     <ScreenContainer>
       <Appbar.Header>
         <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title="Message templates" />
+        <Appbar.Content title="Scheduled messages" />
         <Appbar.Action
           icon="plus"
           onPress={() => router.push("/message-templates/new")}
@@ -96,16 +97,16 @@ export default function MessageTemplatesScreen() {
 
       {!isLoading && !error && templates.length === 0 && (
         <View style={commonStyles.centered}>
-          <Text style={commonStyles.emptyText}>No templates yet</Text>
+          <Text style={commonStyles.emptyText}>No scheduled messages yet</Text>
           <Text style={commonStyles.emptySubtext}>
-            Create a template to automatically message guests.
+            Create a scheduled message to automatically message guests.
           </Text>
           <Button
             mode="contained"
             style={styles.ctaButton}
             onPress={() => router.push("/message-templates/new")}
           >
-            Create template
+            Create scheduled message
           </Button>
         </View>
       )}
@@ -156,29 +157,48 @@ function TemplateCard({
   const extraListings = template.listingIds.length - 1;
 
   return (
-    <Card style={styles.card} onPress={onPress}>
-      <Card.Title title={template.name} />
-      <Card.Content>
-        <View style={styles.chipsRow}>
+    <Pressable style={[commonStyles.card, styles.card]} onPress={onPress}>
+      <View style={commonStyles.row}>
+        <View style={styles.cardBody}>
+          <Text style={commonStyles.itemTitle}>{template.name}</Text>
+
           {triggerLabel && (
-            <Chip compact style={styles.chip} textStyle={styles.chipText}>
-              {triggerLabel}
-            </Chip>
+            <View style={styles.metadataRow}>
+              <Text style={styles.label}>Sends on:</Text>
+              <Chip
+                compact
+                style={commonStyles.chip}
+                textStyle={styles.chipText}
+              >
+                {triggerLabel}
+              </Chip>
+            </View>
           )}
+
           {firstListingTitle && (
-            <Chip compact style={styles.chip} textStyle={styles.chipText}>
-              {truncate(firstListingTitle)}
-            </Chip>
-          )}
-          {extraListings > 0 && (
-            <Text style={styles.moreText}>
-              & {extraListings} more{" "}
-              {extraListings === 1 ? "listing" : "listings"}
-            </Text>
+            <View style={styles.metadataRow}>
+              <Text style={styles.label}>
+                {template.listingIds.length === 1 ? "Listing:" : "Listings:"}
+              </Text>
+              <Chip
+                compact
+                style={commonStyles.chip}
+                textStyle={styles.chipText}
+              >
+                {truncate(firstListingTitle)}
+              </Chip>
+              {extraListings > 0 && (
+                <Text style={styles.moreText}>
+                  + {extraListings} {extraListings === 1 ? "other" : "others"}
+                </Text>
+              )}
+            </View>
           )}
         </View>
-      </Card.Content>
-    </Card>
+
+        <Icon source="chevron-right" size={20} color={colors.icon} />
+      </View>
+    </Pressable>
   );
 }
 
@@ -192,14 +212,19 @@ const styles = StyleSheet.create({
   card: {
     marginBottom: spacing.md,
   },
-  chipsRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    alignItems: "center",
+  cardBody: {
+    flex: 1,
     gap: spacing.xs,
   },
-  chip: {
-    backgroundColor: colors.border,
+  metadataRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: spacing.xs,
+  },
+  label: {
+    fontSize: typography.sm,
+    color: colors.textSecondary,
   },
   chipText: {
     fontSize: typography.sm,

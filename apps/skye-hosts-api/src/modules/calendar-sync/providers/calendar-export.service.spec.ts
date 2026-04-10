@@ -7,6 +7,7 @@ import { CalendarExportService } from './calendar-export.service';
 
 const makeSyncRepo = () => ({
   findOne: jest.fn(),
+  update: jest.fn(),
 });
 
 const makeBlockRepo = () => ({
@@ -63,7 +64,6 @@ describe('CalendarExportService', () => {
     id: 1,
     listingId: 10,
     exportToken: 'test-token-123',
-    isExportEnabled: true,
   };
 
   const mockListing = {
@@ -75,17 +75,6 @@ describe('CalendarExportService', () => {
     calendarSyncRepo.findOne.mockResolvedValue(null);
 
     const result = await service.generateIcal('nonexistent');
-
-    expect(result).toBeNull();
-  });
-
-  it('should return null when export is disabled', async () => {
-    calendarSyncRepo.findOne.mockResolvedValue({
-      ...mockSync,
-      isExportEnabled: false,
-    });
-
-    const result = await service.generateIcal('test-token-123');
 
     expect(result).toBeNull();
   });
@@ -192,6 +181,28 @@ describe('CalendarExportService', () => {
     const [opts] = calendarBlockRepo.find.mock.calls[0];
     expect(opts.where.source).toBe('import');
     expect(opts.where.listingId).toBe(10);
+  });
+
+  it('should record lastExportedAt after a successful export', async () => {
+    calendarSyncRepo.findOne.mockResolvedValue(mockSync);
+    listingRepo.findOne.mockResolvedValue(mockListing);
+    bookingRepo.find.mockResolvedValue([]);
+    calendarBlockRepo.find.mockResolvedValue([]);
+
+    await service.generateIcal('test-token-123');
+
+    expect(calendarSyncRepo.update).toHaveBeenCalledWith(
+      mockSync.id,
+      expect.objectContaining({ lastExportedAt: expect.any(Date) }),
+    );
+  });
+
+  it('should not record lastExportedAt when sync is not found', async () => {
+    calendarSyncRepo.findOne.mockResolvedValue(null);
+
+    await service.generateIcal('nonexistent');
+
+    expect(calendarSyncRepo.update).not.toHaveBeenCalled();
   });
 
   it('should use CRLF line endings per RFC 5545', async () => {

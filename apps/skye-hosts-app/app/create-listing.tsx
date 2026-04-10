@@ -1,13 +1,14 @@
 import { useFocusEffect, useRouter } from "expo-router";
 import { useCallback, useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Appbar, Button, Card } from "react-native-paper";
+import { Appbar, Button, Card, IconButton } from "react-native-paper";
 import { ScreenContainer } from "./components/screen-container";
 import {
   generateDraftId,
@@ -107,6 +108,25 @@ export default function EditListingsScreen() {
     router.push("/create-new-listing");
   };
 
+  const handleDeleteDraft = (draft: CreateListingDraft) => {
+    Alert.alert(
+      "Delete draft",
+      `Are you sure you want to delete "${getDraftDisplayTitle(draft)}"? This cannot be undone.`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            const updated = drafts.filter((d) => d.id !== draft.id);
+            await StorageService.setItem(StorageKeys.LISTING_DRAFTS, updated);
+            setDrafts(updated);
+          },
+        },
+      ],
+    );
+  };
+
   const handleResumeDraft = (draft: CreateListingDraft) => {
     setPendingDraftId(draft.id);
 
@@ -152,6 +172,16 @@ export default function EditListingsScreen() {
                 <Card.Title
                   title={getDraftDisplayTitle(d)}
                   subtitle={formatFriendlyDate(d.updatedAt)}
+                  right={() => (
+                    <IconButton
+                      icon="trash-can-outline"
+                      iconColor={colors.danger}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        handleDeleteDraft(d);
+                      }}
+                    />
+                  )}
                 />
               </Card>
             </TouchableOpacity>

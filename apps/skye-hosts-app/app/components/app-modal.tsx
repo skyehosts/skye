@@ -19,7 +19,7 @@ export function AppModal({ visible, onDismiss, children }: AppModalProps) {
         contentContainerStyle={commonStyles.modal}
       >
         <Pressable style={styles.closeButton} onPress={onDismiss} hitSlop={8}>
-          <Ionicons name="close" size={22} color={colors.textSecondary} />
+          <Ionicons name="close" size={22} color={colors.iconMuted} />
         </Pressable>
         {children}
       </Modal>

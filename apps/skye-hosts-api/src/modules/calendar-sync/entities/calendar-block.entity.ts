@@ -45,7 +45,7 @@ export class CalendarBlock {
   @UpdateDateColumn({ type: 'timestamp with time zone' })
   updatedAt: Date;
 
-  @ManyToOne(() => CalendarSync, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => CalendarSync, { onDelete: 'CASCADE', nullable: true })
   @JoinColumn({ name: 'calendarSyncId' })
   calendarSync: CalendarSync | null;
 }

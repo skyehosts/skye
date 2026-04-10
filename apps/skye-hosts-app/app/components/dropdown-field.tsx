@@ -38,11 +38,7 @@ export function DropdownField<T extends string>({
             <Text style={styles.triggerText} numberOfLines={1}>
               {selectedLabel}
             </Text>
-            <Ionicons
-              name="chevron-down"
-              size={18}
-              color={colors.textSecondary}
-            />
+            <Ionicons name="chevron-down" size={18} color={colors.icon} />
           </Pressable>
         }
         anchorPosition="bottom"

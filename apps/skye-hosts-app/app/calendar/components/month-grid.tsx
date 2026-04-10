@@ -79,13 +79,11 @@ function MonthGridInner({
   const [tooltipState, setTooltipState] = useState<{
     dateString: string;
     infos: BlockedDateInfo[];
-    x: number;
-    y: number;
+    anchor: { x: number; y: number; width: number; height: number };
   } | null>(null);
   const [restrictedTooltip, setRestrictedTooltip] = useState<{
     dateString: string;
-    x: number;
-    y: number;
+    anchor: { x: number; y: number; width: number; height: number };
   } | null>(null);
 
   const containerRef = useRef<View>(null);
@@ -118,16 +116,21 @@ function MonthGridInner({
     return map;
   }, [blocks, platformBySyncId, data]);
 
-  const measureTooltipPosition = useCallback(
+  const measureCellAnchor = useCallback(
     (
       dayIndex: number,
       weekIndex: number,
-      callback: (pos: { x: number; y: number }) => void,
+      callback: (anchor: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      }) => void,
     ) => {
-      const x = dayIndex * (cellSize + cellGap) + spacing.md;
-      containerRef.current?.measureInWindow((_cx, cy) => {
-        const yOffset = MONTH_LABEL_HEIGHT + weekIndex * (cellHeight + cellGap);
-        callback({ x, y: cy + yOffset + cellHeight });
+      containerRef.current?.measureInWindow((cx, cy) => {
+        const x = cx + spacing.md + dayIndex * (cellSize + cellGap);
+        const y = cy + MONTH_LABEL_HEIGHT + weekIndex * (cellHeight + cellGap);
+        callback({ x, y, width: cellSize, height: cellHeight });
       });
     },
     [cellSize, cellGap, cellHeight],
@@ -137,20 +140,20 @@ function MonthGridInner({
     (dateString: string, dayIndex: number, weekIndex: number) => {
       const infos = blockedDateInfo?.get(dateString);
       if (infos?.length) {
-        measureTooltipPosition(dayIndex, weekIndex, ({ x, y }) =>
-          setTooltipState({ dateString, infos, x, y }),
+        measureCellAnchor(dayIndex, weekIndex, (anchor) =>
+          setTooltipState({ dateString, infos, anchor }),
         );
         return;
       }
       if (restrictedDates?.has(dateString)) {
-        measureTooltipPosition(dayIndex, weekIndex, ({ x, y }) =>
-          setRestrictedTooltip({ dateString, x, y }),
+        measureCellAnchor(dayIndex, weekIndex, (anchor) =>
+          setRestrictedTooltip({ dateString, anchor }),
         );
         return;
       }
       onDayPress?.(dateString);
     },
-    [blockedDateInfo, restrictedDates, measureTooltipPosition, onDayPress],
+    [blockedDateInfo, restrictedDates, measureCellAnchor, onDayPress],
   );
 
   return (
@@ -233,7 +236,7 @@ function MonthGridInner({
         <BlockedDateTooltip
           infos={tooltipState.infos}
           dateString={tooltipState.dateString}
-          position={{ x: tooltipState.x, y: tooltipState.y }}
+          anchor={tooltipState.anchor}
           onClose={() => setTooltipState(null)}
           onReloadData={onReloadData}
         />
@@ -242,7 +245,7 @@ function MonthGridInner({
         <RestrictedDateTooltip
           dateString={restrictedTooltip.dateString}
           minNights={minNightsProp ?? 1}
-          position={{ x: restrictedTooltip.x, y: restrictedTooltip.y }}
+          anchor={restrictedTooltip.anchor}
           onClose={() => setRestrictedTooltip(null)}
         />
       )}

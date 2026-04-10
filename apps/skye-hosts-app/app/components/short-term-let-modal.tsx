@@ -43,7 +43,7 @@ export function ShortTermLetModal({
         <View style={commonStyles.row}>
           <Text style={commonStyles.modalTitle}>Local laws in Scotland</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 

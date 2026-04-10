@@ -70,8 +70,9 @@ export function ListingHeroSection({
           component="h1"
           sx={{
             fontWeight: 600,
+            fontSize: 26,
             display: { xs: 'block', md: 'none' },
-            color: 'custom.seaGlassTeal',
+            color: 'custom.grey950',
           }}
         >
           {title}
@@ -121,7 +122,7 @@ export function ListingHeroSection({
               />
               <Typography
                 variant="body1"
-                sx={{ fontWeight: 600, color: 'custom.seaGlassTeal' }}
+                sx={{ fontWeight: 600, color: 'custom.grey950' }}
               >
                 Hosted by {hostInfo.name}
               </Typography>

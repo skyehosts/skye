@@ -72,7 +72,7 @@ export function FormInputModal({
         <View style={commonStyles.row}>
           <Text style={commonStyles.modalTitle}>{title}</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 

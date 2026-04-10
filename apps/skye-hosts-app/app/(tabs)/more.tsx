@@ -6,6 +6,7 @@ import { AppModal } from "../components/app-modal";
 import { MenuItem } from "../components/menu-item";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
+import { env } from "../services/env";
 import {
   colors,
   commonStyles,
@@ -58,12 +59,17 @@ export default function MoreScreen() {
         />
       </View>
 
-      {__DEV__ && (
+      {(__DEV__ || env.showDevMenu) && (
         <View style={commonStyles.menuSection}>
           <MenuItem
+            icon="palette-outline"
+            label="Style Guide"
+            onPress={() => router.push("/style-guide")}
+          />
+          <MenuItem
             icon="flask-outline"
-            label="Demo"
-            onPress={() => router.push("/demo-info-boxes")}
+            label="Demo Form"
+            onPress={() => router.push("/demo-form")}
           />
         </View>
       )}
@@ -94,9 +100,9 @@ export default function MoreScreen() {
             Cancel
           </Button>
           <Button
-            mode="contained"
+            mode="outlined"
             onPress={signOut}
-            buttonColor={colors.danger}
+            textColor={colors.danger}
             style={styles.modalButton}
           >
             Sign out

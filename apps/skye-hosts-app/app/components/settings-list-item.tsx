@@ -21,7 +21,7 @@ export function SettingsListItem({
 }: SettingsListItemProps) {
   return (
     <TouchableOpacity style={commonStyles.menuItem} onPress={onPress}>
-      <Icon source={icon} size={22} color={colors.textSecondary} />
+      <Icon source={icon} size={22} color={colors.icon} />
       <View style={commonStyles.menuItemText}>
         <Text style={commonStyles.itemTitle}>{label}</Text>
         {value && <Text style={commonStyles.itemSubtext}>{value}</Text>}
@@ -32,7 +32,7 @@ export function SettingsListItem({
       {actionText ? (
         <Text style={commonStyles.menuItemAction}>{actionText}</Text>
       ) : (
-        <Icon source="chevron-right" size={22} color={colors.textSecondary} />
+        <Icon source="chevron-right" size={22} color={colors.icon} />
       )}
     </TouchableOpacity>
   );

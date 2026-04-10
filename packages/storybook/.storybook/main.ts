@@ -25,6 +25,14 @@ const config: StorybookConfig = {
       ),
       "@repo/common": path.resolve(__dirname, "../../common/src/index.ts"),
       "@repo/theme": path.resolve(__dirname, "../../theme/src/index.ts"),
+      "@repo/web/create-app-theme": path.resolve(
+        __dirname,
+        "../../web/src/theme/create-app-theme.ts",
+      ),
+      "@repo/web/highland-theme": path.resolve(
+        __dirname,
+        "../../web/src/theme/highland-theme.ts",
+      ),
     };
     return config;
   },

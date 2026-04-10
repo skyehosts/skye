@@ -11,8 +11,9 @@ import type {
   IDemoFormRequestDto,
   IDemoFormResponseDto,
 } from "../../../packages/skye-hosts-api-client/src";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, StyleSheet, View } from "react-native";
 import {
@@ -88,6 +89,11 @@ export default function DemoScreen() {
   const category = watch("category");
   const priority = watch("priority");
   const subscribe = watch("subscribe");
+
+  useEffect(() => {
+    const extra = Constants.expoConfig?.extra ?? {};
+    console.debug("[demo] env vars:", JSON.stringify(extra, null, 2));
+  }, []);
 
   const onSubmit = async (data: DemoFormValues) => {
     setServerError("");

@@ -4,8 +4,9 @@ import type {
 } from "../../../../packages/skye-hosts-api-client/src";
 import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Button, IconButton, Modal, Portal } from "react-native-paper";
+import { IconButton, Modal, Portal } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
+import { ActionBar } from "../components/action-bar";
 import { AppSnackbar } from "../components/app-snackbar";
 import { fetchApi } from "../services/api";
 import {
@@ -65,7 +66,7 @@ export function GuestsModal({
         <View style={commonStyles.row}>
           <Text style={commonStyles.modalTitle}>Edit guests</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
-            <Ionicons name="close" size={22} color={colors.textSecondary} />
+            <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 
@@ -78,6 +79,8 @@ export function GuestsModal({
             icon="minus"
             mode="outlined"
             size={22}
+            iconColor={colors.primary}
+            style={{ borderColor: colors.primary }}
             disabled={maxGuests <= 1}
             onPress={() => setMaxGuests((v) => Math.max(1, v - 1))}
           />
@@ -86,25 +89,18 @@ export function GuestsModal({
             icon="plus"
             mode="outlined"
             size={22}
+            iconColor={colors.primary}
+            style={{ borderColor: colors.primary }}
             onPress={() => setMaxGuests((v) => v + 1)}
           />
         </View>
 
-        <View style={commonStyles.divider} />
-
-        <View style={commonStyles.row}>
-          <Button mode="text" onPress={onDismiss} disabled={saving}>
-            Cancel
-          </Button>
-          <Button
-            mode="contained"
-            onPress={handleSave}
-            loading={saving}
-            disabled={saving}
-          >
-            Save
-          </Button>
-        </View>
+        <ActionBar
+          onCancel={onDismiss}
+          onSave={handleSave}
+          loading={saving}
+          showDivider
+        />
       </Modal>
       <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </Portal>

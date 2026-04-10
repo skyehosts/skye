@@ -1,4 +1,5 @@
 import type {
+  CancellationPolicyShortTermId,
   HostInteractionId,
   IGetListingResponseDto,
   IListingImageDto,
@@ -20,7 +21,6 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   description: string;
   descriptionLong: string;
   guestAccess: string;
-  interactionWithGuests: string;
   otherDetailsToNote: string;
   typeId: ListingTypeId;
   spaceType: ListingSpaceType;
@@ -78,6 +78,7 @@ export class GetListingResponseDto implements IGetListingResponseDto {
   maxNights: number | null;
   status: ListingStatus;
   shortTermLetLicenseConfirmed: boolean;
+  cancellationPolicyShortTerm: CancellationPolicyShortTermId;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -2,6 +2,7 @@
 
 ## General guide
 
+- **This project is pre-production.** There is no live data or live users. Destructive DB changes (non-nullable columns, dropping data, deleting rows) are fine — no need to treat them as risky.
 - Always run pnpm lint and pnpm build after making changes and fix issues if present.
 - Then run pnpm format
 - After you do things, if there are steps I need to take like adding env vars etc, create a new file in /docs/user-todos/x.md
@@ -211,6 +212,34 @@ export default async function DemoPage() {
 - Any bespoke, non-trivial components created should be added to packages/ui and and then referenced in storybook
 - When a component in packages/ui is updated, it's reference should also be updated in storybook (where appropriate)
 
+## Guide for: Icon & colour conventions
+
+Canonical reference: `apps/skye-hosts-app/app/style-guide.tsx` — live examples of every color pattern (buttons, icons, cards, chips, links, info boxes, steppers). Accessible from the Menu page in dev builds.
+
+Every icon colour has a specific use-case. Do not mix them.
+
+| Use-case                      | Token (`colors.___`) | Palette value                 | When to use                                                                                                                 |
+| ----------------------------- | -------------------- | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Clickable / interactive icons | `icon`               | `deepSkyeBlue` (#1F3F4A)      | Chevrons in pressable rows, menu icons, add-photo, clickable tooltip triggers, any icon inside a Pressable/TouchableOpacity |
+| Purely decorative icons       | `iconDecorative`     | `seaGlassTeal` (#4F8C8D)      | Non-interactive decorative icons (rare — most icons are interactive; use `icon` by default)                                 |
+| Selected / active state       | `primary`            | `deepSkyeBlue` (#1F3F4A)      | Selected selection-card icon, contained button icons                                                                        |
+| Selected card background      | `primaryLight`       | `deepSkyeBlueLight` (#E0EDF0) | Background fill for selected cards in create/edit listing journey                                                           |
+| Active bottom tab             | `primary`            | `deepSkyeBlue` (#1F3F4A)      | Bottom navigation bar active icon                                                                                           |
+| Inactive bottom tab           | `iconInactive`       | `grey600` (#666666)           | Bottom navigation bar inactive icon                                                                                         |
+| Modal close / dismiss         | `iconMuted`          | `grey600` (#666666)           | Close (×) buttons on modals/sheets — intentionally muted                                                                    |
+| Info icons                    | `heatherPurple`      | `heatherPurple` (#8B6FAF)     | Info-box info variant, help-circle-outline tooltips                                                                         |
+| Warning icons                 | `warning`            | `autumnBracken` (#FF9500)     | Info-box warning variant, alert-outline                                                                                     |
+| Error / danger icons          | `danger`             | `rowanBerryLight` (#D4837A)   | Info-box error variant, delete/remove actions                                                                               |
+| Icons on dark backgrounds     | `iconOnDark`         | `warmStone` (#C8BFAE)         | Any icon rendered on a dark background                                                                                      |
+
+**Rules:**
+
+- Never use `textSecondary` for icon colours — use `icon` (deepSkyeBlue) for interactive icons, `iconMuted` for dismiss.
+- Never use `textPrimary` for selected icon states — use `primary` (deepSkyeBlue).
+- Button-embedded icons (via react-native-paper `<Button icon={...}>`) inherit colour from the button variant — do not override.
+- Info-box backgrounds must pair with their icon colour: `heatherPurpleLight` for info, `autumnBrackenLight` for warning, `rowanBerryPale` for error.
+- Info boxes should use their default variant icon unless a custom icon meaningfully improves guidance (e.g. `gesture-swipe` to hint at a swipe interaction). Don't override the icon just for decoration.
+
 ## Guide for: Styling in skye-hosts-app
 
 - **Never hardcode colors, spacing, or font sizes** — always import tokens from `app/theme/`.
@@ -249,11 +278,11 @@ export default async function DemoPage() {
 - Should send HTTP requests to apps/skye-hosts-api (Not Nextjs API routes)
 - Always use `applyServerErrors` from `@repo/ui/forms/apply-server-errors` in the catch block to map API validation errors onto fields. See canonical examples:
   - Web: `packages/ui/src/auth/sign-up-form.tsx`
-  - Native (host app): `apps/skye-hosts-app/app/demo.tsx` — full demo form posting to `POST /demo/form`
+  - Native (host app): `apps/skye-hosts-app/app/demo-form.tsx` — full demo form posting to `POST /demo/form`
 
 #### React Native form pattern (skye-hosts-app)
 
-Canonical reference: `apps/skye-hosts-app/app/demo.tsx`. Every form with text inputs MUST follow this pattern:
+Canonical reference: `apps/skye-hosts-app/app/demo-form.tsx`. Every form with text inputs MUST follow this pattern:
 
 1. **`useForm` + `Controller`** — wrap every text input in `<Controller control={control} name="fieldName" rules={{...}} render={...} />`. Never use `setValue`/`watch`/`register` for text fields — always use `Controller`.
 2. **`rules` on Controller** — add frontend validation (required, pattern, minLength, etc.) directly on the `Controller` `rules` prop. Use `pattern` with regex for emails: `{ value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Enter a valid email address" }`.

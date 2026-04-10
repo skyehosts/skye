@@ -16,5 +16,8 @@ export const theme = {
     background: colors.background,
     primary: colors.primary,
     secondary: colors.secondary,
+    secondaryContainer: colors.primaryLight,
+    onSecondaryContainer: colors.primary,
+    outline: colors.border,
   },
 };

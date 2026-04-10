@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as Sentry from '@sentry/nestjs';
-import { DataSource, In, IsNull, Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { CalendarBlock, CalendarSync } from '../entities';
 import {
   IcalParserService,
@@ -59,7 +59,6 @@ export class CalendarImportService {
         return sync;
       }
 
-      await this.adoptOrphanedBlocks(sync.id, sync.listingId, events);
       await this.reconcileBlocks(sync.id, sync.listingId, events);
 
       sync.lastImportAt = new Date();
@@ -95,7 +94,6 @@ export class CalendarImportService {
         );
 
         if (sync.consecutiveFailures >= MAX_CONSECUTIVE_FAILURES) {
-          sync.isImportEnabled = false;
           this.logger.error(
             `Auto-disabled import for sync ${sync.id} after ${MAX_CONSECUTIVE_FAILURES} consecutive permanent failures`,
           );
@@ -124,7 +122,6 @@ export class CalendarImportService {
       lastImportError: sync.lastImportError,
       lastImportEventCount: sync.lastImportEventCount,
       consecutiveFailures: sync.consecutiveFailures,
-      isImportEnabled: sync.isImportEnabled,
     });
 
     return sync;
@@ -186,57 +183,6 @@ export class CalendarImportService {
     } finally {
       clearTimeout(timeout);
     }
-  }
-
-  /**
-   * Re-assigns orphaned import blocks (calendarSyncId = null) that match
-   * incoming events to the new sync. This prevents duplicate blocks when a
-   * host deletes a sync with "Remove sync only" and then re-imports the same
-   * calendar under a new sync record.
-   */
-  private async adoptOrphanedBlocks(
-    calendarSyncId: number,
-    listingId: number,
-    events: ParsedCalendarEvent[],
-  ): Promise<void> {
-    const uids = events.map((e) => e.uid);
-
-    if (VERBOSE_LOGGING)
-      this.logger.debug(
-        `[adoptOrphanedBlocks] sync=${calendarSyncId} listing=${listingId} incomingEvents=${events.length} uids=${JSON.stringify(uids)}`,
-      );
-
-    if (uids.length === 0) {
-      if (VERBOSE_LOGGING)
-        this.logger.debug(
-          `[adoptOrphanedBlocks] sync=${calendarSyncId} — skipping, no incoming events`,
-        );
-      return;
-    }
-
-    // Log how many orphaned blocks exist before adoption
-    const orphanedCount = await this.calendarBlockRepo.count({
-      where: { listingId, calendarSyncId: IsNull(), source: 'import' },
-    });
-    if (VERBOSE_LOGGING)
-      this.logger.debug(
-        `[adoptOrphanedBlocks] sync=${calendarSyncId} listing=${listingId} orphanedBlocksFound=${orphanedCount}`,
-      );
-
-    const result = await this.calendarBlockRepo.update(
-      {
-        listingId,
-        calendarSyncId: IsNull() as unknown as number,
-        source: 'import',
-        externalUid: In(uids),
-      },
-      { calendarSyncId },
-    );
-
-    if (VERBOSE_LOGGING)
-      this.logger.debug(
-        `[adoptOrphanedBlocks] sync=${calendarSyncId} listing=${listingId} blocksAdopted=${result.affected ?? 0}`,
-      );
   }
 
   private async reconcileBlocks(
