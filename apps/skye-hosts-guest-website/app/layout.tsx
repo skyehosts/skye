@@ -6,7 +6,7 @@ import { StorageProvider } from '@repo/web-components/storage/storage-provider';
 import { CookieDisclaimerWrapper } from '@repo/web/cookie-disclaimer-wrapper';
 import { AuthSessionProvider } from '@repo/web/session-provider';
 import type { Metadata } from 'next';
-import { Montserrat, Open_Sans } from 'next/font/google';
+import { Lora, Open_Sans } from 'next/font/google';
 import { auth } from './auth';
 import { FooterWrapper } from './components/footer-wrapper';
 import { HeaderWrapper } from './components/header-wrapper';
@@ -18,9 +18,9 @@ const openSans = Open_Sans({
   variable: '--font-open-sans',
 });
 
-const montserrat = Montserrat({
+const lora = Lora({
   subsets: ['latin'],
-  variable: '--font-montserrat',
+  variable: '--font-lora',
 });
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default async function RootLayout({
   const session = await auth();
 
   return (
-    <html lang="en" className={`${openSans.variable} ${montserrat.variable}`}>
+    <html lang="en" className={`${openSans.variable} ${lora.variable}`}>
       <body>
         <MuiProvider>
           <AppThemeProvider>

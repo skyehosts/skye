@@ -10,7 +10,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
     () =>
       createHighlandTheme({
         body: 'var(--font-open-sans), sans-serif',
-        heading: 'var(--font-montserrat), sans-serif',
+        heading: 'var(--font-lora), serif',
       }),
     [],
   );

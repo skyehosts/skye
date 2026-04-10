@@ -3,6 +3,12 @@
 import { createTheme, type PaletteOptions } from "@mui/material/styles";
 
 declare module "@mui/material/styles" {
+  interface TypographyVariants {
+    fontFamilyHeading: string;
+  }
+  interface TypographyVariantsOptions {
+    fontFamilyHeading?: string;
+  }
   interface Palette {
     brand: {
       primary: string;
@@ -119,6 +125,7 @@ export function createAppTheme({
     },
     typography: {
       fontFamily: fontBody,
+      fontFamilyHeading: fontHeading,
       h1: {
         fontFamily: fontHeading,
         fontStyle: "normal",
@@ -201,7 +208,7 @@ export function createAppTheme({
       },
       MuiButton: {
         styleOverrides: {
-          root: { textTransform: "none" as const },
+          root: { textTransform: "none" as const, fontFamily: fontHeading },
         },
       },
       MuiFormHelperText: {

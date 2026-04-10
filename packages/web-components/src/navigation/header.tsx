@@ -20,6 +20,8 @@ import {
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
+import { CONTENT_MAX_WIDTH, contentPaddingX } from '../layout/layout-constants';
+
 export interface HeaderLink {
   label: string;
   href: string;
@@ -56,7 +58,7 @@ const navLinkSx = (
       ? theme.palette.header.linkTextHover
       : theme.palette.header.linkText,
     fontSize: '1rem',
-    fontFamily: theme.typography.fontFamily,
+    fontFamily: (theme.typography.h1 as { fontFamily?: string }).fontFamily,
     fontWeight: 500,
     px: 1.5,
     position: 'relative',
@@ -113,7 +115,16 @@ export function Header({
       elevation={0}
       sx={{ bgcolor: 'header.background' }}
     >
-      <Toolbar disableGutters sx={{ px: 2, alignItems: 'stretch' }}>
+      <Toolbar
+        disableGutters
+        sx={{
+          px: contentPaddingX,
+          alignItems: 'stretch',
+          maxWidth: CONTENT_MAX_WIDTH,
+          mx: 'auto',
+          width: '100%',
+        }}
+      >
         <Link
           href={logoHref}
           sx={{
@@ -258,7 +269,18 @@ export function Header({
                   href={link.href}
                   onClick={handleDrawerToggle}
                 >
-                  <ListItemText primary={link.label} />
+                  <ListItemText
+                    primary={link.label}
+                    slotProps={{
+                      primary: {
+                        sx: (theme: import('@mui/material/styles').Theme) => ({
+                          fontFamily: (
+                            theme.typography.h1 as { fontFamily?: string }
+                          ).fontFamily,
+                        }),
+                      },
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -276,7 +298,20 @@ export function Header({
                       onLogout?.();
                     }}
                   >
-                    <ListItemText primary="Log out" />
+                    <ListItemText
+                      primary="Log out"
+                      slotProps={{
+                        primary: {
+                          sx: (
+                            theme: import('@mui/material/styles').Theme,
+                          ) => ({
+                            fontFamily: (
+                              theme.typography.h1 as { fontFamily?: string }
+                            ).fontFamily,
+                          }),
+                        },
+                      }}
+                    />
                   </ListItemButton>
                 </ListItem>
               )

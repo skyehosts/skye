@@ -1,6 +1,8 @@
 import Container from '@mui/material/Container';
 import type { ReactNode } from 'react';
 
+import { contentPaddingX } from './layout-constants';
+
 interface PageContainerProps {
   children: ReactNode;
   /** Max content width in px. Defaults to 1120 to match the listing detail page. */
@@ -29,7 +31,7 @@ export function PageContainer({
       maxWidth={false}
       sx={{
         maxWidth,
-        px: { xs: 2, sm: 3 },
+        px: contentPaddingX,
         pt: disableTopPadding ? 0 : { xs: 2, sm: 3 },
         pb: { xs: 4, sm: 6 },
       }}
