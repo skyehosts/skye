@@ -86,66 +86,68 @@ export function CalendarSyncColumns({
       )}
       {/* Import section */}
       <View style={styles.section}>
-        <Text style={styles.heading}>Import</Text>
-        <View style={styles.importColumn}>
+        <View style={styles.headingRow}>
+          <Text style={styles.heading}>Import:</Text>
           <Text style={styles.value}>
             {sync.lastImportAt
               ? `Imported ${formatRelativeTime(sync.lastImportAt)}`
               : `${platformLabel} hasn${"\u2019"}t synced yet`}
           </Text>
-          {showImportButton && (
-            <>
-              <Button
-                mode="outlined"
-                compact
-                onPress={() => onTriggerImport(sync.id)}
-                loading={importBusy}
-                disabled={importBusy}
-                icon="download"
-              >
-                Import now
-              </Button>
-              <Pressable
-                style={commonStyles.helpLink}
-                onPress={() => showTooltipFor(importAnchor, importTooltipText)}
-              >
-                <View ref={importAnchor}>
-                  <Icon
-                    source="help-circle-outline"
-                    size={16}
-                    color={colors.heatherPurple}
-                  />
-                </View>
-                <Text style={commonStyles.helpLinkText}>
-                  What{"\u2019"}s this?
-                </Text>
-              </Pressable>
-            </>
-          )}
         </View>
+        {showImportButton && (
+          <View style={styles.importActionsRow}>
+            <Button
+              mode="outlined"
+              compact
+              onPress={() => onTriggerImport(sync.id)}
+              loading={importBusy}
+              disabled={importBusy}
+              icon="download"
+            >
+              Import now
+            </Button>
+            <Pressable
+              style={commonStyles.helpLink}
+              onPress={() => showTooltipFor(importAnchor, importTooltipText)}
+            >
+              <View ref={importAnchor}>
+                <Icon
+                  source="help-circle-outline"
+                  size={16}
+                  color={colors.heatherPurple}
+                />
+              </View>
+              <Text style={commonStyles.helpLinkText}>
+                What{"\u2019"}s this?
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
 
       <View style={styles.divider} />
 
       {/* Export section */}
       <View style={styles.section}>
-        <Text style={styles.heading}>Export</Text>
-        {exportValueText && (
-          <View style={styles.exportValueRow}>
-            <Text style={styles.value}>{exportValueText}</Text>
-            <Pressable
-              onPress={() => showTooltipFor(exportAnchor, exportTooltipText)}
-            >
-              <View ref={exportAnchor}>
-                <Icon
-                  source="information-outline"
-                  size={18}
-                  color={colors.icon}
-                />
-              </View>
-            </Pressable>
-          </View>
-        )}
+        <View style={styles.headingRow}>
+          <Text style={styles.heading}>Export:</Text>
+          {exportValueText && (
+            <>
+              <Text style={styles.value}>{exportValueText}</Text>
+              <Pressable
+                onPress={() => showTooltipFor(exportAnchor, exportTooltipText)}
+              >
+                <View ref={exportAnchor}>
+                  <Icon
+                    source="information-outline"
+                    size={18}
+                    color={colors.icon}
+                  />
+                </View>
+              </Pressable>
+            </>
+          )}
+        </View>
         {exportState === "overdue" && (
           <View style={styles.warningWrapper}>
             <InfoBox variant="warning">
@@ -217,12 +219,13 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
   },
-  exportValueRow: {
+  headingRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
   },
-  importColumn: {
+  importActionsRow: {
+    flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
   },
