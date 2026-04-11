@@ -396,6 +396,21 @@ export const commonStyles = StyleSheet.create({
     borderColor: colors.background,
   },
 
+  /* ── Coming soon badge ──────────────────────────── */
+
+  comingSoonBadge: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 2,
+    borderRadius: borderRadius.sm,
+    backgroundColor: colors.infoBackground,
+  },
+
+  comingSoonBadgeText: {
+    fontSize: typography.sm,
+    color: colors.heatherPurple,
+    fontWeight: fontWeight.medium,
+  },
+
   /* ── Help links ──────────────────────────────────── */
 
   helpLink: {
