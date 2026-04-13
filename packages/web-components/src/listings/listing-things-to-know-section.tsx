@@ -73,11 +73,12 @@ function buildSafetyPreview(listing: IGetListingResponseDto): string[] {
 function buildCancellationPreview(
   listing: IGetListingResponseDto,
   checkInDate: Date | null,
+  policyLabel: string,
 ): { lines: string[]; linkText: string } {
   if (!checkInDate) {
     return {
       lines: [
-        'Add your trip dates to get the cancellation details for this stay.',
+        `${policyLabel} policy. Add your trip dates to get the cancellation details for this stay.`,
       ],
       linkText: 'Add dates',
     };
@@ -93,7 +94,7 @@ function buildCancellationPreview(
 
   return {
     lines: [
-      `Free cancellation before ${freeDate}. Cancel before check-in on ${partialDate} for a partial refund.`,
+      `${policyLabel} policy. Free cancellation before ${freeDate}. Cancel before check-in on ${partialDate} for a partial refund.`,
     ],
     linkText: 'Learn more',
   };
@@ -184,10 +185,13 @@ export function ListingThingsToKnowSection({
 
   const houseRulesLines = buildHouseRulesPreview(listing);
   const safetyLines = buildSafetyPreview(listing);
-  const cancellationPreview = buildCancellationPreview(listing, checkInDate);
-
   const policyLabel =
     CANCELLATION_POLICY_SHORT_TERM_LABELS[listing.cancellationPolicyShortTerm];
+  const cancellationPreview = buildCancellationPreview(
+    listing,
+    checkInDate,
+    policyLabel,
+  );
 
   const handleCancellationOpen = () => {
     if (checkInDate) {
@@ -201,7 +205,7 @@ export function ListingThingsToKnowSection({
     {
       id: 'cancellation-policy',
       icon: 'cancel',
-      title: `Cancellation policy · ${policyLabel}`,
+      title: 'Cancellation policy',
       lines: cancellationPreview.lines,
       linkText: cancellationPreview.linkText,
       onOpen: handleCancellationOpen,
