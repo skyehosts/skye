@@ -230,7 +230,7 @@ export default function MessagesScreen() {
       <Appbar.Header>
         <Appbar.Content title="Messages" />
         <Appbar.Action
-          icon="cog"
+          icon="clock-edit-outline"
           onPress={() => router.push("/message-templates")}
         />
       </Appbar.Header>
