@@ -96,7 +96,9 @@ export function NameModal({
           )}
         />
         {errors.name && (
-          <HelperText type="error">{errors.name.message}</HelperText>
+          <HelperText type="error" padding="none">
+            {errors.name.message}
+          </HelperText>
         )}
       </View>
       <Button

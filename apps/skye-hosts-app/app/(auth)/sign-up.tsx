@@ -108,7 +108,9 @@ export default function SignUpScreen() {
               )}
             />
             {errors.phoneNumber && (
-              <HelperText type="error">{errors.phoneNumber.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.phoneNumber.message}
+              </HelperText>
             )}
           </View>
 
@@ -135,7 +137,9 @@ export default function SignUpScreen() {
                 )}
               />
               {errors.name && (
-                <HelperText type="error">{errors.name.message}</HelperText>
+                <HelperText type="error" padding="none">
+                  {errors.name.message}
+                </HelperText>
               )}
             </View>
           )}

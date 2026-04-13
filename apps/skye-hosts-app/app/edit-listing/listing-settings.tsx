@@ -97,7 +97,11 @@ export default function ListingSettingsScreen() {
                 error={!!errors.confirmation}
                 autoCapitalize="none"
               />
-              <HelperText type="error" visible={!!errors.confirmation}>
+              <HelperText
+                type="error"
+                padding="none"
+                visible={!!errors.confirmation}
+              >
                 {errors.confirmation?.message}
               </HelperText>
             </View>

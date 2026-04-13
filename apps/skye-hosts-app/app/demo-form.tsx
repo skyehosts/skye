@@ -149,9 +149,13 @@ export default function DemoScreen() {
               />
             )}
           />
-          {errors.name && (
-            <HelperText testID="demo-name-error" type="error">
+          {errors.name ? (
+            <HelperText testID="demo-name-error" type="error" padding="none">
               {errors.name.message}
+            </HelperText>
+          ) : (
+            <HelperText type="info" padding="none">
+              Example hint: this field is for your reference only.
             </HelperText>
           )}
         </View>
@@ -183,7 +187,7 @@ export default function DemoScreen() {
             )}
           />
           {errors.email && (
-            <HelperText testID="demo-email-error" type="error">
+            <HelperText testID="demo-email-error" type="error" padding="none">
               {errors.email.message}
             </HelperText>
           )}
@@ -219,7 +223,7 @@ export default function DemoScreen() {
             )}
           />
           {errors.age && (
-            <HelperText testID="demo-age-error" type="error">
+            <HelperText testID="demo-age-error" type="error" padding="none">
               {errors.age.message}
             </HelperText>
           )}
@@ -301,7 +305,7 @@ export default function DemoScreen() {
             )}
           />
           {errors.message && (
-            <HelperText testID="demo-message-error" type="error">
+            <HelperText testID="demo-message-error" type="error" padding="none">
               {errors.message.message}
             </HelperText>
           )}
@@ -326,7 +330,9 @@ export default function DemoScreen() {
             )}
           />
           {errors.website && (
-            <HelperText type="error">{errors.website.message}</HelperText>
+            <HelperText type="error" padding="none">
+              {errors.website.message}
+            </HelperText>
           )}
         </View>
 

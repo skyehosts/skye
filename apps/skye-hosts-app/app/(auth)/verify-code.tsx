@@ -112,7 +112,9 @@ export default function VerifyCodeScreen() {
               )}
             />
             {errors.code && (
-              <HelperText type="error">{errors.code.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.code.message}
+              </HelperText>
             )}
           </View>
 

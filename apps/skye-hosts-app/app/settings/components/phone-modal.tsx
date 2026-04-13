@@ -134,7 +134,9 @@ export function PhoneModal({
               )}
             />
             {errors.phoneNumber && (
-              <HelperText type="error">{errors.phoneNumber.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.phoneNumber.message}
+              </HelperText>
             )}
           </View>
           <Button
@@ -177,7 +179,9 @@ export function PhoneModal({
               )}
             />
             {errors.code && (
-              <HelperText type="error">{errors.code.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.code.message}
+              </HelperText>
             )}
           </View>
           <Button

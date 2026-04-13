@@ -322,7 +322,9 @@ export default function CalendarSyncFormScreen() {
               )}
             />
             {errors.importUrl && (
-              <HelperText type="error">{errors.importUrl.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.importUrl.message}
+              </HelperText>
             )}
           </View>
 

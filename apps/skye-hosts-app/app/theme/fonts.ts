@@ -30,7 +30,7 @@ export const paperFonts = configureFonts({
 
     bodyLarge: { fontFamily: fontFamily.body },
     bodyMedium: { fontFamily: fontFamily.body },
-    bodySmall: { fontFamily: fontFamily.body },
+    bodySmall: { fontFamily: fontFamily.body, fontSize: 14 },
 
     labelLarge: { fontFamily: fontFamily.headingSemibold },
     labelMedium: { fontFamily: fontFamily.headingSemibold },

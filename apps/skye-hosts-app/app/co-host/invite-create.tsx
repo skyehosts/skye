@@ -191,7 +191,9 @@ export default function InviteCreateScreen() {
               )}
             />
             {errors.email && (
-              <HelperText type="error">{errors.email.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.email.message}
+              </HelperText>
             )}
           </View>
 

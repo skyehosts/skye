@@ -83,7 +83,9 @@ export function WifiDetailsModal({
                   disabled={loading}
                 />
                 {errors.network && (
-                  <HelperText type="error">{errors.network.message}</HelperText>
+                  <HelperText type="error" padding="none">
+                    {errors.network.message}
+                  </HelperText>
                 )}
               </View>
             )}
@@ -106,7 +108,7 @@ export function WifiDetailsModal({
                   disabled={loading}
                 />
                 {errors.password && (
-                  <HelperText type="error">
+                  <HelperText type="error" padding="none">
                     {errors.password.message}
                   </HelperText>
                 )}

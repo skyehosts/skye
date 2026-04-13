@@ -138,7 +138,7 @@ export function CheckInCheckoutCard({
             onChange={setCheckOut}
           />
 
-          <HelperText type="error" visible={!!validationError}>
+          <HelperText type="error" padding="none" visible={!!validationError}>
             {validationError}
           </HelperText>
 

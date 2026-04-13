@@ -235,8 +235,15 @@ export default function MessageTemplateFormScreen() {
               />
             )}
           />
-          {errors.name && (
-            <HelperText type="error">{errors.name.message}</HelperText>
+          {errors.name ? (
+            <HelperText type="error" padding="none">
+              {errors.name.message}
+            </HelperText>
+          ) : (
+            <HelperText type="info" padding="none">
+              This name is just for you — it won't be included in the message
+              sent to your guest.
+            </HelperText>
           )}
         </View>
 
@@ -268,7 +275,9 @@ export default function MessageTemplateFormScreen() {
             )}
           />
           {errors.content && (
-            <HelperText type="error">{errors.content.message}</HelperText>
+            <HelperText type="error" padding="none">
+              {errors.content.message}
+            </HelperText>
           )}
           <Button
             mode="outlined"
