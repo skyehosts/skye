@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  type GestureResponderEvent,
+} from "react-native";
 import type { CalendarSyncPlatform } from "@repo/skye-hosts-api-client";
 import AirbnbLogo from "../../../assets/icons/airbnb-logo.svg";
 import BookingLogo from "../../../assets/icons/booking-logo.svg";
@@ -78,8 +83,7 @@ function ExternalBookingBarInner({
   cellGap,
   isPast,
 }: ExternalBookingBarProps) {
-  const [tooltipVisible, setTooltipVisible] = useState(false);
-  const [barLayout, setBarLayout] = useState<{
+  const [tooltipAnchor, setTooltipAnchor] = useState<{
     x: number;
     y: number;
     width: number;
@@ -115,21 +119,23 @@ function ExternalBookingBarInner({
             borderBottomRightRadius: segment.isEnd ? 150 : 0,
           },
         ]}
-        onLayout={(e) => {
-          e.target.measureInWindow((x, y, width, height) => {
-            setBarLayout({ x, y, width, height });
+        onPress={(e: GestureResponderEvent) => {
+          setTooltipAnchor({
+            x: e.nativeEvent.pageX - e.nativeEvent.locationX,
+            y: e.nativeEvent.pageY - e.nativeEvent.locationY,
+            width: barWidth,
+            height: barHeight,
           });
         }}
-        onPress={() => setTooltipVisible(true)}
       >
         {(segment.isStart || !segment.isEnd) && (
           <PlatformIcon platform={segment.platform} />
         )}
       </Pressable>
-      {tooltipVisible && barLayout && (
+      {tooltipAnchor && (
         <PositionedTooltip
-          anchor={barLayout}
-          onClose={() => setTooltipVisible(false)}
+          anchor={tooltipAnchor}
+          onClose={() => setTooltipAnchor(null)}
         >
           <Text style={tooltipStyles.title}>
             Booked on {getPlatformName(segment.platform)}
