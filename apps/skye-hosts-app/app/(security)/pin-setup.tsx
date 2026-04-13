@@ -81,7 +81,9 @@ export default function PinSetupScreen() {
               error={!!errors.pin}
             />
             {errors.pin && (
-              <HelperText type="error">{errors.pin.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.pin.message}
+              </HelperText>
             )}
           </View>
         ) : (
@@ -101,7 +103,9 @@ export default function PinSetupScreen() {
               error={!!errors.confirmPin}
             />
             {errors.confirmPin && (
-              <HelperText type="error">{errors.confirmPin.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.confirmPin.message}
+              </HelperText>
             )}
           </View>
         )}

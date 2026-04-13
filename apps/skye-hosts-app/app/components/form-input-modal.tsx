@@ -103,7 +103,9 @@ export function FormInputModal({
             )}
           />
           {errors.value ? (
-            <HelperText type="error">{errors.value.message}</HelperText>
+            <HelperText type="error" padding="none">
+              {errors.value.message}
+            </HelperText>
           ) : (
             <Text style={styles.charCount}>
               {remaining} characters available

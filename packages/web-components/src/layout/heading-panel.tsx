@@ -3,6 +3,8 @@
 import { Box, Typography, type TypographyProps } from '@mui/material';
 import type { ReactNode } from 'react';
 
+import { contentPaddingX } from './layout-constants';
+
 interface HeadingPanelProps {
   title: ReactNode;
   component?: TypographyProps['component'];
@@ -11,21 +13,18 @@ interface HeadingPanelProps {
 export function HeadingPanel({ title, component = 'h1' }: HeadingPanelProps) {
   return (
     <Box
-      sx={(theme) => {
-        const gutterXs = theme.spacing(2);
-        const gutterSm = theme.spacing(3);
-        return {
-          pt: { xs: '40px', md: '55px' },
-          pb: '38px',
-          mb: '40px',
-          textAlign: 'center',
-          borderBottom: 1,
-          borderColor: 'divider',
-          mx: `-${gutterXs}`,
-          [theme.breakpoints.up('sm')]: {
-            mx: `-${gutterSm}`,
-          },
-        };
+      sx={{
+        pt: { xs: '40px', md: '55px' },
+        pb: { xs: '40px', md: '55px' },
+        mb: '40px',
+        textAlign: 'center',
+        borderTop: 1,
+        borderBottom: 1,
+        borderColor: 'divider',
+        width: '100vw',
+        position: 'relative',
+        left: '50%',
+        transform: 'translateX(-50%)',
       }}
     >
       <Typography
@@ -33,7 +32,7 @@ export function HeadingPanel({ title, component = 'h1' }: HeadingPanelProps) {
         component={component}
         sx={{
           fontWeight: 700,
-          px: { xs: 2, sm: 3 },
+          px: contentPaddingX,
           fontSize: {
             xs: '1.875rem',
             sm: '2.25rem',

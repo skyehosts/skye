@@ -26,7 +26,6 @@ import { fetchApi } from "../services/api";
 import {
   colors,
   commonStyles,
-  fontWeight,
   lineHeight,
   spacing,
   typography,
@@ -174,15 +173,17 @@ export default function NotificationsSettingsScreen() {
           <ActivityIndicator style={styles.loader} />
         ) : (
           EVENT_TYPES.map((event) => (
-            <View key={event.eventType} style={styles.item}>
+            <Pressable
+              key={event.eventType}
+              style={styles.item}
+              onPress={() => setEditingEvent(event)}
+            >
               <View style={styles.itemText}>
-                <Text style={styles.itemTitle}>{event.title}</Text>
+                <Text style={commonStyles.itemTitle}>{event.title}</Text>
                 <Text style={styles.itemDescription}>{event.description}</Text>
               </View>
-              <Pressable onPress={() => setEditingEvent(event)}>
-                <Text style={styles.editLink}>Edit</Text>
-              </Pressable>
-            </View>
+              <Text style={styles.editLink}>Edit</Text>
+            </Pressable>
           ))
         )}
       </ScrollView>
@@ -262,11 +263,6 @@ const styles = StyleSheet.create({
   },
   itemText: {
     flex: 1,
-  },
-  itemTitle: {
-    fontSize: typography.md,
-    color: colors.textPrimary,
-    fontWeight: fontWeight.semibold,
   },
   itemDescription: {
     fontSize: typography.sm,

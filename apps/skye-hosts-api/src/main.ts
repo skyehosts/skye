@@ -20,7 +20,12 @@ import { ErrorFormatFilter } from './modules/common/filters';
 
 async function bootstrap() {
   const isLocal = process.env.SKYE_ENVIRONMENT === Environments.LOCAL;
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const isProduction = process.env.SKYE_ENVIRONMENT === Environments.PRODUCTION;
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    ...(!isProduction && {
+      logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    }),
+  });
   app.useGlobalFilters(new ErrorFormatFilter());
   const logger = new Logger(bootstrap.name);
   if (!isLocal) {

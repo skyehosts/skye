@@ -3,10 +3,15 @@ import type {
   ICalendarBlockDto,
   IListingBookingItemDto,
 } from "@repo/skye-hosts-api-client";
-import React, { useCallback, useMemo, useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useCallback, useMemo, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  type GestureResponderEvent,
+} from "react-native";
 import { colors } from "../../theme/colors";
-import { fontWeight } from "../../theme/font-weight";
+import { fontFamily } from "../../theme/fonts";
 import { spacing } from "../../theme/spacing";
 import { typography } from "../../theme/typography";
 import {
@@ -18,7 +23,7 @@ import {
 import { formatDateString } from "../utils/format-date-string";
 import { BlockedDateTooltip } from "./blocked-date-tooltip";
 import { BookingBar } from "./booking-bar";
-import { type BlockedDateInfo, MONTH_LABEL_HEIGHT } from "./calendar-list";
+import { type BlockedDateInfo } from "./calendar-list";
 import { DayCell, type DayCellStatus } from "./day-cell";
 import { ExternalBookingBar } from "./external-booking-bar";
 import { RestrictedDateTooltip } from "./restricted-date-tooltip";
@@ -86,7 +91,6 @@ function MonthGridInner({
     anchor: { x: number; y: number; width: number; height: number };
   } | null>(null);
 
-  const containerRef = useRef<View>(null);
   const segmentsByWeek = useMemo(() => {
     if (!bookings?.length) return new Map<number, BookingSegment[]>();
     const segs = getBookingSegmentsForMonth(bookings, data);
@@ -116,48 +120,36 @@ function MonthGridInner({
     return map;
   }, [blocks, platformBySyncId, data]);
 
-  const measureCellAnchor = useCallback(
-    (
-      dayIndex: number,
-      weekIndex: number,
-      callback: (anchor: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      }) => void,
-    ) => {
-      containerRef.current?.measureInWindow((cx, cy) => {
-        const x = cx + spacing.md + dayIndex * (cellSize + cellGap);
-        const y = cy + MONTH_LABEL_HEIGHT + weekIndex * (cellHeight + cellGap);
-        callback({ x, y, width: cellSize, height: cellHeight });
-      });
-    },
-    [cellSize, cellGap, cellHeight],
+  const anchorFromEvent = useCallback(
+    (e: GestureResponderEvent) => ({
+      x: e.nativeEvent.pageX - e.nativeEvent.locationX,
+      y: e.nativeEvent.pageY - e.nativeEvent.locationY,
+      width: cellSize,
+      height: cellHeight,
+    }),
+    [cellSize, cellHeight],
   );
 
   const handleDayPress = useCallback(
-    (dateString: string, dayIndex: number, weekIndex: number) => {
+    (dateString: string, e: GestureResponderEvent) => {
       const infos = blockedDateInfo?.get(dateString);
       if (infos?.length) {
-        measureCellAnchor(dayIndex, weekIndex, (anchor) =>
-          setTooltipState({ dateString, infos, anchor }),
-        );
+        const anchor = anchorFromEvent(e);
+        setTooltipState({ dateString, infos, anchor });
         return;
       }
       if (restrictedDates?.has(dateString)) {
-        measureCellAnchor(dayIndex, weekIndex, (anchor) =>
-          setRestrictedTooltip({ dateString, anchor }),
-        );
+        const anchor = anchorFromEvent(e);
+        setRestrictedTooltip({ dateString, anchor });
         return;
       }
       onDayPress?.(dateString);
     },
-    [blockedDateInfo, restrictedDates, measureCellAnchor, onDayPress],
+    [blockedDateInfo, restrictedDates, anchorFromEvent, onDayPress],
   );
 
   return (
-    <View style={styles.container} ref={containerRef}>
+    <View style={styles.container}>
       <Text style={styles.monthLabel}>{data.label}</Text>
       <View style={{ rowGap: cellGap }}>
         {data.weeks.map((week, weekIndex) => (
@@ -190,7 +182,7 @@ function MonthGridInner({
                   status={status}
                   size={cellSize}
                   height={cellHeight}
-                  onPress={(ds) => handleDayPress(ds, dayIndex, weekIndex)}
+                  onPress={(ds, e) => handleDayPress(ds, e)}
                   onLongPress={onLongPress}
                 />
               );
@@ -261,8 +253,8 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   monthLabel: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.lg,
-    fontWeight: fontWeight.semibold,
     color: colors.primary,
     paddingVertical: spacing.md,
   },

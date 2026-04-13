@@ -25,6 +25,7 @@ import {
   borderRadius,
   colors,
   commonStyles,
+  fontFamily,
   fontWeight,
   spacing,
   typography,
@@ -329,8 +330,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xs,
   },
   headerName: {
+    fontFamily: fontFamily.heading,
     fontSize: typography.md,
-    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
   },
   headerSubtitle: {

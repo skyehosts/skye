@@ -138,7 +138,9 @@ export function EmailModal({
               )}
             />
             {errors.email && (
-              <HelperText type="error">{errors.email.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.email.message}
+              </HelperText>
             )}
           </View>
           <Button
@@ -184,7 +186,9 @@ export function EmailModal({
               )}
             />
             {errors.code && (
-              <HelperText type="error">{errors.code.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.code.message}
+              </HelperText>
             )}
           </View>
           <Button

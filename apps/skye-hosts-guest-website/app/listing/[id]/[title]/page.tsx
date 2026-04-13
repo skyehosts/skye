@@ -129,17 +129,6 @@ export default async function ListingPage({
           <Suspense>
             <ListingThingsToKnowWithDates listing={listing} />
           </Suspense>
-          <ListingLocationSection
-            approximateLatitude={listing.approximateLatitude}
-            approximateLongitude={listing.approximateLongitude}
-            googleMapsStaticApiKey={
-              process.env.NEXT_PUBLIC_GOOGLE_MAPS_STATIC_KEY ?? ''
-            }
-            mapboxAccessToken={
-              process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''
-            }
-            listingTitle={listing.title}
-          />
           {/* TODO: Replace hardcoded values with actual booking form data */}
           {guestId ? (
             <BookNowButton
@@ -167,6 +156,18 @@ export default async function ListingPage({
           minNights={listing.minNights}
           minNightsByCheckInDay={listing.minNightsByCheckInDay}
           maxNights={listing.maxNights}
+        />
+      </Box>
+
+      <Box sx={{ px: { xs: 2, md: 0 } }}>
+        <ListingLocationSection
+          approximateLatitude={listing.approximateLatitude}
+          approximateLongitude={listing.approximateLongitude}
+          googleMapsStaticApiKey={
+            process.env.NEXT_PUBLIC_GOOGLE_MAPS_STATIC_KEY ?? ''
+          }
+          mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN ?? ''}
+          listingTitle={listing.title}
         />
       </Box>
     </Container>

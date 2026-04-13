@@ -21,6 +21,7 @@ import {
   borderRadius,
   colors,
   commonStyles,
+  fontFamily,
   fontWeight,
   spacing,
   typography,
@@ -229,8 +230,8 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   cardTitle: {
+    fontFamily: fontFamily.heading,
     fontSize: typography.md,
-    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
   },
   cardSubtitle: {

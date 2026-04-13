@@ -1,3 +1,5 @@
+'use client';
+
 import StarIcon from '@mui/icons-material/Star';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -122,7 +124,11 @@ export function ListingHeroSection({
               />
               <Typography
                 variant="body1"
-                sx={{ fontWeight: 600, color: 'custom.grey950' }}
+                sx={(theme) => ({
+                  fontFamily: theme.typography.fontFamilyHeading,
+                  fontWeight: 600,
+                  color: 'custom.grey950',
+                })}
               >
                 Hosted by {hostInfo.name}
               </Typography>

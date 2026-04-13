@@ -119,7 +119,9 @@ export default function ChangePinScreen() {
         error={!!errors[field]}
       />
       {errors[field] && (
-        <HelperText type="error">{errors[field]?.message}</HelperText>
+        <HelperText type="error" padding="none">
+          {errors[field]?.message}
+        </HelperText>
       )}
     </View>
   );

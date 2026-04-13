@@ -1,5 +1,11 @@
 import React from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  type GestureResponderEvent,
+} from "react-native";
 import { borderRadius } from "../../theme/border-radius";
 import { colors } from "../../theme/colors";
 import { fontWeight } from "../../theme/font-weight";
@@ -39,8 +45,8 @@ interface DayCellProps {
   size: number;
   /** Cell height — defaults to size if not provided */
   height?: number;
-  /** Called with the dateString when the day is pressed */
-  onPress?: (dateString: string) => void;
+  /** Called with the dateString and press event when the day is pressed */
+  onPress?: (dateString: string, event: GestureResponderEvent) => void;
   /** Called with the dateString when the day is long-pressed */
   onLongPress?: (dateString: string) => void;
 }
@@ -61,9 +67,9 @@ function DayCellInner({
     return <View style={[styles.cell, { width: size, height: cellHeight }]} />;
   }
 
-  const handlePress = () => {
+  const handlePress = (e: GestureResponderEvent) => {
     if (dateString && onPress) {
-      onPress(dateString);
+      onPress(dateString, e);
     }
   };
 

@@ -102,7 +102,9 @@ export default function PinUnlockScreen() {
             error={!!errors.pin}
           />
           {errors.pin && (
-            <HelperText type="error">{errors.pin.message}</HelperText>
+            <HelperText type="error" padding="none">
+              {errors.pin.message}
+            </HelperText>
           )}
         </View>
 

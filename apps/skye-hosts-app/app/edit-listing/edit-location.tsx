@@ -182,7 +182,9 @@ export default function EditLocationScreen() {
               </Button>
             </View>
             {errors.postCode && (
-              <HelperText type="error">{errors.postCode.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.postCode.message}
+              </HelperText>
             )}
 
             {isGeocoding && (

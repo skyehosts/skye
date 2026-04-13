@@ -210,11 +210,7 @@ export default function CheckoutInstructionsScreen() {
                         </Text>
                       ) : null}
                     </View>
-                    <Ionicons
-                      name="chevron-forward"
-                      size={18}
-                      color={colors.icon}
-                    />
+                    <Text style={commonStyles.menuItemAction}>Edit</Text>
                   </Pressable>
                 </View>
               ))}

@@ -29,9 +29,16 @@ import type {
 import { APP_DISPLAY_NAME } from "@repo/common/app-names";
 import { AppSnackbar } from "../components/app-snackbar";
 import { DangerButton } from "../components/danger-button";
+import { InfoBox } from "../components/info-box";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
-import { colors, commonStyles, spacing, typography } from "../theme";
+import {
+  colors,
+  commonStyles,
+  fontFamily,
+  spacing,
+  typography,
+} from "../theme";
 import { borderRadius } from "../theme/border-radius";
 import { fontWeight } from "../theme/font-weight";
 import { captureException } from "../services/error-reporting";
@@ -254,133 +261,154 @@ export default function CalendarSyncFormScreen() {
           </View>
         )}
 
-        {/* Import section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Import from {platformLabel}</Text>
-            <Pressable onPress={() => setHelpVisible(true)}>
-              <Icon
-                source="help-circle-outline"
-                size={20}
-                color={colors.heatherPurple}
-              />
-            </Pressable>
-          </View>
-          <Text style={styles.sectionDescription}>
-            Paste your {platformLabel} calendar link below. When a guest books
-            on {platformLabel}, those dates will automatically be blocked on{" "}
-            {APP_DISPLAY_NAME} — preventing double bookings.
-          </Text>
+        {!isEditing && platform !== "airbnb" && (
+          <InfoBox variant="info">
+            Only AirBnB is available at this time. Support for {platformLabel}{" "}
+            is coming soon.
+          </InfoBox>
+        )}
 
-          <Controller
-            control={control}
-            name="importUrl"
-            rules={{
-              required: "Import URL is required",
-              pattern: {
-                value: /^https?:\/\/.+/,
-                message: "Enter a valid URL starting with http:// or https://",
-              },
-            }}
-            render={({ field: { value, onChange, onBlur } }) => (
-              <TextInput
-                mode="outlined"
-                value={value}
-                onChangeText={onChange}
-                onBlur={onBlur}
-                placeholder="https://..."
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="url"
-                error={!!errors.importUrl}
-              />
-            )}
-          />
-          {errors.importUrl && (
-            <HelperText type="error">{errors.importUrl.message}</HelperText>
-          )}
-        </View>
-
-        {/* Export section */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Export to {platformLabel}</Text>
-            <Pressable onPress={() => setExportHelpVisible(true)}>
-              <Icon
-                source="help-circle-outline"
-                size={20}
-                color={colors.heatherPurple}
-              />
-            </Pressable>
-          </View>
-          <Text style={styles.sectionDescription}>
-            Share your {APP_DISPLAY_NAME} calendar with {platformLabel} so
-            bookings here automatically block dates there — preventing double
-            bookings.
-          </Text>
-
-          {isEditing && existingSync?.exportUrl && (
-            <View style={styles.exportCard}>
-              <View style={styles.exportCardHeader}>
+        <View
+          style={
+            !isEditing && platform !== "airbnb"
+              ? styles.comingSoonDisabled
+              : undefined
+          }
+          pointerEvents={!isEditing && platform !== "airbnb" ? "none" : "auto"}
+        >
+          {/* Import section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>
+                Import from {platformLabel}
+              </Text>
+              <Pressable onPress={() => setHelpVisible(true)}>
                 <Icon
-                  source="information-outline"
-                  size={24}
+                  source="help-circle-outline"
+                  size={20}
                   color={colors.heatherPurple}
                 />
-                <Text style={styles.exportCardHeading}>
-                  Share this link with {platformLabel}
+              </Pressable>
+            </View>
+            <Text style={styles.sectionDescription}>
+              Paste your {platformLabel} calendar link below. When a guest books
+              on {platformLabel}, those dates will automatically be blocked on{" "}
+              {APP_DISPLAY_NAME} — preventing double bookings.
+            </Text>
+
+            <Controller
+              control={control}
+              name="importUrl"
+              rules={{
+                required: "Import URL is required",
+                pattern: {
+                  value: /^https?:\/\/.+/,
+                  message:
+                    "Enter a valid URL starting with http:// or https://",
+                },
+              }}
+              render={({ field: { value, onChange, onBlur } }) => (
+                <TextInput
+                  mode="outlined"
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder="https://..."
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="url"
+                  error={!!errors.importUrl}
+                />
+              )}
+            />
+            {errors.importUrl && (
+              <HelperText type="error" padding="none">
+                {errors.importUrl.message}
+              </HelperText>
+            )}
+          </View>
+
+          {/* Export section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Export to {platformLabel}</Text>
+              <Pressable onPress={() => setExportHelpVisible(true)}>
+                <Icon
+                  source="help-circle-outline"
+                  size={20}
+                  color={colors.heatherPurple}
+                />
+              </Pressable>
+            </View>
+            <Text style={styles.sectionDescription}>
+              Share your {APP_DISPLAY_NAME} calendar with {platformLabel} so
+              bookings here automatically block dates there — preventing double
+              bookings.
+            </Text>
+
+            {isEditing && existingSync?.exportUrl && (
+              <View style={styles.exportCard}>
+                <View style={styles.exportCardHeader}>
+                  <Icon
+                    source="information-outline"
+                    size={24}
+                    color={colors.heatherPurple}
+                  />
+                  <Text style={styles.exportCardHeading}>
+                    Share this link with {platformLabel}
+                  </Text>
+                </View>
+                <Text style={styles.exportUrl} numberOfLines={2} selectable>
+                  {existingSync.exportUrl}
+                </Text>
+                <Button
+                  mode="outlined"
+                  compact
+                  onPress={handleCopyExportUrl}
+                  icon="content-copy"
+                  style={styles.exportCardCopyButton}
+                >
+                  Copy link
+                </Button>
+                <Text style={styles.exportCardBody}>
+                  Paste it into {platformLabel}
+                  {"\u2019"}s calendar import settings so bookings on{" "}
+                  {APP_DISPLAY_NAME} block those dates automatically.{" "}
+                  <Text
+                    style={styles.exportCalloutLink}
+                    onPress={() => setExportHelpVisible(true)}
+                  >
+                    See how
+                  </Text>
                 </Text>
               </View>
-              <Text style={styles.exportUrl} numberOfLines={2} selectable>
-                {existingSync.exportUrl}
-              </Text>
-              <Button
-                mode="outlined"
-                compact
-                onPress={handleCopyExportUrl}
-                icon="content-copy"
-                style={styles.exportCardCopyButton}
-              >
-                Copy link
-              </Button>
-              <Text style={styles.exportCardBody}>
-                Paste it into {platformLabel}
-                {"\u2019"}s calendar import settings so bookings on{" "}
-                {APP_DISPLAY_NAME} block those dates automatically.{" "}
-                <Text
-                  style={styles.exportCalloutLink}
-                  onPress={() => setExportHelpVisible(true)}
-                >
-                  See how
-                </Text>
-              </Text>
-            </View>
+            )}
+          </View>
+
+          {serverError ? (
+            <Text style={commonStyles.errorText}>{serverError}</Text>
+          ) : null}
+
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            loading={isSubmitting}
+            disabled={isSubmitting}
+            style={styles.saveButton}
+          >
+            {isEditing ? "Save changes" : "Add calendar"}
+          </Button>
+
+          {isEditing && (
+            <DangerButton
+              variant="secondary"
+              onPress={() => setDeleteVisible(true)}
+              icon="delete-outline"
+            >
+              Remove this calendar sync
+            </DangerButton>
           )}
         </View>
-
-        {serverError ? (
-          <Text style={commonStyles.errorText}>{serverError}</Text>
-        ) : null}
-
-        <Button
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-          disabled={isSubmitting}
-          style={styles.saveButton}
-        >
-          {isEditing ? "Save changes" : "Add calendar"}
-        </Button>
-
-        {isEditing && (
-          <DangerButton
-            variant="secondary"
-            onPress={() => setDeleteVisible(true)}
-            icon="delete-outline"
-          >
-            Remove this calendar sync
-          </DangerButton>
-        )}
       </ScrollView>
 
       <Portal>
@@ -467,8 +495,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   sectionTitle: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.md,
-    fontWeight: fontWeight.semibold,
     color: colors.textPrimary,
   },
   sectionDescription: {
@@ -506,6 +534,10 @@ const styles = StyleSheet.create({
   exportCalloutLink: {
     color: colors.primary,
     textDecorationLine: "underline",
+  },
+  comingSoonDisabled: {
+    opacity: 0.5,
+    gap: spacing.lg,
   },
   saveButton: {
     marginTop: spacing.sm,

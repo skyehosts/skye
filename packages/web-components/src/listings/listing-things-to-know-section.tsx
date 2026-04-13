@@ -73,11 +73,12 @@ function buildSafetyPreview(listing: IGetListingResponseDto): string[] {
 function buildCancellationPreview(
   listing: IGetListingResponseDto,
   checkInDate: Date | null,
+  policyLabel: string,
 ): { lines: string[]; linkText: string } {
   if (!checkInDate) {
     return {
       lines: [
-        'Add your trip dates to get the cancellation details for this stay.',
+        `${policyLabel} policy. Add your trip dates to get the cancellation details for this stay.`,
       ],
       linkText: 'Add dates',
     };
@@ -93,7 +94,7 @@ function buildCancellationPreview(
 
   return {
     lines: [
-      `Free cancellation before ${freeDate}. Cancel before check-in on ${partialDate} for a partial refund.`,
+      `${policyLabel} policy. Free cancellation before ${freeDate}. Cancel before check-in on ${partialDate} for a partial refund.`,
     ],
     linkText: 'Learn more',
   };
@@ -141,10 +142,12 @@ function MobileCard({ card }: { card: ThingsToKnowCard }) {
 function DesktopCard({ card }: { card: ThingsToKnowCard }) {
   return (
     <Box>
-      <AmenityIcon name={card.icon} size={28} />
-      <Typography variant="body1" sx={{ fontWeight: 600, mt: 1.5, mb: 1 }}>
-        {card.title}
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+        <AmenityIcon name={card.icon} size={28} />
+        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+          {card.title}
+        </Typography>
+      </Box>
       {card.lines.map((line, i) => (
         <Typography
           key={i}
@@ -182,10 +185,13 @@ export function ListingThingsToKnowSection({
 
   const houseRulesLines = buildHouseRulesPreview(listing);
   const safetyLines = buildSafetyPreview(listing);
-  const cancellationPreview = buildCancellationPreview(listing, checkInDate);
-
   const policyLabel =
     CANCELLATION_POLICY_SHORT_TERM_LABELS[listing.cancellationPolicyShortTerm];
+  const cancellationPreview = buildCancellationPreview(
+    listing,
+    checkInDate,
+    policyLabel,
+  );
 
   const handleCancellationOpen = () => {
     if (checkInDate) {
@@ -197,11 +203,12 @@ export function ListingThingsToKnowSection({
 
   const cards: ThingsToKnowCard[] = [
     {
-      id: 'house-rules',
-      icon: 'clipboard-text-outline',
-      title: 'House rules',
-      lines: houseRulesLines,
-      onOpen: () => setHouseRulesOpen(true),
+      id: 'cancellation-policy',
+      icon: 'cancel',
+      title: 'Cancellation policy',
+      lines: cancellationPreview.lines,
+      linkText: cancellationPreview.linkText,
+      onOpen: handleCancellationOpen,
     },
     {
       id: 'safety',
@@ -214,12 +221,11 @@ export function ListingThingsToKnowSection({
       onOpen: () => setSafetyOpen(true),
     },
     {
-      id: 'cancellation-policy',
-      icon: 'cancel',
-      title: `Cancellation policy · ${policyLabel}`,
-      lines: cancellationPreview.lines,
-      linkText: cancellationPreview.linkText,
-      onOpen: handleCancellationOpen,
+      id: 'house-rules',
+      icon: 'clipboard-text-outline',
+      title: 'House rules',
+      lines: houseRulesLines,
+      onOpen: () => setHouseRulesOpen(true),
     },
   ];
 

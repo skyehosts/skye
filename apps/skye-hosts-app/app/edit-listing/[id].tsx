@@ -80,7 +80,8 @@ export default function EditListingScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    padding: spacing.lg,
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.md,
   },
   segmentedButtons: {
     marginBottom: spacing.lg,

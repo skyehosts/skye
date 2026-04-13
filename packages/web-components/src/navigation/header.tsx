@@ -20,6 +20,8 @@ import {
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
+import { CONTENT_MAX_WIDTH, contentPaddingX } from '../layout/layout-constants';
+
 export interface HeaderLink {
   label: string;
   href: string;
@@ -38,12 +40,12 @@ export interface HeaderProps extends HeaderLogoProps {
 }
 
 export interface HeaderLogoProps {
-  /** Path to the wide logo (shown on md+ screens) */
-  logoWideSrc: string;
-  /** Path to the square logo (shown on xs screens) */
+  /** Path to the square logo */
   logoSquareSrc: string;
   /** Alt text for the logo */
   logoAlt?: string;
+  /** App display name shown beside the logo */
+  displayName?: string;
 }
 
 const navLinkSx = (
@@ -56,7 +58,7 @@ const navLinkSx = (
       ? theme.palette.header.linkTextHover
       : theme.palette.header.linkText,
     fontSize: '1rem',
-    fontFamily: theme.typography.fontFamily,
+    fontFamily: theme.typography.fontFamilyHeading,
     fontWeight: 500,
     px: 1.5,
     position: 'relative',
@@ -83,9 +85,9 @@ export function Header({
   isLoading = false,
   onLogout,
   logoHref = '/',
-  logoWideSrc,
   logoSquareSrc,
   logoAlt = 'Logo',
+  displayName,
   links = [],
   authLinks = {
     login: { label: 'Log in', href: '/login' },
@@ -113,7 +115,16 @@ export function Header({
       elevation={0}
       sx={{ bgcolor: 'header.background' }}
     >
-      <Toolbar disableGutters sx={{ px: 2, alignItems: 'stretch' }}>
+      <Toolbar
+        disableGutters
+        sx={{
+          px: contentPaddingX,
+          alignItems: 'stretch',
+          maxWidth: CONTENT_MAX_WIDTH,
+          mx: 'auto',
+          width: '100%',
+        }}
+      >
         <Link
           href={logoHref}
           sx={{
@@ -124,18 +135,6 @@ export function Header({
             mr: 3,
           }}
         >
-          {/* Wide logo: hidden below 480px */}
-          <Box
-            component="img"
-            src={logoWideSrc}
-            alt={logoAlt}
-            sx={{
-              height: 55,
-              width: 'auto',
-              display: { xs: 'none', sm: 'block' },
-            }}
-          />
-          {/* Square logo: shown below 480px */}
           <Box
             component="img"
             src={logoSquareSrc}
@@ -143,9 +142,27 @@ export function Header({
             sx={{
               height: 55,
               width: 55,
-              display: { xs: 'block', sm: 'none' },
+              my: '5px',
             }}
           />
+          {displayName && (
+            <Typography
+              sx={(theme) => ({
+                ml: 2,
+                display: { xs: 'none' },
+                '@media (min-width: 360px)': {
+                  display: 'block',
+                },
+                fontFamily: theme.typography.fontFamilyHeading,
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'secondary.main',
+                whiteSpace: 'nowrap',
+              })}
+            >
+              {displayName}
+            </Typography>
+          )}
         </Link>
 
         {/* Desktop navigation links (left-aligned) */}
@@ -258,7 +275,16 @@ export function Header({
                   href={link.href}
                   onClick={handleDrawerToggle}
                 >
-                  <ListItemText primary={link.label} />
+                  <ListItemText
+                    primary={link.label}
+                    slotProps={{
+                      primary: {
+                        sx: (theme: import('@mui/material/styles').Theme) => ({
+                          fontFamily: theme.typography.fontFamilyHeading,
+                        }),
+                      },
+                    }}
+                  />
                 </ListItemButton>
               </ListItem>
             ))}
@@ -276,7 +302,18 @@ export function Header({
                       onLogout?.();
                     }}
                   >
-                    <ListItemText primary="Log out" />
+                    <ListItemText
+                      primary="Log out"
+                      slotProps={{
+                        primary: {
+                          sx: (
+                            theme: import('@mui/material/styles').Theme,
+                          ) => ({
+                            fontFamily: theme.typography.fontFamilyHeading,
+                          }),
+                        },
+                      }}
+                    />
                   </ListItemButton>
                 </ListItem>
               )

@@ -28,6 +28,8 @@
     "generate-icons:monochrome": "node -e \"const fs=require('fs');const src=process.argv[1];if(!src){console.error('Usage: pnpm generate-icons:monochrome <path-to-icon>');process.exit(1)}fs.copyFileSync(src,'./assets/android-icon-monochrome.png');console.log('Updated ./assets/android-icon-monochrome.png — rebuild to apply')\" --"
   },
   "dependencies": {
+    "@expo-google-fonts/lora": "^0.4.2",
+    "@expo-google-fonts/open-sans": "^0.4.2",
     "@expo/metro-runtime": "~55.0.6",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@repo/common": "workspace:^",
@@ -42,6 +44,7 @@
     "expo-crypto": "^55.0.8",
     "expo-dev-client": "~55.0.11",
     "expo-file-system": "^55.0.11",
+    "expo-font": "^55.0.6",
     "expo-image-manipulator": "^55.0.11",
     "expo-image-picker": "^55.0.13",
     "expo-linking": "~55.0.7",
@@ -49,6 +52,7 @@
     "expo-notifications": "^55.0.11",
     "expo-router": "~55.0.3",
     "expo-secure-store": "~55.0.8",
+    "expo-splash-screen": "^55.0.17",
     "expo-status-bar": "~55.0.4",
     "expo-system-ui": "~55.0.9",
     "react": "19.2.0",

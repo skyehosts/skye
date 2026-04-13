@@ -333,7 +333,7 @@ export default function InviteLandingScreen() {
                   )}
                 />
                 {errors.phoneNumber && (
-                  <HelperText type="error">
+                  <HelperText type="error" padding="none">
                     {errors.phoneNumber.message}
                   </HelperText>
                 )}
@@ -362,7 +362,9 @@ export default function InviteLandingScreen() {
                     )}
                   />
                   {errors.name && (
-                    <HelperText type="error">{errors.name.message}</HelperText>
+                    <HelperText type="error" padding="none">
+                      {errors.name.message}
+                    </HelperText>
                   )}
                 </View>
               )}
@@ -444,7 +446,9 @@ export default function InviteLandingScreen() {
                   )}
                 />
                 {errors.code && (
-                  <HelperText type="error">{errors.code.message}</HelperText>
+                  <HelperText type="error" padding="none">
+                    {errors.code.message}
+                  </HelperText>
                 )}
               </View>
 

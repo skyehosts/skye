@@ -43,6 +43,7 @@
     "./listings/use-listing-booking-state": "./src/listings/use-listing-booking-state.ts",
     "./listings/use-listing-unavailability": "./src/listings/use-listing-unavailability.ts",
     "./layout/form-card": "./src/layout/form-card.tsx",
+    "./layout/layout-constants": "./src/layout/layout-constants.ts",
     "./layout/page-container": "./src/layout/page-container.tsx",
     "./layout/heading-panel": "./src/layout/heading-panel.tsx",
     "./layout/principal-column": "./src/layout/principal-column.tsx",

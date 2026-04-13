@@ -4,6 +4,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { Controller, useForm } from "react-hook-form";
 import { Button, HelperText, Text, TextInput } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
+import { AuthLogo } from "../components/auth-logo";
 import { ScreenContainer } from "../components/screen-container";
 import { useAuth } from "../contexts/auth-context";
 import { verifyOtp } from "../services/auth.service";
@@ -65,6 +66,7 @@ export default function VerifyCodeScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <View style={styles.content}>
+          <AuthLogo />
           <Text variant="headlineMedium" style={styles.title}>
             Enter verification code
           </Text>
@@ -110,7 +112,9 @@ export default function VerifyCodeScreen() {
               )}
             />
             {errors.code && (
-              <HelperText type="error">{errors.code.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.code.message}
+              </HelperText>
             )}
           </View>
 

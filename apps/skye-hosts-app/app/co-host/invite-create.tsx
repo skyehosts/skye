@@ -39,6 +39,7 @@ const ROLE_OPTIONS: {
   value: CoHostRole;
   label: string;
   description: string;
+  comingSoon?: boolean;
 }[] = [
   {
     value: "full_access",
@@ -50,11 +51,13 @@ const ROLE_OPTIONS: {
     value: "calendar_and_messaging",
     label: "Calendar & Messaging",
     description: "Can view calendar and message guests",
+    comingSoon: true,
   },
   {
     value: "calendar_only",
     label: "Calendar Only",
     description: "Can only view calendar and booking dates",
+    comingSoon: true,
   },
 ];
 
@@ -188,7 +191,9 @@ export default function InviteCreateScreen() {
               )}
             />
             {errors.email && (
-              <HelperText type="error">{errors.email.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.email.message}
+              </HelperText>
             )}
           </View>
 
@@ -198,20 +203,32 @@ export default function InviteCreateScreen() {
               {ROLE_OPTIONS.map((option) => (
                 <Pressable
                   key={option.value}
+                  disabled={option.comingSoon}
                   style={[
                     styles.roleCard,
                     selectedRole === option.value && styles.roleCardSelected,
+                    option.comingSoon && styles.roleCardDisabled,
                   ]}
                   onPress={() => setValue("role", option.value)}
                 >
-                  <Text
-                    style={[
-                      styles.roleLabel,
-                      selectedRole === option.value && styles.roleLabelSelected,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
+                  <View style={styles.roleLabelRow}>
+                    <Text
+                      style={[
+                        styles.roleLabel,
+                        selectedRole === option.value &&
+                          styles.roleLabelSelected,
+                      ]}
+                    >
+                      {option.label}
+                    </Text>
+                    {option.comingSoon && (
+                      <View style={commonStyles.comingSoonBadge}>
+                        <Text style={commonStyles.comingSoonBadgeText}>
+                          Coming soon
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                   <Text style={styles.roleDescription}>
                     {option.description}
                   </Text>
@@ -290,6 +307,14 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginTop: spacing.xs,
+  },
+  roleCardDisabled: {
+    opacity: 0.5,
+  },
+  roleLabelRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
   },
   successContent: {
     flex: 1,

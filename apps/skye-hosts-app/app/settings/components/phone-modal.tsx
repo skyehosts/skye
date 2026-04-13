@@ -11,6 +11,7 @@ import { Button, HelperText, TextInput } from "react-native-paper";
 import { AppModal } from "../../components/app-modal";
 import { AppSnackbar } from "../../components/app-snackbar";
 import { fetchApi } from "../../services/api";
+import { validateUkPhone } from "../../utils/phone-validation";
 import {
   colors,
   commonStyles,
@@ -116,10 +117,7 @@ export function PhoneModal({
               name="phoneNumber"
               rules={{
                 required: "Phone number is required",
-                pattern: {
-                  value: /^\+?[0-9\s\-()]{7,15}$/,
-                  message: "Enter a valid phone number",
-                },
+                validate: validateUkPhone,
               }}
               render={({ field: { onChange, onBlur, value } }) => (
                 <TextInput
@@ -136,7 +134,9 @@ export function PhoneModal({
               )}
             />
             {errors.phoneNumber && (
-              <HelperText type="error">{errors.phoneNumber.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.phoneNumber.message}
+              </HelperText>
             )}
           </View>
           <Button
@@ -179,7 +179,9 @@ export function PhoneModal({
               )}
             />
             {errors.code && (
-              <HelperText type="error">{errors.code.message}</HelperText>
+              <HelperText type="error" padding="none">
+                {errors.code.message}
+              </HelperText>
             )}
           </View>
           <Button

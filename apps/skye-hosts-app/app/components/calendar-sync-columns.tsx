@@ -1,9 +1,9 @@
 import type { ICalendarSyncDto } from "@repo/skye-hosts-api-client";
 import { useCallback, useRef, useState } from "react";
-import { Pressable, StyleSheet, useWindowDimensions, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Button, Icon, Portal, Text } from "react-native-paper";
 import { tooltipStyles } from "../calendar/components/tooltip-styles";
-import { colors, spacing, typography } from "../theme";
+import { colors, commonStyles, spacing, typography } from "../theme";
 import { fontWeight } from "../theme/font-weight";
 import { clampTooltipLeft } from "../utils/tooltip";
 import {
@@ -13,8 +13,6 @@ import {
 } from "../utils/sync-status";
 import { getPlatformLabel } from "../utils/calendar-sync-constants";
 import { InfoBox } from "./info-box";
-
-const STACK_BREAKPOINT = 360;
 
 interface CalendarSyncColumnsProps {
   sync: ICalendarSyncDto;
@@ -29,9 +27,6 @@ export function CalendarSyncColumns({
   syncingId,
   onShowExportHelp,
 }: CalendarSyncColumnsProps) {
-  const { width } = useWindowDimensions();
-  const stack = width < STACK_BREAKPOINT;
-
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -65,16 +60,14 @@ export function CalendarSyncColumns({
       ? `Exported ${formatRelativeTime(sync.lastExportedAt)}`
       : exportState === "pending"
         ? `Waiting for ${platformLabel}`
-        : `${platformLabel} hasn${"\u2019"}t requested your calendar yet`;
+        : null;
 
   const exportTooltipText =
     exportState === "healthy"
       ? `${platformLabel} last fetched your calendar ${formatRelativeTime(
           sync.lastExportedAt,
         )}. ${platformLabel} checks for updates automatically about once an hour, so new bookings show up on ${platformLabel} without you doing anything.`
-      : exportState === "pending"
-        ? `After you paste your Skye export link into ${platformLabel}, it can take up to a day before ${platformLabel} fetches your calendar for the first time. Nothing to do yet — check back tomorrow.`
-        : `It has been more than 24 hours and ${platformLabel} still hasn${"\u2019"}t fetched your calendar. This usually means the export link wasn${"\u2019"}t pasted into ${platformLabel} correctly. Tap this card to copy the link and paste it into ${platformLabel} again.`;
+      : `After you paste your Skye export link into ${platformLabel}, it can take up to a day before ${platformLabel} fetches your calendar for the first time. Nothing to do yet ${"\u2014"} check back tomorrow.`;
 
   const importTooltipText = `We automatically pull the latest availability from ${platformLabel} every few hours, so any bookings made there block the same dates on Skye. Tap "Import now" to run it immediately.`;
 
@@ -91,93 +84,86 @@ export function CalendarSyncColumns({
           re-enable.
         </Text>
       )}
-      <View style={[styles.row, stack && styles.rowStacked]}>
-        {/* Import column */}
-        <View style={styles.column}>
-          <Text style={styles.heading}>Import</Text>
+      {/* Import section */}
+      <View style={styles.section}>
+        <View style={styles.headingRow}>
+          <Text style={styles.heading}>Import:</Text>
           <Text style={styles.value}>
             {sync.lastImportAt
               ? `Imported ${formatRelativeTime(sync.lastImportAt)}`
               : `${platformLabel} hasn${"\u2019"}t synced yet`}
           </Text>
-          {showImportButton && (
-            <View style={styles.importActions}>
-              <Button
-                mode="outlined"
-                compact
-                onPress={() => onTriggerImport(sync.id)}
-                loading={importBusy}
-                disabled={importBusy}
-                icon="download"
-              >
-                Import now
-              </Button>
+        </View>
+        {showImportButton && (
+          <View style={styles.importActionsRow}>
+            <Button
+              mode="outlined"
+              compact
+              onPress={() => onTriggerImport(sync.id)}
+              loading={importBusy}
+              disabled={importBusy}
+              icon="download"
+            >
+              Import now
+            </Button>
+            <Pressable
+              style={commonStyles.helpLink}
+              onPress={() => showTooltipFor(importAnchor, importTooltipText)}
+            >
+              <View ref={importAnchor}>
+                <Icon
+                  source="help-circle-outline"
+                  size={16}
+                  color={colors.heatherPurple}
+                />
+              </View>
+              <Text style={commonStyles.helpLinkText}>
+                What{"\u2019"}s this?
+              </Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.divider} />
+
+      {/* Export section */}
+      <View style={styles.section}>
+        <View style={styles.headingRow}>
+          <Text style={styles.heading}>Export:</Text>
+          {exportValueText && (
+            <>
+              <Text style={styles.value}>{exportValueText}</Text>
               <Pressable
-                onPress={() => showTooltipFor(importAnchor, importTooltipText)}
+                onPress={() => showTooltipFor(exportAnchor, exportTooltipText)}
               >
-                <View ref={importAnchor}>
+                <View ref={exportAnchor}>
                   <Icon
                     source="information-outline"
-                    size={20}
+                    size={18}
                     color={colors.icon}
                   />
                 </View>
               </Pressable>
-            </View>
+            </>
           )}
         </View>
-
-        {/* Divider */}
-        {!stack && <View style={styles.divider} />}
-
-        {/* Export column */}
-        <View style={styles.column}>
-          <Text style={styles.heading}>Export</Text>
-          <View style={styles.exportValueRow}>
-            <Text
-              style={[
-                styles.value,
-                exportState === "overdue" && styles.valueWarning,
-              ]}
-            >
-              {exportValueText}
-            </Text>
-            <Pressable
-              onPress={() => showTooltipFor(exportAnchor, exportTooltipText)}
-            >
-              <View ref={exportAnchor}>
-                <Icon
-                  source={
-                    exportState === "overdue"
-                      ? "alert-outline"
-                      : "information-outline"
-                  }
-                  size={18}
-                  color={
-                    exportState === "overdue" ? colors.warning : colors.icon
-                  }
-                />
-              </View>
-            </Pressable>
+        {exportState === "overdue" && (
+          <View style={styles.warningWrapper}>
+            <InfoBox variant="warning">
+              {platformLabel} hasn{"\u2019"}t requested your calendar yet. Copy
+              your export link and paste it into {platformLabel}.{" "}
+              {onShowExportHelp && (
+                <Text
+                  style={styles.inlineHelpLink}
+                  onPress={() => onShowExportHelp(sync)}
+                >
+                  See how
+                </Text>
+              )}
+            </InfoBox>
           </View>
-          {exportState === "overdue" && (
-            <View style={styles.warningWrapper}>
-              <InfoBox variant="warning">
-                Tap this card to open the sync, copy the export link, and paste
-                it into {platformLabel}
-                {"\u2019"}s calendar import settings.{" "}
-                {onShowExportHelp && (
-                  <Text
-                    style={styles.helpLink}
-                    onPress={() => onShowExportHelp(sync)}
-                  >
-                    See how
-                  </Text>
-                )}
-              </InfoBox>
-            </View>
-          )}
-        </View>
+        )}
       </View>
       {tooltip && (
         <Portal>
@@ -215,55 +201,39 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.warning,
   },
-  row: {
-    flexDirection: "row",
-    alignItems: "stretch",
-    gap: spacing.md,
-  },
-  rowStacked: {
-    flexDirection: "column",
-  },
-  column: {
-    flex: 1,
+  section: {
     gap: spacing.xs,
-    alignItems: "center",
+    paddingVertical: spacing.sm,
   },
   divider: {
-    width: StyleSheet.hairlineWidth,
+    height: StyleSheet.hairlineWidth,
     backgroundColor: colors.textSecondary,
     opacity: 0.3,
   },
   heading: {
     fontSize: typography.sm,
-    fontWeight: fontWeight.semibold,
+    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
-    textAlign: "center",
   },
   value: {
     fontSize: typography.sm,
     color: colors.textSecondary,
-    textAlign: "center",
   },
-  valueWarning: {
-    color: colors.warning,
-    fontWeight: fontWeight.semibold,
-  },
-  exportValueRow: {
+  headingRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
   },
-  importActions: {
+  importActionsRow: {
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.sm,
-    marginTop: spacing.xs,
   },
   warningWrapper: {
     width: "100%",
     marginTop: spacing.xs,
   },
-  helpLink: {
+  inlineHelpLink: {
     color: colors.primary,
     textDecorationLine: "underline",
   },

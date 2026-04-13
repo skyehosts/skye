@@ -21,6 +21,7 @@ import { fetchApi } from "../services/api";
 import {
   colors,
   commonStyles,
+  fontFamily,
   fontWeight,
   spacing,
   typography,
@@ -229,7 +230,7 @@ export default function MessagesScreen() {
       <Appbar.Header>
         <Appbar.Content title="Messages" />
         <Appbar.Action
-          icon="cog"
+          icon="clock-edit-outline"
           onPress={() => router.push("/message-templates")}
         />
       </Appbar.Header>
@@ -286,12 +287,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   nameText: {
+    fontFamily: fontFamily.headingSemibold,
     fontSize: typography.md,
     color: colors.textPrimary,
     flex: 1,
   },
   nameTextUnread: {
-    fontWeight: fontWeight.bold,
+    fontFamily: fontFamily.heading,
   },
   timeText: {
     fontSize: typography.sm,

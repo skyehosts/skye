@@ -8,7 +8,7 @@
     "userInterfaceStyle": "light",
     "scheme": "skye-hosts",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logo-square.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

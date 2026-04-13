@@ -1,5 +1,6 @@
 import { MD3LightTheme } from "react-native-paper";
 import { colors } from "./colors";
+import { paperFonts } from "./fonts";
 
 export { colors } from "./colors";
 export { spacing } from "./spacing";
@@ -8,6 +9,7 @@ export { borderRadius } from "./border-radius";
 export { fontWeight } from "./font-weight";
 export { lineHeight } from "./line-height";
 export { commonStyles } from "./common-styles";
+export { fontFamily } from "./fonts";
 
 export const theme = {
   ...MD3LightTheme,
@@ -20,4 +22,5 @@ export const theme = {
     onSecondaryContainer: colors.primary,
     outline: colors.border,
   },
+  fonts: paperFonts,
 };

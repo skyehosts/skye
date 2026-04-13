@@ -187,7 +187,7 @@ export default function CalendarSyncScreen() {
           </Button>
 
           <Pressable
-            style={styles.helpLink}
+            style={commonStyles.helpLink}
             onPress={() => setHelpVisible(true)}
           >
             <Icon
@@ -195,7 +195,7 @@ export default function CalendarSyncScreen() {
               size={16}
               color={colors.heatherPurple}
             />
-            <Text style={styles.helpLinkText}>
+            <Text style={commonStyles.helpLinkText}>
               How does calendar sync work?
             </Text>
           </Pressable>
@@ -273,18 +273,6 @@ const styles = StyleSheet.create({
   },
   addButton: {
     marginTop: spacing.sm,
-  },
-  helpLink: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    alignSelf: "center",
-    paddingVertical: spacing.sm,
-  },
-  helpLinkText: {
-    fontSize: typography.sm,
-    color: colors.primary,
-    fontWeight: fontWeight.semibold,
   },
   helpDialogTip: {
     marginTop: spacing.md,

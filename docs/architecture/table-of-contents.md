@@ -13,3 +13,4 @@ High-level documentation of key features and systems. These docs focus on critic
 | [listing-deletion.md](./listing-deletion.md)                   | Listing deletion flow, FK constraint order, confirmation UI                        |
 | [listing-things-to-know.md](./listing-things-to-know.md)       | Guest listing detail "Things to know" — house rules, safety, responsive layout     |
 | [theme-tokens.md](./theme-tokens.md)                           | Shared design tokens package (`@repo/theme`) — spacing, border-radius, font-weight |
+| [guest-website-layout.md](./guest-website-layout.md)           | Guest website layout — full-bleed header/footer, 1800px content width, alignment   |

@@ -36,6 +36,7 @@ import {
   SignUpRequestDto,
 } from '../dto';
 import { AuthService } from '../providers';
+import { formatUkPhoneNumber } from '../utils/format-uk-phone-number';
 
 @Controller('auth')
 export class AuthController {
@@ -99,7 +100,8 @@ export class AuthController {
   async onPhoneLookup(
     @Body() dto: PhoneLookupRequestDto,
   ): Promise<IPhoneLookupResponseDto> {
-    const exists = await this.authService.phoneLookup(dto.phoneNumber);
+    const phoneNumber = formatUkPhoneNumber(dto.phoneNumber);
+    const exists = await this.authService.phoneLookup(phoneNumber);
     return { exists };
   }
 
@@ -108,7 +110,8 @@ export class AuthController {
   async onPhoneRequestOtp(
     @Body() dto: PhoneRequestOtpRequestDto,
   ): Promise<IPhoneRequestOtpResponseDto> {
-    return this.authService.phoneRequestOtp(dto.phoneNumber);
+    const phoneNumber = formatUkPhoneNumber(dto.phoneNumber);
+    return this.authService.phoneRequestOtp(phoneNumber);
   }
 
   @Post('phone-verify-otp')
@@ -116,8 +119,9 @@ export class AuthController {
   async onPhoneVerifyOtp(
     @Body() dto: PhoneVerifyOtpRequestDto,
   ): Promise<IPhoneVerifyOtpResponseDto> {
+    const phoneNumber = formatUkPhoneNumber(dto.phoneNumber);
     return this.authService.phoneVerifyOtp(
-      dto.phoneNumber,
+      phoneNumber,
       dto.code,
       dto.name,
       dto.email,
@@ -129,9 +133,10 @@ export class AuthController {
     @AuthenticatedUser() authenticatedUser: IJwtClaims,
     @Body() dto: PhoneChangeRequestOtpRequestDto,
   ): Promise<IAccountPhoneRequestOtpResponseDto> {
+    const phoneNumber = formatUkPhoneNumber(dto.phoneNumber);
     return this.authService.phoneChangeRequestOtp(
       authenticatedUser.sub,
-      dto.phoneNumber,
+      phoneNumber,
     );
   }
 
@@ -140,9 +145,10 @@ export class AuthController {
     @AuthenticatedUser() authenticatedUser: IJwtClaims,
     @Body() dto: PhoneChangeVerifyOtpRequestDto,
   ): Promise<IAccountPhoneVerifyOtpResponseDto> {
+    const phoneNumber = formatUkPhoneNumber(dto.phoneNumber);
     return this.authService.phoneChangeVerifyOtp(
       authenticatedUser.sub,
-      dto.phoneNumber,
+      phoneNumber,
       dto.code,
     );
   }

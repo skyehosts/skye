@@ -5,7 +5,7 @@ import { createHighlandTheme } from "@repo/web/highland-theme";
 
 const highlandTheme = createHighlandTheme({
   body: '"Open Sans", sans-serif',
-  heading: '"Montserrat", sans-serif',
+  heading: '"Lora", serif',
 });
 
 export const highlandThemeDecorator: Decorator = (Story) => (

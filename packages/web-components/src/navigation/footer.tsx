@@ -3,6 +3,8 @@
 import { Box, Link, Stack, Typography } from '@mui/material';
 import { APP_DISPLAY_NAME_SHORT } from '@repo/common';
 
+import { CONTENT_MAX_WIDTH, contentPaddingX } from '../layout/layout-constants';
+
 export interface FooterLink {
   label: string;
   href: string;
@@ -30,18 +32,27 @@ export function Footer({
         color: 'footer.text',
         mt: '50px',
         py: 4,
-        px: 3,
       }}
     >
       <Box
         sx={{
+          maxWidth: CONTENT_MAX_WIDTH,
+          mx: 'auto',
+          px: contentPaddingX,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
         }}
       >
         <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 1.5 }}>
+          <Typography
+            variant="subtitle1"
+            sx={(theme) => ({
+              fontFamily: theme.typography.fontFamilyHeading,
+              fontWeight: 700,
+              mb: 1.5,
+            })}
+          >
             Help
           </Typography>
           <Stack spacing={0.5}>
@@ -53,7 +64,8 @@ export function Footer({
                   color: theme.palette.footer.linkText,
                   textDecoration: 'none',
                   fontSize: '0.875rem',
-                  fontFamily: theme.typography.fontFamily,
+                  fontFamily: (theme.typography.h1 as { fontFamily?: string })
+                    .fontFamily,
                   '&:hover': {
                     color: theme.palette.footer.linkTextHover,
                     textDecoration: 'underline',
