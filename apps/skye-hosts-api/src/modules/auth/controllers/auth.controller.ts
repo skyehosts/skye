@@ -3,6 +3,7 @@ import type {
   IAccountPhoneRequestOtpResponseDto,
   IAccountPhoneVerifyOtpResponseDto,
   IChangePasswordResponseDto,
+  ICheckEmailResponseDto,
   IEmailRequestOtpResponseDto,
   IEmailVerifyOtpResponseDto,
   IForgotPasswordResponseDto,
@@ -21,6 +22,7 @@ import {
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
 import {
   ChangePasswordRequestDto,
+  CheckEmailRequestDto,
   EmailRequestOtpRequestDto,
   EmailVerifyOtpRequestDto,
   ForgotPasswordRequestDto,
@@ -60,6 +62,15 @@ export class AuthController {
       dto.email,
       dto.code,
     );
+  }
+
+  @Post('check-email')
+  @IgnoreBearerAuthentication()
+  async onCheckEmail(
+    @Body() dto: CheckEmailRequestDto,
+  ): Promise<ICheckEmailResponseDto> {
+    const exists = await this.authService.checkEmailExists(dto.email);
+    return { exists };
   }
 
   @Post('change-password')

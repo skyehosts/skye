@@ -2,10 +2,13 @@ flora
 multi
 pqq
 
-===========
-In-Progress
-===========
-
+======================================
+In-Progress / Needs human verification
+======================================
+- tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
+  - Is this only happening on device?
+- Confirm and Pay
+  - Customer friendly 5XX not diusplayed when clicking test book and API down
 
 ===============
 Pending Prompts
@@ -17,8 +20,6 @@ MVP: Host app
 --------------
 High prescence
 --------------
-- tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
-  - Is this only happening on device?
 - Menu -> Earnings
 - Menu -> Payments
 - How to view images on desktop, should open in lightbox? MVP
@@ -64,7 +65,7 @@ MVP: Guest website
 ---------------
 High prescence
 --------------
-- Listing detail, full width content or static position date popup
+- Show booking price in preferred currency>?
 - Instant Booking flow / as it pertains to opening confirm and pay modal and login/register
 - Request to book Message hots button on listing detail page?
 - Show more modal on listing detail page, scrollbar shows on mobile when not needed

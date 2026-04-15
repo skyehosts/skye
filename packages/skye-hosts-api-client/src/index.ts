@@ -12,6 +12,8 @@ export * from './dto-interfaces/account/update-account-privacy-request.dto';
 export * from './dto-interfaces/account/update-account-privacy-response.dto';
 export * from './dto-interfaces/auth/change-password-request.dto';
 export * from './dto-interfaces/auth/change-password-response.dto';
+export * from './dto-interfaces/auth/check-email-request.dto';
+export * from './dto-interfaces/auth/check-email-response.dto';
 export * from './dto-interfaces/auth/email-request-otp-request.dto';
 export * from './dto-interfaces/auth/email-request-otp-response.dto';
 export * from './dto-interfaces/auth/email-verify-otp-request.dto';

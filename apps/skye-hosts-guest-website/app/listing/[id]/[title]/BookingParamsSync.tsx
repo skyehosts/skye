@@ -14,17 +14,22 @@ import { serializeBookingSearchParams } from '@repo/web-components/listings/list
 import { ListingMobileBookingBar } from '@repo/web-components/listings/listing-mobile-booking-bar';
 import { useListingBookingState } from '@repo/web-components/listings/use-listing-booking-state';
 import { useListingUnavailability } from '@repo/web-components/listings/use-listing-unavailability';
+import { useReserveFlow } from '@repo/web-components/listings/use-reserve-flow';
+import { LogInOrSignUpModalWrapper } from '@repo/web/log-in-or-sign-up-modal-wrapper';
+import { useAuth } from '@repo/web/use-auth';
 import { usePathname, useRouter } from 'next/navigation';
 import { useCallback, useEffect } from 'react';
 
 interface BookingParamsSyncProps
   extends ListingGuestRuleProps, ListingNightRuleProps {
   listingId: number;
+  listingTitle: string;
   initialBookingParams: BookingSearchParams;
 }
 
 export function BookingParamsSync({
   listingId,
+  listingTitle,
   initialBookingParams,
   maxGuests,
   childrenAllowed,
@@ -36,6 +41,7 @@ export function BookingParamsSync({
 }: BookingParamsSyncProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { isAuthenticated } = useAuth();
 
   const onBookingChange = useCallback(
     (dateRange: { from: Date; to: Date } | null, guests: GuestCounts) => {
@@ -56,6 +62,14 @@ export function BookingParamsSync({
     initialDateRange: initialBookingParams.dateRange,
     initialGuests: initialBookingParams.guests,
     onBookingChange,
+  });
+
+  const reserveFlow = useReserveFlow({
+    isAuthenticated,
+    listingId,
+    listingTitle,
+    dateRange: bookingState.dateRange,
+    guests: bookingState.guests,
   });
 
   // Listen for 'open-date-picker' events from sibling components
@@ -88,6 +102,7 @@ export function BookingParamsSync({
           {...bookingState}
           dateModalOpen={isDesktop && bookingState.dateModalOpen}
           unavailableDates={unavailableDates}
+          onReserveClick={reserveFlow.handleReserveClick}
         />
       </Box>
 
@@ -98,6 +113,16 @@ export function BookingParamsSync({
         {...bookingState}
         dateModalOpen={!isDesktop && bookingState.dateModalOpen}
         unavailableDates={unavailableDates}
+        onReserveClick={reserveFlow.handleReserveClick}
+      />
+
+      <LogInOrSignUpModalWrapper
+        open={reserveFlow.modalOpen}
+        onClose={() => reserveFlow.setModalOpen(false)}
+        onAuthenticated={reserveFlow.handleAuthenticated}
+        role="guest"
+        logoSrc="/logo-square.png"
+        logoAlt="Skye"
       />
     </>
   );

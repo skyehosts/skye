@@ -249,8 +249,6 @@ export interface ListingBookingStateProps {
   setDateModalOpen: (open: boolean) => void;
   guestModalOpen: boolean;
   setGuestModalOpen: (open: boolean) => void;
-  confirmModalOpen: boolean;
-  setConfirmModalOpen: (open: boolean) => void;
   handleDateSave: (range: { from: Date; to: Date }) => void;
   handleDateClear: () => void;
   handleGuestSave: (guests: GuestCounts) => void;
@@ -274,6 +272,21 @@ export function formatGuestSummary(guests: GuestCounts): string {
   return text;
 }
 
+export function formatGuestBreakdown(guests: GuestCounts): string {
+  const parts: string[] = [];
+  parts.push(`${guests.adults} adult${guests.adults !== 1 ? 's' : ''}`);
+  if (guests.children > 0) {
+    parts.push(`${guests.children} child${guests.children !== 1 ? 'ren' : ''}`);
+  }
+  if (guests.infants > 0) {
+    parts.push(`${guests.infants} infant${guests.infants !== 1 ? 's' : ''}`);
+  }
+  if (guests.pets > 0) {
+    parts.push(`${guests.pets} pet${guests.pets !== 1 ? 's' : ''}`);
+  }
+  return parts.join(', ');
+}
+
 function parseIntSafe(
   value: string | undefined,
   min: number,
@@ -285,7 +298,7 @@ function parseIntSafe(
   return parsed;
 }
 
-function toDateOnly(iso: string): Date | null {
+export function toDateOnly(iso: string): Date | null {
   const match = /^\d{4}-\d{2}-\d{2}$/.exec(iso);
   if (!match) return null;
   const d = new Date(iso + 'T00:00:00');
@@ -324,7 +337,7 @@ export function parseBookingSearchParams(
   return { dateRange, guests };
 }
 
-function formatDateParam(d: Date): string {
+export function formatDateParam(d: Date): string {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
@@ -345,9 +358,7 @@ export function serializeBookingSearchParams(
   for (const key of Object.keys(
     DEFAULT_GUEST_COUNTS,
   ) as (keyof GuestCounts)[]) {
-    if (guests[key] !== DEFAULT_GUEST_COUNTS[key]) {
-      result[key] = String(guests[key]);
-    }
+    result[key] = String(guests[key]);
   }
 
   return result;

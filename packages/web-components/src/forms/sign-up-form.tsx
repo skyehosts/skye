@@ -24,17 +24,15 @@ export interface SignUpFormValues {
   confirmEmail: string;
   password: string;
   acceptTerms: boolean;
-  subscribeNewsletter: boolean;
 }
 
 export interface SignUpFormResult {}
 
 export interface SignUpFormProps {
   onSubmit: (data: SignUpFormValues) => Promise<SignUpFormResult>;
-  newsletterLabel?: string;
 }
 
-export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
+export function SignUpForm({ onSubmit }: SignUpFormProps) {
   const [result, setResult] = useState<SignUpFormResult | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -53,7 +51,6 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
       confirmEmail: '',
       password: '',
       acceptTerms: false,
-      subscribeNewsletter: false,
     },
   });
 
@@ -187,13 +184,6 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
             </FormControl>
           )}
         />
-
-        <FormControl>
-          <FormControlLabel
-            control={<Checkbox {...register('subscribeNewsletter')} />}
-            label={newsletterLabel ?? 'Subscribe to our newsletter'}
-          />
-        </FormControl>
 
         {serverError && <Alert severity="error">{serverError}</Alert>}
         {result && (

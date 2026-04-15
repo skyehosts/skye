@@ -13,10 +13,8 @@ import { ListingHeroImages } from '@repo/web-components/listings/listing-hero-im
 import { ListingHeroSection } from '@repo/web-components/listings/listing-hero-section';
 import { ListingLocationSection } from '@repo/web-components/listings/listing-location-section';
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { Suspense } from 'react';
 import { auth } from '../../../auth';
-import { BookNowButton } from './BookNowButton';
 import { BookingParamsSync } from './BookingParamsSync';
 import { ListingHeroWithFavourite } from './ListingHeroWithFavourite';
 import { ListingThingsToKnowWithDates } from './ListingThingsToKnowWithDates';
@@ -42,7 +40,7 @@ export default async function ListingPage({
   params,
   searchParams,
 }: ListingPageProps) {
-  const { id, title } = await params;
+  const { id } = await params;
   const resolvedSearchParams = await searchParams;
   const [listing, amenitiesData] = await Promise.all([
     fetchApi<IGetListingResponseDto>(`/listing/${id}`),
@@ -129,25 +127,12 @@ export default async function ListingPage({
           <Suspense>
             <ListingThingsToKnowWithDates listing={listing} />
           </Suspense>
-          {/* TODO: Replace hardcoded values with actual booking form data */}
-          {guestId ? (
-            <BookNowButton
-              listingId={listing.id}
-              guestId={guestId}
-              checkInDate="2026-04-01"
-              checkOutDate="2026-04-05"
-              totalPrice={500}
-            />
-          ) : (
-            <Link href={`/login?callbackUrl=/listing/${id}/${title}`}>
-              Log in to book
-            </Link>
-          )}
         </Box>
 
         {/* Right column: booking sidebar (desktop) + mobile bar — via BookingParamsSync */}
         <BookingParamsSync
           listingId={listing.id}
+          listingTitle={listing.title}
           initialBookingParams={initialBookingParams}
           maxGuests={listing.maxGuests}
           childrenAllowed={listing.houseRuleChildrenAllowed}
