@@ -10,7 +10,6 @@ In-Progress
 ===============
 Pending Prompts
 ===============
-- Checkout instructions page, already selected items should have 'Edit' not chevron right.
 
 =============
 MVP: Host app
@@ -57,7 +56,6 @@ High prescence
 -------------
 Low prescence
 -------------
-- "enable import and for full pro -> enable export for protection against double bookings?
 - Message template add details..comment out non implemented?
 
 ==================

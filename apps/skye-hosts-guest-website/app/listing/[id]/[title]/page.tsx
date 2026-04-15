@@ -170,6 +170,17 @@ export default async function ListingPage({
           listingTitle={listing.title}
         />
       </Box>
+
+      {/* TEMP: filler content to enable scrolling past the map (remove before merge) */}
+      <Box
+        sx={{
+          height: 1600,
+          mx: { xs: 2, md: 0 },
+          mt: 4,
+          bgcolor: 'custom.driftwoodSand',
+          borderRadius: 1,
+        }}
+      />
     </Container>
   );
 }
