@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { getDisplayError } from './get-display-error';
 
 export interface ForgotPasswordFormValues {
   email: string;
@@ -40,11 +41,7 @@ export function ForgotPasswordForm({ onSubmit }: ForgotPasswordFormProps) {
       await onSubmit(data);
       setSubmitted(true);
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 

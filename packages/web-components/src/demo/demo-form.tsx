@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { applyServerErrors } from '../forms/apply-server-errors';
+import { getDisplayError } from '../forms/get-display-error';
 
 export interface DemoFormValues {
   name: string;
@@ -71,11 +72,7 @@ export function DemoForm({ onSubmit }: DemoFormProps) {
       reset();
     } catch (e) {
       if (applyServerErrors(e, setError)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 

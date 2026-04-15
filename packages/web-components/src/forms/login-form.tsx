@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { getDisplayError } from './get-display-error';
 
 export interface LoginFormValues {
   email: string;
@@ -41,11 +42,7 @@ export function LoginForm({ onSubmit, infoMessage }: LoginFormProps) {
     try {
       await onSubmit(data);
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 

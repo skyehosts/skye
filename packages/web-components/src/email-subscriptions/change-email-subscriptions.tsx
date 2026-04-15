@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { getDisplayError } from '../forms/get-display-error';
 
 export interface ChangeEmailSubscriptionsValues {
   subscribedToNewsViaEmail: boolean;
@@ -65,11 +66,7 @@ export function ChangeEmailSubscriptions({
       await onSubmit(data);
       setSuccess(true);
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 

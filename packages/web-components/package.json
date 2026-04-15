@@ -8,6 +8,7 @@
     "./primitives/code": "./src/primitives/code.tsx",
     "./demo/demo-form": "./src/demo/demo-form.tsx",
     "./forms/apply-server-errors": "./src/forms/apply-server-errors.ts",
+    "./forms/get-display-error": "./src/forms/get-display-error.ts",
     "./forms/change-password-form": "./src/forms/change-password-form.tsx",
     "./forms/forgot-password-form": "./src/forms/forgot-password-form.tsx",
     "./forms/login-form": "./src/forms/login-form.tsx",

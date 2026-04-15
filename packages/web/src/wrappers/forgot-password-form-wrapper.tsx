@@ -15,7 +15,7 @@ export function ForgotPasswordFormWrapper() {
     });
 
     if (!res.ok) {
-      throw new Error("Something went wrong. Please try again.");
+      throw new Error("Forgot password request failed");
     }
   };
 

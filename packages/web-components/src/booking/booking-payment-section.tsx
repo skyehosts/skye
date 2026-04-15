@@ -21,6 +21,7 @@ import {
 } from '@repo/skye-hosts-api-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { getDisplayError } from '../forms/get-display-error';
 import { formatDateParam } from '../listings/listing-guest-types';
 import { formatGbp, type Quote } from './use-quote';
 
@@ -99,7 +100,7 @@ function TestBookingPanel({
       }).toString();
       router.push(`/booking-confirmed?${qs}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Something went wrong');
+      setError(getDisplayError(e));
       setLoading(false);
     }
   };

@@ -9,7 +9,7 @@ In-Progress / Needs human verification
   - Is this only happening on device?
 - Confirm and Pay
   - Customer friendly 5XX not diusplayed when clicking test book and API down
-
+  - Tried a fix but didnt seem to reoslve.
 ===============
 Pending Prompts
 ===============

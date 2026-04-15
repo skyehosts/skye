@@ -29,6 +29,8 @@ export class ApiRequestError extends Error {
   }
 }
 
+export const SERVER_ERROR_MESSAGE = 'Something went wrong. Please try again.';
+
 export interface FetchApiOptions {
   method?: string;
   headers?: Record<string, string>;
@@ -47,11 +49,16 @@ export async function fetchApi<TResponse, TBody = never>(
     ...options?.headers,
   };
 
-  const res = await fetch(`${baseUrl}${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${baseUrl}${path}`, {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new ApiRequestError(0, SERVER_ERROR_MESSAGE);
+  }
   if (!res.ok) {
     if (res.status === 401 || res.status === 498) {
       throw new ApiAuthenticationError(res.status);

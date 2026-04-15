@@ -17,6 +17,7 @@ import {
   SignUpRole,
   fetchApi,
 } from "../../../skye-hosts-api-client/src";
+import { getDisplayError } from "@repo/web-components/forms/get-display-error";
 
 const ROLE_LABELS: Record<SignUpRole, string> = {
   guest: "guest",
@@ -61,11 +62,7 @@ export function LogInOrSignUpModalWrapper({
       setEmail(data.email);
       setStep(response.exists ? "login" : "signup");
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
-      );
+      setServerError(getDisplayError(e));
     }
   };
 
@@ -79,16 +76,13 @@ export function LogInOrSignUpModalWrapper({
       });
 
       if (!result?.ok) {
-        throw new Error("Invalid email or password");
+        setServerError("Invalid email or password");
+        return;
       }
 
       onAuthenticated();
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
-      );
+      setServerError(getDisplayError(e));
     }
   };
 
@@ -110,7 +104,8 @@ export function LogInOrSignUpModalWrapper({
       });
 
       if (!result?.ok) {
-        throw new Error("Account created but sign-in failed. Please log in.");
+        setServerError("Account created but sign-in failed. Please log in.");
+        return;
       }
 
       onAuthenticated();
@@ -123,11 +118,7 @@ export function LogInOrSignUpModalWrapper({
         );
         return;
       }
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : "Something went wrong. Please try again.",
-      );
+      setServerError(getDisplayError(e));
     }
   };
 
