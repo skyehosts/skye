@@ -1,0 +1,7 @@
+{
+  "testRegex": ".*\\.spec\\.ts$",
+  "transform": {
+    "^.+\\.ts$": ["@swc/jest"]
+  },
+  "testEnvironment": "node"
+}

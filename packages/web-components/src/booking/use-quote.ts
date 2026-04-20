@@ -1,15 +1,14 @@
-import { differenceInCalendarDays } from 'date-fns';
-import type { GuestCounts } from '../listings/listing-guest-types';
+'use client';
 
-export interface Quote {
-  nightlyRate: number;
-  nights: number;
-  subtotal: number;
-  cleaningFee: number;
-  serviceFee: number;
-  total: number;
-  currency: 'GBP';
-}
+import type { IQuoteRequestDto, IQuoteResponseDto } from '@repo/common';
+import { fetchApi } from '@repo/skye-hosts-api-client';
+import { useEffect, useState } from 'react';
+import {
+  formatDateParam,
+  type GuestCounts,
+} from '../listings/listing-guest-types';
+
+export type Quote = IQuoteResponseDto;
 
 export interface UseQuoteParams {
   listingId: number;
@@ -17,33 +16,52 @@ export interface UseQuoteParams {
   guests: GuestCounts;
 }
 
-// TODO: replace with real /listings/{id}/quote endpoint once available.
-// Keeping a clean signature so the swap is internal to this hook.
-const STUB_NIGHTLY_RATE = 120;
-const STUB_CLEANING_FEE = 25;
-const STUB_SERVICE_FEE_RATE = 0.12;
+export function useQuote({
+  listingId,
+  dateRange,
+  guests,
+}: UseQuoteParams): Quote | null {
+  const [quote, setQuote] = useState<Quote | null>(null);
 
-export function useQuote({ dateRange }: UseQuoteParams): Quote | null {
-  if (!dateRange) return null;
+  const checkInDate = dateRange ? formatDateParam(dateRange.from) : null;
+  const checkOutDate = dateRange ? formatDateParam(dateRange.to) : null;
 
-  const nights = differenceInCalendarDays(dateRange.to, dateRange.from);
-  if (nights <= 0) return null;
+  useEffect(() => {
+    if (!checkInDate || !checkOutDate) {
+      setQuote(null);
+      return;
+    }
+    let cancelled = false;
+    const body: IQuoteRequestDto = {
+      checkInDate,
+      checkOutDate,
+      guestCount: {
+        adults: guests.adults,
+        children: guests.children,
+        babies: guests.infants,
+      },
+    };
+    fetchApi<IQuoteResponseDto, IQuoteRequestDto>(
+      `/listing/${listingId}/quote`,
+      body,
+    )
+      .then((res) => {
+        if (!cancelled) setQuote(res);
+      })
+      .catch(() => {
+        if (!cancelled) setQuote(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    listingId,
+    checkInDate,
+    checkOutDate,
+    guests.adults,
+    guests.children,
+    guests.infants,
+  ]);
 
-  const subtotal = STUB_NIGHTLY_RATE * nights;
-  const serviceFee = Math.round(subtotal * STUB_SERVICE_FEE_RATE);
-  const total = subtotal + STUB_CLEANING_FEE + serviceFee;
-
-  return {
-    nightlyRate: STUB_NIGHTLY_RATE,
-    nights,
-    subtotal,
-    cleaningFee: STUB_CLEANING_FEE,
-    serviceFee,
-    total,
-    currency: 'GBP',
-  };
-}
-
-export function formatGbp(amount: number): string {
-  return `£${amount.toLocaleString('en-GB')}`;
+  return quote;
 }

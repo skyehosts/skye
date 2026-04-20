@@ -24,7 +24,7 @@ import { isExternalBooking } from "../utils/booking-segments";
 import { formatDateString, parseDateString } from "../utils/format-date-string";
 import { computeRestrictedDates } from "../utils/min-nights-gap";
 import type { DayCellStatus } from "./day-cell";
-import { MonthGrid, type MonthData } from "./month-grid";
+import { MonthGrid, type DayPriceInfo, type MonthData } from "./month-grid";
 
 const MONTHS_IN_PAST = 6;
 const MONTHS_IN_FUTURE = 18;
@@ -128,6 +128,7 @@ interface CalendarListProps {
   bookings?: IListingBookingItemDto[];
   blocks?: ICalendarBlockDto[];
   platformBySyncId?: Map<number, CalendarSyncPlatform>;
+  pricesByDate?: Map<string, DayPriceInfo>;
   minNights?: number;
   minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
   onDayPress?: (dateString: string) => void;
@@ -140,6 +141,7 @@ export function CalendarList({
   bookings,
   blocks,
   platformBySyncId,
+  pricesByDate,
   minNights: minNightsProp,
   minNightsByCheckInDay,
   onDayPress,
@@ -424,6 +426,7 @@ export function CalendarList({
         bookedDates={bookedDates}
         blockedDateInfo={blockedDateInfo}
         restrictedDates={restrictedDates}
+        pricesByDate={pricesByDate}
         minNights={minNightsProp ?? 1}
         onDayPress={onDayPress}
         getDayStatus={getDayStatus}
@@ -439,6 +442,7 @@ export function CalendarList({
       bookedDates,
       blockedDateInfo,
       restrictedDates,
+      pricesByDate,
       minNightsProp,
       onDayPress,
       getDayStatus,

@@ -25,6 +25,7 @@ interface DateBlockSheetProps {
   loading: boolean;
   onBlock: () => void;
   onUnblock: () => void;
+  onSetPriceOverride?: () => void;
   onDismiss: () => void;
 }
 
@@ -55,6 +56,7 @@ export function DateBlockSheet({
   loading,
   onBlock,
   onUnblock,
+  onSetPriceOverride,
   onDismiss,
 }: DateBlockSheetProps) {
   const translateY = useRef(new Animated.Value(300)).current;
@@ -75,16 +77,6 @@ export function DateBlockSheet({
       }).start();
     }
   }, [visible, translateY]);
-
-  console.log("[DateBlockSheet] render", {
-    visible,
-    startDate,
-    endDate,
-    hasManualBlocks,
-    hasUnblockedDates,
-    hasBookedDates,
-    loading,
-  });
 
   if (!visible) return null;
 
@@ -124,6 +116,17 @@ export function DateBlockSheet({
               style={styles.actionButton}
             >
               Unblock these dates
+            </Button>
+          )}
+          {hasUnblockedDates && onSetPriceOverride && (
+            <Button
+              mode="outlined"
+              onPress={onSetPriceOverride}
+              disabled={loading}
+              icon="currency-gbp"
+              style={styles.actionButton}
+            >
+              Set price override
             </Button>
           )}
         </View>

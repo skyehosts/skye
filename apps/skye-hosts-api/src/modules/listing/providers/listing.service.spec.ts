@@ -21,6 +21,7 @@ import {
   SentMessage,
 } from '../../scheduled-message/entities';
 import { Listing } from '../entities';
+import { ListingPricingService } from './listing-pricing.service';
 import { ListingService } from './listing.service';
 
 describe('ListingService', () => {
@@ -44,6 +45,10 @@ describe('ListingService', () => {
         { provide: getRepositoryToken(Account), useValue: {} },
         { provide: getRepositoryToken(ListingImage), useValue: {} },
         { provide: ListingAccessService, useValue: listingAccessService },
+        {
+          provide: ListingPricingService,
+          useValue: { hasCompletePricing: jest.fn().mockResolvedValue(true) },
+        },
         {
           provide: ConfigService,
           useValue: {

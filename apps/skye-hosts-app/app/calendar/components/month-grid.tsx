@@ -44,6 +44,11 @@ export interface MonthData {
   weeks: (number | null)[][];
 }
 
+export interface DayPriceInfo {
+  hostNetPence: number;
+  isOverride: boolean;
+}
+
 interface MonthGridProps {
   data: MonthData;
   cellSize: number;
@@ -56,6 +61,7 @@ interface MonthGridProps {
   bookedDates?: Set<string>;
   blockedDateInfo?: Map<string, BlockedDateInfo[]>;
   restrictedDates?: Set<string>;
+  pricesByDate?: Map<string, DayPriceInfo>;
   minNights?: number;
   onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus | undefined;
@@ -75,6 +81,7 @@ function MonthGridInner({
   bookedDates,
   blockedDateInfo,
   restrictedDates,
+  pricesByDate,
   minNights: minNightsProp,
   onDayPress,
   getDayStatus,
@@ -172,6 +179,10 @@ function MonthGridInner({
                         ? "restricted"
                         : "none"))
                 : "none";
+              const priceInfo =
+                dateString && pricesByDate
+                  ? pricesByDate.get(dateString)
+                  : undefined;
               return (
                 <DayCell
                   key={dayIndex}
@@ -182,6 +193,8 @@ function MonthGridInner({
                   status={status}
                   size={cellSize}
                   height={cellHeight}
+                  hostNetPence={priceInfo?.hostNetPence}
+                  isPriceOverride={priceInfo?.isOverride}
                   onPress={(ds, e) => handleDayPress(ds, e)}
                   onLongPress={onLongPress}
                 />

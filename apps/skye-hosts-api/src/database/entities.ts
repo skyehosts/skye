@@ -5,7 +5,12 @@ import { CoHostInvite, ListingUserRole } from '../modules/co-host/entities';
 import { Demo } from '../modules/demo/entities';
 import { Favourite } from '../modules/favourite/entities';
 import { ListingImage } from '../modules/listing-image/entities';
-import { Listing } from '../modules/listing/entities';
+import {
+  Listing,
+  ListingPriceOverride,
+  ListingPricing,
+  ListingSeasonPricing,
+} from '../modules/listing/entities';
 import { Message } from '../modules/message/entities';
 import {
   DeviceToken,
@@ -34,6 +39,9 @@ export const entities = [
   Listing,
   ListingImage,
   ListingMessageTemplate,
+  ListingPriceOverride,
+  ListingPricing,
+  ListingSeasonPricing,
   ListingUserRole,
   Message,
   MessageLog,

@@ -14,7 +14,12 @@ import { Booking } from '../../booking/entities';
 import { CalendarBlock, CalendarSync } from '../../calendar-sync/entities';
 import { CoHostInvite, ListingUserRole } from '../../co-host/entities';
 import { Demo } from '../../demo/entities';
-import { Listing } from '../../listing/entities';
+import {
+  Listing,
+  ListingPriceOverride,
+  ListingPricing,
+  ListingSeasonPricing,
+} from '../../listing/entities';
 import { Message } from '../../message/entities';
 import {
   ListingMessageTemplate,
@@ -53,6 +58,9 @@ export class E2eSeedService {
       Booking,
       CoHostInvite,
       ListingUserRole,
+      ListingPriceOverride,
+      ListingSeasonPricing,
+      ListingPricing,
       Listing,
       Account,
       Demo,
@@ -149,6 +157,73 @@ export class E2eSeedService {
     });
     const listingId = listingResult.identifiers[0].id as number;
 
+    const unpricedListingResult = await listingRepo.insert({
+      hostId: host.id,
+      title: 'E2E Unpriced Draft Listing',
+      description:
+        'Used to verify publish guard blocks listings without pricing.',
+      typeId: ListingTypeId.Cabin,
+      spaceType: ListingSpaceType.EntirePlace,
+      maxGuests: 2,
+      bedrooms: 1,
+      beds: 1,
+      bathrooms: 1,
+      postCode: 'BT1 1AB',
+      amenities: [],
+      highlights: [],
+      bookingType: ListingBookingType.InstantBook,
+      safetyDisclosures: [],
+      timezone: 'Europe/London',
+      status: 'draft' as const,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const unpricedListingId = unpricedListingResult.identifiers[0].id as number;
+
+    const seasonRepo = this.dataSource.getRepository(ListingSeasonPricing);
+    await seasonRepo.insert([
+      {
+        listingId,
+        season: 'low',
+        weekdayPricePence: 8000,
+        weekendPricePence: 10000,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        listingId,
+        season: 'shoulder',
+        weekdayPricePence: 10000,
+        weekendPricePence: 12000,
+        createdAt: now,
+        updatedAt: now,
+      },
+      {
+        listingId,
+        season: 'peak',
+        weekdayPricePence: 12000,
+        weekendPricePence: 15000,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ]);
+
+    const pricingRepo = this.dataSource.getRepository(ListingPricing);
+    await pricingRepo.insert({
+      listingId,
+      cleaningFeePence: 100,
+      extraGuestThreshold: 0,
+      extraGuestFeePence: 0,
+      lastMinuteEnabled: false,
+      lastMinutePercent: 5,
+      weeklyEnabled: false,
+      weeklyPercent: 10,
+      monthlyEnabled: false,
+      monthlyPercent: 20,
+      createdAt: now,
+      updatedAt: now,
+    });
+
     const bookingRepo = this.dataSource.getRepository(Booking);
 
     await bookingRepo.insert({
@@ -161,6 +236,8 @@ export class E2eSeedService {
       createdAt: now,
     });
 
-    this.logger.debug(`Seeded: 3 accounts, 1 listing, 1 booking`);
+    this.logger.debug(
+      `Seeded: 3 accounts, 2 listings (priced #${listingId}, unpriced #${unpricedListingId}), 1 booking`,
+    );
   }
 }

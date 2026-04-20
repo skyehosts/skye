@@ -13,7 +13,7 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
-import { Environments } from '@repo/common';
+import { Environments, formatGbp, type DiscountType } from '@repo/common';
 import {
   fetchApi,
   type IBookingPaymentRequestDto,
@@ -23,13 +23,19 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { getDisplayError } from '../forms/get-display-error';
 import { formatDateParam } from '../listings/listing-guest-types';
-import { formatGbp, type Quote } from './use-quote';
+import { type Quote } from './use-quote';
 
 export interface BookingPaymentSectionProps {
   quote: Quote | null;
   listingId: number;
   guestId: number;
   dateRange: { from: Date; to: Date } | null;
+}
+
+function discountLabel(type: DiscountType): string {
+  if (type === 'lastMinute') return 'Last-minute discount';
+  if (type === 'weekly') return 'Weekly discount';
+  return 'Monthly discount';
 }
 
 function PriceLine({
@@ -148,6 +154,15 @@ export function BookingPaymentSection({
   const isDev =
     process.env.NEXT_PUBLIC_SKYE_ENVIRONMENT !== Environments.PRODUCTION;
 
+  const nightsCount = quote?.nights.length ?? 0;
+  const avgNightlyPence =
+    quote && nightsCount > 0
+      ? Math.round(quote.nightlyRateSumPence / nightsCount)
+      : 0;
+  const serviceFeePence = quote
+    ? quote.guestFeePence + quote.stripeFeePence
+    : 0;
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box>
@@ -192,7 +207,7 @@ export function BookingPaymentSection({
           listingId={listingId}
           guestId={guestId}
           dateRange={dateRange}
-          totalPrice={quote?.total ?? null}
+          totalPrice={quote ? Math.round(quote.totalGuestPence) / 100 : null}
         />
       )}
 
@@ -232,28 +247,43 @@ export function BookingPaymentSection({
                   Total ({quote.currency})
                 </Typography>
                 <Typography variant="body2" sx={{ fontWeight: 700 }}>
-                  {formatGbp(quote.total)}
+                  {formatGbp(quote.totalGuestPence)}
                 </Typography>
               </Box>
             </AccordionSummary>
             <AccordionDetails sx={{ px: 2, pt: 0 }}>
               <Divider sx={{ mb: 1 }} />
               <PriceLine
-                label={`${formatGbp(quote.nightlyRate)} × ${quote.nights} night${
-                  quote.nights !== 1 ? 's' : ''
+                label={`${formatGbp(avgNightlyPence)} × ${nightsCount} night${
+                  nightsCount !== 1 ? 's' : ''
                 }`}
-                amount={formatGbp(quote.subtotal)}
+                amount={formatGbp(quote.nightlyRateSumPence)}
               />
-              <PriceLine
-                label="Cleaning fee"
-                amount={formatGbp(quote.cleaningFee)}
-              />
-              <PriceLine
-                label="Service fee"
-                amount={formatGbp(quote.serviceFee)}
-              />
+              {quote.appliedDiscounts.map((d) => (
+                <PriceLine
+                  key={d.type}
+                  label={`${discountLabel(d.type)} (-${d.percent}%)`}
+                  amount={`-${formatGbp(d.amountPence)}`}
+                />
+              ))}
+              {quote.cleaningFeePence > 0 && (
+                <PriceLine
+                  label="Cleaning fee"
+                  amount={formatGbp(quote.cleaningFeePence)}
+                />
+              )}
+              {serviceFeePence > 0 && (
+                <PriceLine
+                  label="Service fee"
+                  amount={formatGbp(serviceFeePence)}
+                />
+              )}
               <Divider sx={{ my: 1 }} />
-              <PriceLine label="Total" amount={formatGbp(quote.total)} bold />
+              <PriceLine
+                label="Total"
+                amount={formatGbp(quote.totalGuestPence)}
+                bold
+              />
             </AccordionDetails>
           </Accordion>
         ) : (
