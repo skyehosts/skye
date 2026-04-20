@@ -124,8 +124,7 @@ function DayCellInner({
       </View>
       {hostNetPence !== undefined &&
         !isPast &&
-        status !== "booked" &&
-        status !== "blocked" && (
+        (status === "none" || status === "selected") && (
           <Text
             style={[
               styles.priceText,

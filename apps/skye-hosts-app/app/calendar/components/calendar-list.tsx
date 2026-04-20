@@ -178,8 +178,22 @@ export function CalendarList({
         set.add(d);
       }
     }
+    // Imported iCal bookings (Airbnb, Booking.com, etc.) are booked too —
+    // they render as bars rather than blocked cells.
+    for (const block of blocks ?? []) {
+      if (block.source === "import" && isExternalBooking(block.summary)) {
+        // endDate is exclusive per iCal DTEND semantics
+        for (const d of expandDateRange(
+          block.startDate,
+          block.endDate,
+          false,
+        )) {
+          set.add(d);
+        }
+      }
+    }
     return set;
-  }, [bookings]);
+  }, [bookings, blocks]);
 
   const blockedDateInfo = useMemo(() => {
     const map = new Map<string, BlockedDateInfo[]>();
@@ -212,21 +226,6 @@ export function CalendarList({
     for (const key of blockedDateInfo.keys()) {
       occupiedDates.add(key);
     }
-    // Include external booking dates (imported iCal blocks with "Reserved"
-    // summary) — these are excluded from both bookedDates and blockedDateInfo
-    // but still occupy the calendar.
-    for (const block of blocks ?? []) {
-      if (block.source === "import" && isExternalBooking(block.summary)) {
-        // endDate is exclusive per iCal DTEND semantics
-        for (const d of expandDateRange(
-          block.startDate,
-          block.endDate,
-          false,
-        )) {
-          occupiedDates.add(d);
-        }
-      }
-    }
     const firstMonth = months[0];
     const lastMonth = months[months.length - 1];
     const rangeStart = formatDateString(firstMonth.year, firstMonth.month, 1);
@@ -250,7 +249,6 @@ export function CalendarList({
   }, [
     bookedDates,
     blockedDateInfo,
-    blocks,
     minNightsProp,
     minNightsByCheckInDay,
     months,
