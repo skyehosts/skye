@@ -10,15 +10,34 @@ In-Progress / Needs human verification
 ===============
 Pending Prompts
 ===============
+- Manual: Logo in app has cross, need complete window
+- Bug:
+  - Emulator shows Sep 14th-20th are blocked on airbnb but they arne't. Why?
+  - On device only, when long pressing on Sept 15th, it should select just that date, but it selects 15-22 sep?
+- Feature:
+  - Long press should not be required to select a single date, a tap should be sufficient.
 - tests on pricing
   - On 3+ night stays, the guest fee is 0%. ?
+    - NB: Pricing on AirBNB isn't just 18% and 15%, its more nuanced, need to understand further to achieve some semblance of parity.
   - % over weekday UI needs changed to match Airbnb. I.E don't use radio groups
-  - No point showing price on yellow cel (unbookable)
-  - Increase font size of money in cell?
   - Copy / guidance / copy needs improved overall
   - Needs instruction on calendar page to le tthem know about long press?
 - Cleaning fees
+  - In hosts app on 'Pricing' page, there was a previously partially implemented feature called 'Cleaning fee'
+  - Let's fininsh the implementation
+  - Adding a tap handler on the card, which opens a modal.
+  - This modal should enable host to set a value.
+  - Re-use existing components where possible
+  - Present options to me for which modal to re-use or if creating a new one is required. Check existing components for compatibility
+  - In particular check if there is an existing modal component that enables the setting of a single integer value.
+  - Ideally we want somethin glike form-input-modal.tsx but for integer value.
+  - Add 'A lower clecaning fee may increase your bookings' help text at bottom (below form control but above submit button)
+  - This should save the cleaning fee value to the DB via API
+  - Review standard process / components / success/failure handling (toast etc) and ensure you follow standards useed already
+  - Update the card on the pricing page to display the already selected value (if set)
+  - Ensure that any price calculations for listings is correctly including this clenaing fee in it's calcs (it should be already)
 - Extra guest fee
+  - 
 
 
 =============

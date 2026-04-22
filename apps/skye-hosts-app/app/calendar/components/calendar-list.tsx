@@ -131,7 +131,6 @@ interface CalendarListProps {
   pricesByDate?: Map<string, DayPriceInfo>;
   minNights?: number;
   minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
-  onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
   onReloadData?: () => void;
   onSelectionComplete?: (startDate: string, endDate: string) => void;
@@ -144,7 +143,6 @@ export function CalendarList({
   pricesByDate,
   minNights: minNightsProp,
   minNightsByCheckInDay,
-  onDayPress,
   getDayStatus: getDayStatusProp,
   onReloadData,
   onSelectionComplete,
@@ -341,6 +339,22 @@ export function CalendarList({
     [todayString],
   );
 
+  const handleDayTap = useCallback(
+    (dateString: string) => {
+      if (dateString < todayString) return;
+      if (bookedDates.has(dateString)) return;
+      const parsed = parseDateString(dateString);
+      const next = new Date(parsed.year, parsed.month, parsed.day + 1);
+      const exclusiveEnd = formatDateString(
+        next.getFullYear(),
+        next.getMonth(),
+        next.getDate(),
+      );
+      onSelectionComplete?.(dateString, exclusiveEnd);
+    },
+    [todayString, bookedDates, onSelectionComplete],
+  );
+
   const handleTouchMove = useCallback(
     (e: GestureResponderEvent) => {
       if (!selectionActiveRef.current) return;
@@ -429,7 +443,7 @@ export function CalendarList({
         datesWithBookingBar={datesWithBookingBar}
         pricesByDate={pricesByDate}
         minNights={minNightsProp ?? 1}
-        onDayPress={onDayPress}
+        onDayPress={handleDayTap}
         getDayStatus={getDayStatus}
         onReloadData={onReloadData}
         onLongPress={handleLongPress}
@@ -446,7 +460,7 @@ export function CalendarList({
       datesWithBookingBar,
       pricesByDate,
       minNightsProp,
-      onDayPress,
+      handleDayTap,
       getDayStatus,
       onReloadData,
       handleLongPress,
