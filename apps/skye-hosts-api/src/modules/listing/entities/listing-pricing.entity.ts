@@ -15,8 +15,8 @@ export class ListingPricing {
   @Column({ type: 'integer', unique: true })
   listingId: number;
 
-  @Column({ type: 'integer', default: 100 })
-  cleaningFeePence: number;
+  @Column({ type: 'integer', default: 0 })
+  cleaningFeePound: number;
 
   @Column({ type: 'integer', default: 0 })
   extraGuestThreshold: number;

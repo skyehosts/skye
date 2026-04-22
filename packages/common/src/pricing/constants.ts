@@ -28,7 +28,8 @@ export const DEFAULT_LAST_MINUTE_DISCOUNT_PERCENT = 5;
 export const DEFAULT_WEEKLY_DISCOUNT_PERCENT = 10;
 export const DEFAULT_MONTHLY_DISCOUNT_PERCENT = 20;
 
-export const DEFAULT_CLEANING_FEE_PENCE = 100;
+export const DEFAULT_CLEANING_FEE_POUND = 0;
+export const MAX_CLEANING_FEE_POUND = 500;
 
 // ISO weekdays that count as a "weekend night" (Mon=1..Sun=7). Fri + Sat.
 export const WEEKEND_NIGHT_ISO_WEEKDAYS: readonly number[] = [5, 6] as const;

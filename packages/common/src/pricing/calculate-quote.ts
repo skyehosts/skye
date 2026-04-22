@@ -24,7 +24,7 @@ export interface ICalculateQuoteSeasonInput {
 }
 
 export interface ICalculateQuotePricingInput {
-  cleaningFeePence: number;
+  cleaningFeePound: number;
   extraGuestThreshold: number;
   extraGuestFeePence: number;
   lastMinute: IDiscountSetting;
@@ -91,7 +91,9 @@ export function calculateQuote(
       : 0;
 
   const hostNetSubtotalPence =
-    nightlyRateSumPence + extraGuestTotalPence + input.pricing.cleaningFeePence;
+    nightlyRateSumPence +
+    extraGuestTotalPence +
+    input.pricing.cleaningFeePound * 100;
 
   const daysToCheckIn = Math.max(
     0,
@@ -138,7 +140,7 @@ export function calculateQuote(
     nights,
     nightlyRateSumPence,
     extraGuestTotalPence,
-    cleaningFeePence: input.pricing.cleaningFeePence,
+    cleaningFeePound: input.pricing.cleaningFeePound,
     hostNetSubtotalPence,
     appliedDiscounts,
     discountedHostNetPence,

@@ -43,7 +43,7 @@ export interface IPriceBreakdownDto {
   nights: IPriceBreakdownNightDto[];
   nightlyRateSumPence: number;
   extraGuestTotalPence: number;
-  cleaningFeePence: number;
+  cleaningFeePound: number;
   hostNetSubtotalPence: number;
   appliedDiscounts: IAppliedDiscountDto[];
   discountedHostNetPence: number;
@@ -72,9 +72,13 @@ export interface IListingDiscountsDto {
 }
 
 export interface IListingPricingGlobalsDto extends IListingDiscountsDto {
-  cleaningFeePence: number;
+  cleaningFeePound: number;
   extraGuestThreshold: number;
   extraGuestFeePence: number;
+}
+
+export interface IUpdateCleaningFeeRequestDto {
+  cleaningFeePound: number;
 }
 
 export interface IGetListingPricingResponseDto {

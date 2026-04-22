@@ -1,17 +1,21 @@
 import {
   formatGbp,
+  MAX_CLEANING_FEE_POUND,
   PRICING_SEASON_IDS,
   type IGetListingPricingResponseDto,
   type IListingDiscountsDto,
   type IListingSeasonPricingDto,
+  type IUpdateCleaningFeeRequestDto,
   type IUpdateDiscountsRequestDto,
   type IUpdateSeasonPricingRequestDto,
   type PricingSeasonId,
 } from "@repo/common";
+import { Ionicons } from "@expo/vector-icons";
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
 import { useCallback, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -20,6 +24,7 @@ import {
 import { Appbar } from "react-native-paper";
 import { AppSnackbar } from "../components/app-snackbar";
 import { InfoBox } from "../components/info-box";
+import { PriceInputModal } from "../components/price-input-modal";
 import { ScreenContainer } from "../components/screen-container";
 import { fetchApi } from "../services/api";
 import { captureException } from "../services/error-reporting";
@@ -40,6 +45,7 @@ export default function PricingScreen() {
   const [activeSeason, setActiveSeason] = useState<PricingSeasonId | null>(
     null,
   );
+  const [cleaningFeeModalVisible, setCleaningFeeModalVisible] = useState(false);
   const discountsTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchPricing = useCallback(async () => {
@@ -84,6 +90,25 @@ export default function PricingScreen() {
       });
       setActiveSeason(null);
       await fetchPricing();
+    } catch (e) {
+      handleApiError(e, setServerError);
+    }
+  };
+
+  const handleSaveCleaningFee = async (valuePound: number) => {
+    try {
+      const body: IUpdateCleaningFeeRequestDto = {
+        cleaningFeePound: valuePound,
+      };
+      await fetchApi(`/listing/${listingId}/pricing/cleaning-fee`, body, {
+        method: "PUT",
+      });
+      setPricing((p) =>
+        p
+          ? { ...p, globals: { ...p.globals, cleaningFeePound: valuePound } }
+          : p,
+      );
+      setCleaningFeeModalVisible(false);
     } catch (e) {
       handleApiError(e, setServerError);
     }
@@ -157,12 +182,22 @@ export default function PricingScreen() {
 
         <View style={commonStyles.editSection}>
           <Text style={commonStyles.sectionTitle}>Cleaning fee</Text>
-          <View style={commonStyles.card}>
-            <Text style={commonStyles.itemTitle}>Per stay</Text>
-            <Text style={styles.largeValue}>
-              {formatGbp(pricing.globals.cleaningFeePence)}
-            </Text>
-          </View>
+          <Pressable
+            style={[commonStyles.card, styles.pressableCard]}
+            onPress={() => setCleaningFeeModalVisible(true)}
+          >
+            <View style={styles.textCol}>
+              <Text style={commonStyles.itemTitle}>Per stay</Text>
+              {pricing.globals.cleaningFeePound > 0 ? (
+                <Text style={styles.largeValue}>
+                  {formatGbp(pricing.globals.cleaningFeePound * 100)}
+                </Text>
+              ) : (
+                <Text style={commonStyles.itemSubtext}>Not set</Text>
+              )}
+            </View>
+            <Ionicons name="chevron-forward" size={22} color={colors.icon} />
+          </Pressable>
         </View>
 
         <View style={commonStyles.editSection}>
@@ -217,6 +252,19 @@ export default function PricingScreen() {
         />
       )}
 
+      <PriceInputModal
+        visible={cleaningFeeModalVisible}
+        onDismiss={() => setCleaningFeeModalVisible(false)}
+        title="Cleaning fee"
+        subtext="Charged once per stay."
+        inputLabel="Amount"
+        valuePound={pricing.globals.cleaningFeePound}
+        onSave={handleSaveCleaningFee}
+        helperText="A lower cleaning fee may increase your bookings."
+        minPound={0}
+        maxPound={MAX_CLEANING_FEE_POUND}
+      />
+
       <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </ScreenContainer>
   );
@@ -238,5 +286,15 @@ const styles = StyleSheet.create({
   perNight: {
     fontSize: typography.sm,
     color: colors.textSecondary,
+  },
+  pressableCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: spacing.md,
+  },
+  textCol: {
+    flex: 1,
+    gap: spacing.xs,
   },
 });

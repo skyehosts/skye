@@ -211,7 +211,7 @@ export class E2eSeedService {
     const pricingRepo = this.dataSource.getRepository(ListingPricing);
     await pricingRepo.insert({
       listingId,
-      cleaningFeePence: 100,
+      cleaningFeePound: 25,
       extraGuestThreshold: 0,
       extraGuestFeePence: 0,
       lastMinuteEnabled: false,

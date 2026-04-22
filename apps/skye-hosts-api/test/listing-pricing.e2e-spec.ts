@@ -67,7 +67,7 @@ describe('Listing Pricing (e2e)', () => {
       const payload = res.body.payload;
       expect(payload.isComplete).toBe(true);
       expect(payload.seasons).toHaveLength(3);
-      expect(payload.globals.cleaningFeePence).toBe(100);
+      expect(payload.globals.cleaningFeePound).toBe(25);
       expect(payload.overrideCount).toBe(0);
     });
 
@@ -218,6 +218,120 @@ describe('Listing Pricing (e2e)', () => {
           monthlyPercent: 20,
         })
         .expect(400);
+    });
+  });
+
+  describe('PUT /listing/:id/pricing/cleaning-fee', () => {
+    afterAll(async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: 25 })
+        .expect(204);
+    });
+
+    it('persists the cleaning fee and is observable via GET', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: 45 })
+        .expect(204);
+
+      const res = await request(app.getHttpServer())
+        .get(`/listing/${pricedListingId}/pricing`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .expect(200);
+      expect(res.body.payload.globals.cleaningFeePound).toBe(45);
+    });
+
+    it('accepts 0 (used as the "not set" sentinel)', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${unpricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: 0 })
+        .expect(204);
+
+      const res = await request(app.getHttpServer())
+        .get(`/listing/${unpricedListingId}/pricing`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .expect(200);
+      expect(res.body.payload.globals.cleaningFeePound).toBe(0);
+    });
+
+    it('rejects a negative value with 400', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: -1 })
+        .expect(400);
+    });
+
+    it('rejects a value above the 500 maximum with 400', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: 501 })
+        .expect(400);
+    });
+
+    it('rejects a non-integer value with 400', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: 10.5 })
+        .expect(400);
+    });
+
+    it('rejects a missing body field with 400', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({})
+        .expect(400);
+    });
+
+    it('returns 403 for non-host', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${guestToken}`)
+        .send({ cleaningFeePound: 30 })
+        .expect(403);
+    });
+
+    it('returns 403 for an authenticated user without listing access', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${cohostToken}`)
+        .send({ cleaningFeePound: 30 })
+        .expect(403);
+    });
+
+    it('returns 401 without auth', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .send({ cleaningFeePound: 30 })
+        .expect(401);
+    });
+
+    it('is reflected in a subsequent quote breakdown', async () => {
+      await request(app.getHttpServer())
+        .put(`/listing/${pricedListingId}/pricing/cleaning-fee`)
+        .set('Authorization', `Bearer ${hostToken}`)
+        .send({ cleaningFeePound: 40 })
+        .expect(204);
+
+      const res = await request(app.getHttpServer())
+        .post(`/listing/${pricedListingId}/quote`)
+        .send({
+          checkInDate: '2027-07-05',
+          checkOutDate: '2027-07-06',
+          guestCount: { adults: 2, children: 0, babies: 0 },
+        })
+        .expect(201);
+
+      const q = res.body.payload;
+      expect(q.cleaningFeePound).toBe(40);
+      expect(q.hostNetSubtotalPence).toBe(q.nightlyRateSumPence + 40 * 100);
     });
   });
 

@@ -166,7 +166,7 @@ describe('BookingService', () => {
         nights: [],
         nightlyRateSumPence: 24000,
         extraGuestTotalPence: 0,
-        cleaningFeePence: 100,
+        cleaningFeePound: 1,
         hostNetSubtotalPence: 24100,
         appliedDiscounts: [],
         discountedHostNetPence: 24100,

@@ -1,6 +1,5 @@
 import { calculateQuote, ICalculateQuoteInput } from './calculate-quote';
 import {
-  DEFAULT_CLEANING_FEE_PENCE,
   GUEST_FEE_LONG_STAY_RATE,
   GUEST_FEE_SHORT_STAY_RATE,
   HOST_FEE_RATE,
@@ -8,6 +7,8 @@ import {
 } from './constants';
 import { getSeasonForDate, isWeekendNight } from './seasons';
 import type { PricingSeasonId } from './types';
+
+const TEST_CLEANING_FEE_POUND = 25;
 
 const disabledDiscount = { enabled: false, percent: 0 };
 const baseSeasonPricing: Record<
@@ -30,7 +31,7 @@ function buildInput(
     seasonPricing: baseSeasonPricing,
     overridesByDate: {},
     pricing: {
-      cleaningFeePence: DEFAULT_CLEANING_FEE_PENCE,
+      cleaningFeePound: TEST_CLEANING_FEE_POUND,
       extraGuestThreshold: 0,
       extraGuestFeePence: 0,
       lastMinute: disabledDiscount,
@@ -75,8 +76,8 @@ describe('calculateQuote', () => {
     expect(q.nights[0].season).toBe('peak');
     expect(q.nights[0].isWeekend).toBe(false);
     expect(q.nightlyRateSumPence).toBe(12000);
-    expect(q.cleaningFeePence).toBe(DEFAULT_CLEANING_FEE_PENCE);
-    expect(q.hostNetSubtotalPence).toBe(12000 + DEFAULT_CLEANING_FEE_PENCE);
+    expect(q.cleaningFeePound).toBe(TEST_CLEANING_FEE_POUND);
+    expect(q.hostNetSubtotalPence).toBe(12000 + TEST_CLEANING_FEE_POUND * 100);
     expect(q.appliedDiscounts).toHaveLength(0);
     expect(q.discountedHostNetPence).toBe(q.hostNetSubtotalPence);
     expect(q.guestFeeRate).toBe(GUEST_FEE_SHORT_STAY_RATE);
@@ -112,7 +113,7 @@ describe('calculateQuote', () => {
         checkInDate: '2026-05-04',
         checkOutDate: '2026-05-11',
         pricing: {
-          cleaningFeePence: 0,
+          cleaningFeePound: 0,
           extraGuestThreshold: 0,
           extraGuestFeePence: 0,
           lastMinute: disabledDiscount,
@@ -133,7 +134,7 @@ describe('calculateQuote', () => {
         checkInDate: '2026-05-04',
         checkOutDate: '2026-06-01',
         pricing: {
-          cleaningFeePence: 0,
+          cleaningFeePound: 0,
           extraGuestThreshold: 0,
           extraGuestFeePence: 0,
           lastMinute: disabledDiscount,
@@ -153,7 +154,7 @@ describe('calculateQuote', () => {
         checkInDate: '2026-05-04',
         checkOutDate: '2026-05-11',
         pricing: {
-          cleaningFeePence: 0,
+          cleaningFeePound: 0,
           extraGuestThreshold: 0,
           extraGuestFeePence: 0,
           lastMinute: { enabled: true, percent: 5 },
@@ -198,7 +199,7 @@ describe('calculateQuote', () => {
       buildInput({
         guestCount: { adults: 3, children: 1, babies: 2 },
         pricing: {
-          cleaningFeePence: 0,
+          cleaningFeePound: 0,
           extraGuestThreshold: 2,
           extraGuestFeePence: 1000,
           lastMinute: disabledDiscount,

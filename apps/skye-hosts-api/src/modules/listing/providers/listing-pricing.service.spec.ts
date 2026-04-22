@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { DEFAULT_CLEANING_FEE_PENCE } from '@repo/common';
 import { ListingAccessService } from '../../co-host/providers/listing-access.service';
 import {
   Listing,
@@ -14,6 +13,8 @@ import {
   ListingSeasonPricing,
 } from '../entities';
 import { ListingPricingService } from './listing-pricing.service';
+
+const TEST_CLEANING_FEE_POUND = 25;
 
 const LISTING_ID = 10;
 const ACCOUNT_ID = 42;
@@ -38,7 +39,7 @@ function globalsRow(overrides: Record<string, unknown> = {}) {
   return {
     id: 1,
     listingId: LISTING_ID,
-    cleaningFeePence: DEFAULT_CLEANING_FEE_PENCE,
+    cleaningFeePound: TEST_CLEANING_FEE_POUND,
     extraGuestThreshold: 0,
     extraGuestFeePence: 0,
     lastMinuteEnabled: false,
@@ -113,7 +114,7 @@ describe('ListingPricingService', () => {
       expect(result.isComplete).toBe(true);
       expect(result.seasons).toHaveLength(3);
       expect(result.overrideCount).toBe(2);
-      expect(result.globals.cleaningFeePence).toBe(100);
+      expect(result.globals.cleaningFeePound).toBe(TEST_CLEANING_FEE_POUND);
     });
 
     it('returns isComplete=false when a season is missing', async () => {
@@ -140,13 +141,13 @@ describe('ListingPricingService', () => {
       expect(globalsRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
           listingId: LISTING_ID,
-          cleaningFeePence: 100,
+          cleaningFeePound: 0,
           lastMinuteEnabled: false,
           weeklyEnabled: false,
           monthlyEnabled: false,
         }),
       );
-      expect(result.globals.cleaningFeePence).toBe(100);
+      expect(result.globals.cleaningFeePound).toBe(0);
     });
 
     it('throws ForbiddenException when the user lacks edit permission', async () => {
@@ -234,6 +235,92 @@ describe('ListingPricingService', () => {
           monthlyEnabled: false,
         }),
       );
+    });
+  });
+
+  describe('updateCleaningFee', () => {
+    it('persists the cleaning fee on the globals row', async () => {
+      const existing = globalsRow();
+      globalsRepo.findOne.mockResolvedValue(existing);
+
+      await service.updateCleaningFee(LISTING_ID, ACCOUNT_ID, {
+        cleaningFeePound: 40,
+      });
+
+      expect(globalsRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: existing.id,
+          cleaningFeePound: 40,
+        }),
+      );
+    });
+
+    it('preserves unrelated fields (discounts, extra-guest) on the globals row', async () => {
+      const existing = globalsRow({
+        lastMinutePercent: 8,
+        extraGuestFeePence: 1500,
+      });
+      globalsRepo.findOne.mockResolvedValue(existing);
+
+      await service.updateCleaningFee(LISTING_ID, ACCOUNT_ID, {
+        cleaningFeePound: 40,
+      });
+
+      expect(globalsRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: existing.id,
+          cleaningFeePound: 40,
+          lastMinutePercent: 8,
+          extraGuestFeePence: 1500,
+        }),
+      );
+    });
+
+    it('bootstraps a globals row before applying the fee when none exists', async () => {
+      globalsRepo.findOne.mockResolvedValue(null);
+      globalsRepo.save.mockImplementation(async (row) => ({ id: 99, ...row }));
+
+      await service.updateCleaningFee(LISTING_ID, ACCOUNT_ID, {
+        cleaningFeePound: 30,
+      });
+
+      expect(globalsRepo.save.mock.calls[0][0]).toMatchObject({
+        listingId: LISTING_ID,
+        cleaningFeePound: 0,
+      });
+      expect(globalsRepo.save.mock.calls[1][0]).toMatchObject({
+        cleaningFeePound: 30,
+      });
+    });
+
+    it('accepts 0 (sentinel for "not set") without clearing other fields', async () => {
+      const existing = globalsRow({
+        cleaningFeePound: 50,
+        lastMinuteEnabled: true,
+      });
+      globalsRepo.findOne.mockResolvedValue(existing);
+
+      await service.updateCleaningFee(LISTING_ID, ACCOUNT_ID, {
+        cleaningFeePound: 0,
+      });
+
+      expect(globalsRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          cleaningFeePound: 0,
+          lastMinuteEnabled: true,
+        }),
+      );
+    });
+
+    it('throws ForbiddenException when unauthorized', async () => {
+      listingAccessService.hasPermission.mockResolvedValue(false);
+
+      await expect(
+        service.updateCleaningFee(LISTING_ID, ACCOUNT_ID, {
+          cleaningFeePound: 30,
+        }),
+      ).rejects.toThrow(ForbiddenException);
+      expect(globalsRepo.save).not.toHaveBeenCalled();
     });
   });
 

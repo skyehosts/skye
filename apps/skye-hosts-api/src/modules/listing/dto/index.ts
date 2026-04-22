@@ -9,6 +9,7 @@ export * from './get-host-listings-response.dto';
 export * from './get-listing-response.dto';
 export * from './get-space-types-response.dto';
 export * from './quote-request.dto';
+export * from './update-cleaning-fee-request.dto';
 export * from './update-discounts-request.dto';
 export * from './update-listing-request.dto';
 export * from './update-season-pricing-request.dto';

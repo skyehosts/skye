@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   calculateQuote,
-  DEFAULT_CLEANING_FEE_PENCE,
+  DEFAULT_CLEANING_FEE_POUND,
   DEFAULT_LAST_MINUTE_DISCOUNT_PERCENT,
   DEFAULT_MONTHLY_DISCOUNT_PERCENT,
   DEFAULT_WEEKLY_DISCOUNT_PERCENT,
@@ -32,6 +32,7 @@ import { ListingAccessService } from '../../co-host/providers/listing-access.ser
 import {
   DeleteOverridesRequestDto,
   QuoteRequestDto,
+  UpdateCleaningFeeRequestDto,
   UpdateDiscountsRequestDto,
   UpdateSeasonPricingRequestDto,
   UpsertOverridesRequestDto,
@@ -86,7 +87,7 @@ export class ListingPricingService {
       const now = new Date();
       globals = await this.globalsRepo.save({
         listingId,
-        cleaningFeePence: DEFAULT_CLEANING_FEE_PENCE,
+        cleaningFeePound: DEFAULT_CLEANING_FEE_POUND,
         extraGuestThreshold: 0,
         extraGuestFeePence: 0,
         lastMinuteEnabled: false,
@@ -104,7 +105,7 @@ export class ListingPricingService {
 
   private toGlobalsDto(globals: ListingPricing): IListingPricingGlobalsDto {
     return {
-      cleaningFeePence: globals.cleaningFeePence,
+      cleaningFeePound: globals.cleaningFeePound,
       extraGuestThreshold: globals.extraGuestThreshold,
       extraGuestFeePence: globals.extraGuestFeePence,
       lastMinuteEnabled: globals.lastMinuteEnabled,
@@ -189,6 +190,20 @@ export class ListingPricingService {
       weeklyPercent: dto.weeklyPercent,
       monthlyEnabled: dto.monthlyEnabled,
       monthlyPercent: dto.monthlyPercent,
+      updatedAt: new Date(),
+    });
+  }
+
+  async updateCleaningFee(
+    listingId: number,
+    accountId: number,
+    dto: UpdateCleaningFeeRequestDto,
+  ): Promise<void> {
+    await this.assertHostPermission(accountId, listingId);
+    const globals = await this.ensureGlobals(listingId);
+    await this.globalsRepo.save({
+      ...globals,
+      cleaningFeePound: dto.cleaningFeePound,
       updatedAt: new Date(),
     });
   }
@@ -349,7 +364,7 @@ export class ListingPricingService {
       seasonPricing,
       overridesByDate,
       pricing: {
-        cleaningFeePence: globals.cleaningFeePence,
+        cleaningFeePound: globals.cleaningFeePound,
         extraGuestThreshold: globals.extraGuestThreshold,
         extraGuestFeePence: globals.extraGuestFeePence,
         lastMinute: {

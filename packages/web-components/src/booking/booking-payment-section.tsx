@@ -266,10 +266,10 @@ export function BookingPaymentSection({
                   amount={`-${formatGbp(d.amountPence)}`}
                 />
               ))}
-              {quote.cleaningFeePence > 0 && (
+              {quote.cleaningFeePound > 0 && (
                 <PriceLine
                   label="Cleaning fee"
-                  amount={formatGbp(quote.cleaningFeePence)}
+                  amount={formatGbp(quote.cleaningFeePound * 100)}
                 />
               )}
               {serviceFeePence > 0 && (

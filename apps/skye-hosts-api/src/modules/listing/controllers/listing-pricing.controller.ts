@@ -15,6 +15,7 @@ import type {
 import { AuthenticatedUser } from '../../common/decorators';
 import type { IJwtClaims } from '../../common/guards/bearer-authentication.guard';
 import {
+  UpdateCleaningFeeRequestDto,
   UpdateDiscountsRequestDto,
   UpdateSeasonPricingRequestDto,
 } from '../dto';
@@ -56,5 +57,19 @@ export class ListingPricingController {
     @AuthenticatedUser() authenticatedUser: IJwtClaims,
   ): Promise<void> {
     await this.pricingService.upsertDiscounts(id, authenticatedUser.sub, body);
+  }
+
+  @Put(':id/pricing/cleaning-fee')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async onUpdateCleaningFee(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: UpdateCleaningFeeRequestDto,
+    @AuthenticatedUser() authenticatedUser: IJwtClaims,
+  ): Promise<void> {
+    await this.pricingService.updateCleaningFee(
+      id,
+      authenticatedUser.sub,
+      body,
+    );
   }
 }
