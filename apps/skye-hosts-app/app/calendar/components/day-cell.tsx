@@ -50,6 +50,11 @@ interface DayCellProps {
   hostNetPence?: number;
   /** Whether the host net price is a per-date override */
   isPriceOverride?: boolean;
+  /**
+   * Whether a booking bar overlays the bottom of this cell. When true the
+   * price sits higher to avoid being obscured by the bar.
+   */
+  hasBookingBar?: boolean;
   /** Called with the dateString and press event when the day is pressed */
   onPress?: (dateString: string, event: GestureResponderEvent) => void;
   /** Called with the dateString when the day is long-pressed */
@@ -66,6 +71,7 @@ function DayCellInner({
   height,
   hostNetPence,
   isPriceOverride,
+  hasBookingBar,
   onPress,
   onLongPress,
 }: DayCellProps) {
@@ -128,6 +134,7 @@ function DayCellInner({
           <Text
             style={[
               styles.priceText,
+              hasBookingBar ? styles.priceTextRaised : styles.priceTextShifted,
               isPriceOverride && styles.priceTextOverride,
             ]}
             numberOfLines={1}
@@ -214,7 +221,12 @@ const styles = StyleSheet.create({
   priceText: {
     fontSize: typography.xs,
     color: colors.textSecondary,
-    marginTop: 2,
+  },
+  priceTextRaised: {
+    marginTop: -3,
+  },
+  priceTextShifted: {
+    marginTop: 20,
   },
   priceTextOverride: {
     color: colors.primary,

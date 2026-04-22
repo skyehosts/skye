@@ -167,32 +167,34 @@ export function CalendarList({
     return buildDateRange(selectionAnchor, selectionEnd);
   }, [selectionAnchor, selectionEnd]);
 
-  const bookedDates = useMemo(() => {
-    const set = new Set<string>();
+  // `bookedDates`: cells rendered with "booked" status (unavailable).
+  // `datesWithBookingBar`: cells with a bar painted over them — a superset
+  // of bookedDates that also includes each external iCal block's endDate,
+  // since the bar visually penetrates into that checkout cell even though
+  // iCal DTEND is exclusive and the cell is still bookable.
+  const { bookedDates, datesWithBookingBar } = useMemo(() => {
+    const booked = new Set<string>();
+    const withBar = new Set<string>();
     for (const booking of bookings ?? []) {
       for (const d of expandDateRange(
         booking.checkInDate,
         booking.checkOutDate,
         true,
       )) {
-        set.add(d);
+        booked.add(d);
+        withBar.add(d);
       }
     }
-    // Imported iCal bookings (Airbnb, Booking.com, etc.) are booked too —
-    // they render as bars rather than blocked cells.
     for (const block of blocks ?? []) {
-      if (block.source === "import" && isExternalBooking(block.summary)) {
-        // endDate is exclusive per iCal DTEND semantics
-        for (const d of expandDateRange(
-          block.startDate,
-          block.endDate,
-          false,
-        )) {
-          set.add(d);
-        }
+      if (block.source !== "import" || !isExternalBooking(block.summary))
+        continue;
+      for (const d of expandDateRange(block.startDate, block.endDate, false)) {
+        booked.add(d);
+        withBar.add(d);
       }
+      withBar.add(block.endDate);
     }
-    return set;
+    return { bookedDates: booked, datesWithBookingBar: withBar };
   }, [bookings, blocks]);
 
   const blockedDateInfo = useMemo(() => {
@@ -424,6 +426,7 @@ export function CalendarList({
         bookedDates={bookedDates}
         blockedDateInfo={blockedDateInfo}
         restrictedDates={restrictedDates}
+        datesWithBookingBar={datesWithBookingBar}
         pricesByDate={pricesByDate}
         minNights={minNightsProp ?? 1}
         onDayPress={onDayPress}
@@ -440,6 +443,7 @@ export function CalendarList({
       bookedDates,
       blockedDateInfo,
       restrictedDates,
+      datesWithBookingBar,
       pricesByDate,
       minNightsProp,
       onDayPress,

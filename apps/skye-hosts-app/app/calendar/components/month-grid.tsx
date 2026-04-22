@@ -61,6 +61,12 @@ interface MonthGridProps {
   bookedDates?: Set<string>;
   blockedDateInfo?: Map<string, BlockedDateInfo[]>;
   restrictedDates?: Set<string>;
+  /**
+   * Dates where a booking bar overlays the cell (internal bookings + external
+   * iCal bookings, including the visual checkout day). Used by DayCell to
+   * keep the price from sitting under the bar.
+   */
+  datesWithBookingBar?: Set<string>;
   pricesByDate?: Map<string, DayPriceInfo>;
   minNights?: number;
   onDayPress?: (dateString: string) => void;
@@ -81,6 +87,7 @@ function MonthGridInner({
   bookedDates,
   blockedDateInfo,
   restrictedDates,
+  datesWithBookingBar,
   pricesByDate,
   minNights: minNightsProp,
   onDayPress,
@@ -183,6 +190,9 @@ function MonthGridInner({
                 dateString && pricesByDate
                   ? pricesByDate.get(dateString)
                   : undefined;
+              const hasBookingBar =
+                dateString !== undefined &&
+                (datesWithBookingBar?.has(dateString) ?? false);
               return (
                 <DayCell
                   key={dayIndex}
@@ -195,6 +205,7 @@ function MonthGridInner({
                   height={cellHeight}
                   hostNetPence={priceInfo?.hostNetPence}
                   isPriceOverride={priceInfo?.isOverride}
+                  hasBookingBar={hasBookingBar}
                   onPress={(ds, e) => handleDayPress(ds, e)}
                   onLongPress={onLongPress}
                 />
