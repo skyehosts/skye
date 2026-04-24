@@ -53,7 +53,8 @@ function HelpTooltipButtonInner() {
             <Text style={tooltipStyles.title}>Selecting multiple days</Text>
           </View>
           <Text style={tooltipStyles.text}>
-            Long-press any day, then drag across to select a date range.
+            To block or set price overrides on multiple days, long-press any
+            day, then drag across to select a date range.
           </Text>
         </PositionedTooltip>
       )}
