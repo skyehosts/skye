@@ -6,7 +6,6 @@ pqq
 Testing pending
 ======================================
 - Test single tap on listing calendar ok (real device)
-- % over weekday UI needs changed to match Airbnb. I.E don't use radio groups
 
 =======================
 Development In-Progress
@@ -22,8 +21,7 @@ Pending Prompts
 - Refine pricing featire
   - On 3+ night stays, the guest fee is 0%. ?
     - NB: Pricing on AirBNB isn't just 18% and 15%, its more nuanced, need to understand further to achieve some semblance of parity.
-  - Copy / guidance / copy needs improved overall
-  - Needs instruction on calendar page to le tthem know about long press?
+- Needs instruction on calendar page to le tthem know about long press?
 - Extra guest fee
   - In hosts app on 'Pricing' page, there was a previously partially implemented feature called 'Extra Guest fdee'
   - Let's fininsh the implementation

@@ -157,7 +157,9 @@ export default function PricingScreen() {
         <View style={commonStyles.editSection}>
           <Text style={commonStyles.sectionTitle}>Seasons</Text>
           <Text style={commonStyles.sectionSubtext}>
-            Set your weekday and weekend nightly rates for each season.
+            Set your weekday and weekend nightly rates for each season. You can
+            override these default prices for specific dates directly on the
+            calendar page.
           </Text>
           <View style={commonStyles.editSectionCards}>
             {PRICING_SEASON_IDS.map((season) => {
