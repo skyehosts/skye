@@ -1,17 +1,22 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, StyleSheet, View } from "react-native";
-import { HelperText, Modal, Portal, Text, TextInput } from "react-native-paper";
+import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { HelperText, Modal, Portal, Text } from "react-native-paper";
 import { ActionBar } from "./action-bar";
-import { colors, commonStyles, spacing, typography } from "../theme";
+import {
+  colors,
+  commonStyles,
+  fontWeight,
+  spacing,
+  typography,
+} from "../theme";
 
 interface PriceInputModalProps {
   visible: boolean;
   onDismiss: () => void;
   title: string;
   subtext?: string;
-  inputLabel?: string;
   valuePound: number;
   onSave: (valuePound: number) => void | Promise<void>;
   helperText?: string;
@@ -28,7 +33,6 @@ export function PriceInputModal({
   onDismiss,
   title,
   subtext,
-  inputLabel,
   valuePound,
   onSave,
   helperText,
@@ -69,10 +73,9 @@ export function PriceInputModal({
           </Pressable>
         </View>
 
-        {subtext && <Text style={commonStyles.itemSubtext}>{subtext}</Text>}
+        {subtext && <Text style={styles.subtext}>{subtext}</Text>}
 
         <View>
-          {inputLabel && <Text style={styles.inputLabel}>{inputLabel}</Text>}
           <Controller
             control={control}
             name="value"
@@ -85,30 +88,28 @@ export function PriceInputModal({
               },
             }}
             render={({ field }) => (
-              <View style={styles.inputRow}>
-                <Text style={styles.prefix}>£</Text>
-                <TextInput
-                  mode="outlined"
-                  keyboardType="numeric"
-                  value={field.value}
-                  onChangeText={(text) =>
-                    field.onChange(text.replace(/\D/g, ""))
-                  }
-                  error={!!errors.value}
-                  disabled={isSubmitting}
-                  autoFocus
-                  style={styles.input}
-                  dense
-                />
-              </View>
+              <TextInput
+                style={styles.bigPrice}
+                value={field.value === "" ? "" : `£${field.value}`}
+                onChangeText={(text) => field.onChange(text.replace(/\D/g, ""))}
+                keyboardType="numeric"
+                placeholder="£0"
+                placeholderTextColor={colors.textSecondary}
+                editable={!isSubmitting}
+                autoFocus
+                selectTextOnFocus
+                maxLength={5}
+              />
             )}
           />
           {errors.value ? (
-            <HelperText type="error" padding="none">
+            <HelperText type="error" padding="none" style={styles.centerText}>
               {errors.value.message}
             </HelperText>
           ) : helperText ? (
-            <Text style={styles.helperText}>{helperText}</Text>
+            <Text style={[styles.helperText, styles.centerText]}>
+              {helperText}
+            </Text>
           ) : null}
         </View>
 
@@ -123,28 +124,24 @@ export function PriceInputModal({
 }
 
 const styles = StyleSheet.create({
-  inputLabel: {
+  subtext: {
     fontSize: typography.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.xs,
+    textAlign: "center",
   },
-  inputRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-  },
-  prefix: {
-    fontSize: typography.xxl,
+  bigPrice: {
+    fontSize: typography.display,
+    fontWeight: fontWeight.bold,
     color: colors.textPrimary,
-  },
-  input: {
-    flex: 1,
-    fontSize: typography.xxl,
-    backgroundColor: colors.background,
+    textAlign: "center",
+    marginVertical: spacing.sm,
   },
   helperText: {
     fontSize: typography.sm,
     color: colors.textSecondary,
     marginTop: spacing.xs,
+  },
+  centerText: {
+    textAlign: "center",
   },
 });

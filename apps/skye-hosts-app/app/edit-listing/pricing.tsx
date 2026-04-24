@@ -254,7 +254,6 @@ export default function PricingScreen() {
         onDismiss={() => setCleaningFeeModalVisible(false)}
         title="Cleaning fee"
         subtext="Charged once per stay."
-        inputLabel="Amount"
         valuePound={pricing.globals.cleaningFeePound}
         onSave={handleSaveCleaningFee}
         helperText="A lower cleaning fee may increase your bookings."
