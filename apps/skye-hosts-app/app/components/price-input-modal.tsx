@@ -1,16 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, StyleSheet, TextInput, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { HelperText, Modal, Portal, Text } from "react-native-paper";
 import { ActionBar } from "./action-bar";
-import {
-  colors,
-  commonStyles,
-  fontWeight,
-  spacing,
-  typography,
-} from "../theme";
+import { HeroPriceInput } from "./hero-price-input";
+import { colors, commonStyles, spacing, typography } from "../theme";
 
 interface PriceInputModalProps {
   visible: boolean;
@@ -88,16 +83,11 @@ export function PriceInputModal({
               },
             }}
             render={({ field }) => (
-              <TextInput
-                style={styles.bigPrice}
+              <HeroPriceInput
                 value={field.value === "" ? "" : `£${field.value}`}
                 onChangeText={(text) => field.onChange(text.replace(/\D/g, ""))}
                 keyboardType="numeric"
-                placeholder="£0"
-                placeholderTextColor={colors.textSecondary}
                 editable={!isSubmitting}
-                autoFocus
-                selectTextOnFocus
                 maxLength={5}
               />
             )}
@@ -128,13 +118,6 @@ const styles = StyleSheet.create({
     fontSize: typography.sm,
     color: colors.textSecondary,
     textAlign: "center",
-  },
-  bigPrice: {
-    fontSize: typography.display,
-    fontWeight: fontWeight.bold,
-    color: colors.textPrimary,
-    textAlign: "center",
-    marginVertical: spacing.sm,
   },
   helperText: {
     fontSize: typography.sm,

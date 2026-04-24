@@ -5,15 +5,9 @@ import {
   type PricingSeasonId,
 } from "@repo/common";
 import { useEffect, useState } from "react";
-import {
-  Modal,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Modal, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Appbar, Button } from "react-native-paper";
+import { HeroPriceInput } from "../../components/hero-price-input";
 import { InfoBox } from "../../components/info-box";
 import { PercentSlider } from "../../components/percent-slider";
 import {
@@ -123,15 +117,9 @@ export function SeasonWizardModal({
                 The amount you&apos;ll receive per night (after fees), Sunday to
                 Thursday.
               </Text>
-              <TextInput
-                style={styles.bigPrice}
+              <HeroPriceInput
                 value={weekdayPence === 0 ? "" : formatGbp(weekdayPence)}
                 onChangeText={(t) => setWeekdayPence(parseGbpToPence(t))}
-                keyboardType="decimal-pad"
-                placeholder="£0"
-                placeholderTextColor={colors.textSecondary}
-                autoFocus
-                selectTextOnFocus
                 maxLength={7}
               />
               <GuestPriceBreakdown hostNetPence={weekdayPence} />

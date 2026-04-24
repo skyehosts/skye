@@ -1,18 +1,20 @@
 import {
+  formatGbp,
+  parseGbpToPence,
   toDateString,
   type IDeleteOverridesRequestDto,
   type IUpsertOverridesRequestDto,
 } from "@repo/common";
 import { format, parseISO } from "date-fns";
-import { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { StyleSheet, Text } from "react-native";
 import { Modal, Portal } from "react-native-paper";
 import { ActionBar } from "../../components/action-bar";
-import { PriceInput } from "../../components/price-input";
+import { HeroPriceInput } from "../../components/hero-price-input";
 import { GuestPriceBreakdown } from "../../edit-listing/pricing/guest-price-breakdown";
 import { fetchApi } from "../../services/api";
 import { captureException } from "../../services/error-reporting";
-import { borderRadius, colors, spacing, typography } from "../../theme";
+import { colors, commonStyles, spacing, typography } from "../../theme";
 
 interface PriceOverrideModalProps {
   visible: boolean;
@@ -72,7 +74,10 @@ export function PriceOverrideModal({
   }, [visible]);
 
   const hasExisting = existingOverrideDates.length > 0;
-  const dates = expandDates(startDate, endDate);
+  const dates = useMemo(
+    () => expandDates(startDate, endDate),
+    [startDate, endDate],
+  );
 
   const handleSave = async () => {
     if (pricePence <= 0) return;
@@ -116,16 +121,15 @@ export function PriceOverrideModal({
       <Modal
         visible={visible}
         onDismiss={saving ? () => {} : onDismiss}
-        contentContainerStyle={styles.modal}
+        contentContainerStyle={commonStyles.modal}
       >
-        <Text style={styles.title}>Set price override</Text>
+        <Text style={commonStyles.modalTitle}>Set price override</Text>
         <Text style={styles.subtitle}>{formatRange(startDate, endDate)}</Text>
 
-        <PriceInput
-          valuePence={pricePence}
-          onChangePence={setPricePence}
-          autoFocus
-          label="Your price per night (override)"
+        <HeroPriceInput
+          value={pricePence === 0 ? "" : formatGbp(pricePence)}
+          onChangeText={(t) => setPricePence(parseGbpToPence(t))}
+          maxLength={7}
         />
 
         {pricePence > 0 && <GuestPriceBreakdown hostNetPence={pricePence} />}
@@ -147,17 +151,6 @@ export function PriceOverrideModal({
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    backgroundColor: colors.background,
-    margin: spacing.lg,
-    padding: spacing.lg,
-    borderRadius: borderRadius.md,
-    gap: spacing.md,
-  },
-  title: {
-    fontSize: typography.lg,
-    color: colors.textPrimary,
-  },
   subtitle: {
     fontSize: typography.sm,
     color: colors.textSecondary,
