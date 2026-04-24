@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { Appbar, Button } from "react-native-paper";
+import { InfoBox } from "../../components/info-box";
 import { PercentSlider } from "../../components/percent-slider";
 import {
   colors,
@@ -134,6 +135,10 @@ export function SeasonWizardModal({
                 maxLength={7}
               />
               <GuestPriceBreakdown hostNetPence={weekdayPence} />
+              <InfoBox variant="info">
+                We recommend setting your price ~7% higher than your Airbnb net
+                — you earn more, guests still pay less.
+              </InfoBox>
             </>
           ) : (
             <>

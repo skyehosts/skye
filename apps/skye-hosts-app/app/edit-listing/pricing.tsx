@@ -154,11 +154,6 @@ export default function PricingScreen() {
       </Appbar.Header>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        <InfoBox variant="info">
-          The price you set is what you receive after fees. Set it ~7% higher
-          than your Airbnb net — you earn more, guests still pay less.
-        </InfoBox>
-
         <View style={commonStyles.editSection}>
           <Text style={commonStyles.sectionTitle}>Seasons</Text>
           <Text style={commonStyles.sectionSubtext}>
