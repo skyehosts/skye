@@ -1,3 +1,4 @@
+import { parseGbpToPence } from "@repo/common";
 import { StyleSheet, View } from "react-native";
 import { Text, TextInput } from "react-native-paper";
 import { colors, spacing, typography } from "../theme";
@@ -18,17 +19,6 @@ export function PriceInput({
   const valuePounds =
     valuePence === 0 ? "" : (valuePence / 100).toFixed(2).replace(/\.00$/, "");
 
-  const handleChange = (text: string) => {
-    const cleaned = text.replace(/[^0-9.]/g, "");
-    if (cleaned === "") {
-      onChangePence(0);
-      return;
-    }
-    const asNumber = parseFloat(cleaned);
-    if (isNaN(asNumber)) return;
-    onChangePence(Math.round(asNumber * 100));
-  };
-
   return (
     <View style={styles.wrapper}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -38,7 +28,7 @@ export function PriceInput({
           mode="outlined"
           keyboardType="decimal-pad"
           value={valuePounds}
-          onChangeText={handleChange}
+          onChangeText={(t) => onChangePence(parseGbpToPence(t))}
           autoFocus={autoFocus}
           style={styles.input}
           dense

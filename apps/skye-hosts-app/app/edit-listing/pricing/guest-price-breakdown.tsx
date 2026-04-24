@@ -6,7 +6,7 @@ import {
 } from "@repo/common";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { borderRadius, colors, spacing, typography } from "../../theme";
+import { colors, spacing, typography } from "../../theme";
 
 interface GuestPriceBreakdownProps {
   hostNetPence: number;
@@ -30,7 +30,7 @@ export function GuestPriceBreakdown({
         hitSlop={8}
       >
         <Text style={styles.headerText}>
-          Guest pays {formatGbp(totalPence)}
+          Guest price {formatGbp(totalPence)}
         </Text>
         <Ionicons
           name={expanded ? "chevron-up" : "chevron-down"}
@@ -87,16 +87,14 @@ function Row({
 
 const styles = StyleSheet.create({
   wrapper: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: borderRadius.md,
-    padding: spacing.md,
+    alignSelf: "center",
     gap: spacing.sm,
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    alignSelf: "center",
+    gap: spacing.xs,
   },
   headerText: {
     fontSize: typography.md,

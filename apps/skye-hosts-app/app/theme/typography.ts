@@ -5,4 +5,5 @@ export const typography = {
   lg: 18,
   xl: 24,
   xxl: 28,
+  display: 44,
 } as const;

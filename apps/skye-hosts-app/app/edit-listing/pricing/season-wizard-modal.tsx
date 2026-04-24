@@ -1,16 +1,27 @@
-import { PRICING_SEASON_LABELS, type PricingSeasonId } from "@repo/common";
+import {
+  formatGbp,
+  parseGbpToPence,
+  PRICING_SEASON_LABELS,
+  type PricingSeasonId,
+} from "@repo/common";
 import { useEffect, useState } from "react";
 import {
   Modal,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
 import { Appbar, Button } from "react-native-paper";
-import { PriceInput } from "../../components/price-input";
-import { colors, commonStyles, spacing, typography } from "../../theme";
+import { PercentSlider } from "../../components/percent-slider";
+import {
+  colors,
+  commonStyles,
+  fontWeight,
+  spacing,
+  typography,
+} from "../../theme";
 import { GuestPriceBreakdown } from "./guest-price-breakdown";
 
 interface SeasonWizardModalProps {
@@ -23,7 +34,24 @@ interface SeasonWizardModalProps {
 }
 
 type Stage = "weekday" | "weekend";
-type WeekendMode = "percent" | "absolute";
+
+const PREMIUM_MIN = 0;
+const PREMIUM_MAX = 100;
+const PREMIUM_STEP = 5;
+const DEFAULT_PREMIUM = 20;
+const PREMIUM_TICKS = [0, 25, 50, 75, 100];
+
+function computeInitialPremium(
+  initialWeekdayPence: number,
+  initialWeekendPence: number,
+): number {
+  if (initialWeekdayPence <= 0) return DEFAULT_PREMIUM;
+  if (initialWeekendPence <= 0) return DEFAULT_PREMIUM;
+  const raw =
+    ((initialWeekendPence - initialWeekdayPence) / initialWeekdayPence) * 100;
+  const snapped = Math.round(raw / PREMIUM_STEP) * PREMIUM_STEP;
+  return Math.max(PREMIUM_MIN, Math.min(PREMIUM_MAX, snapped));
+}
 
 export function SeasonWizardModal({
   visible,
@@ -35,19 +63,8 @@ export function SeasonWizardModal({
 }: SeasonWizardModalProps) {
   const [stage, setStage] = useState<Stage>("weekday");
   const [weekdayPence, setWeekdayPence] = useState(initialWeekdayPence);
-  const [weekendPence, setWeekendPence] = useState(initialWeekendPence);
-  const [weekendMode, setWeekendMode] = useState<WeekendMode>("absolute");
   const [weekendPercent, setWeekendPercent] = useState(
-    initialWeekdayPence > 0
-      ? Math.max(
-          0,
-          Math.round(
-            ((initialWeekendPence - initialWeekdayPence) /
-              initialWeekdayPence) *
-              100,
-          ),
-        )
-      : 0,
+    computeInitialPremium(initialWeekdayPence, initialWeekendPence),
   );
   const [saving, setSaving] = useState(false);
 
@@ -55,40 +72,24 @@ export function SeasonWizardModal({
     if (visible) {
       setStage("weekday");
       setWeekdayPence(initialWeekdayPence);
-      setWeekendPence(initialWeekendPence);
       setWeekendPercent(
-        initialWeekdayPence > 0
-          ? Math.max(
-              0,
-              Math.round(
-                ((initialWeekendPence - initialWeekdayPence) /
-                  initialWeekdayPence) *
-                  100,
-              ),
-            )
-          : 0,
+        computeInitialPremium(initialWeekdayPence, initialWeekendPence),
       );
     }
   }, [visible, initialWeekdayPence, initialWeekendPence]);
 
-  const effectiveWeekendPence =
-    weekendMode === "percent"
-      ? Math.round(weekdayPence * (1 + weekendPercent / 100))
-      : weekendPence;
+  const weekendPence = Math.round(weekdayPence * (1 + weekendPercent / 100));
 
   const handleNext = () => {
     if (weekdayPence <= 0) return;
-    if (weekendPence <= 0 || weekendPence < weekdayPence) {
-      setWeekendPence(weekdayPence);
-    }
     setStage("weekend");
   };
 
   const handleSave = async () => {
-    if (effectiveWeekendPence <= 0) return;
+    if (weekendPence <= 0) return;
     setSaving(true);
     try {
-      await onSave(weekdayPence, effectiveWeekendPence);
+      await onSave(weekdayPence, weekendPence);
     } finally {
       setSaving(false);
     }
@@ -116,94 +117,53 @@ export function SeasonWizardModal({
         >
           {stage === "weekday" ? (
             <>
-              <Text style={styles.stageTitle}>Weekday price</Text>
+              <Text style={styles.stageTitle}>Set a weekday price</Text>
               <Text style={styles.stageSubtext}>
-                The price you receive per night on Sun–Thu.
+                The amount you&apos;ll receive per night (after fees), Sunday to
+                Thursday.
               </Text>
-              <PriceInput
-                valuePence={weekdayPence}
-                onChangePence={setWeekdayPence}
+              <TextInput
+                style={styles.bigPrice}
+                value={weekdayPence === 0 ? "" : formatGbp(weekdayPence)}
+                onChangeText={(t) => setWeekdayPence(parseGbpToPence(t))}
+                keyboardType="decimal-pad"
+                placeholder="£0"
+                placeholderTextColor={colors.textSecondary}
                 autoFocus
+                selectTextOnFocus
+                maxLength={7}
               />
               <GuestPriceBreakdown hostNetPence={weekdayPence} />
             </>
           ) : (
             <>
-              <Text style={styles.stageTitle}>Weekend price</Text>
+              <Text style={styles.stageTitle}>Set a weekend price</Text>
               <Text style={styles.stageSubtext}>
-                The price you receive per night on Fri and Sat.
+                Add a premium for Fridays and Saturdays. Price shown is after
+                fees.
               </Text>
 
-              <View style={styles.toggleRow}>
-                <Pressable
-                  style={[
-                    styles.toggle,
-                    weekendMode === "percent" && styles.toggleActive,
-                  ]}
-                  onPress={() => setWeekendMode("percent")}
-                >
-                  <Text
-                    style={[
-                      styles.toggleText,
-                      weekendMode === "percent" && styles.toggleTextActive,
-                    ]}
-                  >
-                    % over weekday
-                  </Text>
-                </Pressable>
-                <Pressable
-                  style={[
-                    styles.toggle,
-                    weekendMode === "absolute" && styles.toggleActive,
-                  ]}
-                  onPress={() => setWeekendMode("absolute")}
-                >
-                  <Text
-                    style={[
-                      styles.toggleText,
-                      weekendMode === "absolute" && styles.toggleTextActive,
-                    ]}
-                  >
-                    Set directly
-                  </Text>
-                </Pressable>
-              </View>
+              <Text style={styles.bigPrice}>{formatGbp(weekendPence)}</Text>
 
-              {weekendMode === "percent" ? (
-                <View style={styles.percentPanel}>
-                  <View style={styles.percentRow}>
-                    <Pressable
-                      onPress={() =>
-                        setWeekendPercent(Math.max(0, weekendPercent - 5))
-                      }
-                      style={styles.percentButton}
-                    >
-                      <Text style={styles.percentButtonText}>−5</Text>
-                    </Pressable>
-                    <Text style={styles.percentValue}>{weekendPercent}%</Text>
-                    <Pressable
-                      onPress={() =>
-                        setWeekendPercent(Math.min(200, weekendPercent + 5))
-                      }
-                      style={styles.percentButton}
-                    >
-                      <Text style={styles.percentButtonText}>+5</Text>
-                    </Pressable>
-                  </View>
-                  <Text style={styles.computedText}>
-                    = £{(effectiveWeekendPence / 100).toFixed(2)} per weekend
-                    night
-                  </Text>
+              <GuestPriceBreakdown hostNetPence={weekendPence} />
+
+              <View style={styles.premiumSection}>
+                <View style={styles.premiumHeader}>
+                  <Text style={styles.premiumLabel}>Weekend premium</Text>
+                  <Text style={styles.premiumValue}>+{weekendPercent}%</Text>
                 </View>
-              ) : (
-                <PriceInput
-                  valuePence={weekendPence}
-                  onChangePence={setWeekendPence}
-                  autoFocus
+                <PercentSlider
+                  value={weekendPercent}
+                  onValueChange={setWeekendPercent}
+                  min={PREMIUM_MIN}
+                  max={PREMIUM_MAX}
+                  step={PREMIUM_STEP}
+                  ticks={PREMIUM_TICKS}
                 />
-              )}
-
-              <GuestPriceBreakdown hostNetPence={effectiveWeekendPence} />
+                <Text style={styles.premiumHelper}>
+                  Uplift over your weekday rate of {formatGbp(weekdayPence)}.
+                </Text>
+              </View>
             </>
           )}
         </ScrollView>
@@ -229,7 +189,7 @@ export function SeasonWizardModal({
               mode="contained"
               onPress={handleSave}
               loading={saving}
-              disabled={saving || effectiveWeekendPence <= 0}
+              disabled={saving || weekendPence <= 0}
             >
               Save
             </Button>
@@ -259,59 +219,35 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: "center",
   },
-  toggleRow: {
-    flexDirection: "row",
+  bigPrice: {
+    fontSize: typography.display,
+    fontWeight: fontWeight.bold,
+    color: colors.textPrimary,
+    textAlign: "center",
+    marginTop: spacing.sm,
+    marginBottom: -spacing.md,
+  },
+  premiumSection: {
     gap: spacing.sm,
+    marginTop: spacing.md,
   },
-  toggle: {
-    flex: 1,
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 8,
+  premiumHeader: {
+    flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
   },
-  toggleActive: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight,
+  premiumLabel: {
+    fontSize: typography.md,
+    color: colors.textPrimary,
   },
-  toggleText: {
+  premiumValue: {
+    fontSize: typography.md,
+    color: colors.primary,
+    fontWeight: fontWeight.semibold,
+  },
+  premiumHelper: {
     fontSize: typography.sm,
     color: colors.textSecondary,
-  },
-  toggleTextActive: {
-    color: colors.primary,
-  },
-  percentPanel: {
-    gap: spacing.sm,
-  },
-  percentRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.lg,
-  },
-  percentButton: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  percentButtonText: {
-    fontSize: typography.md,
-    color: colors.primary,
-  },
-  percentValue: {
-    fontSize: typography.xl,
-    color: colors.textPrimary,
-    minWidth: 80,
-    textAlign: "center",
-  },
-  computedText: {
-    fontSize: typography.md,
-    color: colors.textSecondary,
-    textAlign: "center",
+    marginTop: spacing.lg,
   },
 });

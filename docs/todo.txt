@@ -5,7 +5,8 @@ pqq
 ======================================
 Testing pending
 ======================================
-- Test single tap on listing calendar ok
+- Test single tap on listing calendar ok (real device)
+- % over weekday UI needs changed to match Airbnb. I.E don't use radio groups
 
 =======================
 Development In-Progress
@@ -21,17 +22,30 @@ Pending Prompts
 - Refine pricing featire
   - On 3+ night stays, the guest fee is 0%. ?
     - NB: Pricing on AirBNB isn't just 18% and 15%, its more nuanced, need to understand further to achieve some semblance of parity.
-  - % over weekday UI needs changed to match Airbnb. I.E don't use radio groups
   - Copy / guidance / copy needs improved overall
   - Needs instruction on calendar page to le tthem know about long press?
 - Extra guest fee
   - In hosts app on 'Pricing' page, there was a previously partially implemented feature called 'Extra Guest fdee'
   - Let's fininsh the implementation
-  -  Adding a tap handler on the card, which opens a PriceInputModal
+  - Adding a tap handler on the card, which opens a PriceInputModal
+    - Title: 'Extra-guest fee'
+    - Subtitle: 'Per extra guest, per night'
+    - Main £ form control: £x , where x = price per additonal guest
+    - Text under form field: 'This additional fee will increase the nightly total your guests see'
+    - Additional: Form control:
+      - 'For each guest after' '-' {additionalGuestThreshold} '+' (NumberStepper component) (come up with a better name than additionalGuestThreshold)
+      - NB: This sets the threshold at which  the additional guest dfee is charged.
+      - E.G If additionalGuestThreshold = 2, and price per additional guest is £20, then if guest books for 3 it will be £20 more, or if guest books 4 it would be £40 more.
   - This should save a value to the DB via API
   - Ensure follow approach consistent with elsewhere in app with regards to success/failure toast, error handling, unexpected server exception customer friendly message displayed and all other relevant things. 
   - Update the card on the pricing page to display the already selected value (if set)
   - Ensure that any price calculations for listings is correctly including this clenaing fee in it's calcs (it should be already)
+  - It should default to not set.
+  - On guest website:
+    - packages/web-components/src/listings/listing-guest-selector-modal.tsx and packages/web-components/src/listings/listing-guest-selector-popup.tsx (and anywhere else you can set guests on booking)
+    - Should not be able to set guests > max
+    - Max is determined by guests-modal.tsx (host app) this is absolute ceiling, additional guests cannot exceed it.
+
 
 =============
 MVP: Host app
