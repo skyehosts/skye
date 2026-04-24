@@ -15,7 +15,6 @@ Development In-Progress
 ===============
 Pending Prompts
 ===============
-- The form field on cleaning fee modal looks crap
 - Bug:
   - Emulator shows Sep 14th-20th are blocked on airbnb but they arne't. Why?
   - On device only, when long pressing on Sept 15th, it should select just that date, but it selects 15-22 sep?
@@ -44,7 +43,6 @@ Pending Prompts
     - packages/web-components/src/listings/listing-guest-selector-modal.tsx and packages/web-components/src/listings/listing-guest-selector-popup.tsx (and anywhere else you can set guests on booking)
     - Should not be able to set guests > max
     - Max is determined by guests-modal.tsx (host app) this is absolute ceiling, additional guests cannot exceed it.
-
 
 =============
 MVP: Host app

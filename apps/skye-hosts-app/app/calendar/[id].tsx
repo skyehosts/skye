@@ -30,6 +30,7 @@ import { fetchApi } from "../services/api";
 import { getAggregateSyncHealthColor } from "../utils/sync-status";
 import { CalendarList } from "./components/calendar-list";
 import { DateBlockSheet } from "./components/date-block-sheet";
+import { HelpTooltipButton } from "./components/help-tooltip-button";
 import type { DayPriceInfo } from "./components/month-grid";
 import { PriceOverrideModal } from "./components/price-override-modal";
 
@@ -359,6 +360,7 @@ export default function CalendarDetailScreen() {
           onSaved={handleOverrideSaved}
         />
       )}
+      {!sheetVisible && !priceOverrideModalVisible && <HelpTooltipButton />}
       <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </ScreenContainer>
   );

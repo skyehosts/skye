@@ -33,6 +33,10 @@ Hosts can block or unblock date ranges directly on the Skye Hosts calendar via s
 
 Both entry points funnel through `CalendarList.onSelectionComplete(start, exclusiveEnd)` — the tap path synthesizes `exclusiveEnd = tappedDate + 1`, which matches iCal DTEND semantics and what a long-press without drag already produces. RN `Pressable`'s native `delayLongPress={400}` provides tap-vs-longpress discrimination; `selectionActiveRef` gates drag handlers so short taps never engage the selection machinery.
 
+### Gesture discoverability
+
+Long-press + drag is a hidden gesture, so `HelpTooltipButton` (floating outlined `?` in the bottom-right of `app/calendar/[id].tsx`) exposes it via a `PositionedTooltip` — the same tooltip primitive used by `ExternalBookingBar`. The button auto-hides whenever `DateBlockSheet` or `PriceOverrideModal` is open so it never competes with the active sheet.
+
 ### Unblock range logic
 
 Unblocking is more complex because it may need to split existing blocks:
