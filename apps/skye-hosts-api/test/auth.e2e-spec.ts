@@ -192,4 +192,63 @@ describe('Auth (e2e)', () => {
         .expect(400);
     });
   });
+
+  // ── Check email (enumeration surface) ──────────────────────────────────────
+
+  describe('POST /auth/check-email', () => {
+    it('should return { exists: true } for a seeded account', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/check-email')
+        .send({ email: 'guest@test.com' })
+        .expect(201);
+
+      expect(res.body.payload).toEqual({ exists: true });
+    });
+
+    it('should return { exists: false } for an unknown email', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/check-email')
+        .send({ email: 'nobody-ever-seen@test.com' })
+        .expect(201);
+
+      expect(res.body.payload).toEqual({ exists: false });
+    });
+
+    it('should use an identical response shape for existing vs unknown emails', async () => {
+      const found = await request(app.getHttpServer())
+        .post('/auth/check-email')
+        .send({ email: 'guest@test.com' });
+      const missing = await request(app.getHttpServer())
+        .post('/auth/check-email')
+        .send({ email: 'nobody-ever-seen@test.com' });
+
+      expect(found.status).toBe(missing.status);
+      expect(Object.keys(found.body).sort()).toEqual(
+        Object.keys(missing.body).sort(),
+      );
+      expect(Object.keys(found.body.payload).sort()).toEqual(
+        Object.keys(missing.body.payload).sort(),
+      );
+      expect(found.body.payload.exists).toBe(true);
+      expect(missing.body.payload.exists).toBe(false);
+    });
+
+    it('should return 400 for a malformed email', async () => {
+      await request(app.getHttpServer())
+        .post('/auth/check-email')
+        .send({ email: 'not-an-email' })
+        .expect(400);
+    });
+
+    it('should rate limit bursts of requests', async () => {
+      let rateLimitedCount = 0;
+      for (let i = 0; i < 35; i++) {
+        const res = await request(app.getHttpServer())
+          .post('/auth/check-email')
+          .send({ email: 'burst@test.com' });
+        if (res.status === 429) rateLimitedCount++;
+      }
+      expect(rateLimitedCount).toBeGreaterThan(0);
+    });
+  });
 });

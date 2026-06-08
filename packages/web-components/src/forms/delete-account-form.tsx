@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { getDisplayError } from './get-display-error';
 
 export interface DeleteAccountFormValues {
   confirmation: string;
@@ -38,11 +39,7 @@ export function DeleteAccountForm({ onSubmit }: DeleteAccountFormProps) {
     try {
       await onSubmit();
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 

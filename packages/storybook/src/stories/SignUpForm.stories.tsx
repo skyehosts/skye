@@ -17,10 +17,6 @@ const meta = {
       description:
         "Called with form values on submission. Must return a promise resolving to SignUpFormResult.",
     },
-    newsletterLabel: {
-      control: "text",
-      description: "Label text for the newsletter opt-in checkbox.",
-    },
   },
 } satisfies Meta<typeof SignUpForm>;
 
@@ -29,7 +25,6 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    newsletterLabel: "Keep me updated with the latest glamping offers",
     onSubmit: fn(async (_data: SignUpFormValues): Promise<SignUpFormResult> => {
       await delay(1000);
       return {};

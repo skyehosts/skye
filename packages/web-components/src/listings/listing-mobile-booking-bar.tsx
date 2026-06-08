@@ -6,7 +6,6 @@ import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { formatShortDateRange } from '@repo/common';
-import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerModal } from './listing-date-picker-modal';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
 import type {
@@ -22,6 +21,7 @@ interface ListingMobileBookingBarProps
     ListingNightRuleProps,
     ListingBookingStateProps {
   unavailableDates?: Set<string>;
+  onReserveClick: () => void;
 }
 
 export function ListingMobileBookingBar({
@@ -39,12 +39,11 @@ export function ListingMobileBookingBar({
   setDateModalOpen,
   guestModalOpen,
   setGuestModalOpen,
-  confirmModalOpen,
-  setConfirmModalOpen,
   handleDateSave,
   handleDateClear,
   handleGuestSave,
   handleGuestChange: _handleGuestChange,
+  onReserveClick,
 }: ListingMobileBookingBarProps) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
@@ -134,11 +133,7 @@ export function ListingMobileBookingBar({
                 </Typography>
               </Box>
             </Box>
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => setConfirmModalOpen(true)}
-            >
+            <Button variant="contained" size="small" onClick={onReserveClick}>
               Reserve
             </Button>
           </>
@@ -166,11 +161,6 @@ export function ListingMobileBookingBar({
         childrenAllowed={childrenAllowed}
         infantsAllowed={infantsAllowed}
         petsAllowed={petsAllowed}
-      />
-
-      <ListingConfirmPayModal
-        open={confirmModalOpen}
-        onClose={() => setConfirmModalOpen(false)}
       />
     </>
   );

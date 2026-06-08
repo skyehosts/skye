@@ -20,15 +20,22 @@ Because dates are always open by default, new future dates continuously become b
 
 ## Manual Date Blocking
 
-Hosts can block or unblock date ranges directly on the Skye Hosts calendar via long-press and drag selection.
+Hosts can block or unblock date ranges directly on the Skye Hosts calendar via single tap (1-night range) or long-press + drag (multi-day range).
 
 ### Block creation flow
 
-1. Host long-presses a date cell on the calendar → enters selection mode
-2. Drags thumb across dates → cells highlight (blue) between anchor and current position
-3. Lifts finger → bottom sheet slides up with "Block these dates" / "Unblock these dates"
-4. Block action: `POST /calendar-sync/listing/:id/blocks` with `{ startDate, endDate }`
-5. Calendar reloads to show the new block
+1. Host selects dates:
+   - **Single tap** on a bookable cell → opens the sheet for a 1-night range (tapped day → tapped day + 1). Past and booked cells are no-oped; blocked and min-nights-restricted cells show their existing tooltips instead.
+   - **Long-press + drag**: anchor on the press, cells highlight (blue) as the thumb moves, range commits on release.
+2. Bottom sheet slides up with "Block these dates" / "Unblock these dates" / "Set price override"
+3. Block action: `POST /calendar-sync/listing/:id/blocks` with `{ startDate, endDate }`
+4. Calendar reloads to show the new block
+
+Both entry points funnel through `CalendarList.onSelectionComplete(start, exclusiveEnd)` — the tap path synthesizes `exclusiveEnd = tappedDate + 1`, which matches iCal DTEND semantics and what a long-press without drag already produces. RN `Pressable`'s native `delayLongPress={400}` provides tap-vs-longpress discrimination; `selectionActiveRef` gates drag handlers so short taps never engage the selection machinery.
+
+### Gesture discoverability
+
+Long-press + drag is a hidden gesture, so `HelpTooltipButton` (floating outlined `?` in the bottom-right of `app/calendar/[id].tsx`) exposes it via a `PositionedTooltip` — the same tooltip primitive used by `ExternalBookingBar`. The button auto-hides whenever `DateBlockSheet` or `PriceOverrideModal` is open so it never competes with the active sheet.
 
 ### Unblock range logic
 

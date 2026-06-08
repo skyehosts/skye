@@ -171,6 +171,43 @@ describe('AuthService', () => {
     });
   });
 
+  describe('checkEmailExists', () => {
+    it('should return true when an account exists for the email', async () => {
+      accountService.findByEmail.mockResolvedValue({
+        id: 1,
+        email: 'found@example.com',
+      });
+
+      const result = await authService.checkEmailExists('found@example.com');
+
+      expect(result).toBe(true);
+      expect(accountService.findByEmail).toHaveBeenCalledWith(
+        'found@example.com',
+      );
+    });
+
+    it('should return false when no account exists for the email', async () => {
+      accountService.findByEmail.mockResolvedValue(null);
+
+      const result = await authService.checkEmailExists('missing@example.com');
+
+      expect(result).toBe(false);
+      expect(accountService.findByEmail).toHaveBeenCalledWith(
+        'missing@example.com',
+      );
+    });
+
+    it('should always query the account service (constant DB work)', async () => {
+      accountService.findByEmail.mockResolvedValue(null);
+
+      await authService.checkEmailExists('a@example.com');
+      await authService.checkEmailExists('a@example.com');
+      await authService.checkEmailExists('b@example.com');
+
+      expect(accountService.findByEmail).toHaveBeenCalledTimes(3);
+    });
+  });
+
   describe('changePassword', () => {
     it('should change password when current password is correct', async () => {
       const passwordHash = await bcrypt.hash('OldPassword1', 10);

@@ -1,4 +1,10 @@
 import {
+  formatGbp,
+  type IGetListingPricingResponseDto,
+  type IListingSeasonPricingDto,
+  type PricingSeasonId,
+} from "@repo/common";
+import {
   type IGetListingResponseDto,
   type IUpdateListingRequestDto,
   type ICalendarSyncDto,
@@ -14,8 +20,30 @@ import { CalendarSyncSummaryCard } from "../components/calendar-sync-summary-car
 import { ListingStatusModal } from "../components/listing-status-modal";
 import { ListingStatusRow } from "../components/listing-status-row";
 import { fetchApi } from "../services/api";
-import { commonStyles, spacing } from "../theme";
+import { colors, commonStyles, spacing } from "../theme";
 import { handleApiError } from "../utils/form-error-handler";
+
+const SEASON_SHORT_LABEL: Record<PricingSeasonId, string> = {
+  peak: "Peak",
+  shoulder: "Shoulder",
+  low: "Low",
+};
+
+function formatPriceLine(seasons: IListingSeasonPricingDto[]): string | null {
+  const complete = seasons.filter(
+    (s) => s.weekdayPricePence > 0 && s.weekendPricePence > 0,
+  );
+  if (complete.length === 0) return null;
+  const order: PricingSeasonId[] = ["peak", "shoulder", "low"];
+  return order
+    .map((s) => {
+      const data = complete.find((x) => x.season === s);
+      if (!data) return null;
+      return `${SEASON_SHORT_LABEL[s]} ${formatGbp(data.weekdayPricePence)}`;
+    })
+    .filter(Boolean)
+    .join(" · ");
+}
 
 function formatNightsCardText(listing: IGetListingResponseDto): string {
   const minDisplay = listing.minNightsByCheckInDay
@@ -37,6 +65,9 @@ export function BookingsSection({
 }: BookingsSectionProps) {
   const [listing, setListing] = useState<IGetListingResponseDto | null>(null);
   const [syncs, setSyncs] = useState<ICalendarSyncDto[]>([]);
+  const [pricing, setPricing] = useState<IGetListingPricingResponseDto | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -44,16 +75,22 @@ export function BookingsSection({
 
   const fetchData = useCallback(async () => {
     try {
-      const [listingData, syncsData] = await Promise.allSettled([
+      const [listingData, syncsData, pricingData] = await Promise.allSettled([
         fetchApi<IGetListingResponseDto>(`/listing/${listingId}/edit`),
         fetchApi<IGetCalendarSyncsResponseDto>(
           `/calendar-sync/listing/${listingId}`,
           undefined,
           { method: "GET" },
         ),
+        fetchApi<IGetListingPricingResponseDto>(
+          `/listing/${listingId}/pricing`,
+          undefined,
+          { method: "GET" },
+        ),
       ]);
       if (listingData.status === "fulfilled") setListing(listingData.value);
       if (syncsData.status === "fulfilled") setSyncs(syncsData.value.syncs);
+      if (pricingData.status === "fulfilled") setPricing(pricingData.value);
     } finally {
       setLoading(false);
     }
@@ -113,12 +150,53 @@ export function BookingsSection({
         {/* Pricing */}
         <Pressable
           style={[commonStyles.card, { gap: spacing.sm }]}
-          onPress={() => router.push("/edit-listing/pricing")}
+          onPress={() =>
+            router.push({
+              pathname: "/edit-listing/pricing",
+              params: { id: listingId },
+            })
+          }
         >
           <Text style={commonStyles.itemTitle}>Pricing</Text>
-          <Text style={commonStyles.itemSubtext}>£120 per night</Text>
-          <Text style={commonStyles.itemSubtext}>£120 weekend price</Text>
-          <Text style={commonStyles.itemSubtext}>25% weekly discount</Text>
+          {(() => {
+            if (!pricing) {
+              return (
+                <Text style={commonStyles.itemSubtext}>Enter details</Text>
+              );
+            }
+            const priceLine = formatPriceLine(pricing.seasons);
+            const discounts: string[] = [];
+            if (pricing.globals.lastMinuteEnabled)
+              discounts.push(
+                `Last-minute ${pricing.globals.lastMinutePercent}% off`,
+              );
+            if (pricing.globals.weeklyEnabled)
+              discounts.push(`Weekly ${pricing.globals.weeklyPercent}% off`);
+            if (pricing.globals.monthlyEnabled)
+              discounts.push(`Monthly ${pricing.globals.monthlyPercent}% off`);
+            return (
+              <>
+                <Text style={commonStyles.itemSubtext}>
+                  {priceLine ?? "Enter details"}
+                </Text>
+                {discounts.length > 0 && (
+                  <Text style={commonStyles.itemSubtext}>
+                    {discounts.join(" · ")}
+                  </Text>
+                )}
+                {!pricing.isComplete && listing?.status !== "active" && (
+                  <Text
+                    style={[
+                      commonStyles.itemSubtext,
+                      { color: colors.warning },
+                    ]}
+                  >
+                    Required to publish
+                  </Text>
+                )}
+              </>
+            );
+          })()}
         </Pressable>
 
         {/* Availability */}

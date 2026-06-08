@@ -22,7 +22,6 @@ export function useListingBookingState(
   );
   const [dateModalOpen, setDateModalOpen] = useState(false);
   const [guestModalOpen, setGuestModalOpen] = useState(false);
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
   const handleDateSave = (range: { from: Date; to: Date }) => {
     setDateRange(range);
@@ -53,8 +52,6 @@ export function useListingBookingState(
     setDateModalOpen,
     guestModalOpen,
     setGuestModalOpen,
-    confirmModalOpen,
-    setConfirmModalOpen,
     handleDateSave,
     handleDateClear,
     handleGuestSave,

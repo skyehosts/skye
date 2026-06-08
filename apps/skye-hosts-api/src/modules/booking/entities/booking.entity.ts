@@ -1,3 +1,4 @@
+import type { IPriceBreakdownDto } from '@repo/common';
 import {
   Column,
   Entity,
@@ -33,6 +34,9 @@ export class Booking {
 
   @Column({ type: 'character varying', default: 'pending' })
   status: string;
+
+  @Column({ type: 'jsonb', nullable: true, default: null })
+  priceBreakdown: IPriceBreakdownDto | null;
 
   @Column({ type: 'timestamp without time zone' })
   createdAt: Date;

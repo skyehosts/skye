@@ -164,7 +164,6 @@ export class AccountService {
   }
 
   buildProfilePhotoUrl(key: string | null): string | null {
-    if (!key) return null;
     return `https://${this.cdnDomain}/${key}`;
   }
 

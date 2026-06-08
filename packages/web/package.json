@@ -9,6 +9,7 @@
     "./delete-account-form-wrapper": "./src/wrappers/delete-account-form-wrapper.tsx",
     "./cookie-disclaimer-wrapper": "./src/wrappers/cookie-disclaimer-wrapper.tsx",
     "./forgot-password-form-wrapper": "./src/wrappers/forgot-password-form-wrapper.tsx",
+    "./log-in-or-sign-up-modal-wrapper": "./src/wrappers/log-in-or-sign-up-modal-wrapper.tsx",
     "./login-form-wrapper": "./src/wrappers/login-form-wrapper.tsx",
     "./reset-password-form-wrapper": "./src/wrappers/reset-password-form-wrapper.tsx",
     "./sentry": "./src/sentry/index.ts",

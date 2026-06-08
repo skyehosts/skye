@@ -23,7 +23,7 @@ export function SignUpFormWrapper() {
       name: data.name,
       password: data.password,
       role: 'guest',
-      subscribedToNewsViaEmail: data.subscribeNewsletter,
+      subscribedToNewsViaEmail: false,
     });
 
     const result = await signIn('credentials', {
@@ -41,10 +41,5 @@ export function SignUpFormWrapper() {
     return {};
   };
 
-  return (
-    <SignUpForm
-      onSubmit={handleSubmit}
-      newsletterLabel="Stay updated with the best glamping spots and deals"
-    />
-  );
+  return <SignUpForm onSubmit={handleSubmit} />;
 }

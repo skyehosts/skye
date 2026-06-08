@@ -24,7 +24,7 @@ import { isExternalBooking } from "../utils/booking-segments";
 import { formatDateString, parseDateString } from "../utils/format-date-string";
 import { computeRestrictedDates } from "../utils/min-nights-gap";
 import type { DayCellStatus } from "./day-cell";
-import { MonthGrid, type MonthData } from "./month-grid";
+import { MonthGrid, type DayPriceInfo, type MonthData } from "./month-grid";
 
 const MONTHS_IN_PAST = 6;
 const MONTHS_IN_FUTURE = 18;
@@ -128,9 +128,9 @@ interface CalendarListProps {
   bookings?: IListingBookingItemDto[];
   blocks?: ICalendarBlockDto[];
   platformBySyncId?: Map<number, CalendarSyncPlatform>;
+  pricesByDate?: Map<string, DayPriceInfo>;
   minNights?: number;
   minNightsByCheckInDay?: IMinNightsByCheckInDay | null;
-  onDayPress?: (dateString: string) => void;
   getDayStatus?: (dateString: string) => DayCellStatus;
   onReloadData?: () => void;
   onSelectionComplete?: (startDate: string, endDate: string) => void;
@@ -140,9 +140,9 @@ export function CalendarList({
   bookings,
   blocks,
   platformBySyncId,
+  pricesByDate,
   minNights: minNightsProp,
   minNightsByCheckInDay,
-  onDayPress,
   getDayStatus: getDayStatusProp,
   onReloadData,
   onSelectionComplete,
@@ -165,19 +165,35 @@ export function CalendarList({
     return buildDateRange(selectionAnchor, selectionEnd);
   }, [selectionAnchor, selectionEnd]);
 
-  const bookedDates = useMemo(() => {
-    const set = new Set<string>();
+  // `bookedDates`: cells rendered with "booked" status (unavailable).
+  // `datesWithBookingBar`: cells with a bar painted over them — a superset
+  // of bookedDates that also includes each external iCal block's endDate,
+  // since the bar visually penetrates into that checkout cell even though
+  // iCal DTEND is exclusive and the cell is still bookable.
+  const { bookedDates, datesWithBookingBar } = useMemo(() => {
+    const booked = new Set<string>();
+    const withBar = new Set<string>();
     for (const booking of bookings ?? []) {
       for (const d of expandDateRange(
         booking.checkInDate,
         booking.checkOutDate,
         true,
       )) {
-        set.add(d);
+        booked.add(d);
+        withBar.add(d);
       }
     }
-    return set;
-  }, [bookings]);
+    for (const block of blocks ?? []) {
+      if (block.source !== "import" || !isExternalBooking(block.summary))
+        continue;
+      for (const d of expandDateRange(block.startDate, block.endDate, false)) {
+        booked.add(d);
+        withBar.add(d);
+      }
+      withBar.add(block.endDate);
+    }
+    return { bookedDates: booked, datesWithBookingBar: withBar };
+  }, [bookings, blocks]);
 
   const blockedDateInfo = useMemo(() => {
     const map = new Map<string, BlockedDateInfo[]>();
@@ -210,21 +226,6 @@ export function CalendarList({
     for (const key of blockedDateInfo.keys()) {
       occupiedDates.add(key);
     }
-    // Include external booking dates (imported iCal blocks with "Reserved"
-    // summary) — these are excluded from both bookedDates and blockedDateInfo
-    // but still occupy the calendar.
-    for (const block of blocks ?? []) {
-      if (block.source === "import" && isExternalBooking(block.summary)) {
-        // endDate is exclusive per iCal DTEND semantics
-        for (const d of expandDateRange(
-          block.startDate,
-          block.endDate,
-          false,
-        )) {
-          occupiedDates.add(d);
-        }
-      }
-    }
     const firstMonth = months[0];
     const lastMonth = months[months.length - 1];
     const rangeStart = formatDateString(firstMonth.year, firstMonth.month, 1);
@@ -248,7 +249,6 @@ export function CalendarList({
   }, [
     bookedDates,
     blockedDateInfo,
-    blocks,
     minNightsProp,
     minNightsByCheckInDay,
     months,
@@ -339,6 +339,22 @@ export function CalendarList({
     [todayString],
   );
 
+  const handleDayTap = useCallback(
+    (dateString: string) => {
+      if (dateString < todayString) return;
+      if (bookedDates.has(dateString)) return;
+      const parsed = parseDateString(dateString);
+      const next = new Date(parsed.year, parsed.month, parsed.day + 1);
+      const exclusiveEnd = formatDateString(
+        next.getFullYear(),
+        next.getMonth(),
+        next.getDate(),
+      );
+      onSelectionComplete?.(dateString, exclusiveEnd);
+    },
+    [todayString, bookedDates, onSelectionComplete],
+  );
+
   const handleTouchMove = useCallback(
     (e: GestureResponderEvent) => {
       if (!selectionActiveRef.current) return;
@@ -424,8 +440,10 @@ export function CalendarList({
         bookedDates={bookedDates}
         blockedDateInfo={blockedDateInfo}
         restrictedDates={restrictedDates}
+        datesWithBookingBar={datesWithBookingBar}
+        pricesByDate={pricesByDate}
         minNights={minNightsProp ?? 1}
-        onDayPress={onDayPress}
+        onDayPress={handleDayTap}
         getDayStatus={getDayStatus}
         onReloadData={onReloadData}
         onLongPress={handleLongPress}
@@ -439,8 +457,10 @@ export function CalendarList({
       bookedDates,
       blockedDateInfo,
       restrictedDates,
+      datesWithBookingBar,
+      pricesByDate,
       minNightsProp,
-      onDayPress,
+      handleDayTap,
       getDayStatus,
       onReloadData,
       handleLongPress,

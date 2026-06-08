@@ -1,3 +1,4 @@
+import { formatGbp } from "@repo/common";
 import React from "react";
 import {
   Pressable,
@@ -45,6 +46,15 @@ interface DayCellProps {
   size: number;
   /** Cell height — defaults to size if not provided */
   height?: number;
+  /** Host net pence for the night — rendered in small text when present */
+  hostNetPence?: number;
+  /** Whether the host net price is a per-date override */
+  isPriceOverride?: boolean;
+  /**
+   * Whether a booking bar overlays the bottom of this cell. When true the
+   * price sits higher to avoid being obscured by the bar.
+   */
+  hasBookingBar?: boolean;
   /** Called with the dateString and press event when the day is pressed */
   onPress?: (dateString: string, event: GestureResponderEvent) => void;
   /** Called with the dateString when the day is long-pressed */
@@ -59,6 +69,9 @@ function DayCellInner({
   status,
   size,
   height,
+  hostNetPence,
+  isPriceOverride,
+  hasBookingBar,
   onPress,
   onLongPress,
 }: DayCellProps) {
@@ -115,6 +128,20 @@ function DayCellInner({
           {day}
         </Text>
       </View>
+      {hostNetPence !== undefined &&
+        !isPast &&
+        (status === "none" || status === "selected") && (
+          <Text
+            style={[
+              styles.priceText,
+              hasBookingBar ? styles.priceTextRaised : styles.priceTextShifted,
+              isPriceOverride && styles.priceTextOverride,
+            ]}
+            numberOfLines={1}
+          >
+            {formatGbp(hostNetPence)}
+          </Text>
+        )}
     </Pressable>
   );
 }
@@ -188,6 +215,20 @@ const styles = StyleSheet.create({
     color: colors.calendarTextPast,
   },
   todayText: {
+    color: colors.primary,
+    fontWeight: fontWeight.semibold,
+  },
+  priceText: {
+    fontSize: typography.xs,
+    color: colors.textSecondary,
+  },
+  priceTextRaised: {
+    marginTop: -3,
+  },
+  priceTextShifted: {
+    marginTop: 20,
+  },
+  priceTextOverride: {
     color: colors.primary,
     fontWeight: fontWeight.semibold,
   },

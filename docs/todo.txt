@@ -2,15 +2,47 @@ flora
 multi
 pqq
 
-===========
-In-Progress
-===========
+======================================
+Testing pending
+======================================
+- Test single tap on listing calendar ok (real device)
 
+=======================
+Development In-Progress
+=======================
+- Pricing
 
 ===============
 Pending Prompts
 ===============
-- Checkout instructions page, already selected items should have 'Edit' not chevron right.
+- Bug:
+  - Emulator shows Sep 14th-20th are blocked on airbnb but they arne't. Why?
+  - On device only, when long pressing on Sept 15th, it should select just that date, but it selects 15-22 sep?
+- Refine pricing featire
+  - On 3+ night stays, the guest fee is 0%. ?
+    - NB: Pricing on AirBNB isn't just 18% and 15%, its more nuanced, need to understand further to achieve some semblance of parity.
+- Needs instruction on calendar page to le tthem know about long press?
+- Extra guest fee
+  - In hosts app on 'Pricing' page, there was a previously partially implemented feature called 'Extra Guest fdee'
+  - Let's fininsh the implementation
+  - Adding a tap handler on the card, which opens a PriceInputModal
+    - Title: 'Extra-guest fee'
+    - Subtitle: 'Per extra guest, per night'
+    - Main £ form control: £x , where x = price per additonal guest
+    - Text under form field: 'This additional fee will increase the nightly total your guests see'
+    - Additional: Form control:
+      - 'For each guest after' '-' {additionalGuestThreshold} '+' (NumberStepper component) (come up with a better name than additionalGuestThreshold)
+      - NB: This sets the threshold at which  the additional guest dfee is charged.
+      - E.G If additionalGuestThreshold = 2, and price per additional guest is £20, then if guest books for 3 it will be £20 more, or if guest books 4 it would be £40 more.
+  - This should save a value to the DB via API
+  - Ensure follow approach consistent with elsewhere in app with regards to success/failure toast, error handling, unexpected server exception customer friendly message displayed and all other relevant things. 
+  - Update the card on the pricing page to display the already selected value (if set)
+  - Ensure that any price calculations for listings is correctly including this clenaing fee in it's calcs (it should be already)
+  - It should default to not set.
+  - On guest website:
+    - packages/web-components/src/listings/listing-guest-selector-modal.tsx and packages/web-components/src/listings/listing-guest-selector-popup.tsx (and anywhere else you can set guests on booking)
+    - Should not be able to set guests > max
+    - Max is determined by guests-modal.tsx (host app) this is absolute ceiling, additional guests cannot exceed it.
 
 =============
 MVP: Host app
@@ -18,8 +50,6 @@ MVP: Host app
 --------------
 High prescence
 --------------
-- tool tip occassional position error on calendar page, when tapping booking bar towards bottom of page.
-  - Is this only happening on device?
 - Menu -> Earnings
 - Menu -> Payments
 - How to view images on desktop, should open in lightbox? MVP
@@ -57,7 +87,6 @@ High prescence
 -------------
 Low prescence
 -------------
-- "enable import and for full pro -> enable export for protection against double bookings?
 - Message template add details..comment out non implemented?
 
 ==================
@@ -66,7 +95,7 @@ MVP: Guest website
 ---------------
 High prescence
 --------------
-- Listing detail, full width content or static position date popup
+- Show booking price in preferred currency>?
 - Instant Booking flow / as it pertains to opening confirm and pay modal and login/register
 - Request to book Message hots button on listing detail page?
 - Show more modal on listing detail page, scrollbar shows on mobile when not needed
@@ -125,3 +154,147 @@ TLDR:
 On both thes pages in host app:
   - Create message template
   - Edit message template.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- Currently setting pricing for a Hosts Air BnB listing is unimplemented, let's implement it
+- Help me refine the feature and then propose a plan to implement.
+- Any major decisions ask, scrutinise my idea for bad assunmptions, decisions etc.
+- Identify superior approaches where possible
+- Re-use existing components/stylers where possible, if new styles required, ensure oy make them re-useable
+- Business Goals:
+  - Primary incentive for hosts of using Skye Hosts is lower fees than Air BnB.
+  - Most of this benefit should be passed to Host, (10% ish savings), with Guest recieving 2% benefit approx.
+  - Air BNB charges guests about 21% on average for a 2 night booking, and hosts 3%, for a 3+ night booking their guest fee drops to 15%
+  - Skye hosts will aim to charge hosts 3%, and guests about 3% + 3% payment processing (stripe), so 6% in total. This is about 12% cheaper than air bnb on a 2night booking and 9% cheaper on 3 night booking.
+  - Hosts use Air BNB as their primary booking system, therefore
+  - We want it to be very simple (low cognitive load) for hosts to input a price for listing here that has price parity with (AirBNB - 3% approx) (from guests perspective)
+    - I.E THey can look at their Air BNB actual net income receievd (after all feees deducted) and use that as a basis for what they charge in skye hosts)
+    - I.E Guests will be incentised to book with Skye hosts because it's about 3% cheaper
+    - Hosts will be incentivised because they can save about 10%.
+  - We want it to be clearly displayed to host:
+    - How much they can expect to save on fees
+    - How much they will earn, net per night after subtraction of guest fee, host fee, cleaning fees, extra guest fee etc.
+  - Provide guidance to increase clarity where possible to the host using existig
+- Don't worry about iuncluding this in the listing creation flow, it can just be done after creation.. Ensure it is easily re-usable though if we want to include later whilst keeping things DRY.
+- Ensure all code for calculating prices etc is re-useable.
+- Document this all in /plans/architecture so we can pick it up later. (Once plan finalised)
+- Approach:
+  - Page 1: On 'Listing editor' page in hots apps, inside the 'Booking' tab, in the 'Pricing' card, display:
+      - 'Enter details' (Copy how other cards do it) if no pricing data set, otherwise:
+      - Show quick summary of pricing data if already set (Up to 3 lines max)
+    - After taping on the pricing card, on the ezxisting 'Pricing page', add capability to set pricing for their listing.
+    - There will be no smart (dynamic pricing), no promotions (implemented later)
+    - On the pricing page, add sections:
+      - Section 1: Seasons:
+        - Title 'Seasons';
+        - List items:
+          - List item 1:
+            - Title: Low Season (Winter)
+            - Subtext: November → February
+          - List item 2:
+            - Title: Shoulder Season (Spring & Autumn) 
+            - Subtext: March → April and September → October
+          - List item 3:
+            - Title: Peak Season (Summer)
+            - Subtext: Remaining months
+          - Re-use existing list item components/styles. 
+          - Displsay 'Edit' on right hand side
+          - Each list item has Extra subtext (only if value set)
+            - Display Summary of: 'Weekday price, weeeknd price, discounts available (For discounts only show 1, if more, show + n other discounts)
+        - Display each season in a card (vertically stacked)
+        - When a season is tapped on, open a modal which starts a wizard with approx 3 srtages:
+          - Stage 1: Set a weekday base price
+          - Stage 2: Set a weekend base price
+            - This can be specified via either an absolute number or via a percentage over weekday bas price
+              - If percentage slider is changed, dynamically up date the absolute value shown on-the-fly
+              - Set percentage to default of 10%
+          - NB in both weekday and weekend price pages.
+            - Below price input, show:
+              'Guest price £XXXX' with a down ehvron, that when tapped. Expans something below:
+                - Thw shows a price rebakdown resulting in guest fdee
+            - Also show, 'Learn more about pricing' link which when tapped, opens a modal explaining how pricing works
+            - These two stages can be very similiarily layoued out /styled
+            - Content should be centered, including title, text, to make intuitive for user. S
+          - Stage 3: Discounts, possibleoptions include:
+            - Last-minute Discount
+              - Can be toggled on/off
+              - Set %, default 5%
+              - Description: "For stay sbooked 14 days or less before arrival"
+            - Weekly discount
+              - Can be toggled on/off
+              - Set %, default 10%
+              - Description: "For stays of 7 nights or more"
+            - Monthly discount
+              - Can be toggled on/off
+              - Set %, default 20%
+              - Description: "For stays of 28 nights or more"
+          - Wizard should include next, cancel, back buttons etc at bottom.
+          - NB, there is WizardAppBar existing which may be of some use.
+      - Section 2. Cleaning fee (not seasonal)
+        - Display title 'Cleaning fee'
+        - Card:
+          - Title: 'Per stay'
+          - Text: '£1' (Large font-size) (Current value) or if no current value, display 'Enter details'
+          - Don't implement front-end code for host to set value here (it will be done later), just assume for now it's £1, and setup required backend code
+          - We include backend code now, as this may affect pricing shown to guests. 
+      - Section 3. Extra-guest fee
+        - Display as a card, when tapped, opens form-input-modal
+        - "After N guests, per night":
+        - Excludes babies, only includes adults, children, etc
+        - Don't implement front-end code for host to set value here (it will be done later), just assume for now it's possible that it will exist in future. (Should be incproprated/included into any price calcs if set). Setup required backend code for it.
+      - Include the following helpful guidance for clarity
+        - The price you set is how much you will receive after all fees deducted (I.E after cleaning fees, skye hosts fee etc) how much it will arrive in your bank account
+        - Important: 
+          - Recommend that they first figure out what their AirBNB net nightly income is for this particular season and then set a value here that is about 10% more. E.G They will earn 10% more if a booking happens here. And the guests will pay about 2% less as well
+          -
+  - Page 2: Listing calender page:
+    - We want it to be simple and fast to set pricing on a seasonal basis. E.G peak, off-peak, shoulder. Then for granular adjustments on specific dates they can override these baselines.
+    - The overriding capability should be handled on the listing calendar page by clicking on a day cell (multiple) using existing thumb drag select
+      - In the existing slider that cxomes up from bottom (that includes the button 'Block these dates'), add an additional button that approx text "Set price override/manual" (You decide best wording)
+        - This would then open a modal to set overrides. 
+        - This modal would also display:
+          - How much it's advertised to Guest (E.G price includin host fee + guest fee + cleaning fee + extra guest fee etc.)
+    - The unbooked, unblobkced, available day cells in present -> future (not past) should be updated to show:
+      - Price advertised for. (Where £ represents net income for Host) (grey text)
+
+
+  -  1. 
+    Incentivising hosts is the priority.
+    Guest incentive is secondary. (I.E If price as same as AirBnB not a huge deal, but ideal is a small reduction)
+    The 12% I provided was on a 2 night booking whereby AirBnB takes 18% guest fee).
+    Update our proposal to copy this pattern. E.G For 1-2 night bookings = % and 3+ night bookings = % - 3% (For guest )
+    Double check our asumption about airbnb gurest fee is accurate. Check we have approximate parity.
+    On both 1-2 night bookings and 3_+ night bookings we want to create about a 12% gap
+    Don't word it like 'Up to % cheaper', word it like '% cheaper'
+  - 2. Agree
+  - 3. Agree. The advertised price can exist only when overriding prices on a day cell it show in resulting mnodal
+  - 4. We will ship the 'cleaning fee' feature before our product is live, the £1 is purely to ensure it is correctly incorporated into any pricing cacls, for testing purposes, it will default to zero once live. But do as you see best.
+  - 5. Agree
+  - 6. Agree
+  - 7. Agree
+  - Decision: a-f: Proceed with your recommendation/default
+  - Decision g: What are pros cons of a separate 'pricing' package, as opposed to next best alternatei which I'm assuming is 'packages/skye-hosts-api-client'
+  - Decisions H: Yes build endpoint but no frontend for guest website

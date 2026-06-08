@@ -266,6 +266,12 @@ export class AuthService {
     return !!account;
   }
 
+  async checkEmailExists(email: string): Promise<boolean> {
+    const account = await this.accountService.findByEmail(email);
+    this.logger.debug(`checkEmailExists "${email}" → ${!!account}`);
+    return !!account;
+  }
+
   async phoneVerifyOtp(
     phoneNumber: string,
     code: string,

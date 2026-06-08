@@ -17,6 +17,7 @@ import {
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { applyServerErrors } from '../forms/apply-server-errors';
+import { getDisplayError } from '../forms/get-display-error';
 
 export interface SignUpFormValues {
   name: string;
@@ -24,17 +25,15 @@ export interface SignUpFormValues {
   confirmEmail: string;
   password: string;
   acceptTerms: boolean;
-  subscribeNewsletter: boolean;
 }
 
 export interface SignUpFormResult {}
 
 export interface SignUpFormProps {
   onSubmit: (data: SignUpFormValues) => Promise<SignUpFormResult>;
-  newsletterLabel?: string;
 }
 
-export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
+export function SignUpForm({ onSubmit }: SignUpFormProps) {
   const [result, setResult] = useState<SignUpFormResult | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
@@ -53,7 +52,6 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
       confirmEmail: '',
       password: '',
       acceptTerms: false,
-      subscribeNewsletter: false,
     },
   });
 
@@ -66,11 +64,7 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
       reset();
     } catch (e) {
       if (applyServerErrors(e, setError)) return;
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 
@@ -187,13 +181,6 @@ export function SignUpForm({ onSubmit, newsletterLabel }: SignUpFormProps) {
             </FormControl>
           )}
         />
-
-        <FormControl>
-          <FormControlLabel
-            control={<Checkbox {...register('subscribeNewsletter')} />}
-            label={newsletterLabel ?? 'Subscribe to our newsletter'}
-          />
-        </FormControl>
 
         {serverError && <Alert severity="error">{serverError}</Alert>}
         {result && (

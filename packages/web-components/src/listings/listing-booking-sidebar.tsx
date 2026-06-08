@@ -10,7 +10,6 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { differenceInCalendarDays, format, isValid, parse } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
-import { ListingConfirmPayModal } from './listing-confirm-pay-modal';
 import { ListingDatePickerPopup } from './listing-date-picker-popup';
 import { GuestCounterRows } from './listing-guest-counter-rows';
 import { ListingGuestSelectorModal } from './listing-guest-selector-modal';
@@ -58,6 +57,7 @@ interface ListingBookingSidebarProps
     ListingNightRuleProps,
     ListingBookingStateProps {
   unavailableDates?: Set<string>;
+  onReserveClick: () => void;
 }
 
 export function ListingBookingSidebar({
@@ -75,12 +75,11 @@ export function ListingBookingSidebar({
   setDateModalOpen,
   guestModalOpen,
   setGuestModalOpen,
-  confirmModalOpen,
-  setConfirmModalOpen,
   handleDateSave,
   handleDateClear,
   handleGuestSave,
   handleGuestChange,
+  onReserveClick,
 }: ListingBookingSidebarProps) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true });
@@ -341,7 +340,7 @@ export function ListingBookingSidebar({
                 if (!dateRange) {
                   setDateModalOpen(true);
                 } else {
-                  setConfirmModalOpen(true);
+                  onReserveClick();
                 }
               }}
               sx={{ mb: 1.5 }}
@@ -361,11 +360,6 @@ export function ListingBookingSidebar({
         childrenAllowed={childrenAllowed}
         infantsAllowed={infantsAllowed}
         petsAllowed={petsAllowed}
-      />
-
-      <ListingConfirmPayModal
-        open={confirmModalOpen}
-        onClose={() => setConfirmModalOpen(false)}
       />
     </>
   );

@@ -1,3 +1,8 @@
+import {
+  toDateString,
+  type ICalendarPricesResponseDto,
+  type IGetOverridesResponseDto,
+} from "@repo/common";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useCallback, useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
@@ -25,6 +30,9 @@ import { fetchApi } from "../services/api";
 import { getAggregateSyncHealthColor } from "../utils/sync-status";
 import { CalendarList } from "./components/calendar-list";
 import { DateBlockSheet } from "./components/date-block-sheet";
+import { HelpTooltipButton } from "./components/help-tooltip-button";
+import type { DayPriceInfo } from "./components/month-grid";
+import { PriceOverrideModal } from "./components/price-override-modal";
 
 export default function CalendarDetailScreen() {
   const router = useRouter();
@@ -42,29 +50,58 @@ export default function CalendarDetailScreen() {
   const [sheetEndDate, setSheetEndDate] = useState("");
   const [sheetLoading, setSheetLoading] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [pricesByDate, setPricesByDate] = useState<Map<string, DayPriceInfo>>(
+    new Map(),
+  );
+  const [overrideDates, setOverrideDates] = useState<Set<string>>(new Set());
+  const [priceOverrideModalVisible, setPriceOverrideModalVisible] =
+    useState(false);
 
   const loadData = useCallback(async () => {
-    const [bookingsResult, blocksResult, syncsResult, listingResult] =
-      await Promise.allSettled([
-        fetchApi<IGetListingBookingsResponseDto>(
-          `/booking/listing/${id}`,
-          undefined,
-          { method: "GET" },
-        ),
-        fetchApi<IGetCalendarBlocksResponseDto>(
-          `/calendar-sync/listing/${id}/blocks`,
-          undefined,
-          { method: "GET" },
-        ),
-        fetchApi<IGetCalendarSyncsResponseDto>(
-          `/calendar-sync/listing/${id}`,
-          undefined,
-          { method: "GET" },
-        ),
-        fetchApi<IGetListingResponseDto>(`/listing/${id}`, undefined, {
-          method: "GET",
-        }),
-      ]);
+    const today = new Date();
+    const from = toDateString(today);
+    const rangeEnd = new Date(today);
+    rangeEnd.setFullYear(rangeEnd.getFullYear() + 1);
+    rangeEnd.setMonth(rangeEnd.getMonth() + 6);
+    const to = toDateString(rangeEnd);
+
+    const [
+      bookingsResult,
+      blocksResult,
+      syncsResult,
+      listingResult,
+      pricesResult,
+      overridesResult,
+    ] = await Promise.allSettled([
+      fetchApi<IGetListingBookingsResponseDto>(
+        `/booking/listing/${id}`,
+        undefined,
+        { method: "GET" },
+      ),
+      fetchApi<IGetCalendarBlocksResponseDto>(
+        `/calendar-sync/listing/${id}/blocks`,
+        undefined,
+        { method: "GET" },
+      ),
+      fetchApi<IGetCalendarSyncsResponseDto>(
+        `/calendar-sync/listing/${id}`,
+        undefined,
+        { method: "GET" },
+      ),
+      fetchApi<IGetListingResponseDto>(`/listing/${id}`, undefined, {
+        method: "GET",
+      }),
+      fetchApi<ICalendarPricesResponseDto>(
+        `/listing/${id}/calendar-prices?from=${from}&to=${to}`,
+        undefined,
+        { method: "GET" },
+      ),
+      fetchApi<IGetOverridesResponseDto>(
+        `/listing/${id}/overrides?from=${from}&to=${to}`,
+        undefined,
+        { method: "GET" },
+      ),
+    ]);
 
     if (bookingsResult.status === "fulfilled") {
       setBookings(bookingsResult.value.bookings);
@@ -78,6 +115,21 @@ export default function CalendarDetailScreen() {
     if (listingResult.status === "fulfilled") {
       setMinNights(listingResult.value.minNights);
       setMinNightsByCheckInDay(listingResult.value.minNightsByCheckInDay);
+    }
+    if (pricesResult.status === "fulfilled") {
+      const map = new Map<string, DayPriceInfo>();
+      for (const p of pricesResult.value.prices) {
+        map.set(p.date, {
+          hostNetPence: p.hostNetPence,
+          isOverride: p.isOverride,
+        });
+      }
+      setPricesByDate(map);
+    }
+    if (overridesResult.status === "fulfilled") {
+      setOverrideDates(
+        new Set(overridesResult.value.overrides.map((o) => o.date)),
+      );
     }
   }, [id]);
 
@@ -120,7 +172,7 @@ export default function CalendarDetailScreen() {
       const cur = new Date(clamped0 + "T00:00:00");
       const stop = new Date(clamped1 + "T00:00:00");
       while (cur < stop) {
-        occupiedDatesInRange.add(cur.toISOString().slice(0, 10));
+        occupiedDatesInRange.add(toDateString(cur));
         cur.setDate(cur.getDate() + 1);
       }
     };
@@ -148,7 +200,7 @@ export default function CalendarDetailScreen() {
     const rangeEnd = new Date(sheetEndDate + "T00:00:00");
     const cur = new Date(rangeStart);
     while (cur < rangeEnd) {
-      const ds = cur.toISOString().slice(0, 10);
+      const ds = toDateString(cur);
       if (!occupiedDatesInRange.has(ds)) {
         foundUnblocked = true;
         break;
@@ -237,6 +289,25 @@ export default function CalendarDetailScreen() {
     }
   }, [sheetLoading]);
 
+  const handleOpenPriceOverride = useCallback(() => {
+    setSheetVisible(false);
+    setPriceOverrideModalVisible(true);
+  }, []);
+
+  const existingOverrideDatesInRange = useMemo(() => {
+    if (!sheetStartDate || !sheetEndDate) return [];
+    const out: string[] = [];
+    for (const d of overrideDates) {
+      if (d >= sheetStartDate && d < sheetEndDate) out.push(d);
+    }
+    return out;
+  }, [overrideDates, sheetStartDate, sheetEndDate]);
+
+  const handleOverrideSaved = useCallback(async () => {
+    setPriceOverrideModalVisible(false);
+    await loadData();
+  }, [loadData]);
+
   return (
     <ScreenContainer>
       <Appbar.Header>
@@ -259,6 +330,7 @@ export default function CalendarDetailScreen() {
         bookings={bookings}
         blocks={blocks}
         platformBySyncId={platformBySyncId}
+        pricesByDate={pricesByDate}
         minNights={minNights}
         minNightsByCheckInDay={minNightsByCheckInDay}
         onReloadData={loadData}
@@ -274,8 +346,21 @@ export default function CalendarDetailScreen() {
         loading={sheetLoading}
         onBlock={handleBlock}
         onUnblock={handleUnblock}
+        onSetPriceOverride={handleOpenPriceOverride}
         onDismiss={handleSheetDismiss}
       />
+      {priceOverrideModalVisible && sheetStartDate && sheetEndDate && (
+        <PriceOverrideModal
+          visible={true}
+          listingId={id as string}
+          startDate={sheetStartDate}
+          endDate={sheetEndDate}
+          existingOverrideDates={existingOverrideDatesInRange}
+          onDismiss={() => setPriceOverrideModalVisible(false)}
+          onSaved={handleOverrideSaved}
+        />
+      )}
+      {!sheetVisible && !priceOverrideModalVisible && <HelpTooltipButton />}
       <AppSnackbar message={serverError} onDismiss={() => setServerError("")} />
     </ScreenContainer>
   );

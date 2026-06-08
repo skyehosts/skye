@@ -34,6 +34,7 @@ import {
   UpdateListingRequestDto,
 } from '../dto';
 import { Listing } from '../entities';
+import { ListingPricingService } from './listing-pricing.service';
 
 function generateApproximateCoordinates(
   lat: number,
@@ -62,6 +63,7 @@ export class ListingService {
     @InjectRepository(ListingImage)
     private readonly listingImageRepo: Repository<ListingImage>,
     private listingAccessService: ListingAccessService,
+    private listingPricingService: ListingPricingService,
     private configService: ConfigService,
     private dataSource: DataSource,
   ) {
@@ -396,7 +398,19 @@ export class ListingService {
     if (dto.minNightsByCheckInDay !== undefined)
       listing.minNightsByCheckInDay = dto.minNightsByCheckInDay ?? null;
     if (dto.maxNights !== undefined) listing.maxNights = dto.maxNights ?? null;
-    if (dto.status !== undefined) listing.status = dto.status;
+    if (dto.status !== undefined) {
+      if (dto.status === 'active' && listing.status !== 'active') {
+        const isComplete = await this.listingPricingService.hasCompletePricing(
+          listing.id,
+        );
+        if (!isComplete) {
+          throw new BadRequestException(
+            'Listing pricing must be complete (all three seasons) before publishing',
+          );
+        }
+      }
+      listing.status = dto.status;
+    }
     if (dto.shortTermLetLicenseConfirmed !== undefined)
       listing.shortTermLetLicenseConfirmed = dto.shortTermLetLicenseConfirmed;
     if (dto.cancellationPolicyShortTerm !== undefined)

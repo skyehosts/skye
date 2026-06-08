@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { getDisplayError } from './get-display-error';
 
 export interface ChangePasswordFormValues {
   currentPassword: string;
@@ -48,11 +49,7 @@ export function ChangePasswordForm({ onSubmit }: ChangePasswordFormProps) {
       setSuccess(true);
       reset();
     } catch (e) {
-      setServerError(
-        e instanceof Error
-          ? e.message
-          : 'Something went wrong. Please try again.',
-      );
+      setServerError(getDisplayError(e));
     }
   };
 

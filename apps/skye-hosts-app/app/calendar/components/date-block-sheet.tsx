@@ -25,10 +25,14 @@ interface DateBlockSheetProps {
   loading: boolean;
   onBlock: () => void;
   onUnblock: () => void;
+  onSetPriceOverride?: () => void;
   onDismiss: () => void;
 }
 
-function formatRange(startDate: string, endDate: string): string {
+function getRangeInfo(
+  startDate: string,
+  endDate: string,
+): { label: string; isSingleDay: boolean } {
   const start = parseISO(startDate);
   // endDate is exclusive, so subtract 1 day for display
   const end = parseISO(endDate);
@@ -41,8 +45,16 @@ function formatRange(startDate: string, endDate: string): string {
     (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24) + 1,
   );
 
-  if (diffDays === 1) return `${startStr} ${start.getFullYear()} (1 day)`;
-  return `${startStr} – ${endStr} (${diffDays} days)`;
+  if (diffDays === 1) {
+    return {
+      label: `${startStr} ${start.getFullYear()} (1 day)`,
+      isSingleDay: true,
+    };
+  }
+  return {
+    label: `${startStr} – ${endStr} (${diffDays} days)`,
+    isSingleDay: false,
+  };
 }
 
 export function DateBlockSheet({
@@ -55,6 +67,7 @@ export function DateBlockSheet({
   loading,
   onBlock,
   onUnblock,
+  onSetPriceOverride,
   onDismiss,
 }: DateBlockSheetProps) {
   const translateY = useRef(new Animated.Value(300)).current;
@@ -76,17 +89,9 @@ export function DateBlockSheet({
     }
   }, [visible, translateY]);
 
-  console.log("[DateBlockSheet] render", {
-    visible,
-    startDate,
-    endDate,
-    hasManualBlocks,
-    hasUnblockedDates,
-    hasBookedDates,
-    loading,
-  });
-
   if (!visible) return null;
+
+  const { label: rangeLabel, isSingleDay } = getRangeInfo(startDate, endDate);
 
   return (
     <Portal>
@@ -95,23 +100,34 @@ export function DateBlockSheet({
         <View style={styles.handle} />
 
         <View style={styles.header}>
-          <Text style={styles.title}>{formatRange(startDate, endDate)}</Text>
+          <Text style={styles.title}>{rangeLabel}</Text>
           <Pressable onPress={onDismiss} hitSlop={8}>
             <Ionicons name="close" size={22} color={colors.iconMuted} />
           </Pressable>
         </View>
 
         <View style={styles.actions}>
-          {hasUnblockedDates && (
+          {hasUnblockedDates && onSetPriceOverride && (
             <Button
               mode="contained"
+              onPress={onSetPriceOverride}
+              disabled={loading}
+              icon="currency-gbp"
+              style={styles.actionButton}
+            >
+              Set custom price
+            </Button>
+          )}
+          {hasUnblockedDates && (
+            <Button
+              mode="outlined"
               onPress={onBlock}
               loading={loading}
               disabled={loading}
               icon="calendar-remove"
               style={styles.actionButton}
             >
-              Block these dates
+              {isSingleDay ? "Block this date" : "Block these dates"}
             </Button>
           )}
           {hasManualBlocks && (
@@ -123,7 +139,7 @@ export function DateBlockSheet({
               icon="calendar-check"
               style={styles.actionButton}
             >
-              Unblock these dates
+              {isSingleDay ? "Unblock this date" : "Unblock these dates"}
             </Button>
           )}
         </View>

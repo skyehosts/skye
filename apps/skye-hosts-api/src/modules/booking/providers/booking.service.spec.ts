@@ -1,11 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { ListingPricingService } from '../../listing/providers/listing-pricing.service';
 import { ScheduledMessageCreationService } from '../../scheduled-message/providers/scheduled-message-creation.service';
 import { Booking } from '../entities';
 import { BookingService } from './booking.service';
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makeParams(
   overrides: Partial<Parameters<BookingService['createBooking']>[0]> = {},
@@ -42,12 +41,25 @@ function makeBookingWithListing(booking: Booking) {
   };
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+function makeMockManager(
+  saved: Booking,
+  withListing: ReturnType<typeof makeBookingWithListing>,
+  overrides: { save?: jest.Mock; findOne?: jest.Mock; delete?: jest.Mock } = {},
+) {
+  const save = overrides.save ?? jest.fn().mockResolvedValue(saved);
+  const findOne = overrides.findOne ?? jest.fn().mockResolvedValue(withListing);
+  return {
+    getRepository: jest.fn().mockReturnValue({ save, findOne }),
+    save,
+    findOne,
+  };
+}
 
 describe('BookingService', () => {
   let service: BookingService;
   let dataSource: { transaction: jest.Mock };
   let scheduledMessageCreationService: { createForBooking: jest.Mock };
+  let listingPricingService: { getBreakdownForBooking: jest.Mock };
 
   beforeEach(async () => {
     dataSource = {
@@ -56,6 +68,12 @@ describe('BookingService', () => {
 
     scheduledMessageCreationService = {
       createForBooking: jest.fn().mockResolvedValue(undefined),
+    };
+
+    listingPricingService = {
+      getBreakdownForBooking: jest
+        .fn()
+        .mockRejectedValue(new Error('pricing not configured in tests')),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -67,6 +85,10 @@ describe('BookingService', () => {
           provide: ScheduledMessageCreationService,
           useValue: scheduledMessageCreationService,
         },
+        {
+          provide: ListingPricingService,
+          useValue: listingPricingService,
+        },
       ],
     }).compile();
 
@@ -77,13 +99,7 @@ describe('BookingService', () => {
     it('should save a booking with status confirmed and call createForBooking', async () => {
       const saved = makeSavedBooking();
       const withListing = makeBookingWithListing(saved);
-
-      const mockManager = {
-        getRepository: jest.fn().mockReturnValue({
-          save: jest.fn().mockResolvedValue(saved),
-          findOne: jest.fn().mockResolvedValue(withListing),
-        }),
-      };
+      const mockManager = makeMockManager(saved, withListing);
       dataSource.transaction.mockImplementation(
         (cb: (m: typeof mockManager) => Promise<Booking>) => cb(mockManager),
       );
@@ -97,7 +113,7 @@ describe('BookingService', () => {
       ).toHaveBeenCalledWith(
         saved,
         withListing.listing,
-        undefined, // isTestBooking not passed
+        undefined,
         mockManager,
       );
     });
@@ -105,13 +121,7 @@ describe('BookingService', () => {
     it('should forward isTestBooking to createForBooking', async () => {
       const saved = makeSavedBooking();
       const withListing = makeBookingWithListing(saved);
-
-      const mockManager = {
-        getRepository: jest.fn().mockReturnValue({
-          save: jest.fn().mockResolvedValue(saved),
-          findOne: jest.fn().mockResolvedValue(withListing),
-        }),
-      };
+      const mockManager = makeMockManager(saved, withListing);
       dataSource.transaction.mockImplementation(
         (cb: (m: typeof mockManager) => Promise<Booking>) => cb(mockManager),
       );
@@ -131,13 +141,7 @@ describe('BookingService', () => {
     it('should propagate the error and not return a booking when createForBooking throws', async () => {
       const saved = makeSavedBooking();
       const withListing = makeBookingWithListing(saved);
-
-      const mockManager = {
-        getRepository: jest.fn().mockReturnValue({
-          save: jest.fn().mockResolvedValue(saved),
-          findOne: jest.fn().mockResolvedValue(withListing),
-        }),
-      };
+      const mockManager = makeMockManager(saved, withListing);
       dataSource.transaction.mockImplementation(
         (cb: (m: typeof mockManager) => Promise<Booking>) => cb(mockManager),
       );
@@ -148,6 +152,66 @@ describe('BookingService', () => {
       await expect(service.createBooking(makeParams())).rejects.toThrow(
         'DB error in createForBooking',
       );
+    });
+
+    it('persists the pricing breakdown and overrides totalPrice with the computed total', async () => {
+      const saved = makeSavedBooking();
+      const withListing = makeBookingWithListing(saved);
+      const mockManager = makeMockManager(saved, withListing);
+      dataSource.transaction.mockImplementation(
+        (cb: (m: typeof mockManager) => Promise<Booking>) => cb(mockManager),
+      );
+
+      const breakdown = {
+        nights: [],
+        nightlyRateSumPence: 24000,
+        extraGuestTotalPence: 0,
+        cleaningFeePound: 1,
+        hostNetSubtotalPence: 24100,
+        appliedDiscounts: [],
+        discountedHostNetPence: 24100,
+        guestFeePence: 723,
+        guestFeeRate: 0.03,
+        hostFeePence: 723,
+        stripeFeePence: 766,
+        totalGuestPence: 26312,
+        hostPayoutPence: 24100,
+        currency: 'GBP' as const,
+      };
+      listingPricingService.getBreakdownForBooking.mockResolvedValue(breakdown);
+
+      await service.createBooking(
+        makeParams({ checkInDate: '2027-07-05', checkOutDate: '2027-07-07' }),
+      );
+
+      expect(listingPricingService.getBreakdownForBooking).toHaveBeenCalledWith(
+        10,
+        '2027-07-05',
+        '2027-07-07',
+        { adults: 2, children: 0, babies: 0 },
+        expect.any(Date),
+      );
+      const persisted = mockManager.save.mock.calls[0][0];
+      expect(persisted.priceBreakdown).toBe(breakdown);
+      expect(persisted.totalPrice).toBe(263.12);
+    });
+
+    it('persists priceBreakdown=null and falls back to supplied totalPrice when pricing throws', async () => {
+      const saved = makeSavedBooking();
+      const withListing = makeBookingWithListing(saved);
+      const mockManager = makeMockManager(saved, withListing);
+      dataSource.transaction.mockImplementation(
+        (cb: (m: typeof mockManager) => Promise<Booking>) => cb(mockManager),
+      );
+      listingPricingService.getBreakdownForBooking.mockRejectedValue(
+        new Error('pricing incomplete'),
+      );
+
+      await service.createBooking(makeParams({ totalPrice: 999 }));
+
+      const persisted = mockManager.save.mock.calls[0][0];
+      expect(persisted.priceBreakdown).toBeNull();
+      expect(persisted.totalPrice).toBe(999);
     });
   });
 });
